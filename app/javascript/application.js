@@ -6,6 +6,7 @@ import 'flowbite/dist/flowbite.turbo.js'
 
 import TimeParser from './scripts/time_parser'
 import log from './scripts/log'
+import 'controllers'
 import "controllers" // eslint-disable-line
 
 const toggleChecks = (event) => {
@@ -124,4 +125,3 @@ document.addEventListener('turbo:load', () => {
   document.querySelectorAll('.expandSiblingsEllipse')
     .forEach(el => el.addEventListener('click', expandSiblingsEllipse))
 })
-import "controllers"
