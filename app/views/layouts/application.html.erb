@@ -23,12 +23,12 @@
       <% if current_user.present? %>
         <li>Hi user!</li>
         <li>
-          <%= button_to "logout", destroy_user_session_path, method: "delete", data: {turbo: false}  %>
+          <%= button_to "logout", destroy_user_session_path, method: :delete, data: {turbo: false}  %>
         </li>
       <% else %>
         <li>
-          <%#= button_to "Sign in", user_strava_omniauth_authorize_path, data: { turbo: false } %>
-          <%= link_to "Sign in link", user_strava_omniauth_authorize_path, data: { turbo: false } %>
+          <%= button_to "Sign in", user_strava_omniauth_authorize_path, method: :post, data: { turbo: false } %>
+          <%#= link_to "Sign in link", user_strava_omniauth_authorize_path, data: { turbo: false } %>
         </li>
       <% end %>
     </ul>

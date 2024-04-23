@@ -1,12 +1,10 @@
 // Entry point for the build script in your package.json
 import '@hotwired/turbo-rails'
-import './controllers'
 // Import flowbite, a tailwind component library, for interactions
 import 'flowbite/dist/flowbite.turbo.js'
 
 import TimeParser from './scripts/time_parser'
 import log from './scripts/log'
-import 'controllers'
 import "controllers" // eslint-disable-line
 
 const toggleChecks = (event) => {
