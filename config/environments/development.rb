@@ -23,7 +23,7 @@ Rails.application.configure do
     config.action_controller.perform_caching = true
     config.action_controller.enable_fragment_cache_logging = true
 
-    config.cache_store = :memory_store
+    config.cache_store = :redis_cache_store, {url: config.redis_cache_url}
     config.public_file_server.headers = {
       "Cache-Control" => "public, max-age=#{2.days.to_i}"
     }
@@ -31,6 +31,19 @@ Rails.application.configure do
     config.action_controller.perform_caching = false
 
     config.cache_store = :null_store
+  end
+
+  # Lograge is used in production
+  unless Rails.root.join("tmp", "non-lograge-dev.txt").exist?
+    config.lograge.enabled = true
+    config.log_level = :debug
+    config.lograge.formatter = Lograge::Formatters::Logstash.new # Use logstash format
+    config.lograge.custom_options = lambda do |event|
+      {
+        remote_ip: event.payload[:ip],
+        params: event.payload[:params]&.except("controller", "action", "format", "id")
+      }
+    end
   end
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
