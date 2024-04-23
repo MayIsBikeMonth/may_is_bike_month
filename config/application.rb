@@ -36,7 +36,7 @@ module MayIsBikeMonth
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
-    # config.time_zone = "Central Time (US & Canada)"
+    config.time_zone = "America/Los_Angeles"
     # config.eager_load_paths << Rails.root.join("extras")
 
     config.generators do |g|
