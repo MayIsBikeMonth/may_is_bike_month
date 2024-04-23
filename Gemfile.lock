@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/marcbest/omniauth-strava
+  revision: ea1b4680e50844abd5cea989fa190eaa51f7f4d1
+  branch: bump-to-omniauth-2.0
+  specs:
+    omniauth-strava (1.0.0)
+      omniauth (~> 2.0)
+      omniauth-oauth2 (~> 1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -77,6 +86,9 @@ GEM
       tzinfo (~> 2.0)
     addressable (2.8.6)
       public_suffix (>= 2.0.2, < 6.0)
+    annotate (3.2.0)
+      activerecord (>= 3.2, < 8.0)
+      rake (>= 10.4, < 14.0)
     ast (2.4.2)
     base64 (0.2.0)
     bcrypt (3.1.20)
@@ -112,8 +124,10 @@ GEM
     factory_bot_rails (6.4.3)
       factory_bot (~> 6.4)
       railties (>= 5.0.0)
-    faraday (0.17.6)
-      multipart-post (>= 1.2, < 3)
+    faraday (2.9.0)
+      faraday-net_http (>= 2.0, < 3.2)
+    faraday-net_http (3.1.0)
+      net-http
     fast_blank (1.0.1)
     ffi (1.16.3)
     flamegraph (0.9.5)
@@ -136,14 +150,13 @@ GEM
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
     hashdiff (1.1.0)
-    hashie (2.1.2)
+    hashie (5.0.0)
     honeybadger (5.8.0)
     hotwire-livereload (1.3.2)
       actioncable (>= 6.0.0)
       listen (>= 3.0.0)
       railties (>= 6.0.0)
     htmlbeautifier (1.4.3)
-    httpauth (0.2.1)
     i18n (1.14.4)
       concurrent-ruby (~> 1.0)
     importmap-rails (2.0.1)
@@ -160,6 +173,8 @@ GEM
     jsbundling-rails (1.3.0)
       railties (>= 6.0.0)
     json (2.7.2)
+    jwt (2.8.1)
+      base64
     kaminari (1.2.2)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.2)
@@ -198,11 +213,13 @@ GEM
     minitest (5.22.3)
     msgpack (1.7.2)
     multi_json (1.15.0)
-    multipart-post (2.4.0)
+    multi_xml (0.6.0)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
     mutex_m (0.2.0)
     nenv (0.3.0)
+    net-http (0.4.1)
+      uri
     net-imap (0.4.10)
       date
       net-protocol
@@ -222,19 +239,20 @@ GEM
     notiffany (0.1.3)
       nenv (~> 0.1)
       shellany (~> 0.0)
-    oauth2 (0.6.1)
-      faraday (~> 0.7)
-      httpauth (~> 0.1)
-      multi_json (~> 1.3)
-    omniauth (1.1.4)
-      hashie (>= 1.2, < 3)
-      rack
-    omniauth-oauth2 (1.0.2)
-      oauth2 (~> 0.6.0)
-      omniauth (~> 1.0)
-    omniauth-strava (0.0.6)
-      omniauth (~> 1.0)
-      omniauth-oauth2 (~> 1.0)
+    oauth2 (2.0.9)
+      faraday (>= 0.17.3, < 3.0)
+      jwt (>= 1.0, < 3.0)
+      multi_xml (~> 0.5)
+      rack (>= 1.2, < 4)
+      snaky_hash (~> 2.0)
+      version_gem (~> 1.1)
+    omniauth (2.1.2)
+      hashie (>= 3.4.6)
+      rack (>= 2.2.3)
+      rack-protection
+    omniauth-oauth2 (1.8.0)
+      oauth2 (>= 1.4, < 3)
+      omniauth (~> 2.0)
     orm_adapter (0.5.0)
     parallel (1.24.0)
     parser (3.3.0.5)
@@ -378,6 +396,9 @@ GEM
       rack-protection (= 4.0.0)
       rack-session (>= 2.0.0, < 3)
       tilt (~> 2.0)
+    snaky_hash (2.0.1)
+      hashie
+      version_gem (~> 1.1, >= 1.1.1)
     stackprof (0.2.26)
     standard (1.35.1)
       language_server-protocol (~> 3.17.0.2)
@@ -409,7 +430,9 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
+    uri (0.13.0)
     vcr (6.2.0)
+    version_gem (1.1.4)
     warden (1.2.9)
       rack (>= 2.0.9)
     webmock (3.23.0)
@@ -429,6 +452,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  annotate
   bootsnap (>= 1.1.0)
   cssbundling-rails
   devise
@@ -447,7 +471,8 @@ DEPENDENCIES
   listen (>= 3.0.5, < 3.2)
   lograge
   logstash-event
-  omniauth-strava
+  multi_json
+  omniauth-strava!
   pg
   propshaft
   puma

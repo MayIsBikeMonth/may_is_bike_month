@@ -36,7 +36,9 @@ gem "tzinfo-data", platforms: %i[windows jruby]
 
 # Users
 gem "devise"
-gem "omniauth-strava"
+gem "multi_json" # Add to gemspec! - also update readme
+# See https://github.com/thogg4/omniauth-strava/pull/9
+gem "omniauth-strava", git: "https://github.com/marcbest/omniauth-strava", branch: "bump-to-omniauth-2.0"
 
 group :production, :staging do
   gem "honeybadger" # Error reporting
@@ -57,6 +59,7 @@ group :development do
   gem "listen", ">= 3.0.5", "< 3.2"
   gem "rerun" # For restarting sidekiq on file changes
   gem "hotwire-livereload" # Livereload!
+  gem "annotate" # Annotate models with schema info
 end
 
 group :test do
