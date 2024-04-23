@@ -8,10 +8,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def current_user
-    nil # devise
-  end
-
   before_action :enable_rack_profiler
 
   helper_method :display_dev_info?, :user_root_url, :controller_namespace

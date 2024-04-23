@@ -34,6 +34,10 @@ gem "tzinfo-data", platforms: %i[windows jruby]
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
+# Users
+gem "devise"
+gem "omniauth-strava"
+
 group :production, :staging do
   gem "honeybadger" # Error reporting
   # gem "skylight" # Performance, add when needed
