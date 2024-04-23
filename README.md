@@ -28,7 +28,7 @@ Run these commands in the terminal, from the directory the project is in.
 
 - Create and migrate the databases `bundle exec rake db:create db:migrate db:test:prepare`
 
-- `bin/dev` start the server.
+- `./bin/dev` start the server.
 
 - Go to [localhost:3010](http://localhost:3010)
 

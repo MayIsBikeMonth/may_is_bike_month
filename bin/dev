@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env sh
+
 touch log/development.log
 > log/development.log # Clear out development log, otherwise it balloons
 > log/test.log # Clear out test log too
@@ -8,4 +9,4 @@ touch log/redis.log
 > log/redis.log
 redis-server > log/redis.log &
 
-bundle exec foreman start -f Procfile.dev "$@"
+exec foreman start -f Procfile.dev "$@"

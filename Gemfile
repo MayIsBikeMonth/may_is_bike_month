@@ -16,14 +16,13 @@ gem "sinatra" # Used for sidekiq web
 gem "sidekiq-failures" # Show sidekiq failures
 
 # Frontend stuff
-# The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
-gem "sprockets-rails"
-# Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
-gem "importmap-rails"
-# Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
-gem "turbo-rails"
-# Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
+gem "propshaft" # For Assets Pipeline
+gem "jsbundling-rails" # required for new sourcemaps stuff
+gem "cssbundling-rails" # required for new sourcemaps stuff
+gem "importmap-rails" # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]gem "turbo-rails"
+gem "turbo-rails" # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "stimulus-rails"
+gem "tranzito_utils" # For timeparser, sortable, etc
 
 # Make logging - more useful and ingestible
 gem "lograge" # Structure log data, put it in single lines to improve the functionality
