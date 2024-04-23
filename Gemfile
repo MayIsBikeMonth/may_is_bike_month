@@ -4,57 +4,69 @@ ruby "3.2.3"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.1.3", ">= 7.1.3.1"
+gem "puma" # Use Puma as the app server
+gem "rack-cors" # Make cors requests
 
+gem "pg" # database
+
+# Redis, redis requirements
+gem "redis" # Redis itself
+gem "sidekiq" # Background job processing (with redis)
+gem "sinatra" # Used for sidekiq web
+gem "sidekiq-failures" # Show sidekiq failures
+
+# Frontend stuff
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
-
-gem "pg"
-
-# Use the Puma web server [https://github.com/puma/puma]
-gem "puma", ">= 5.0"
-
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
-
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
-
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem "stimulus-rails"
 
-# Use Redis adapter to run Action Cable in production
-gem "redis", ">= 4.0.1"
-
-# Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
-# gem "kredis"
-
-# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-# gem "bcrypt", "~> 3.1.7"
+# Make logging - more useful and ingestible
+gem "lograge" # Structure log data, put it in single lines to improve the functionality
+gem "logstash-event" # Use logstash format for logging data
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
-# Reduces boot times through caching; required in config/boot.rb
-gem "bootsnap", require: false
-
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
+group :production, :staging do
+  gem "honeybadger" # Error reporting
+  # gem "skylight" # Performance, add when needed
+end
+
 group :development, :test do
-  # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri windows ]
-  gem "rspec-rails"
-  gem "standard"
+  gem "foreman" # Process runner for local work
+  gem "dotenv-rails" # Add environmental variables for importing things
+  gem "rspec-rails" # Test framework
+  gem "factory_bot_rails" # mocking/stubbing
+  gem "rubocop"
+  gem "standard" # Ruby linter
+  gem "htmlbeautifier" # html linting
 end
 
 group :development do
-  # Use console on exceptions pages [https://github.com/rails/web-console]
-  gem "web-console"
-
-  # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
-  # gem "rack-mini-profiler"
-
-  # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
-  # gem "spring"
+  gem "listen", ">= 3.0.5", "< 3.2"
+  gem "rerun" # For restarting sidekiq on file changes
+  gem "hotwire-livereload" # Livereload!
 end
 
+group :test do
+  gem "guard", require: false
+  gem "guard-rspec", require: false
+  gem "rails-controller-testing" # Assert testing views
+  gem "vcr" # Stub external HTTP requests
+  gem "webmock" # mocking for VCR
+end
+
+# Performance Stuff
+gem "fast_blank" # high performance replacement String#blank? a method that is called quite frequently in ActiveRecord
+gem "flamegraph", require: false
+gem "stackprof", require: false # Required by flamegraph
+gem "rack-mini-profiler", require: ["prepend_net_http_patch"] # If you can't see it you can't make it better
+gem "bootsnap", ">= 1.1.0", require: false # Reduces boot times through caching; required in config/boot.rb
