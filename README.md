@@ -2,7 +2,7 @@
 
 This is a Rails app to track the score and generate the leaderboard for the May is Bike Month group.
 
-Copy the `.env.example` file to `.env` and fill in the values for your [Strava app](https://www.strava.com/settings/api)
+Copy the `.env.template` file to `.env` and fill in the values for your [Strava app](https://www.strava.com/settings/api)
 
 ### Dependencies
 
@@ -30,7 +30,7 @@ Run these commands in the terminal, from the directory the project is in.
 
 - `bin/dev` start the server.
 
-- Go to [localhost:3010](http://localhost:3009)
+- Go to [localhost:3010](http://localhost:3010)
 
 | Toggle in development | command                      | default  |
 | ---------             | -------                      | -------  |
