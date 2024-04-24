@@ -102,7 +102,7 @@ RSpec.describe "Authentication", type: :request do
       expect(user.display_name).to eq "seth herr"
       expect(user.strava_auth.keys).to match_array(%w[token refresh_token expires_at])
       expect(user.role).to eq "basic_user"
-      expect(user.info).to eq omniauth_data.dig(:extra, :raw_info).as_json
+      expect(user.strava_info).to eq omniauth_data.dig(:extra, :raw_info).as_json
 
       expect(user.last_sign_in_at).to be_present
     end

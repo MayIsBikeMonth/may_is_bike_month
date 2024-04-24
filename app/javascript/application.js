@@ -1,11 +1,11 @@
 // Entry point for the build script in your package.json
-import '@hotwired/turbo-rails'
+import "@hotwired/turbo-rails" // eslint-disable-line
 // Import flowbite, a tailwind component library, for interactions
 import 'flowbite'
 
 import TimeParser from './scripts/time_parser'
 import log from './scripts/log'
-import "controllers" // eslint-disable-line
+import 'controllers'
 
 const toggleChecks = (event) => {
   const checked = event.target.checked
@@ -123,4 +123,3 @@ document.addEventListener('turbo:load', () => {
   document.querySelectorAll('.expandSiblingsEllipse')
     .forEach(el => el.addEventListener('click', expandSiblingsEllipse))
 })
-import "@hotwired/turbo-rails"

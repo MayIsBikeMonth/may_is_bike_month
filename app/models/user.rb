@@ -76,7 +76,7 @@ class User < ApplicationRecord
   private
 
   def calculated_name
-    first_last = [strava_info["first_name"], strava_info["last_name"]].compact.reject(&:blank?).join(" ")
+    first_last = [strava_info["firstname"], strava_info["lastname"]].compact.reject(&:blank?).join(" ")
     first_last.present? ? first_last : strava_username
   end
 end

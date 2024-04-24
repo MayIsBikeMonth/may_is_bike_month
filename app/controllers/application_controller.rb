@@ -93,8 +93,4 @@ class ApplicationController < ActionController::Base
   def controller_namespace
     @controller_namespace ||= (self.class.module_parent.name != "Object") ? self.class.module_parent.name.downcase : nil
   end
-
-  def send_to_root!
-    redirect_to(user_root_path) && return
-  end
 end
