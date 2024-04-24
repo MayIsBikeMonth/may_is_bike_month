@@ -27,6 +27,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_23_165115) do
     t.string "strava_id"
     t.string "display_name"
     t.text "image_url"
+    t.jsonb "strava_info"
     t.jsonb "strava_auth"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -37,12 +37,14 @@ class DeviseCreateUsers < ActiveRecord::Migration[7.1]
       t.string :display_name
       t.text :image_url
 
+      t.jsonb :strava_info
       t.jsonb :strava_auth
 
       t.timestamps null: false
     end
 
-    add_index :users, :strava_username, unique: true
+    add_index :users, :strava_username
+    add_index :users, :strava_id, unique: true
     # add_index :users, :confirmation_token,   unique: true
     # add_index :users, :unlock_token,         unique: true
   end
