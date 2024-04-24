@@ -35,6 +35,7 @@ class User < ApplicationRecord
   class << self
     def from_omniauth(uid, auth)
       user = where(strava_id: uid.to_i).first || new(strava_id: uid.to_i)
+
       user.update(password: Devise.friendly_token[0, 20],
         strava_auth: auth["credentials"].as_json.except("expires"),
         strava_info: auth.dig("extra", "raw_info"))
@@ -44,7 +45,7 @@ class User < ApplicationRecord
     def new_with_session(params, session)
       super.tap do |user|
         if (data = session["devise.strava_data"] && session["devise.strava_data"]["extra"]["raw_info"])
-          user.strava_username = data["id"] if user.strava_id.blank?
+          user.strava_username = data["username"] if user.strava_username.blank?
         end
       end
     end
@@ -68,7 +69,7 @@ class User < ApplicationRecord
 
   def set_calculated_attributes
     self.strava_info ||= {}
-    self.strava_username = strava_info["strava_username"]
+    self.strava_username = strava_info["username"] if strava_info["username"].present?
     self.display_name ||= calculated_name
   end
 

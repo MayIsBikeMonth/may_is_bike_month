@@ -4,8 +4,6 @@ FactoryBot.define do
     sequence(:strava_id) { |n| n + 3 }
     password { "some_pass69" }
 
-    strava_info { {strava_username: strava_username} }
-
     trait :developer_access do
       role { :developer }
     end

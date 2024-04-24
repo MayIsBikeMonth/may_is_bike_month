@@ -5,7 +5,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     @user = User.from_omniauth(request.env["omniauth.auth"].uid, request.env["omniauth.auth"])
     if @user.persisted?
       flash[:success] = "Signed in!"
-      sign_in_and_redirect @user
+      sign_in_and_redirect @user, event: :authentication
     else
       puts request.env["omniauth.auth"]
       flash[:error] = "We're sorry, we failed to sign you in. Ask somebody for help"

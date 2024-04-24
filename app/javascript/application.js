@@ -1,7 +1,7 @@
 // Entry point for the build script in your package.json
 import '@hotwired/turbo-rails'
 // Import flowbite, a tailwind component library, for interactions
-import 'flowbite/dist/flowbite.turbo.js'
+import 'flowbite'
 
 import TimeParser from './scripts/time_parser'
 import log from './scripts/log'
@@ -123,3 +123,4 @@ document.addEventListener('turbo:load', () => {
   document.querySelectorAll('.expandSiblingsEllipse')
     .forEach(el => el.addEventListener('click', expandSiblingsEllipse))
 })
+import "@hotwired/turbo-rails"
