@@ -3,11 +3,8 @@ require "sidekiq/web"
 Rails.application.routes.draw do
   devise_for :users, skip: [:registrations], controllers: {
     omniauth_callbacks: "users/omniauth_callbacks",
-    sessions_controller: "users/sessions_controller"
+    sessions_controller: "sessions"
   } 
-  # do
-  #   get 'sign_in', to: redirect("/"), as: :new_user_session
-  # end
 
   root "landing#index"
 
