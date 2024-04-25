@@ -25,7 +25,7 @@ const enableFullscreenTableOverflow = () => {
   document.querySelectorAll('.full-screen-table table').forEach(el => {
     const tableWidth = el.offsetWidth
     if (tableWidth > pageWidth) {
-      console.log('overflown')
+      log.debug('overflown')
       el.closest('.full-screen-table').classList.add('full-screen-table-overflown')
     }
   })
@@ -123,3 +123,4 @@ document.addEventListener('turbo:load', () => {
   document.querySelectorAll('.expandSiblingsEllipse')
     .forEach(el => el.addEventListener('click', expandSiblingsEllipse))
 })
+import "controllers"
