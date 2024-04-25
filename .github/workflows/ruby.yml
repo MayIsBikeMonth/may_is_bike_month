@@ -26,17 +26,25 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      # Add or replace dependency steps here
+      # Install Ruby dependencies
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
       - run: bundle install
-      # Add or replace database setup steps here
       - name: Set up database schema
         run: bin/rails db:schema:load
+      # Install JS dependencies
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: yarn
+      - name: Install packages
+        run: |
+          yarn install --pure-lockfile
       - name: build assets
-        run: assets:precompile
+        run: bin/rails assets:precompile
       # Run tests
       - name: Run tests
         run: bundle exec rspec
