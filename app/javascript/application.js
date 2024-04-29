@@ -5,7 +5,7 @@ import 'flowbite'
 
 import TimeParser from './scripts/time_parser'
 import log from './scripts/log'
-import 'controllers'
+import './controllers'
 
 const toggleChecks = (event) => {
   const checked = event.target.checked
@@ -123,4 +123,3 @@ document.addEventListener('turbo:load', () => {
   document.querySelectorAll('.expandSiblingsEllipse')
     .forEach(el => el.addEventListener('click', expandSiblingsEllipse))
 })
-import "controllers"
