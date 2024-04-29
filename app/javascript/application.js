@@ -1,13 +1,11 @@
 // Entry point for the build script in your package.json
-import '@hotwired/turbo-rails'
-import './controllers'
+import "@hotwired/turbo-rails" // eslint-disable-line
 // Import flowbite, a tailwind component library, for interactions
-import 'flowbite/dist/flowbite.turbo.js'
+import 'flowbite'
 
 import TimeParser from './scripts/time_parser'
 import log from './scripts/log'
-import 'controllers'
-import "controllers" // eslint-disable-line
+import './controllers'
 
 const toggleChecks = (event) => {
   const checked = event.target.checked
@@ -27,7 +25,7 @@ const enableFullscreenTableOverflow = () => {
   document.querySelectorAll('.full-screen-table table').forEach(el => {
     const tableWidth = el.offsetWidth
     if (tableWidth > pageWidth) {
-      console.log('overflown')
+      log.debug('overflown')
       el.closest('.full-screen-table').classList.add('full-screen-table-overflown')
     }
   })

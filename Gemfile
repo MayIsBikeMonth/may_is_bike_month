@@ -19,7 +19,6 @@ gem "sidekiq-failures" # Show sidekiq failures
 gem "propshaft" # For Assets Pipeline
 gem "jsbundling-rails" # required for new sourcemaps stuff
 gem "cssbundling-rails" # required for new sourcemaps stuff
-gem "importmap-rails" # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]gem "turbo-rails"
 gem "turbo-rails" # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "stimulus-rails"
 gem "tranzito_utils" # For timeparser, sortable, etc
@@ -33,6 +32,13 @@ gem "tzinfo-data", platforms: %i[windows jruby]
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
+
+# Users
+gem "devise"
+gem "multi_json" # Add to gemspec! - also update readme
+# See https://github.com/thogg4/omniauth-strava/pull/9
+gem "omniauth-strava", git: "https://github.com/marcbest/omniauth-strava", branch: "bump-to-omniauth-2.0"
+gem "omniauth-rails_csrf_protection", "~> 1.0" # IDK, somehow it's required too
 
 group :production, :staging do
   gem "honeybadger" # Error reporting
@@ -53,6 +59,7 @@ group :development do
   gem "listen", ">= 3.0.5", "< 3.2"
   gem "rerun" # For restarting sidekiq on file changes
   gem "hotwire-livereload" # Livereload!
+  gem "annotate" # Annotate models with schema info
 end
 
 group :test do

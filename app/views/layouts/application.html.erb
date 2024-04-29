@@ -5,14 +5,32 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
-    <%= hotwire_livereload_tags if Rails.env.development? %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <% if Rails.env.development? %>
+      <link href="/favicon-dev.ico" rel="icon" sizes="192x192">
+      <%= hotwire_livereload_tags %>
+    <% else %>
+      <link href="/favicon.ico" rel="icon" sizes="192x192">
+      <link rel="apple-touch-icon-precomposed apple-touch-icon" href="/apple-touch-icon.png" />
+    <% end %>
   </head>
 
   <body>
+    <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end mt-1 mb-2">
+      <% if current_user.present? %>
+        <li>Hi <%= current_user.display_name %></li>
+        <li>
+          <%= button_to "logout", destroy_user_session_path, method: :delete, data: {turbo: false}  %>
+        </li>
+      <% else %>
+        <li>
+          <%= button_to "Sign in", user_strava_omniauth_authorize_path, method: :post, data: { turbo: false } %>
+        </li>
+      <% end %>
+    </ul>
+
     <%= yield %>
   </body>
 </html>

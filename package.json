@@ -2,8 +2,10 @@
   "name": "app",
   "private": true,
   "dependencies": {
-    "autoprefixer": "^10.4.19",
-    "esbuild": "^0.20.2",
+    "@hotwired/stimulus": "^3.2.2",
+    "@hotwired/turbo-rails": "^8.0.4",
+    "autoprefixer": "^10.4.13",
+    "esbuild": "^0.15.3",
     "flowbite": "^2.3.0",
     "loglevel": "^1.9.1",
     "moment": "^2.30.1",
@@ -13,12 +15,14 @@
     "tranzito_utils_js": "^1.2.1"
   },
   "scripts": {
-    "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets",
+    "build": "node esbuild.config.js",
     "build:css": "tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
     "lint": "standard --fix",
     "test": "jest"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.16.4",
+    "babel-jest": "^27.4.6",
     "standard": "^17.1.0"
   },
   "standard": {
