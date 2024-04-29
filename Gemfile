@@ -19,7 +19,6 @@ gem "sidekiq-failures" # Show sidekiq failures
 gem "propshaft" # For Assets Pipeline
 gem "jsbundling-rails" # required for new sourcemaps stuff
 gem "cssbundling-rails" # required for new sourcemaps stuff
-# gem "importmap-rails" # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]gem "turbo-rails"
 gem "turbo-rails" # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "stimulus-rails"
 gem "tranzito_utils" # For timeparser, sortable, etc
