@@ -10,9 +10,62 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_23_165115) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_30_230045) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "competition_activities", force: :cascade do |t|
+    t.bigint "competition_participant_id"
+    t.string "display_name"
+    t.float "distance_meters"
+    t.integer "moving_seconds"
+    t.float "elevation_meters"
+    t.date "end_date"
+    t.datetime "start_at"
+    t.date "start_date"
+    t.jsonb "strava_data"
+    t.string "strava_id"
+    t.string "timezone"
+    t.boolean "include_in_competition", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["competition_participant_id"], name: "index_competition_activities_on_competition_participant_id"
+  end
+
+  create_table "competition_participants", force: :cascade do |t|
+    t.bigint "competition_id"
+    t.bigint "user_id"
+    t.boolean "included_in_competition", default: false, null: false
+    t.boolean "boolean", default: false, null: false
+    t.integer "score"
+    t.jsonb "score_data"
+    t.string "included_activity_types"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["competition_id"], name: "index_competition_participants_on_competition_id"
+    t.index ["user_id"], name: "index_competition_participants_on_user_id"
+  end
+
+  create_table "competitions", force: :cascade do |t|
+    t.string "display_name"
+    t.string "slug"
+    t.datetime "end_date"
+    t.datetime "start_date"
+    t.boolean "current"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "strava_requests", force: :cascade do |t|
+    t.bigint "user_id"
+    t.jsonb "error_response"
+    t.jsonb "parameters"
+    t.integer "status"
+    t.integer "kind"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_strava_requests_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "encrypted_password", default: "", null: false
