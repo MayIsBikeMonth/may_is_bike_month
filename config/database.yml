@@ -9,7 +9,7 @@ development:
 
 test:
   <<: *default
-  database: may_is_bike_month_test
+  database: may_is_bike_month_rails_test
 
 production:
   <<: *default
