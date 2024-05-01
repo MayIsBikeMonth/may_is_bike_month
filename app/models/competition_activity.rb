@@ -23,6 +23,10 @@ class CompetitionActivity < ApplicationRecord
 
   before_validation :set_calculated_attributes
 
+  def self.find_or_create_if_valid(competition_user:, strava_data:)
+
+  end
+
   def set_calculated_attributes
     self.include_in_competition = competition_user.include_in_competition
   end

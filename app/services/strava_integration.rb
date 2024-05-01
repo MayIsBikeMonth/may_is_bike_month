@@ -10,12 +10,12 @@ class StravaIntegration
       response = connection.post(token_path("refresh_token")) do |req|
         req.body = {refresh_token:, client_secret: SECRET, client_id: CLIENT_ID}.to_json
       end
-      JSON.parse(response.body)
+      {json: JSON.parse(response.body), status: response.status}.with_indifferent_access
     end
 
     def get_activities(access_token, parameters: {})
       response = athlete_connection(access_token).get("/api/v3/athlete/activities?#{parameters.to_query}")
-      JSON.parse(response.body)
+      {json: JSON.parse(response.body), status: response.status}.with_indifferent_access
     end
 
     private

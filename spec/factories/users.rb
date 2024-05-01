@@ -4,6 +4,14 @@ FactoryBot.define do
     sequence(:strava_id) { |n| n + 3 }
     password { "some_pass69" }
 
+    trait :with_active_strava_token do
+      transient { token { "Y" } }
+
+      strava_auth { {token:, refresh_token: "ZZZZZZ", expires_at: (Time.current + 1.day).to_i} }
+    end
+
+    factory :user_with_strava_token, traits: [:with_active_strava_token]
+
     trait :developer_access do
       role { :developer }
     end

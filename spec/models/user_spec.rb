@@ -7,6 +7,14 @@ RSpec.describe User, type: :model do
     it "is valid" do
       expect(user).to be_valid
     end
+    context "user_with_strava_token" do
+      let(:user) { FactoryBot.create(:user_with_strava_token) }
+      it "is valid" do
+        expect(user).to be_valid
+        expect(user.strava_auth_needs_refresh?).to be_falsey
+        expect(user.active_strava_token).to eq "Y"
+      end
+    end
   end
 
   describe "active_strava_token" do
