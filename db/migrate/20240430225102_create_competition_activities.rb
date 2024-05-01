@@ -13,7 +13,7 @@ class CreateCompetitionActivities < ActiveRecord::Migration[7.1]
       t.jsonb :strava_data
       t.string :strava_id
       t.string :timezone
-      t.boolean :include_in_competition, default: false, null: false
+      t.boolean :included_in_competition, default: false, null: false
 
       t.timestamps
     end

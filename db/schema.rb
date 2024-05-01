@@ -26,7 +26,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_30_230045) do
     t.jsonb "strava_data"
     t.string "strava_id"
     t.string "timezone"
-    t.boolean "include_in_competition", default: false, null: false
+    t.boolean "included_in_competition", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["competition_user_id"], name: "index_competition_activities_on_competition_user_id"
@@ -35,10 +35,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_30_230045) do
   create_table "competition_users", force: :cascade do |t|
     t.bigint "competition_id"
     t.bigint "user_id"
-    t.boolean "included_in_competition", default: false, null: false
+    t.boolean "excluded_from_competition", default: false, null: false
     t.integer "score"
     t.jsonb "score_data"
-    t.string "included_activity_types"
+    t.jsonb "included_activity_types"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["competition_id"], name: "index_competition_users_on_competition_id"
@@ -48,8 +48,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_30_230045) do
   create_table "competitions", force: :cascade do |t|
     t.string "display_name"
     t.string "slug"
-    t.datetime "end_date"
-    t.datetime "start_date"
+    t.date "end_date"
+    t.date "start_date"
     t.boolean "current"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

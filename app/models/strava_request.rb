@@ -13,8 +13,8 @@
 #
 class StravaRequest < ApplicationRecord
   UPDATE_DELAY = 60
-  KIND_ENUM = {get_activities: 0, get_athlete: 1}
-  SUCCESS_CODES = [200, 201]
+  KIND_ENUM = {get_activities: 0, get_athlete: 1}.freeze
+  SUCCESS_CODES = [200, 201].freeze
 
   belongs_to :user
 

@@ -5,9 +5,9 @@
 #  id           :bigint           not null, primary key
 #  current      :boolean
 #  display_name :string
-#  end_date     :datetime
+#  end_date     :date
 #  slug         :string
-#  start_date   :datetime
+#  start_date   :date
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #
@@ -18,6 +18,7 @@ class Competition < ApplicationRecord
   before_validation :set_calculated_attributes
 
   validates_presence_of :end_date, :start_date, :slug
+  validates :end_date, comparison: { greater_than: :start_date }
 
   def set_calculated_attributes
     self.end_date ||= start_date + 1.month if start_date.present?

@@ -41,7 +41,8 @@ class User < ApplicationRecord
 
     def valid_strava_auth?(auth)
       return false if auth.blank?
-      stored_strava_auth(auth).slice("token", "expires_at", "refresh_token").values.compact.count == 3
+      stored_strava_auth(auth).slice("token", "expires_at", "refresh_token").values
+        .count { |v| v.present? } == 3
     end
 
     def from_omniauth(uid, auth)
@@ -107,7 +108,7 @@ class User < ApplicationRecord
   end
 
   def calculated_name
-    first_last = [strava_info["firstname"], strava_info["lastname"]].compact.reject(&:blank?).join(" ")
+    first_last = [strava_info["firstname"], strava_info["lastname"]].reject(&:blank?).join(" ")
     first_last.present? ? first_last : strava_username
   end
 end
