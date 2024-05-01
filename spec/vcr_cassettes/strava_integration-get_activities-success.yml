@@ -1,0 +1,77 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://www.strava.com/api/v3/athlete/activities?per_page=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v2.9.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Tue, 30 Apr 2024 23:57:20 GMT
+      Via:
+      - 1.1 linkerd, 1.1 linkerd, 1.1 545a028fb877bcb33ee64ef7fbf07ec0.cloudfront.net
+        (CloudFront)
+      Etag:
+      - W/"71e02543c7aa0d8d0c0b45ab78ece437"
+      Vary:
+      - Accept, Origin
+      Status:
+      - 200 OK
+      X-Request-Id:
+      - 41012cef-3517-4711-ab75-e620b722b955
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Ratelimit-Limit:
+      - '600,6000'
+      X-Ratelimit-Usage:
+      - '8,1289'
+      X-Download-Options:
+      - noopen
+      X-Readratelimit-Limit:
+      - '300,3000'
+      X-Readratelimit-Usage:
+      - '8,1289'
+      X-Content-Type-Options:
+      - nosniff
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Cache:
+      - Miss from cloudfront
+      X-Amz-Cf-Pop:
+      - SFO53-P5
+      X-Amz-Cf-Id:
+      - 9JleXWA4Ox0VKCWrbIKQ61HkAP5fbB-XdWf-qdIu9lPviTt_plYBzw==
+    body:
+      encoding: ASCII-8BIT
+      string: '[{"resource_state":2,"athlete":{"id":2430215,"resource_state":1},"name":"MTB
+        with Jackson and Jack","distance":20678.7,"moving_time":5041,"elapsed_time":7015,"total_elevation_gain":328.8,"type":"Ride","sport_type":"MountainBikeRide","workout_type":10,"id":11294192184,"start_date":"2024-04-28T21:52:32Z","start_date_local":"2024-04-28T14:52:32Z","timezone":"(GMT-08:00)
+        America/Los_Angeles","utc_offset":-25200.0,"location_city":null,"location_state":null,"location_country":"United
+        States","achievement_count":23,"kudos_count":9,"comment_count":2,"athlete_count":2,"photo_count":0,"map":{"id":"a11294192184","summary_polyline":"ogxnFnbeaVEXh@]L_ALH?GOMNJ?W_@Gc@iADe@{@_BMiByAyAq@_BcBoCsFcIkB{AUu@wA_Bi@gAq@uDy@GyAuCM{By@_@sBsD]uCq@M[cAoAa@_@o@gAQPp@\\j@uD}Aw@sBRcBqBgAg@aASsBYi@yBcDiAo@W{@ERbArAUJg@Yx@t@dAhCF`EnAnCIrBW_@GuA[Bb@rCHvAc@CgB{FeA@B}AqAaCQcEkCQm@s@KgAMdA\\z@|Ah@IrAX`CqAeD^lAGn@d@rD`ArB|@r@\\xBhDxDdAfEzCrB`AbBPpGn@~BbBpBzABf@^h@~EZj@pCAz@PxAzCfATv@jBFq@ZpC@tAs@zEtBnGvBbCxCPlBU`A`AHfBcAxDs@fH\\|BfBzAzERgC_FHoGXkBz@i@WkCzAcBXqBf@o@?u@fAz@CPo@YS}@Q?LCWJ`@]Q\\BKPXLOOAPUMDT?ACSb@IYGTXH^k@`Bm@Kg@UEA|@]@A_A}@aD}A{KCsAf@y@JyBq@sAi@?{A[SkAqBcBR_AnCoB\\}D[_@OiCc@yAsAiCHeBkBf@s@UG_A~AqCL}A}ByA`@s@[CKe@i@IwBt@USd@aAFgAyAsBG}@TMx@`AjA^~@WkBm@AaBYg@JO`AnBx@CrCbAzA_@hCb@jG]~BmArBa@rCZlCOj@d@G]yAk@{BQcBu@wCKkEdAi@gBz@r@j@ClDqBmA\\Ae@dAw@~Bp@`BGb@`@lB[EYoBLcBy@Yk@wAO_@a@y@HE\\M]p@{@hFa@fCbA~AYdDr@Dj@_@FPl@WpB^^jAD|BbFd@Bh@hAUaAo@e@O_CoAkCJaCKCVkAKm@Y@NOU]oB_BsAb@eAaB_Ah@e@a@s@Dg@eB_ALFyBa@w@qAbAW[rB}C~AQ\\|@@nBdAvAxFl@fD`DzA`DbBxHlBvEf@~BWrC_BrEOrADvAXr@~C`Af@~BjAdC\\pE~@xC|AfJhDjIIdCqBtF]nFF`AjAbFBzBfD|GF|Eh@r@hBr@f@x@PbDh@rCKtA\\~DrCfFGnB_A~Ak@hCXxA`CnE`A~JhAbHOnBs@zBwA|B_@GUo@q@yDiBkGk@sGcFmI{BaLcAuHcB_Be@cAiIc]cCsEiDoTmDuBoAXiA|@OdAt@~A?zD]rAq@t@yA`@cJTeAAo@g@]RLKMFBUCXFSKNI_@PV","resource_state":2},"trainer":false,"commute":false,"manual":false,"private":false,"visibility":"everyone","flagged":false,"gear_id":"b6011644","start_latlng":[39.28712848573923,-120.94519358128309],"end_latlng":[39.28674627095461,-120.94549750909209],"average_speed":4.102,"max_speed":11.19,"average_watts":166.6,"kilojoules":840.0,"device_watts":false,"has_heartrate":true,"average_heartrate":149.6,"max_heartrate":182.0,"heartrate_opt_out":false,"display_hide_heartrate_option":true,"elev_high":1151.6,"elev_low":978.4,"upload_id":12065034215,"upload_id_str":"12065034215","external_id":"474B860C-EACB-481A-97E5-DF4BBB052D6B-activity.fit","from_accepted_tag":false,"pr_count":13,"total_photo_count":1,"has_kudoed":false,"suffer_score":47.0}]'
+  recorded_at: Tue, 30 Apr 2024 23:57:20 GMT
+recorded_with: VCR 6.2.0

@@ -36,9 +36,9 @@ gem "tzinfo-data", platforms: %i[windows jruby]
 # Users
 gem "devise"
 gem "multi_json" # Add to gemspec! - also update readme
-# See https://github.com/thogg4/omniauth-strava/pull/9
-gem "omniauth-strava", git: "https://github.com/marcbest/omniauth-strava", branch: "bump-to-omniauth-2.0"
+gem "omniauth-strava"
 gem "omniauth-rails_csrf_protection", "~> 1.0" # IDK, somehow it's required too
+gem "faraday" # Used to make bare requests to strava
 
 group :production, :staging do
   gem "honeybadger" # Error reporting

@@ -19,4 +19,11 @@
 #  strava_id                  :string
 #
 class CompetitionActivity < ApplicationRecord
+  belongs_to :competition_participant
+
+  before_validation :set_calculated_attributes
+
+  def set_calculated_attributes
+    self.include_in_competition = competition_participant.include_in_competition
+  end
 end

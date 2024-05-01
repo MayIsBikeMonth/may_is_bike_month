@@ -12,4 +12,8 @@
 #  user_id        :bigint
 #
 class StravaRequest < ApplicationRecord
+  KIND_ENUM = {get_activities:0}
+  belongs_to :user
+
+  enum kind: KIND_ENUM
 end
