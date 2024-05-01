@@ -15,7 +15,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_30_230045) do
   enable_extension "plpgsql"
 
   create_table "competition_activities", force: :cascade do |t|
-    t.bigint "competition_participant_id"
+    t.bigint "competition_user_id"
     t.string "display_name"
     t.float "distance_meters"
     t.integer "moving_seconds"
@@ -29,10 +29,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_30_230045) do
     t.boolean "include_in_competition", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["competition_participant_id"], name: "index_competition_activities_on_competition_participant_id"
+    t.index ["competition_user_id"], name: "index_competition_activities_on_competition_user_id"
   end
 
-  create_table "competition_participants", force: :cascade do |t|
+  create_table "competition_users", force: :cascade do |t|
     t.bigint "competition_id"
     t.bigint "user_id"
     t.boolean "included_in_competition", default: false, null: false
@@ -41,8 +41,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_30_230045) do
     t.string "included_activity_types"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["competition_id"], name: "index_competition_participants_on_competition_id"
-    t.index ["user_id"], name: "index_competition_participants_on_user_id"
+    t.index ["competition_id"], name: "index_competition_users_on_competition_id"
+    t.index ["user_id"], name: "index_competition_users_on_user_id"
   end
 
   create_table "competitions", force: :cascade do |t|

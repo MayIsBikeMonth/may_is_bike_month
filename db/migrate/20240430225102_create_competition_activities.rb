@@ -1,7 +1,7 @@
 class CreateCompetitionActivities < ActiveRecord::Migration[7.1]
   def change
     create_table :competition_activities do |t|
-      t.references :competition_participant, index: true
+      t.references :competition_user, index: true
 
       t.string :display_name
       t.float :distance_meters

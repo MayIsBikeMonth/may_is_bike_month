@@ -13,7 +13,7 @@
 #
 class Competition < ApplicationRecord
   has_many :competition_activities
-  has_many :competition_participants
+  has_many :competition_users
 
   before_validation :set_calculated_attributes
 

@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: competition_participants
+# Table name: competition_users
 #
 #  id                      :bigint           not null, primary key
 #  included_activity_types :string
@@ -12,7 +12,7 @@
 #  competition_id          :bigint
 #  user_id                 :bigint
 #
-class CompetitionParticipant < ApplicationRecord
+class CompetitionUser < ApplicationRecord
   DEFAULT_INCLUDED_ACTIVITY_TYPES = "Ride,Velomobile,Handcycle"
   belongs_to :competition
   belongs_to :user
