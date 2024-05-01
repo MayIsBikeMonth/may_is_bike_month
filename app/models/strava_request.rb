@@ -12,8 +12,18 @@
 #  user_id        :bigint
 #
 class StravaRequest < ApplicationRecord
-  KIND_ENUM = {get_activities:0}
+  UPDATE_DELAY = 60
+  KIND_ENUM = {get_activities: 0}
   belongs_to :user
 
   enum kind: KIND_ENUM
+
+  def self.most_recent_update
+    order(:created_at).last.pick(:created_at)
+  end
+
+  def self.update_due?
+    updated_at = most_recent_update
+    updated_at.blank? || updated_at < (Time.current - UPDATE_DELAY)
+  end
 end

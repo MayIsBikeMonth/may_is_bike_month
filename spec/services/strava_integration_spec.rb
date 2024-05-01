@@ -1,8 +1,8 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe StravaIntegration, type: :model do
   describe "refresh_access_token" do
-    let(:refresh_token) { 'valid-refresh-token' }
+    let(:refresh_token) { "valid-refresh-token" }
     let(:result) { described_class.refresh_access_token(refresh_token) }
     it "returns a valid access_token" do
       VCR.use_cassette("strava_integration-refresh_access_token-success", match_requests_on: [:path]) do
@@ -11,7 +11,7 @@ RSpec.describe StravaIntegration, type: :model do
     end
 
     context "with invalid token" do
-      let(:refresh_token) { 'invalid' }
+      let(:refresh_token) { "invalid" }
       let(:invalid_response) { {message: "Bad Request", errors: [{resource: "RefreshToken", field: "refresh_token", code: "invalid"}]} }
 
       it "returns a valid access_token" do
@@ -23,7 +23,7 @@ RSpec.describe StravaIntegration, type: :model do
   end
 
   describe "get_activities" do
-    let(:access_token) { 'valid-token' }
+    let(:access_token) { "valid-token" }
     let(:result) { described_class.get_activities(access_token, parameters: {per_page: 1}) }
     it "is success" do
       VCR.use_cassette("strava_integration-get_activities-success", match_requests_on: [:path]) do

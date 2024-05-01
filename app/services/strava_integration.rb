@@ -3,7 +3,7 @@
 class StravaIntegration
   CLIENT_ID = ENV["STRAVA_CLIENT_ID"]
   SECRET = ENV["STRAVA_SECRET"]
-  STRAVA_BASE_URL = "https://www.strava.com".freeze
+  STRAVA_BASE_URL = "https://www.strava.com"
 
   class << self
     def refresh_access_token(refresh_token)
@@ -23,14 +23,14 @@ class StravaIntegration
     def connection
       @conn ||= Faraday.new(url: STRAVA_BASE_URL) do |conn|
         conn.adapter Faraday.default_adapter
-        conn.headers['Content-Type'] = 'application/json'
+        conn.headers["Content-Type"] = "application/json"
       end
     end
 
     def athlete_connection(access_token)
       Faraday.new(url: STRAVA_BASE_URL) do |conn|
         conn.adapter Faraday.default_adapter
-        conn.headers['Content-Type'] = 'application/json'
+        conn.headers["Content-Type"] = "application/json"
         conn.headers["Authorization"] = "Bearer #{access_token}"
       end
     end
