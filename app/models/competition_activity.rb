@@ -46,17 +46,26 @@ class CompetitionActivity < ApplicationRecord
     end
   end
 
+  def self.activity_dates(start_at:, timezone:, move_seconds:)
+    local_start_at = start_at.in_time_zone(timezone).to_date
+    local_end_at = local_start_at + moving_seconds.to_date
+    [local_start_at..local_end_at]
+  end
+
+  def self.calculate_end_date(start_at:, timezone:, move_seconds:)
+    activity_dates(start_at:, timezone:, move_seconds:).last
+  end
+
   def include_in_competition?(competition_user:, strava_data:)
     INCLUDED_STRAVA_VISIBILITY.include?(strava_data["visibility"]) &&
       competition_user.included_in_competition? &&
       competition_user.included_activity_type?(strava_data["type"]) &&
       competition_user.competition.included_distance?(strava_data["distance"]) &&
-      competition_user.competition.in_period?(strava_data["distance"])
+      competition_user.competition.in_period?(strava_data["start_date_local"])
   end
 
   # should be private?
   def self.update_competition_activity_if_changed(competition_user:, strava_data:, competition_activity:)
-
     unless round(competition_activity.distance_meters) == round(strava_data["distance_meter"]) &&
       competition_activity.display_name == strava_data["name"] &&
       competition_activity.included_in_competition == include_in_competition?(competition_user:, strava_data:)
@@ -86,7 +95,7 @@ class CompetitionActivity < ApplicationRecord
     {
       strava_id: "#{passed_data["id"]}",
       start_date: start_date,
-      end_date: calculate_end_date(start_at, timezone, passed_data["moving_time"]),
+      end_date: self.class.calculate_end_date(start_at:, timezone:, move_seconds: passed_data["moving_time"]),
       timezone: timezone,
       start_at: start_at,
       display_name: passed_data["name"],

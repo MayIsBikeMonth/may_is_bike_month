@@ -20,4 +20,12 @@ RSpec.describe Competition, type: :model do
       expect(competition.errors.full_messages).to eq target_errors
     end
   end
+
+  describe "in_period?" do
+    let(:competition) { FactoryBot.create(:competition, start_date: Time.current.to_date) }
+    it "is true" do
+      expect(competition.in_period?(Time.current)).to be_truthy
+      expect(competition.in_period?(Time.current.end_of_month)).to be_truthy
+    end
+  end
 end
