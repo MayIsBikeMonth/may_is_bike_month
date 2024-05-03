@@ -77,7 +77,7 @@ class CompetitionActivity < ApplicationRecord
   def self.strava_attrs_from_data(passed_data)
     timezone = parse_strava_timezone(passed_data["timezone"])
     {
-      strava_id: "#{passed_data["id"]}",
+      strava_id: passed_data["id"].to_s,
       timezone: timezone,
       start_at: TranzitoUtils::TimeParser.parse(passed_data["start_date"]),
       display_name: passed_data["name"],
@@ -114,11 +114,7 @@ class CompetitionActivity < ApplicationRecord
   end
 
   def activity_dates
-    if override_activity_dates
-      override_activity_dates
-    else
-      Array(start_date..end_date)
-    end
+    override_activity_dates || Array(start_date..end_date)
   end
 
   def calculated_included_in_competition

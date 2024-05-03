@@ -20,7 +20,7 @@ class Competition < ApplicationRecord
   before_validation :set_calculated_attributes
 
   validates_presence_of :end_date, :start_date, :slug
-  validates :end_date, comparison: { greater_than: :start_date }
+  validates :end_date, comparison: {greater_than: :start_date}
 
   def self.current
     where(current: true).last

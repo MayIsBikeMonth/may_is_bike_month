@@ -4,10 +4,6 @@ RSpec.describe CompetitionActivity, type: :model do
   let(:strava_data_fixture) { File.read(Rails.root.join("spec", "fixtures", "strava_activity1.json")) }
   let(:strava_data) { JSON.parse(strava_data_fixture) }
 
-  describe "include_in_competition?" do
-
-  end
-
   describe "strava_attributes" do
     let(:target_attrs) do
       {
