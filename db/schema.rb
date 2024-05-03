@@ -20,12 +20,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_30_230045) do
     t.float "distance_meters"
     t.integer "moving_seconds"
     t.float "elevation_meters"
-    t.date "end_date"
+    t.string "timezone"
     t.datetime "start_at"
     t.date "start_date"
+    t.date "end_date"
+    t.string "override_activity_dates_string"
     t.jsonb "strava_data"
     t.string "strava_id"
-    t.string "timezone"
     t.boolean "included_in_competition", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

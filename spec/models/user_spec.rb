@@ -38,7 +38,9 @@ RSpec.describe User, type: :model do
           token_type: "wut"
         }.as_json
       end
-      before { allow(StravaIntegration).to receive(:refresh_access_token).with("zzz").and_return(strava_response) }
+      let(:integration_result) { {json: strava_response, status: status} }
+      let(:status) { 200 }
+      before { allow(StravaIntegration).to receive(:refresh_access_token).with("zzz").and_return(integration_result) }
       it "updates strava token" do
         expect(user.active_strava_token).to eq "vvv"
         user.reload
@@ -46,6 +48,7 @@ RSpec.describe User, type: :model do
       end
       context "with invalid strava response" do
         let(:strava_response) { {message: "Bad Request", errors: [{resource: "RefreshToken", field: "refresh_token", code: "invalid"}]} }
+        let(:status) { 401 }
         it "doesn't update token" do
           expect do
             user.active_strava_token

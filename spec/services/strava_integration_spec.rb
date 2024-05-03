@@ -26,7 +26,7 @@ RSpec.describe StravaIntegration, type: :model do
   end
 
   describe "get_activities" do
-    let(:access_token) { "valid-token" }
+    let(:access_token) { "xxxx" }
     let(:result) { described_class.get_activities(access_token, parameters: {per_page: 1}) }
     it "is success" do
       VCR.use_cassette("strava_integration-get_activities-success", match_requests_on: [:path]) do

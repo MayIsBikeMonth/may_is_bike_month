@@ -13,14 +13,12 @@
 #  user_id                   :bigint
 #
 class CompetitionUser < ApplicationRecord
-  DEFAULT_ACTIVITY_TYPES = %w[Ride Velomobile Handcycle].freeze
-
   belongs_to :competition
   belongs_to :user
 
   before_validation :set_calculated_attributes
 
-  def included_in_competition
+  def included_in_competition?
     !excluded_from_competition
   end
 
@@ -30,7 +28,7 @@ class CompetitionUser < ApplicationRecord
 
   def set_calculated_attributes
     self.included_activity_types = if included_activity_types.blank?
-      DEFAULT_ACTIVITY_TYPES
+      competition&.activity_types || Competition::DEFAULT_ACTIVITY_TYPES
     else
       included_activity_types.map(&:strip).reject(&:blank?)
     end

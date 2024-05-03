@@ -50,8 +50,8 @@ class StravaRequest < ApplicationRecord
 
     def parameters_for_competition_activities(competition)
       {
-        before: (competition.end_date + 2.days).to_i,
-        after: (competition.start_date - 2.days).to_i,
+        before: (competition.end_date + 2.days).end_of_day.to_i,
+        after: (competition.start_date - 2.days).beginning_of_day.to_i,
         per_page: "100"
       }.as_json
     end

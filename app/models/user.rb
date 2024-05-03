@@ -99,8 +99,8 @@ class User < ApplicationRecord
 
   def refresh_strava_token!
     refresh_response = StravaIntegration.refresh_access_token(strava_auth["refresh_token"])
-    if self.class.valid_strava_auth?(refresh_response)
-      update!(strava_auth: self.class.stored_strava_auth(refresh_response))
+    if self.class.valid_strava_auth?(refresh_response[:json])
+      update!(strava_auth: self.class.stored_strava_auth(refresh_response[:json]))
       reload
     else
       raise "invalid strava response: #{refresh_response}"
