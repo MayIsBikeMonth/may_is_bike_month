@@ -33,7 +33,7 @@ class Competition < ApplicationRecord
 
   # Method now, could be an attribute later
   def activity_types
-    DEFAULT_ACTIVITY_TYPES
+    DEFAULT_ACTIVITY_TYPES # NOTE: Can be manually specified on CompetitionParticipant
   end
 
   def in_period?(passed_dates_or_times)
