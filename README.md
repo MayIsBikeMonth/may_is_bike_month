@@ -48,3 +48,10 @@ Create a new competition with:
 ```ruby
 Competition.create(start_date: Time.parse("2025-05-01"), display_name: "2025")
 ```
+
+Some manual controls:
+
+- Manually set the dates a `CompetitionActivity` is counted with `override_activity_dates_string`
+  - If set to `competition_activity.override_activity_dates_string = "none"`, it makes the activity `included_in_competition: false`
+
+- Manually set `CompetitionUser` permitted activity types with `included_activity_types` (a JSON array). This enables giving a single user permission for virtual rides (e.g. if they're injured)

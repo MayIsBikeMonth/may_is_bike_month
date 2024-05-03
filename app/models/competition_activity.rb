@@ -30,6 +30,9 @@ class CompetitionActivity < ApplicationRecord
   ].freeze
   INCLUDED_STRAVA_VISIBILITIES = %w[everyone followers_only].freeze
 
+  scope :included_in_competition, -> { where(included_in_competition: true) }
+  scope :not_included_in_competition, -> { where(included_in_competition: false) }
+
   belongs_to :competition_user
 
   delegate :competition, to: :competition_user, allow_nil: true
@@ -105,6 +108,15 @@ class CompetitionActivity < ApplicationRecord
       competition_activity.strava_data["visibility"] != strava_data["visibility"]
   end
 
+  def strava_type
+    strava_data["type"]
+  end
+
+  def activity_dates
+    return override_activity_dates if override_activity_dates
+    (start_date == end_date) ? [start_date] : Array(start_date..end_date)
+  end
+
   def set_calculated_attributes
     self.strava_data = strava_data.except(*IGNORED_STRAVA_KEYS)
     self.attributes = self.class.strava_attrs_from_data(strava_data)
@@ -113,14 +125,10 @@ class CompetitionActivity < ApplicationRecord
     self.included_in_competition = calculated_included_in_competition
   end
 
-  def activity_dates
-    override_activity_dates || Array(start_date..end_date)
-  end
-
   def calculated_included_in_competition
     INCLUDED_STRAVA_VISIBILITIES.include?(strava_data["visibility"]) &&
       competition_user.included_in_competition? &&
-      competition_user.included_activity_type?(strava_data["type"]) &&
+      competition_user.included_activity_type?(strava_type) &&
       competition.in_period?(activity_dates)
   end
 
@@ -139,10 +147,14 @@ class CompetitionActivity < ApplicationRecord
     s_end_date = strava_data_calculated_end_date
     s_start_date = strava_data_start_date
     # Return the first day if there is only one day, or this activity is below the the daily mileage requirement
-    return s_end_date if s_end_date == s_start_date || distance_meters < competition.daily_mileage_requirement
+    return s_end_date if s_end_date == s_start_date || distance_meters < competition.daily_distance_requirement
     strava_calculated_dates = Array(s_start_date..s_end_date)
-    daily_mileages_met = (distance_meters / competition.daily_mileage_requirement).floor
-    strava_calculated_dates[daily_mileages_met - 1]
+    daily_mileages_met = (distance_meters / competition.daily_distance_requirement).floor
+    if daily_mileages_met > strava_calculated_dates.count
+      strava_calculated_dates.last
+    else
+      strava_calculated_dates[daily_mileages_met - 1]
+    end
   end
 
   def calculated_start_date
@@ -161,6 +173,10 @@ class CompetitionActivity < ApplicationRecord
     end
   end
 
+  # override_activity_dates_string overrides the calculated dates from Strava.
+  # It accepts:
+  # - A comma delineated string of dates
+  # - "none" (competition activity counts for no dates, and is included_in_competition: false)
   def override_activity_dates
     return false if override_activity_dates_string.blank?
 

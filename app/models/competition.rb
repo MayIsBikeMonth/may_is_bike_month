@@ -14,8 +14,8 @@
 class Competition < ApplicationRecord
   DEFAULT_ACTIVITY_TYPES = %w[Ride Velomobile Handcycle].freeze
 
-  has_many :competition_activities
   has_many :competition_users
+  has_many :competition_activities, -> { included_in_competition }, through: :competition_users
 
   before_validation :set_calculated_attributes
 
@@ -26,9 +26,18 @@ class Competition < ApplicationRecord
     where(current: true).last
   end
 
+  def self.period_sundays(start_date, end_date)
+    Array(start_date..end_date).select { |date| date.wday == 0 }
+  end
+
+  def self.week_start_from_sunday(date)
+    monday = date - 6.days
+    [monday, date.beginning_of_month].max
+  end
+
   # Method now, could be an attribute later
-  def daily_mileage_requirement
-    3219
+  def daily_distance_requirement
+    3_219 # 2 miles
   end
 
   # Method now, could be an attribute later
@@ -47,10 +56,22 @@ class Competition < ApplicationRecord
     end
   end
 
+  def periods
+    date_periods = self.class.period_sundays(start_date, end_date)
+      .map { |date| {start_date: self.class.week_start_from_sunday(date), end_date: date} }
+
+    last_day = date_periods.last[:end_date]
+    if last_day != end_date
+      date_periods += [{start_date: last_day + 1, end_date: end_date}]
+    end
+    date_periods
+  end
+
   def set_calculated_attributes
-    self.end_date ||= start_date + 1.month if start_date.present?
-    self.start_date ||= end_date - 1.month if end_date.present?
-    self.slug ||= display_name.gsub(/\s/, "-")
+    self.end_date ||= start_date&.end_of_month
+    self.start_date ||= end_date&.beginning_of_month
+    self.display_name ||= start_date&.year
+    self.slug ||= display_name&.gsub(/\s/, "-")
 
     set_current if in_period?(Time.current.to_date)
   end
@@ -60,7 +81,6 @@ class Competition < ApplicationRecord
   def set_current
     self.current = true
 
-    Competition.where(current: true).where.not(id: id)
-      .update_all(current: false)
+    Competition.where(current: true).where.not(id: id).update_all(current: false)
   end
 end

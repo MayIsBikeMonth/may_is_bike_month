@@ -33,4 +33,7 @@ class CompetitionUser < ApplicationRecord
       included_activity_types.map(&:strip).reject(&:blank?)
     end
   end
+
+  def calculated_scoring_data
+  end
 end

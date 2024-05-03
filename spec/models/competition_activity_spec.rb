@@ -43,22 +43,42 @@ RSpec.describe CompetitionActivity, type: :model do
       expect(competition_activity.strava_data).to eq target_strava_data
       expect(competition_activity.distance_meters).to eq 3611.4
       expect(competition_activity.display_name).to eq "Rainbow"
-      expect(competition_activity.included_in_competition).to be_truthy
       expect(competition_activity.send(:strava_data_end_date)).to eq Date.parse("2024-5-2")
       expect(competition_activity.activity_dates).to eq([Date.parse("2024-5-2")])
+
+      expect(competition_user.included_in_competition?).to be_truthy
+
+      expect(competition.in_period?(competition_activity.activity_dates)).to be_truthy
+      expect(competition_activity.included_in_competition).to be_truthy
     end
 
     context "with activity in multiple days" do
-      let(:strava_data) { JSON.parse(strava_data_fixture).merge("start_date" => "2024-05-03T07:55:12Z") }
+      let(:base_data) { JSON.parse(strava_data_fixture) }
+      let(:strava_data) { base_data.merge("start_date" => "2024-05-03T07:55:12Z") }
 
       it "creates, only includes the first day" do
         expect(competition_activity).to be_valid
-        expect(competition_activity.included_in_competition).to be_truthy
         expect(competition_activity.send(:strava_data_start_date)).to eq Date.parse("2024-5-2")
         expect(competition_activity.send(:strava_data_calculated_end_date)).to eq Date.parse("2024-5-3")
-        # NOTE: Different because this activity isn't 2x daily_mileage_requirement
+        # NOTE: Different because this activity isn't 2x daily_distance_requirement
         expect(competition_activity.send(:strava_data_end_date)).to eq Date.parse("2024-5-2")
         expect(competition_activity.activity_dates).to eq([Date.parse("2024-5-2")])
+
+        expect(competition.in_period?(competition_activity.activity_dates)).to be_truthy
+        expect(competition_activity.included_in_competition).to be_truthy
+      end
+      context "with activity of sufficient length" do
+        let(:strava_data) { base_data.merge("start_date" => "2024-05-03T07:55:12Z", "distance" => 10_000) }
+        it "creates and includes both days" do
+          expect(competition_activity).to be_valid
+          expect(competition_activity.send(:strava_data_start_date)).to eq Date.parse("2024-5-2")
+          expect(competition_activity.send(:strava_data_calculated_end_date)).to eq Date.parse("2024-5-3")
+          expect(competition_activity.send(:strava_data_end_date)).to eq Date.parse("2024-5-3")
+
+          expect(competition_activity.activity_dates).to eq([Date.parse("2024-5-2"), Date.parse("2024-5-3")])
+          expect(competition.in_period?(competition_activity.activity_dates)).to be_truthy
+          expect(competition_activity.included_in_competition).to be_truthy
+        end
       end
     end
 
@@ -70,12 +90,19 @@ RSpec.describe CompetitionActivity, type: :model do
   end
 
   describe "override_activity_dates" do
-    let(:competition_activity) { FactoryBot.create(:competition_activity, override_activity_dates_string:) }
+    let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-5-1")) }
+    let(:competition_activity) { FactoryBot.create(:competition_activity, competition:, override_activity_dates_string:) }
     let(:override_activity_dates_string) { nil }
     let(:override_activity_dates) { competition_activity.send(:override_activity_dates) }
 
     it "is false" do
+      expect(competition_activity.send(:calculated_start_date)).to eq Date.parse("2024-5-2")
+      expect(competition_activity.start_date).to eq Date.parse("2024-5-2")
+      expect(competition_activity.send(:strava_data_calculated_end_date)).to eq Date.parse("2024-5-2")
+      expect(competition_activity.send(:calculated_end_date)).to eq Date.parse("2024-5-2")
+      expect(competition_activity.end_date).to eq Date.parse("2024-5-2")
       expect(override_activity_dates).to be_falsey
+      expect(competition_activity.included_in_competition).to be_truthy
     end
 
     context "with override_activity_dates_string none" do
@@ -83,6 +110,7 @@ RSpec.describe CompetitionActivity, type: :model do
       it "is empty array" do
         expect(override_activity_dates).to be_truthy
         expect(override_activity_dates).to eq([])
+        expect(competition_activity.included_in_competition).to be_falsey
       end
     end
 
@@ -93,6 +121,7 @@ RSpec.describe CompetitionActivity, type: :model do
         expect(override_activity_dates).to be_truthy
         expect(override_activity_dates).to eq target
         expect(competition_activity.activity_dates).to eq target
+        expect(competition_activity.included_in_competition).to be_truthy
       end
     end
 
@@ -103,6 +132,7 @@ RSpec.describe CompetitionActivity, type: :model do
         expect(override_activity_dates).to be_truthy
         expect(override_activity_dates).to eq(target)
         expect(competition_activity.activity_dates).to eq target
+        expect(competition_activity.included_in_competition).to be_truthy
       end
     end
   end
