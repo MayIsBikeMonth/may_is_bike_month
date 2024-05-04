@@ -39,9 +39,10 @@ Run these commands in the terminal, from the directory the project is in.
 
 
 
-This is a Rails re-write of the [phoenix/elixir May is Bike Month app](https://github.com/MayIsBikeMonth/may_is_bike_month-elixir)
+This is a Rails re-write of the [Phoenix/Elixir May is Bike Month app](https://github.com/MayIsBikeMonth/may_is_bike_month-elixir)
 
----
+
+## Running a Competition
 
 Create a new competition with:
 
@@ -50,9 +51,11 @@ competition = Competition.create(start_date: Date.parse("2025-05-01"), display_n
 competition.create_competition_users
 ```
 
+**NOTE** `competition_user`s are `included_in_competition: false` by default - you have to manually turn each one to true to be included
+
 Some manual controls:
 
-- Manually set the dates a `CompetitionActivity` is counted with `override_activity_dates_string`
-  - If set to `competition_activity.override_activity_dates_string = "none"`, it makes the activity `included_in_competition: false`
+- Manually set the dates a `CompetitionActivity` is counted with `override_activity_dates_strings`
+  - If set to `competition_activity.override_activity_dates_strings = []`, it makes the activity `included_in_competition: false`
 
 - Manually set `CompetitionUser` permitted activity types with `included_activity_types` (a JSON array). This enables giving a single user permission for virtual rides (e.g. if they're injured)
