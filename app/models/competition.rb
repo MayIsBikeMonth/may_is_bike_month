@@ -60,22 +60,10 @@ class Competition < ApplicationRecord
   end
 
   # I think this is less performant than the the comparison
-  # if it isn't (or isn't much), than maybe in_period? should use this instead
+  # if it isn't (or isn't much), than maybe #in_period? should use this instead
   def dates_in_period(passed_dates_or_times)
     Array(start_date..end_date) & dates_array_from(passed_dates_or_times)
   end
-
-  # TODO: Can we remove this (non-string)
-  # def periods_date_obj
-  #   date_periods = self.class.period_sundays(start_date, end_date)
-  #     .map { |date| {start_date: self.class.week_start_from_sunday(date), end_date: date} }
-
-  #   last_day = date_periods.last[:end_date]
-  #   if last_day != end_date
-  #     date_periods += [{start_date: last_day + 1, end_date: end_date}]
-  #   end
-  #   date_periods
-  # end
 
   # Returns with date strings (rather than Date objects) -
   # Array("2024-05-01".."2024-05-03") => ["2024-05-01", "2024-05-02", "2024-05-03"]

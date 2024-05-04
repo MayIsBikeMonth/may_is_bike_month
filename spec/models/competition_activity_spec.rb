@@ -153,10 +153,9 @@ RSpec.describe CompetitionActivity, type: :model do
 
     it "is false" do
       expect(competition_activity.start_date).to eq Date.parse("2024-5-2")
-      # expect(competition_activity.start_date).to eq Date.parse("2024-5-2")
       expect(competition_activity.send(:strava_data_calculated_end_date)).to eq Date.parse("2024-5-2")
       expect(competition_activity.end_date).to eq Date.parse("2024-5-2")
-      # expect(competition_activity.end_date).to eq Date.parse("2024-5-2")
+
       expect(override_activity_dates).to be_falsey
       expect(competition_activity.included_in_competition).to be_truthy
     end

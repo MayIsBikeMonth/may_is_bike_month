@@ -50,11 +50,6 @@ class CompetitionUser < ApplicationRecord
         }.merge(skip_ids ? {} : {ids: competition_activities.pluck(:id)})
       else
         raise "competition_activities must be an ActiveRecord::Relation"
-        #   {
-        #     dates: competition_activities.map(&:activity_dates).flatten.uniq,
-        #     distance: competition_activities.map(&:distance_meters).sum,
-        #     elevation: competition_activities.map(&:elevation_meters).sum
-        #   }.merge(skip_ids ? {} : {ids: competition_activities.map(&:id)})
       end
     end
   end
@@ -87,11 +82,6 @@ class CompetitionUser < ApplicationRecord
   end
 
   def activities_for_period(period)
-    # period_dates = Competition.dates_strings(period[:start_date], period[:end_date])
-    # TODO: Can this be done via postgres JSON
-    # competition_activities.select do |competition_activity|
-    #   (period_dates & competition_activity.activity_dates_strings).any?
-    # end
     competition_activities.matching_dates_strings(
       Competition.dates_strings(period[:start_date], period[:end_date])
     )
