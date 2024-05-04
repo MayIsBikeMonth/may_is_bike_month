@@ -1,11 +1,7 @@
 class LandingController < ApplicationController
   def index
     @competition = Competition.current
-    @competition_users = if @competition.present?
-      @competition.competition_users
-    else
-      []
-    end
+    @competition_users = @competition.present? ? @competition.competition_users : []
   end
 
   def update_strava

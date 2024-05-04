@@ -4,7 +4,7 @@ RSpec.describe UpdateCompetitionUserJob, type: :job do
   let(:instance) { described_class.new }
 
   describe "perform" do
-    let(:user) { FactoryBot.create(:user_with_strava_token, token: "cd775d68780995e60d415b2fd7b6d594a281e3a6") }
+    let(:user) { FactoryBot.create(:user_with_strava_token) }
     let(:competition_user) { FactoryBot.create(:competition_user, user: user) }
     let(:competition) { competition_user.competition }
     it "updates user score" do
@@ -16,6 +16,8 @@ RSpec.describe UpdateCompetitionUserJob, type: :job do
       end
       expect(competition_user.reload.score_data).to be_present
       expect(competition_user.score.round(5)).to eq 3.00005
+
+      expect { described_class.enqueue_current }.not_to change(described_class.jobs, :count)
     end
   end
 end

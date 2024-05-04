@@ -4,7 +4,12 @@ class UpdateCompetitionUserJob < ApplicationJob
   def self.enqueue_current
     competition = Competition.current
     return false unless competition.present?
+
     competition.create_competition_users
+
+    # If an update isn't due, don't enqueue more jobs
+    return true unless StravaRequest.update_due?
+
     competition.competition_users.pluck(:id)
       .each { |id| UpdateCompetitionUserJob.perform_async(id) }
   end

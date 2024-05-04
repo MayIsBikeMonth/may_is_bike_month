@@ -29,7 +29,7 @@ class StravaRequest < ApplicationRecord
     end
 
     def most_recent_update
-      order(:created_at).last&.pick(:created_at)
+      maximum(:created_at)
     end
 
     def update_due?
