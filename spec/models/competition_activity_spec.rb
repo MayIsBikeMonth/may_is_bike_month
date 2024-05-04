@@ -4,6 +4,35 @@ RSpec.describe CompetitionActivity, type: :model do
   let(:strava_data_fixture) { File.read(Rails.root.join("spec", "fixtures", "strava_activity1.json")) }
   let(:strava_data) { JSON.parse(strava_data_fixture) }
 
+  describe "factory" do
+    let(:competition) { FactoryBot.create(:competition) }
+    let(:start_at) { Time.at(1714779274) }
+    let(:competition_activity) do
+      FactoryBot.create(:competition_activity,
+        strava_type: "Handcycle",
+        competition:,
+        elevation_meters: 42,
+        strava_id: "2322x",
+        distance_meters: 43,
+        moving_seconds: 666,
+        start_at: start_at,
+        timezone: "America/Chicago")
+    end
+
+    it "sets strava_data from the passed values" do
+      expect(competition_activity).to be_valid
+      expect(competition_activity.reload.strava_type).to eq "Handcycle"
+      expect(competition_activity.competition.id).to eq competition.id
+      expect(competition_activity.elevation_meters).to eq 42
+      expect(competition_activity.strava_id).to eq "2322"
+      expect(competition_activity.distance_meters).to eq 43
+      expect(competition_activity.moving_seconds).to eq 666
+      expect(competition_activity.start_at.to_i).to eq start_at.to_i
+      expect(competition_activity.timezone).to eq "America/Chicago"
+      expect(competition_activity.included_in_competition).to be_truthy
+    end
+  end
+
   describe "strava_attributes" do
     let(:target_attrs) do
       {
@@ -17,6 +46,7 @@ RSpec.describe CompetitionActivity, type: :model do
       }
     end
     let(:strava_attrs_from_data) { described_class.strava_attrs_from_data(strava_data) }
+
     it "is expected values" do
       expect(strava_attrs_from_data).to eq target_attrs
     end
@@ -66,9 +96,11 @@ RSpec.describe CompetitionActivity, type: :model do
 
         expect(competition.in_period?(competition_activity.activity_dates)).to be_truthy
         expect(competition_activity.included_in_competition).to be_truthy
+        expect(CompetitionActivity.matching_dates_strings(["2024-05-02", "2024-05-03"]).pluck(:id)).to eq([competition_activity.id])
       end
       context "with activity of sufficient length" do
         let(:strava_data) { base_data.merge("start_date" => "2024-05-03T07:55:12Z", "distance" => 10_000) }
+
         it "creates and includes both days" do
           expect(competition_activity).to be_valid
           expect(competition_activity.send(:strava_data_start_date)).to eq Date.parse("2024-5-2")
@@ -80,43 +112,69 @@ RSpec.describe CompetitionActivity, type: :model do
           expect(competition_activity.included_in_competition).to be_truthy
         end
       end
+      context "with activity overlapping start" do
+        let(:strava_data) do
+          base_data.merge("start_date" => "2024-05-01T02:59:12Z",
+            "start_date_local" => "2024-04-30T19:59:12Z",
+            "distance" => 30_000,
+            "moving_time" => 432000) # 5 days
+        end
+
+        it "creates and includes both days" do
+          expect(competition_activity).to be_valid
+          expect(competition_activity.send(:strava_data_start_date)).to eq Date.parse("2024-4-30")
+          expect(competition_activity.send(:strava_data_calculated_end_date)).to eq Date.parse("2024-5-5")
+          expect(competition_activity.send(:strava_data_end_date)).to eq Date.parse("2024-5-5")
+
+          expect(competition_activity.activity_dates).to eq(Array(Date.parse("2024-5-1")..Date.parse("2024-5-5")))
+          expect(competition_activity.start_date).to eq Date.parse("2024-5-1")
+          expect(competition.in_period?(competition_activity.activity_dates)).to be_truthy
+          expect(competition_activity.included_in_competition).to be_truthy
+
+          expect(CompetitionActivity.matching_dates_strings(["2024-05-01"]).pluck(:id)).to eq([competition_activity.id])
+          expect(CompetitionActivity.matching_dates_strings(["2024-05-01", "2024-05-07"]).pluck(:id)).to eq([competition_activity.id])
+          expect(CompetitionActivity.matching_dates_strings(["2024-04-30"]).pluck(:id)).to eq([])
+        end
+      end
     end
 
     context "existing activity" do
       it "does not update" do
-        expect(CompetitionActivity.competition_activity_changed?(competition_activity:, strava_data:)).to be_falsey
+        expect(CompetitionActivity.send(:competition_activity_changed?, competition_activity:, strava_data:)).to be_falsey
       end
     end
   end
 
   describe "override_activity_dates" do
     let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-5-1")) }
-    let(:competition_activity) { FactoryBot.create(:competition_activity, competition:, override_activity_dates_string:) }
-    let(:override_activity_dates_string) { nil }
+    let(:competition_activity) { FactoryBot.create(:competition_activity, competition:, override_activity_dates_strings:) }
+    let(:override_activity_dates_strings) { nil }
     let(:override_activity_dates) { competition_activity.send(:override_activity_dates) }
 
     it "is false" do
-      expect(competition_activity.send(:calculated_start_date)).to eq Date.parse("2024-5-2")
       expect(competition_activity.start_date).to eq Date.parse("2024-5-2")
+      # expect(competition_activity.start_date).to eq Date.parse("2024-5-2")
       expect(competition_activity.send(:strava_data_calculated_end_date)).to eq Date.parse("2024-5-2")
-      expect(competition_activity.send(:calculated_end_date)).to eq Date.parse("2024-5-2")
       expect(competition_activity.end_date).to eq Date.parse("2024-5-2")
+      # expect(competition_activity.end_date).to eq Date.parse("2024-5-2")
       expect(override_activity_dates).to be_falsey
       expect(competition_activity.included_in_competition).to be_truthy
     end
 
-    context "with override_activity_dates_string none" do
-      let(:override_activity_dates_string) { "none" }
+    context "with override_activity_dates_strings none" do
+      let(:override_activity_dates_strings) { [] }
+
       it "is empty array" do
         expect(override_activity_dates).to be_truthy
         expect(override_activity_dates).to eq([])
-        expect(competition_activity.included_in_competition).to be_falsey
+        expect(competition_activity.excluded_from_competition?).to be_truthy
       end
     end
 
-    context "with single override_activity_dates_string" do
-      let(:override_activity_dates_string) { "2024-5-1" }
+    context "with single override_activity_dates_strings" do
+      let(:override_activity_dates_strings) { ["2024-5-1"] }
       let(:target) { [Date.parse("2024-5-1")] }
+
       it "is empty array" do
         expect(override_activity_dates).to be_truthy
         expect(override_activity_dates).to eq target
@@ -125,9 +183,10 @@ RSpec.describe CompetitionActivity, type: :model do
       end
     end
 
-    context "with multiple override_activity_dates_string" do
-      let(:override_activity_dates_string) { "2024-5-1, 2024-5-3" }
+    context "with multiple override_activity_dates_strings" do
+      let(:override_activity_dates_strings) { ["2024-5-1", "2024-5-3"] }
       let(:target) { [Date.parse("2024-5-1"), Date.parse("2024-5-3")] }
+
       it "is empty array" do
         expect(override_activity_dates).to be_truthy
         expect(override_activity_dates).to eq(target)
@@ -151,6 +210,7 @@ RSpec.describe CompetitionActivity, type: :model do
 
     context "UTC" do
       let(:timezone) { "UTC" }
+
       it "calculates" do
         expect(strava_start_date).to eq Date.parse("2024-5-2")
         expect(described_class.parse_strava_local_time(start_date_local, timezone).to_i).to eq 1714679952
@@ -159,6 +219,7 @@ RSpec.describe CompetitionActivity, type: :model do
 
     context "with different timezone" do
       let(:timezone) { "Asia/Hong_Kong" }
+
       it "calculates" do
         expect(strava_start_date).to eq Date.parse("2024-5-2")
         expect(described_class.parse_strava_local_time(start_date_local, timezone).to_i).to eq 1714651152

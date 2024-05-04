@@ -45,7 +45,7 @@ RSpec.describe StravaRequest, type: :model do
     let(:competition) { FactoryBot.create(:competition, start_date: Time.parse("2024-05-01").utc.beginning_of_day) }
     let(:target) do
       {
-        "before" => 1717484399,
+        "before" => 1717397999,
         "after" => 1714374000,
         "per_page" => "100"
       }
