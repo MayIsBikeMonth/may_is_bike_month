@@ -4,7 +4,7 @@ import loglevel from 'loglevel'
 //   // It should be this by default - but that isn't happening, so setting it manually
 //   loglevel.setLevel('warn')
 // } else {
-  loglevel.setLevel('debug')
+loglevel.setLevel('debug')
 // }
 
 export default loglevel

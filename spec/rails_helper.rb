@@ -15,9 +15,9 @@ VCR.configure do |config|
   config.hook_into :webmock
   config.ignore_localhost = true # Turn off for local tests, e.g. feature
 
-  # %w[].each do |key|
-  #   config.filter_sensitive_data("<#{key}>") { ENV[key] }
-  # end
+  %w[STRAVA_SECRET STRAVA_CLIENT_ID].each do |key|
+    config.filter_sensitive_data("<#{key}>") { ENV[key] }
+  end
 
   config.before_record do |i|
     i.response.headers.delete("Set-Cookie")
@@ -50,9 +50,7 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_paths = [
-    Rails.root.join("spec/fixtures")
-  ]
+  config.fixture_paths = [Rails.root.join("spec/fixtures")]
 
   config.include Devise::Test::IntegrationHelpers, type: :request
   # Our stuff

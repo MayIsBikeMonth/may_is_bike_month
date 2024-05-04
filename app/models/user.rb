@@ -30,14 +30,28 @@ class User < ApplicationRecord
 
   enum role: ROLE_ENUM
 
+  has_many :competition_users
+
   before_validation :set_calculated_attributes
 
   class << self
+    def stored_strava_auth(auth_cred)
+      cred = auth_cred.as_json.except("expires", "token_type", "expires_in")
+      return cred if cred["access_token"].blank?
+      cred.except("access_token").merge("token" => cred["access_token"])
+    end
+
+    def valid_strava_auth?(auth)
+      return false if auth.blank?
+      stored_strava_auth(auth).slice("token", "expires_at", "refresh_token").values
+        .count { |v| v.present? } == 3
+    end
+
     def from_omniauth(uid, auth)
       user = where(strava_id: uid.to_i).first || new(strava_id: uid.to_i)
 
       user.update(password: Devise.friendly_token[0, 20],
-        strava_auth: auth["credentials"].as_json.except("expires"),
+        strava_auth: stored_strava_auth(auth["credentials"]),
         strava_info: auth.dig("extra", "raw_info"))
       user
     end
@@ -63,8 +77,18 @@ class User < ApplicationRecord
     end
   end
 
+  def strava_auth_needs_refresh?
+    strava_auth["expires_at"].to_i < (Time.current.to_i + 2)
+  end
+
   def admin_access?
     admin? || developer?
+  end
+
+  def active_strava_token
+    raise "Invalid strava auth" unless self.class.valid_strava_auth?(strava_auth)
+    refresh_strava_token! if strava_auth_needs_refresh?
+    strava_auth["token"]
   end
 
   def set_calculated_attributes
@@ -75,8 +99,18 @@ class User < ApplicationRecord
 
   private
 
+  def refresh_strava_token!
+    refresh_response = StravaIntegration.refresh_access_token(strava_auth["refresh_token"])
+    if self.class.valid_strava_auth?(refresh_response[:json])
+      update!(strava_auth: self.class.stored_strava_auth(refresh_response[:json]))
+      reload
+    else
+      raise "invalid strava response: #{refresh_response}"
+    end
+  end
+
   def calculated_name
-    first_last = [strava_info["firstname"], strava_info["lastname"]].compact.reject(&:blank?).join(" ")
+    first_last = [strava_info["firstname"], strava_info["lastname"]].reject(&:blank?).join(" ")
     first_last.present? ? first_last : strava_username
   end
 end

@@ -1,12 +1,3 @@
-GIT
-  remote: https://github.com/marcbest/omniauth-strava
-  revision: ea1b4680e50844abd5cea989fa190eaa51f7f4d1
-  branch: bump-to-omniauth-2.0
-  specs:
-    omniauth-strava (1.0.0)
-      omniauth (~> 2.0)
-      omniauth-oauth2 (~> 1.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -252,6 +243,9 @@ GEM
     omniauth-rails_csrf_protection (1.0.1)
       actionpack (>= 4.2)
       omniauth (~> 2.0)
+    omniauth-strava (1.0.0)
+      omniauth (~> 2.0)
+      omniauth-oauth2 (~> 1.0)
     orm_adapter (0.5.0)
     parallel (1.24.0)
     parser (3.3.0.5)
@@ -457,6 +451,7 @@ DEPENDENCIES
   devise
   dotenv-rails
   factory_bot_rails
+  faraday
   fast_blank
   flamegraph
   foreman
@@ -471,7 +466,7 @@ DEPENDENCIES
   logstash-event
   multi_json
   omniauth-rails_csrf_protection (~> 1.0)
-  omniauth-strava!
+  omniauth-strava
   pg
   propshaft
   puma

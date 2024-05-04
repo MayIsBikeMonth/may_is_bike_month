@@ -1,0 +1,66 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://www.strava.com/oauth/token?grant_type=refresh_token
+    body:
+      encoding: UTF-8
+      string: '{"refresh_token":"xxxzzzz","client_secret":"<STRAVA_SECRET>","client_id":"<STRAVA_CLIENT_ID>"}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v2.9.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Tue, 30 Apr 2024 23:58:06 GMT
+      Via:
+      - 1.1 linkerd, 1.1 linkerd, 1.1 646b231fddd116a809b791efe727aba6.cloudfront.net
+        (CloudFront)
+      Etag:
+      - W/"6e34248dc4ce508b5c32e05fd977e9e4"
+      Vary:
+      - Accept, Origin
+      Status:
+      - 200 OK
+      X-Request-Id:
+      - 03d438d5-d9f0-4321-9836-345ec6fafbc8
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Download-Options:
+      - noopen
+      X-Content-Type-Options:
+      - nosniff
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Cache:
+      - Miss from cloudfront
+      X-Amz-Cf-Pop:
+      - SFO53-P5
+      X-Amz-Cf-Id:
+      - tMcflD8uBiXJKe5FIR1XBcOii8SA5VPMPCHiuZUq7OhujNhXQ3n69g==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"token_type":"Bearer","access_token":"zzzzxxxxxxx","expires_at":1714533563,"expires_in":12077,"refresh_token":"xxxzzzz"}'
+  recorded_at: Tue, 30 Apr 2024 23:58:06 GMT
+recorded_with: VCR 6.2.0

@@ -3,6 +3,11 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def strava
     @user = User.from_omniauth(request.env["omniauth.auth"].uid, request.env["omniauth.auth"])
+    @competition = Competition.current
+    if @competition.present?
+      @user.competition_users.where(competition_id: @competition.id).first_or_create
+    end
+
     if @user.persisted?
       flash[:success] = "Signed in!"
       sign_in_and_redirect @user, event: :authentication

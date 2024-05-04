@@ -1,0 +1,64 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://www.strava.com/api/v3/athlete/activities?per_page=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v2.9.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 01 May 2024 00:02:35 GMT
+      Via:
+      - 1.1 linkerd, 1.1 linkerd, 1.1 15db3cca810568aab246ba24fafd371a.cloudfront.net
+        (CloudFront)
+      Vary:
+      - Accept, Origin
+      Status:
+      - 401 Unauthorized
+      X-Request-Id:
+      - 133e6813-f5de-43b8-a714-7e52f2783331
+      Cache-Control:
+      - no-cache
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Download-Options:
+      - noopen
+      X-Content-Type-Options:
+      - nosniff
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Cache:
+      - Error from cloudfront
+      X-Amz-Cf-Pop:
+      - SFO53-P5
+      X-Amz-Cf-Id:
+      - xijV6LeVoQdLdmbBBTs26x2QRQWmz-DksMfskGxLZx42efSenVOgEA==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"message":"Authorization Error","errors":[{"resource":"Athlete","field":"access_token","code":"invalid"}]}'
+  recorded_at: Wed, 01 May 2024 00:02:35 GMT
+recorded_with: VCR 6.2.0
