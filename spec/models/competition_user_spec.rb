@@ -19,6 +19,7 @@ RSpec.describe CompetitionUser, type: :model do
       let(:included_activity_types) { ["Virtual Ride", "Ride ", ""] }
       it "is default" do
         expect(competition_user).to be_valid
+        expect(competition_user.score).to eq 0
         competition_user.reload
         expect(competition_user.included_activity_types).to eq(["Virtual Ride", "Ride"])
       end
@@ -30,7 +31,7 @@ RSpec.describe CompetitionUser, type: :model do
     let(:competition_user) { FactoryBot.create(:competition_user, competition:) }
     let(:start_at1) { Time.at(1714778082) }
     it "is empty_score_hash" do
-      expect(competition_user.calculated_score_data).to eq empty_score_data(competition)
+      expect(competition_user.calculated_score_data).to eq empty_score_data(competition).as_json
     end
 
     context "with a competition_activity" do
@@ -46,15 +47,15 @@ RSpec.describe CompetitionUser, type: :model do
           distance: 10_000.00,
           elevation: 200.0,
           ids: [competition_activity1.id],
-          score: 1.9999
-        }
+          score: 1.0001
+        }.with_indifferent_access
       end
       let(:activities_for_period) { competition_user.send(:activities_for_period, period1_data.slice(:start_date, :end_date)) }
       it "returns score_hash_for_activities" do
         # validate that it's an active record collection
         expect(activities_for_period.pluck(:id)).to eq([competition_activity1.id])
 
-        calculated_score_data = competition_user.calculated_score_data
+        calculated_score_data = competition_user.calculated_score_data.with_indifferent_access
         expect(calculated_score_data.except(:periods)).to eq(period1_data.except(:start_date, :end_date, :ids))
         expect(calculated_score_data[:periods].first).to eq period1_data
       end

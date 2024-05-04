@@ -31,12 +31,12 @@ class CompetitionActivity < ApplicationRecord
 
   belongs_to :competition_user
 
-  delegate :competition, to: :competition_user, allow_nil: true
-
   before_validation :set_calculated_attributes
 
   scope :included_in_competition, -> { where(included_in_competition: true) }
   scope :excluded_from_competition, -> { where(included_in_competition: false) }
+
+  delegate :competition, to: :competition_user, allow_nil: true
 
   class << self
     def find_by_strava_data(strava_data)

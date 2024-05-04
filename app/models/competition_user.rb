@@ -5,7 +5,7 @@
 #  id                      :bigint           not null, primary key
 #  included_activity_types :jsonb
 #  included_in_competition :boolean          default(FALSE), not null
-#  score                   :integer
+#  score                   :float
 #  score_data              :jsonb
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
@@ -17,19 +17,23 @@ class CompetitionUser < ApplicationRecord
   belongs_to :competition
   belongs_to :user
 
+  # ... maybe shouldn't be scoped, this will probably trick me in the future
   has_many :competition_activities, -> { included_in_competition }
-  has_many :competition_activities_excluded, -> { excluded_in_competition },
+  has_many :competition_activities_excluded, -> { excluded_from_competition },
     class_name: "CompetitionActivity"
 
   before_validation :set_calculated_attributes
+  validates_uniqueness_of :user_id, scope: [:competition_id], allow_nil: false
 
   scope :included_in_competition, -> { where(included_in_competition: true) }
   scope :excluded_from_competition, -> { where(included_in_competition: false) }
 
+  delegate :display_name, to: :user, allow_nil: true
+
   class << self
     def score_for(dates:, distance:, **)
       return 0 if dates.none?
-      (dates.count + 1 - (1 / distance.to_d)).to_f
+      (dates.count + (1 / distance.to_d)).to_f
     end
 
     def score_hash_for_activities(competition_activities, skip_ids: false)
@@ -68,11 +72,17 @@ class CompetitionUser < ApplicationRecord
     else
       included_activity_types.map(&:strip).reject(&:blank?)
     end
+    self.score = score_data&.dig("score") || 0
+  end
+
+  def update_score_data!
+    update(score_data: calculated_score_data)
   end
 
   def calculated_score_data
     self.class.score_hash_for_activities(competition_activities, skip_ids: true)
       .merge(periods: competition.periods.map { |period| period.merge(period_score_hash(period)) })
+      .as_json
   end
 
   private

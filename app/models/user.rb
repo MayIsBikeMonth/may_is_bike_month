@@ -30,6 +30,8 @@ class User < ApplicationRecord
 
   enum role: ROLE_ENUM
 
+  has_many :competition_users
+
   before_validation :set_calculated_attributes
 
   class << self

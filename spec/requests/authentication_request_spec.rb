@@ -91,6 +91,7 @@ RSpec.describe "Authentication", type: :request do
       OmniAuth.config.test_mode = true
       OmniAuth.config.add_mock(:strava, omniauth_data)
     end
+    let!(:competition) { FactoryBot.create(:competition, current: true) }
     it "auths" do
       expect do
         post path
@@ -105,6 +106,7 @@ RSpec.describe "Authentication", type: :request do
       expect(user.strava_info).to eq omniauth_data.dig(:extra, :raw_info).as_json
 
       expect(user.last_sign_in_at).to be_present
+      expect(user.competition_users.pluck(:competition_id)).to eq([competition.id])
     end
   end
 end

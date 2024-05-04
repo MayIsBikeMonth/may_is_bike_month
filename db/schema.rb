@@ -36,7 +36,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_30_230045) do
     t.bigint "competition_id"
     t.bigint "user_id"
     t.boolean "included_in_competition", default: false, null: false
-    t.integer "score"
+    t.float "score"
     t.jsonb "score_data"
     t.jsonb "included_activity_types"
     t.datetime "created_at", null: false

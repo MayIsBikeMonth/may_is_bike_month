@@ -1,1 +1,6 @@
 welcome welcome welcome!
+
+<% @competition_users.each do |competition_user| %>
+  <h4><%= competition_user.display_name %></h4>
+  <%= pretty_print_json(competition_user.score_data) %>
+<% end %>

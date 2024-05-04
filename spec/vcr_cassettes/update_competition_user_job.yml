@@ -1,0 +1,82 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://www.strava.com/api/v3/athlete/activities?after=1714374000&before=1717397999&per_page=100
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v2.9.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Sat, 04 May 2024 04:50:48 GMT
+      Via:
+      - 1.1 linkerd, 1.1 linkerd, 1.1 527e9fded303586b3afb7046c6793516.cloudfront.net
+        (CloudFront)
+      Etag:
+      - W/"31673e101ced258b77a11305e3524293"
+      Vary:
+      - Accept, Origin
+      Status:
+      - 200 OK
+      X-Request-Id:
+      - 074fe9fd-1e5d-45ad-95a5-c7f71559a81b
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Ratelimit-Limit:
+      - '600,6000'
+      X-Ratelimit-Usage:
+      - '10,36'
+      X-Download-Options:
+      - noopen
+      X-Readratelimit-Limit:
+      - '300,3000'
+      X-Readratelimit-Usage:
+      - '10,36'
+      X-Content-Type-Options:
+      - nosniff
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Cache:
+      - Miss from cloudfront
+      X-Amz-Cf-Pop:
+      - SFO53-P5
+      X-Amz-Cf-Id:
+      - 7Pt_jtCVdFGwOqZozxS_JVhruCtsY4lABrwh1QcuiM9_wDuY62XA3A==
+    body:
+      encoding: ASCII-8BIT
+      string: '[{"resource_state":2,"athlete":{"id":2430215,"resource_state":1},"name":"MTB
+        test ride","distance":4617.6,"moving_time":967,"elapsed_time":991,"total_elevation_gain":20.7,"type":"Ride","sport_type":"Ride","workout_type":0,"id":11326703304,"start_date":"2024-05-04T03:29:06Z","start_date_local":"2024-05-03T20:29:06Z","timezone":"(GMT-08:00)
+        America/Los_Angeles","utc_offset":-25200.0,"location_city":null,"location_state":null,"location_country":"United
+        States","achievement_count":1,"kudos_count":0,"comment_count":0,"athlete_count":1,"photo_count":0,"map":{"id":"a11326703304","summary_polyline":"cbmeFdbcjVHBVER@RENKJBHAJGFFJE?EHCC@TBBCF?RDBCD?^BPCADD?VANIVBB?DEPCn@Al@Wz@?`@EH@b@Ij@ALCd@A\\A`@BLCHDJ?ZIHBLAHDXEp@AdAKv@CPILCRDTER?FQGWAaADGBWG[Am@Cc@@SIu@Fq@EMAKrAo@DD`@c@?HE@ADQ@?@TIBGFEFMTWPM?MHBADE@CBE?ELLFBPPh@BTHP?HVp@C?HT@LGHDJADBFAFHFHLND@NJ^GFCDF\\CL@FCLB\\g@LI?GAI@]`@@BE@GCUFEAM@IFY@E@KCEDG@OAGDADEAGBwAB_@DIIIJIAIBCAIFS?UDGH_@KGHSCIFKKUBMACDK?OBECGB{@BCBOD[AOGGDSDkBAc@FkB?KDe@@_@Fw@@ABIBARLl@FH?XWT[DIQUEYKe@d@IDk@DUMw@?aAQKFQEc@AQCK@OHQDO?O?SKk@\\QDG@MC[BQH_@FMPi@?MJYGg@r@IDu@PQ?KDM@i@@]EAj@_A?eANY@a@AODM\\Vn@BNE@Ff@?HFHEVIJULYBIDUFCFQJEAGFEKIEM?IBORWBgCdBm@HUCK?MCEHKBc@Au@JBKU@TOKFQCCEM@UAKE[DE?IBECM?IEEBCE[Ss@KI]\\jBA@IsBEBDHFDPTOn@FF@PHDAOBEb@ABEJAH@NCBGDALAHBH?RKJHXEX?BIBFFFA?DCNC?AF@N?@FHDLAHKNABLR@JL?DRFZGLBTEH@FMB]BICGAKDODI?_@FYLQAGBGK]BI?KHKNw@HE@IHEBG`@A|@LRAJBHC~@ANEJIRAHCD@VKNDZ?BEf@G`@DDFDCDED?DW`@CPGBABWDGd@MHO\\SXETOf@i@NEt@aAc@b@hF_CgF~B?EEDh@kA@Y|As@bAW@CCABGC?BGACEB?JDB?KCDD@@CAF@A?ACBFGMD","resource_state":2},"trainer":false,"commute":false,"manual":false,"private":false,"visibility":"everyone","flagged":false,"gear_id":"b6011644","start_latlng":[37.75538245216012,-122.40946663543582],"end_latlng":[37.75668986141682,-122.4090477079153],"average_speed":4.775,"max_speed":16.023,"average_watts":165.2,"kilojoules":159.7,"device_watts":false,"has_heartrate":true,"average_heartrate":121.6,"max_heartrate":143.0,"heartrate_opt_out":false,"display_hide_heartrate_option":true,"elev_high":17.4,"elev_low":7.5,"upload_id":12098451547,"upload_id_str":"12098451547","external_id":"13912CE5-47F9-4475-90CB-CC66CD111EFA-activity.fit","from_accepted_tag":false,"pr_count":1,"total_photo_count":0,"has_kudoed":false,"suffer_score":2.0},{"resource_state":2,"athlete":{"id":2430215,"resource_state":1},"name":"Rainbow","distance":3611.4,"moving_time":844,"elapsed_time":1632,"total_elevation_gain":11.0,"type":"Ride","sport_type":"Ride","workout_type":10,"id":11319708328,"start_date":"2024-05-03T02:59:12Z","start_date_local":"2024-05-02T19:59:12Z","timezone":"(GMT-08:00)
+        America/Los_Angeles","utc_offset":-25200.0,"location_city":null,"location_state":null,"location_country":"United
+        States","achievement_count":0,"kudos_count":2,"comment_count":0,"athlete_count":1,"photo_count":0,"map":{"id":"a11319708328","summary_polyline":"qxmeFxccjVGCOHu@RGJE@q@@KE]AADGB_@AIBm@A_@Hc@@KDc@@eBNg@JW?]EUAUH_@CCH]DIEO?k@LGEYVBTCZ?b@CDDRCJG?BNGNWNUFICS@GFG@GEI?IDe@HUESDGCWDIr@FtACb@CJYFICU?s@NUC[DKHICQAUBCCADG?ETEt@BPETGLSBg@Ca@?UDS?UBo@AKDc@@gAPKAKBc@@a@GIFeAJ_@JGEMDQCEFKCSDGDBR@lAHt@AH?b@CT]DCIKAo@@_@EO@KLAJBFCP@b@CNBGAA?BC?X@A@D@AEB@DEDNB@CGBD@E?F?EBB?H@H@GAEA?@D@C?BI@FXNGCB?EABBEKFCCNAFQaAoBFEFOLJPDf@AZGN@H?DGF[AM@[Cm@CKDEAGMW?INQ^EPIDB|@QFNP?PKNHVGF@HAF@`@GFGFHDCHKLEH@DBR?HI^GFBXAd@DVAN@HGF?LGT@FDH?NCD@JI@D?CJBHCLDFFh@KZAHCDBLKFBb@Gh@?TQTGFFPFRBVA\\K\\BJE^GPATC^FR?HCf@?HATMRE|@FREPF`@MRDz@CRCJIH@`@CXGR@TI\\ALCJGBc@Ka@AM@UCUEIA]M[F_CLCDCJ@^GR@F?PPTMn@Gb@BZIP[?IIMCg@CKBa@C_@Fa@FEFQbAEZPHIRBJAHGf@AHKF@NCN@FFHGZAJ?RFZADGHCb@@PGNIT@DCD?FKFC?BBABIB^CBACADHeBEDKEAEF?","resource_state":2},"trainer":false,"commute":false,"manual":false,"private":false,"visibility":"everyone","flagged":false,"gear_id":"b11099614","start_latlng":[37.75897233746946,-122.40972454659641],"end_latlng":[37.75666203349829,-122.40902658551931],"average_speed":4.279,"max_speed":7.894,"average_watts":113.7,"kilojoules":96.0,"device_watts":false,"has_heartrate":true,"average_heartrate":120.3,"max_heartrate":134.0,"heartrate_opt_out":false,"display_hide_heartrate_option":true,"elev_high":14.7,"elev_low":5.4,"upload_id":12091264128,"upload_id_str":"12091264128","external_id":"610122C0-51CD-4D0E-9B66-C533DCAB6FD5-activity.fit","from_accepted_tag":false,"pr_count":0,"total_photo_count":0,"has_kudoed":false,"suffer_score":2.0},{"resource_state":2,"athlete":{"id":2430215,"resource_state":1},"name":"Afternoon
+        Ride","distance":13482.0,"moving_time":3877,"elapsed_time":5779,"total_elevation_gain":188.5,"type":"Ride","sport_type":"Ride","workout_type":10,"id":11311531862,"start_date":"2024-05-01T21:47:07Z","start_date_local":"2024-05-01T14:47:07Z","timezone":"(GMT-08:00)
+        America/Los_Angeles","utc_offset":-25200.0,"location_city":null,"location_state":null,"location_country":"United
+        States","achievement_count":1,"kudos_count":2,"comment_count":0,"athlete_count":1,"photo_count":0,"map":{"id":"a11311531862","summary_polyline":"wjmeFnbcjVe@HCSNb@D]GCZUGJTCJDIHL?k@Cu@XDP{B_@SZsAA@b@c@HeABc@Z[@c@Yi@JkAS_@t@u@Va@OwANMb@s@Je@f@cBg@EXYL]]m@?IYi@Si@Jg@e@oAFeAj@gAOsBGSDAViAUa@P_@QuDh@JJ]FAIDW?XLFKGAG^WCIATG_AfAk@EKHG@wA^i@KMVmA{@p@@Yb@FK[SG?]q@LDpAQv@qB^dBe@KFRgAG~@IEATLGKKNDQCLLGMF@Y`@XmAKp@EDDC@KLJMMCTPMOCF@IBHCENAOJ?IEJAGADAWERJFEW@JQNHE\\L?QA?CTA@`@PZjBIb@nCtEKHIGKq@@DNBKC@GEH@IH@IMGXEt@T@UBTRATVzAGJNbA?vBMf@`@f@ENPf@JbB}A~C]j@Op@m@jBPxCCbBa@VPv@KJOnBXfE_@HSr@D`@|BJdD\\rCKxARbFIj@DtCd@hJKr@JTFdCD`GN^Ub@RjALjGHREd@Jl@`@NpAa@vBKf@B\\VvCKnFa@dCa@d@x@JlBP^@h@ZNLf@TxBh@`@zBKp@UpBJJ~AIhAR|CBhEf@nOAdCJ\\GdBaCd@Q`@XfKCpBPfC?vFTzCEZHlCDh@z@\\~A?zM}@tCAlBWX_@`@JfFM\\RFUz@P`A]fAFE`@cB~@_@Hi@x@cAl@Ob@YNDHIZkAhAw@dCLb@Bn@QZEtBKRXJBOZPc@BCz@Bc@@`ARJ\\y@N?YRFGANFWOKvAdAqBgAAVYe@FS^GIMT?AJu@AI[LqA\\kA?q@b@u@Lq@RKNy@r@iAdCqChCoAFm@yAPYSWaBk@{@K}AeCsDSmFYgBLw@jAD]QAYSEUs@F}C]SFUKm@Ho@f@QIYFQy@a@{BcDIwA@gBpAmJEq@RSMmAFEDa@M_BHiCa@uAcAAs@i@]B]_@OLs@GYs@CkAc@KIc@k@Kc@JIQOD_Bg@kD{EUE{@Za@ARMo@BiDj@e@K}DVaAOkHb@iANKVuABMXk@Le@OEPe@M_AP_@k@g@h@i@}Dm@iAGaAgB{C]Yc@yA?_BLMGcACLHkAMo@E{CIGDQYu@FO?y@IEHi@GYXg@GKFKQm@FO[w@JgBAs@MFCQA{AHWCkBG_ANy@QcDYq@JkBWkAYJUb@k@FKu@cA_@l@GHLEIHUId@FBELBKJNGD","resource_state":2},"trainer":false,"commute":false,"manual":false,"private":false,"visibility":"everyone","flagged":false,"gear_id":"b11099614","start_latlng":[37.7567667234689,-122.40951558575034],"end_latlng":[37.75667536072433,-122.40928759798408],"average_speed":3.477,"max_speed":21.366,"average_watts":121.8,"kilojoules":472.3,"device_watts":false,"has_heartrate":true,"average_heartrate":115.3,"max_heartrate":174.0,"heartrate_opt_out":false,"display_hide_heartrate_option":true,"elev_high":162.8,"elev_low":10.8,"upload_id":12082876036,"upload_id_str":"12082876036","external_id":"4959FDE8-188F-4CF0-BB1A-AD9D0B19FBD6-activity.fit","from_accepted_tag":false,"pr_count":0,"total_photo_count":0,"has_kudoed":false,"suffer_score":13.0}]'
+  recorded_at: Sat, 04 May 2024 04:50:48 GMT
+recorded_with: VCR 6.2.0

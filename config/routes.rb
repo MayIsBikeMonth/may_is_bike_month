@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   }
 
   root "landing#index"
+  get "/update_strava", to: "landing#update_strava"
 
   resource :account, only: %i[edit update]
 

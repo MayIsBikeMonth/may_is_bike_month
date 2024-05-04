@@ -106,6 +106,15 @@ const storeAnchorLocation = (event) => {
   return true
 }
 
+window.updateStravaInBackground = async function () {
+  const response = await fetch('/update_strava')
+  const updateResponse = await response.json()
+  console.log(updateResponse)
+  setInterval(function () {
+    window.updateStravaInBackground()
+  }, 650000) // Update strava in background every 10+ minutes
+}
+
 document.addEventListener('turbo:load', () => {
   scrollToStoredLocation()
 
@@ -122,4 +131,6 @@ document.addEventListener('turbo:load', () => {
 
   document.querySelectorAll('.expandSiblingsEllipse')
     .forEach(el => el.addEventListener('click', expandSiblingsEllipse))
+
+  window.updateStravaInBackground()
 })

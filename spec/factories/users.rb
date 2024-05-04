@@ -7,7 +7,7 @@ FactoryBot.define do
     trait :with_active_strava_token do
       transient { token { "Y" } }
 
-      strava_auth { {token:, refresh_token: "ZZZZZZ", expires_at: (Time.current + 1.day).to_i} }
+      strava_auth { {token:, refresh_token: "ZZZZZZ", expires_at: (Time.current + 1.day).to_i}.as_json }
     end
 
     factory :user_with_strava_token, traits: [:with_active_strava_token]
