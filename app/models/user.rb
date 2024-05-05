@@ -15,7 +15,7 @@
 #  sign_in_count       :integer          default(0), not null
 #  strava_auth         :jsonb
 #  strava_info         :jsonb
-#  strava_username     :string           default(""), not null
+#  strava_username     :string
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  strava_id           :string
@@ -31,6 +31,7 @@ class User < ApplicationRecord
   enum role: ROLE_ENUM
 
   has_many :competition_users
+  has_many :competition_activities, through: :competition_users
 
   before_validation :set_calculated_attributes
 
@@ -75,6 +76,10 @@ class User < ApplicationRecord
     def friendly_find!(str)
       friendly_find(str) || raise(ActiveRecord::RecordNotFound)
     end
+  end
+
+  def current_competition_user
+    competition_users.where(competition_id: Competition.current.id).last
   end
 
   def strava_auth_needs_refresh?

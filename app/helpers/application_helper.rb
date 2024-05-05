@@ -20,4 +20,18 @@ module ApplicationHelper
   def meters_to_miles(number)
     number / 1609.344
   end
+
+  def activity_dates_display(activity_dates)
+    if activity_dates.count > 1
+      short_date_string_gsub(activity_dates.first)
+    else
+      activity_dates.map { |d| short_date_string_gsub(d) }.to_sentence
+    end
+  end
+
+  private
+
+  def short_date_string_gsub(activity_date)
+    activity_date.gsub(/\A\d\d\d\d-/, "")
+  end
 end

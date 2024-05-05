@@ -135,6 +135,10 @@ class CompetitionActivity < ApplicationRecord
     activity_dates_strings.map { |d| Date.parse(d) }
   end
 
+  def strava_url
+    "https://www.strava.com/activities/#{strava_id}"
+  end
+
   def set_calculated_attributes
     self.strava_data = strava_data.except(*IGNORED_STRAVA_KEYS)
     self.attributes = self.class.strava_attrs_from_data(strava_data)

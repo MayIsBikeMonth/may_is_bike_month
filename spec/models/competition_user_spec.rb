@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe CompetitionUser, type: :model do
-  let(:empty_score_hash) { {dates: [], distance: 0, elevation: 0, ids: [], score: 0} }
+  let(:empty_score_hash) { {dates: [], distance: 0, elevation: 0, ids: []} }
 
   def empty_score_data(competition)
     periods = competition.periods.map
@@ -26,7 +26,7 @@ RSpec.describe CompetitionUser, type: :model do
     end
   end
 
-  describe "score_data" do
+  describe "calculated_score_data" do
     let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-5-1")) }
     let(:competition_user) { FactoryBot.create(:competition_user, competition:) }
     let(:start_at1) { Time.at(1714778082) }
@@ -46,15 +46,10 @@ RSpec.describe CompetitionUser, type: :model do
           dates: ["2024-05-03"],
           distance: 10_000.00,
           elevation: 200.0,
-          ids: [competition_activity1.id],
-          score: 1.0001
+          ids: [competition_activity1.id]
         }.with_indifferent_access
       end
       let(:activities_for_period) { competition_user.send(:activities_for_period, period1_data.slice(:start_date, :end_date)) }
-
-      #
-      # TODO: don't include score in the period hashes, it's unnecessary
-      #
 
       it "returns score_hash_for_activities" do
         # validate that it's an active record collection
@@ -64,6 +59,25 @@ RSpec.describe CompetitionUser, type: :model do
         expect(calculated_score_data.except(:periods)).to eq(period1_data.except(:start_date, :end_date, :ids))
         expect(calculated_score_data[:periods].first).to eq period1_data
       end
+    end
+  end
+
+  describe "scoring" do
+    let(:competition_user1) { FactoryBot.create(:competition_user) }
+    let(:competition) { competition_user1.competition }
+    let(:competition_user2) { FactoryBot.create(:competition_user, competition:) }
+    let!(:competition_activity1) { FactoryBot.create(:competition_activity, competition_user: competition_user1, distance_meters: 10000) }
+    let!(:competition_activity2) { FactoryBot.create(:competition_activity, competition_user: competition_user2, distance_meters: 20000) }
+    it "sets the score and orders by the score" do
+      competition_user1.reload.update_score_data!
+      expect(competition_user1.score_data).to be_present
+      competition_user2.reload.update_score_data!
+      expect(competition_user2.score_data).to be_present
+
+      expect(competition_user1.score).to be > 1.0
+      expect(competition_user2.score).to be > 1.0
+      expect(competition_user2.score_integer).to be > competition_user1.score_integer
+      expect(CompetitionUser.score_ordered.pluck(:id)).to eq([competition_user2.id, competition_user1.id])
     end
   end
 end

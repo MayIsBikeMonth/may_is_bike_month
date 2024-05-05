@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.only-dev-visible, .only-dev-visible-small {
+  border: 1px solid #9400d3;
+  background: rgba(148,0,211,.1);
+}
+.only-dev-visible-small {
+  font-size: 60%;
+}

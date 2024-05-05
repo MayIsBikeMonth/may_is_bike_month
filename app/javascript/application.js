@@ -134,11 +134,35 @@ window.showPreferredUnit = () => {
   document.querySelectorAll(`.unit-${hiddenUnit}`).forEach(el => el.classList.add('hidden'))
 }
 
-// SHOW Activities
-window.toggleActivities = (event) => {
-  console.log(event)
-  // TODO: Make this work
-  // document.querySelectorAll(".activityList").forEach(el => el.classList.toggle("hidden"))
+const currentActivityVisibility = () => {
+  let activityVisibility = localStorage.getItem('activityVisibility')
+  if (activityVisibility === null || activityVisibility !== 'show-all') {
+    activityVisibility = 'hidden'
+  } else {
+    activityVisibility = 'show-all'
+  }
+  localStorage.setItem('activityVisibility', activityVisibility)
+  return activityVisibility
+}
+
+const showActivityVisibility = () => {
+  if (currentActivityVisibility() === 'hidden') {
+    document.querySelectorAll('.activityList').forEach(el => el.classList.add('hidden'))
+    document.querySelectorAll('.toggleActivities-shown').forEach(el => el.classList.add('hidden'))
+    document.querySelectorAll('.toggleActivities-hidden').forEach(el => el.classList.remove('hidden'))
+  } else {
+    document.querySelectorAll('.activityList, .toggleActivities-shown').forEach(el => el.classList.remove('hidden'))
+    document.querySelectorAll('.toggleActivities-hidden').forEach(el => el.classList.add('hidden'))
+    document.querySelectorAll('.toggleActivities-shown').forEach(el => el.classList.remove('hidden'))
+  }
+}
+
+const toggleActivities = () => {
+  document.querySelectorAll('.activityList').forEach(el => el.classList.toggle('hidden'))
+  const newVisibility = currentActivityVisibility() === 'hidden' ? 'show-all' : 'hidden'
+  localStorage.setItem('activityVisibility', newVisibility)
+  // console.log(newVisibility, currentActivityVisibility())
+  showActivityVisibility()
 }
 
 // Make a request to internal endpoint that updates Strava
@@ -148,7 +172,9 @@ window.updateStravaInBackground = async function () {
   console.log(updateResponse)
   setInterval(function () {
     window.updateStravaInBackground()
-  }, 650000) // ~ 10 minutes
+    // Manual page reload
+    window.location.reload()
+  }, 600000) // ~ 10 minutes
 
   // TODO: update the page based on updates
 }
@@ -176,7 +202,8 @@ document.addEventListener('turbo:load', () => {
   // TODO: can these all be defined not on the window since we have eslint?
 
   // Toggle activities
-  document.querySelector('#toggleIndividualActivities')?.addEventListener('click', window.toggleActivities)
+  showActivityVisibility()
+  document.querySelector('#toggleIndividualActivities')?.addEventListener('click', toggleActivities)
 
   // Add the click selector to the toggle button
   document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))

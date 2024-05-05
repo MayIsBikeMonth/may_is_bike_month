@@ -19,7 +19,9 @@ class Competition < ApplicationRecord
     class_name: "CompetitionUser"
   has_many :competition_users_excluded, -> { excluded_from_competition },
     class_name: "CompetitionUser"
-  has_many :competition_activities, -> { included_in_competition }, through: :competition_users
+  has_many :competition_activities, through: :competition_users
+  has_many :competition_activities_included, -> { included_in_competition },
+    through: :competition_users, class_name: "CompetitionActivity"
 
   before_validation :set_calculated_attributes
 

@@ -17,6 +17,11 @@ class UpdateCompetitionUserJob < ApplicationJob
 
   def perform(id)
     competition_user = CompetitionUser.find(id)
+    if competition_user.excluded_from_competition?
+      # Added this constraint, because if "included_in_competition" changes,
+      # it doesn't correctly re-enqueue updating
+      raise "Competition user isn't included in competition!"
+    end
     StravaRequest.update_competition_user_activities(competition_user)
     competition_user.reload.update_score_data!
   end

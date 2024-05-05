@@ -25,7 +25,7 @@ RSpec.describe Competition, type: :model do
     let!(:competition_activity1) { FactoryBot.create(:competition_activity, competition_user:, start_at: competition.start_date.to_time + 3.days) }
     let!(:competition_activity2) { FactoryBot.create(:competition_activity, competition_user:, strava_type: "Run", start_at: competition.start_date.to_time + 4.days) }
     it "has matching activities" do
-      expect(competition.reload.competition_activities.pluck(:id)).to match_array([competition_activity1.id])
+      expect(competition.reload.competition_activities_included.pluck(:id)).to match_array([competition_activity1.id])
       competition_user_excluded = FactoryBot.create(:competition_user, included_in_competition: false, competition:)
       expect(competition.competition_users.pluck(:id)).to match_array([competition_user.id, competition_user_excluded.id])
       expect(competition.competition_users_included.pluck(:id)).to match_array([competition_user.id])

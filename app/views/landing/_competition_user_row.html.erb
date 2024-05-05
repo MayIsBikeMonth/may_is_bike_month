@@ -27,6 +27,33 @@
         <%= number_display(score_period["dates"].count) %>
       </div>
     </div>
+    <% if score_period["ids"].count > 0 %>
+      <ul class="list-disc pl-3.5 pt-1 hidden activityList">
+        <% score_period["ids"].each do |id| %>
+          <% competition_activity = competition_user.competition_activities.find(id) %>
+          <li class="text-sm mb-1 leading-none">
+            <span class="text-gray-500 text-xs">
+              <%= activity_dates_display(competition_activity.activity_dates_strings) %>
+            </span>
+            <a
+              href=<%= competition_activity.strava_url %>
+              target="_blank"
+              class="text-blue-800 underline pr-1"
+            >
+              <%= competition_activity.display_name %>
+            </a>
+            <span class="text-gray-500 text-xs">
+              <span class="hidden unit-metric">
+                <%= number_display(competition_activity.distance_meters / 1000, round_to: 1) %>
+              </span>
+              <span class="hidden unit-imperial">
+                <%= number_display(meters_to_miles(competition_activity.distance_meters), round_to: 1) %>
+              </span>
+            </span>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
   </td>
 <% end %>
 
@@ -49,7 +76,7 @@
       </span>
     </div>
     <div class="px-1 pt-2 text-right">
-      <%= number_display(meters_to_miles(competition_user.score_data["dates"].count)) %>
+      <%= number_display(competition_user.score_data["dates"].count) %>
     </div>
   </div>
 </td>
