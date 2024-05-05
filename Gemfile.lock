@@ -104,6 +104,8 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.5.1)
+    dockerfile-rails (1.6.10)
+      rails (>= 3.0.0)
     dotenv (3.1.0)
     dotenv-rails (3.1.0)
       dotenv (= 3.1.0)
@@ -449,6 +451,7 @@ DEPENDENCIES
   bootsnap (>= 1.1.0)
   cssbundling-rails
   devise
+  dockerfile-rails (>= 1.6)
   dotenv-rails
   factory_bot_rails
   faraday
