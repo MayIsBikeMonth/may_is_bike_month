@@ -1,7 +1,11 @@
 <h1 class="text-xl mb-4">
   <%= @competition.display_name %>
 
-  <%# TODO: add TOGGLE ACTIVITIES block %>
+  <a id="toggleIndividualActivities" class="text-blue-800 underline cursor-pointer text-sm ml-2">
+    <span class="toggleActivities-hidden">Show</span>
+    <span class="toggleActivities-shown hidden">Hide</span>
+    activities
+  </a>
 </h1>
 
 <style>
