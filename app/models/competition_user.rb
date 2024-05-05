@@ -5,8 +5,9 @@
 #  id                      :bigint           not null, primary key
 #  included_activity_types :jsonb
 #  included_in_competition :boolean          default(FALSE), not null
-#  score                   :float
+#  score                   :decimal(, )
 #  score_data              :jsonb
+#  score_integer           :integer
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  competition_id          :bigint
@@ -31,19 +32,20 @@ class CompetitionUser < ApplicationRecord
   scope :included_in_current_competition, -> {
     included_in_competition.joins(:competition).where(competitions: {current: true})
   }
-  scope :score_ordered, -> { reorder(score: :desc) }
+  scope :score_ordered, -> { reorder(score_integer: :desc) }
 
   delegate :display_name, to: :user, allow_nil: true
 
   class << self
     def score_for(dates:, distance:, **)
       return 0 if dates.none?
-      (dates.count + (1 / distance.to_d)).to_f
+      (dates.count + 1 - (1 / distance.to_d))
     end
 
     def score_hash_for_activities(competition_activities, skip_ids: false)
-      dde_hash = dates_distance_elevation(competition_activities, skip_ids:)
-      dde_hash.merge(score: score_for(**dde_hash))
+      # dde_hash = dates_distance_elevation(competition_activities, skip_ids:)
+      # dde_hash.merge(score: score_for(**dde_hash))
+      dates_distance_elevation(competition_activities, skip_ids:)
     end
 
     private
@@ -77,11 +79,14 @@ class CompetitionUser < ApplicationRecord
     else
       included_activity_types.map(&:strip).reject(&:blank?)
     end
-    self.score = score_data&.dig("score") || 0
+    self.score = score_from_score_data
+    # Ordering and comparing small decimal differences has some surprises. Convert to integers
+    self.score_integer = score * 100_000
   end
 
   def update_score_data!
     update(score_data: calculated_score_data)
+    reload
   end
 
   def calculated_score_data
@@ -91,6 +96,11 @@ class CompetitionUser < ApplicationRecord
   end
 
   private
+
+  def score_from_score_data
+    return 0 if score_data&.dig("dates").blank?
+    self.class.score_for(dates: score_data["dates"], distance: score_data["distance"])
+  end
 
   def period_score_hash(period)
     self.class.score_hash_for_activities(activities_for_period(period))

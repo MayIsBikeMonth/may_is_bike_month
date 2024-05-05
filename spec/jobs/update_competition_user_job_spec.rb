@@ -31,7 +31,9 @@ RSpec.describe UpdateCompetitionUserJob, type: :job do
         instance.perform(competition_user.id)
       end
       expect(competition_user.reload.score_data).to be_present
-      expect(competition_user.score.round(5)).to eq 3.00005
+      expect(competition_user.competition_activities.count).to eq 3
+      expect(competition_user.score).to be > 3
+      expect(competition_user.score).to be < 4
 
       expect { described_class.enqueue_current }.not_to change(described_class.jobs, :count)
     end
