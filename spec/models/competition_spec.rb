@@ -27,7 +27,8 @@ RSpec.describe Competition, type: :model do
     it "has matching activities" do
       expect(competition.reload.competition_activities.pluck(:id)).to match_array([competition_activity1.id])
       competition_user_excluded = FactoryBot.create(:competition_user, included_in_competition: false, competition:)
-      expect(competition.competition_users.pluck(:id)).to eq([competition_user.id])
+      expect(competition.competition_users.pluck(:id)).to match_array([competition_user.id, competition_user_excluded.id])
+      expect(competition.competition_users_included.pluck(:id)).to match_array([competition_user.id])
       expect(competition.competition_users_excluded.pluck(:id)).to eq([competition_user_excluded.id])
     end
   end
