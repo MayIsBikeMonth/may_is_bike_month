@@ -10,11 +10,11 @@ console_command = '/rails/bin/rails console'
 [build]
 
 [deploy]
-  release_command = './bin/rails db:prepare'
+  release_command = "./bin/rails db:prepare"
 
 [processes]
-  app = './bin/rails server'
-  sidekiq = 'bundle exec sidekiq'
+  app = "./bin/rails server"
+  sidekiq = "bundle exec sidekiq"
 
 [http_service]
   internal_port = 8080
