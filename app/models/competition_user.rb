@@ -17,8 +17,9 @@ class CompetitionUser < ApplicationRecord
   belongs_to :competition
   belongs_to :user
 
-  # ... maybe shouldn't be scoped, this will probably trick me in the future
-  has_many :competition_activities, -> { included_in_competition }
+  has_many :competition_activities
+  has_many :competition_activities_included, -> { included_in_competition },
+    class_name: "CompetitionActivity"
   has_many :competition_activities_excluded, -> { excluded_from_competition },
     class_name: "CompetitionActivity"
 
@@ -27,6 +28,9 @@ class CompetitionUser < ApplicationRecord
 
   scope :included_in_competition, -> { where(included_in_competition: true) }
   scope :excluded_from_competition, -> { where(included_in_competition: false) }
+  scope :included_in_current_competition, -> {
+    included_in_competition.joins(:competition).where(competitions: {current: true})
+  }
 
   delegate :display_name, to: :user, allow_nil: true
 
@@ -80,7 +84,7 @@ class CompetitionUser < ApplicationRecord
   end
 
   def calculated_score_data
-    self.class.score_hash_for_activities(competition_activities, skip_ids: true)
+    self.class.score_hash_for_activities(competition_activities_included, skip_ids: true)
       .merge(periods: competition.periods.map { |period| period.merge(period_score_hash(period)) })
       .as_json
   end
@@ -92,7 +96,7 @@ class CompetitionUser < ApplicationRecord
   end
 
   def activities_for_period(period)
-    competition_activities.matching_dates_strings(
+    competition_activities_included.matching_dates_strings(
       Competition.dates_strings(period[:start_date], period[:end_date])
     )
   end

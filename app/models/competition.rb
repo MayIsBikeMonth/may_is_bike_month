@@ -14,8 +14,9 @@
 class Competition < ApplicationRecord
   DEFAULT_ACTIVITY_TYPES = %w[Ride Velomobile Handcycle].freeze
 
-  # ... maybe shouldn't be scoped, this will probably trick me in the future
-  has_many :competition_users, -> { included_in_competition }
+  has_many :competition_users
+  has_many :competition_users_included, -> { included_in_competition },
+    class_name: "CompetitionUser"
   has_many :competition_users_excluded, -> { excluded_from_competition },
     class_name: "CompetitionUser"
   has_many :competition_activities, -> { included_in_competition }, through: :competition_users

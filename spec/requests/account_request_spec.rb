@@ -3,10 +3,10 @@
 require "rails_helper"
 
 RSpec.describe "/account", type: :request do
-  let(:base_url) { "/account" }
+  let(:base_path) { "/account" }
 
   it "redirects" do
-    get "#{base_url}/edit"
+    get "#{base_path}/edit"
     expect(response).to redirect_to root_url
   end
 
@@ -15,7 +15,7 @@ RSpec.describe "/account", type: :request do
 
     describe "edit" do
       it "renders" do
-        get "#{base_url}/edit"
+        get "#{base_path}/edit"
         expect(response.code).to eq "200"
         expect(response).to render_template("accounts/edit")
       end
