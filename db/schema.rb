@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_30_230045) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_05_190603) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -75,7 +75,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_30_230045) do
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
     t.integer "role", default: 0
-    t.string "strava_username", default: "", null: false
+    t.string "strava_username"
     t.string "strava_id"
     t.string "display_name"
     t.text "image_url"
@@ -83,7 +83,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_30_230045) do
     t.jsonb "strava_auth"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["strava_username"], name: "index_users_on_strava_username", unique: true
   end
 
 end

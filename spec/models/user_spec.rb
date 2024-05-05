@@ -7,6 +7,15 @@ RSpec.describe User, type: :model do
     it "is valid" do
       expect(user).to be_valid
     end
+    context "no strava username" do
+      let(:user1) { FactoryBot.create(:user, strava_username: "") }
+      let(:user2) { FactoryBot.create(:user, strava_username: "") }
+      it "is valid" do
+        # There was a pesky db constraint, sanity check
+        expect(user1).to be_valid
+        expect(user2).to be_valid
+      end
+    end
     context "user_with_strava_token" do
       let(:user) { FactoryBot.create(:user_with_strava_token) }
       it "is valid" do

@@ -15,7 +15,7 @@
 #  sign_in_count       :integer          default(0), not null
 #  strava_auth         :jsonb
 #  strava_info         :jsonb
-#  strava_username     :string           default(""), not null
+#  strava_username     :string
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  strava_id           :string

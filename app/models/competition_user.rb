@@ -31,6 +31,7 @@ class CompetitionUser < ApplicationRecord
   scope :included_in_current_competition, -> {
     included_in_competition.joins(:competition).where(competitions: {current: true})
   }
+  scope :score_ordered, -> { reorder(score: :desc) }
 
   delegate :display_name, to: :user, allow_nil: true
 
