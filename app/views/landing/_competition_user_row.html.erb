@@ -1,3 +1,56 @@
+
 <th scope="row" class="px-2 py-1 font-medium whitespace-nowrap border-l-2 border-r-2">
   <%= link_to competition_user.display_name, strava_user_url(competition_user.user), class: "underline" %>
 </th>
+
+<% competition_user.score_data["periods"].each_with_index do |score_period, inx| %>
+  <% # TODO: if the date is before the period.start_date, skip rendering! %>
+
+  <td id="cu-<%= competition_user.id %>_period-<%= inx %>" class="border-r-2 align-top">
+    <div class="grid grid-cols-3">
+      <div class="px-1 border-r py-1 elevation-cell text-right">
+        <small class="hidden unit-metric">
+          <%= number_display(score_period["elevation"]) %>
+        </small>
+        <small class="hidden unit-imperial">
+          <%= number_display(meters_to_feet(score_period["elevation"])) %>
+        </small>
+      </div>
+      <div class="px-1 border-r py-1 text-right">
+        <span class="hidden unit-metric">
+          <%= number_display(score_period["distance"] / 1000, round_to: 1) %>
+        </span>
+        <span class="hidden unit-imperial text-right">
+          <%= number_display(meters_to_miles(score_period["distance"]), round_to: 1) %>
+        </span>
+      </div>
+      <div class="px-1 py-1 text-right">
+        <%= number_display(score_period["dates"].count) %>
+      </div>
+    </div>
+  </td>
+<% end %>
+
+<td scope="col" class="text-black font-bold border-r-2 border-b-2">
+  <div class="grid grid-cols-3">
+    <div class="px-1 border-r pt-2 elevation-cell text-right">
+      <small class="hidden unit-metric">
+        <%= number_display(competition_user.score_data["elevation"]) %>
+      </small>
+      <small class="hidden unit-imperial">
+        <%= number_display(meters_to_feet(competition_user.score_data["elevation"])) %>
+      </small>
+    </div>
+    <div class="px-1 border-r pt-2 text-right">
+      <span class="hidden unit-metric">
+        <%= number_display(competition_user.score_data["distance"] / 1000, round_to: 1) %>
+      </span>
+      <span class="hidden unit-imperial">
+        <%= number_display(meters_to_miles(competition_user.score_data["distance"]), round_to: 1) %>
+      </span>
+    </div>
+    <div class="px-1 pt-2 text-right">
+      <%= number_display(meters_to_miles(competition_user.score_data["dates"].count)) %>
+    </div>
+  </div>
+</td>
