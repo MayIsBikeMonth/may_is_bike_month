@@ -14,7 +14,7 @@ Devise.setup do |config|
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
-  config.secret_key = ENV["DEVISE_SECRET_KEY"]
+  config.secret_key = ENV.fetch("DEVISE_SECRET_KEY", "fake")
 
   # ==> Controller configuration
   # Configure the parent class to the devise controllers.
@@ -24,7 +24,7 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = "example@mayisbikemonth.com"
+  config.mailer_sender = "example@mayisbikemonth.org"
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'
@@ -126,7 +126,7 @@ Devise.setup do |config|
   config.stretches = Rails.env.test? ? 1 : 12
 
   # Set up a pepper to generate the hashed password.
-  config.pepper = ENV["DEVISE_PEPPER"]
+  config.pepper = ENV.fetch("DEVISE_PEPPER", "fake")
 
   # Send a notification to the original email when the user's email is changed.
   # config.send_email_changed_notification = false
@@ -271,7 +271,7 @@ Devise.setup do |config|
   # ==> OmniAuth
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
-  config.omniauth :strava, ENV["STRAVA_CLIENT_ID"], ENV["STRAVA_SECRET"], scope: "profile:read_all,activity:read_all"
+  config.omniauth :strava, ENV.fetch("STRAVA_CLIENT_ID", "fake"), ENV.fetch("STRAVA_SECRET", "fake"), scope: "profile:read_all,activity:read_all"
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
