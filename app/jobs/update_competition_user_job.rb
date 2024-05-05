@@ -10,7 +10,8 @@ class UpdateCompetitionUserJob < ApplicationJob
     # If an update isn't due, don't enqueue more jobs
     return true unless StravaRequest.update_due?
 
-    competition.competition_users.pluck(:id)
+    # Maybe this should enqueue any without a recent request?
+    CompetitionUser.included_in_current_competition.pluck(:id)
       .each { |id| UpdateCompetitionUserJob.perform_async(id) }
   end
 
