@@ -53,8 +53,8 @@ class CompetitionUser < ApplicationRecord
       elsif competition_activities.is_a?(ActiveRecord::Relation) # Active record collection
         {
           dates: competition_activities.pluck(:activity_dates_strings).flatten.uniq,
-          distance: competition_activities.sum(:distance_meters),
-          elevation: competition_activities.sum(:elevation_meters)
+          distance: competition_activities.sum(:distance_meters), # skip _meters, for space saving
+          elevation: competition_activities.sum(:elevation_meters) # skip _meters, for space saving
         }.merge(skip_ids ? {} : {ids: competition_activities.pluck(:id)})
       else
         raise "competition_activities must be an ActiveRecord::Relation"

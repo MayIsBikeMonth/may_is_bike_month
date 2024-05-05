@@ -17,7 +17,7 @@
     <% end %>
   </head>
 
-  <body>
+  <body class="bg-white antialiased">
     <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end mt-1 mb-2">
       <% if current_user.present? %>
         <li>Hi <%= current_user.display_name %></li>
@@ -30,7 +30,8 @@
         </li>
       <% end %>
     </ul>
-
-    <%= yield %>
+    <div class="px-2 xl:px-4 pb-20 pt-4">
+      <%= yield %>
+    </div>
   </body>
 </html>

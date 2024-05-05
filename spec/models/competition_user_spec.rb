@@ -51,6 +51,11 @@ RSpec.describe CompetitionUser, type: :model do
         }.with_indifferent_access
       end
       let(:activities_for_period) { competition_user.send(:activities_for_period, period1_data.slice(:start_date, :end_date)) }
+
+      #
+      # TODO: don't include score in the period hashes, it's unnecessary
+      #
+
       it "returns score_hash_for_activities" do
         # validate that it's an active record collection
         expect(activities_for_period.pluck(:id)).to eq([competition_activity1.id])

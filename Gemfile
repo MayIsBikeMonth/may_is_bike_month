@@ -77,4 +77,4 @@ gem "stackprof", require: false # Required by flamegraph
 gem "rack-mini-profiler", require: false # If you can't see it you can't make it better
 gem "bootsnap", ">= 1.1.0", require: false # Reduces boot times through caching; required in config/boot.rb
 
-gem "dockerfile-rails", ">= 1.6", :group => :development
+gem "dockerfile-rails", ">= 1.6", group: :development

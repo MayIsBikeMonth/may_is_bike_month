@@ -1,6 +1,99 @@
-welcome welcome welcome!
+<h1 class="text-xl mb-4">
+  <%= @competition.display_name %>
 
-<% @competition_users.each do |competition_user| %>
-  <h4><%= competition_user.display_name %></h4>
-  <%= pretty_print_json(competition_user.score_data) %>
+  <%# TODO: add TOGGLE ACTIVITIES block %>
+</h1>
+
+<style>
+  .score-cell { display: none; }
+</style>
+<div class="relative overflow-x-scroll py-4 -mx-2 xl:-mx-1">
+  <div class="relative max-w-full min-w-[1300px] px-1">
+    <table class="w-full text-sm text-left text-gray-800" id="competition-table">
+      <thead class="text-xs text-gray-500 bg-gray-50 border-2">
+        <tr>
+          <th scope="col" class="border-r-2"></th>
+          <% @competition.periods.each do |period| %>
+            <th class="border-r-2">
+              <span class="block text-md text-center py-2">
+                <%= l Date.parse(period[:start_date]), format: :month_date %> - <%= l Date.parse(period[:end_date]), format: :month_date %>
+              </span>
+              <div class="grid grid-cols-3 min-w-[180px]">
+                <div class="px-1 pb-1 border-r elevation-cell text-center">
+                  ⬆️
+                  <span class="font-normal">
+                    <span class="hidden unit-metric">m</span><span class="hidden unit-imperial">feet</span>
+                  </span>
+                </div>
+                <div class="px-1 pb-1 border-r text-center">
+                  ➡️
+                  <span class="font-normal">
+                    <span class="hidden unit-metric">km</span><span class="hidden unit-imperial">miles</span>
+                  </span>
+                </div>
+                <div class="px-1 pb-1 text-center">Days</div>
+              </div>
+            </th>
+          <% end %>
+          <th scope="col" class="text-black">
+            <span class="block text-md text-center py-2">
+              Total
+            </span>
+            <div class="grid grid-cols-3 min-w-[200px]">
+              <div class="px-1 pb-1 border-r elevation-cell text-center">
+                ⬆️
+                <span class="font-normal">
+                  <span class="hidden unit-metric">m</span><span class="hidden unit-imperial">feet</span>
+                </span>
+              </div>
+              <div class="px-1 pb-1 border-r text-center">
+                ➡️
+                <span class="font-normal">
+                  <span class="hidden unit-metric">km</span><span class="hidden unit-imperial">miles</span>
+                </span>
+              </div>
+              <div class="px-1 pb-1 text-center">Days</div>
+            </div>
+          </th>
+          <th scope="col" class="score-cell border-l">
+            <span class="block pt-7">Score</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @competition_users.each_with_index do |competition_user, index| %>
+          <tr
+            id="competition_user-<%= competition_user.id %>"
+            class="border-r-2 border-b-2 <% index % 2 == 1 ? 'bg-gray-50' : 'bg-white' %>"
+          >
+            <%= render partial:"competition_user_row", locals: {competition_user: competition_user} %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="mt-10">
+  <h4 class="text-lg">
+    <span class="hidden unit-metric">
+      Distance and elevation are in metric.
+      <a class="underline cursor-pointer toggleUnitPreference">
+        Switch to imperial
+      </a>
+    </span>
+    <span class="hidden unit-imperial">
+      Distance and elevation are in imperial.
+      <a class="underline cursor-pointer toggleUnitPreference">Switch to metric</a>
+    </span>
+  </h4>
+</div>
+
+<% if StravaRequest.most_recent_update.present? %>
+  <small id="strava_requests_updated_at">
+    Updated at:
+    <span class="convertTime">
+      <%= l StravaRequest.most_recent_update, format: :convert_time %>
+    </span>
+  </small>
 <% end %>
