@@ -161,7 +161,7 @@ const toggleActivities = () => {
   document.querySelectorAll('.activityList').forEach(el => el.classList.toggle('hidden'))
   const newVisibility = currentActivityVisibility() === 'hidden' ? 'show-all' : 'hidden'
   localStorage.setItem('activityVisibility', newVisibility)
-  console.log(newVisibility, currentActivityVisibility())
+  // console.log(newVisibility, currentActivityVisibility())
   showActivityVisibility()
 }
 
@@ -172,7 +172,9 @@ window.updateStravaInBackground = async function () {
   console.log(updateResponse)
   setInterval(function () {
     window.updateStravaInBackground()
-  }, 650000) // ~ 10 minutes
+    // Manual page reload
+    window.location.reload()
+  }, 600000) // ~ 10 minutes
 
   // TODO: update the page based on updates
 }
