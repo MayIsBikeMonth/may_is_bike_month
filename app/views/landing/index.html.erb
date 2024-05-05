@@ -61,7 +61,14 @@
         </tr>
       </thead>
       <tbody>
-
+        <% @competition_users.each_with_index do |competition_user, index| %>
+          <tr
+            id="competition_user-<%= competition_user.id %>"
+            class="border-r-2 border-b-2 <% index % 2 == 1 ? 'bg-gray-50' : 'bg-white' %>"
+          >
+            <%= render partial:"competition_user_row", locals: {competition_user: competition_user} %>
+          </tr>
+        <% end %>
       </tbody>
     </table>
   </div>

@@ -106,37 +106,37 @@ const storeAnchorLocation = (event) => {
   return true
 }
 
-
 // MIBM SPECIFIC Functions
 
 window.currentUnitPreference = () => {
-  let unitPreference = localStorage.getItem("unitPreference")
-  if (unitPreference === null || unitPreference !== "metric") {
-    unitPreference = "imperial"
+  let unitPreference = localStorage.getItem('unitPreference')
+  if (unitPreference === null || unitPreference !== 'metric') {
+    unitPreference = 'imperial'
   } else {
-    unitPreference = "metric"
+    unitPreference = 'metric'
   }
-  localStorage.setItem("unitPreference", unitPreference)
+  localStorage.setItem('unitPreference', unitPreference)
   return unitPreference
 }
 
 window.toggleUnitPreference = (event = false) => {
   event && event.preventDefault()
-  const newUnit = currentUnitPreference() === "metric" ? "imperial" : "metric"
-  localStorage.setItem("unitPreference", newUnit)
-  showPreferredUnit()
+  const newUnit = window.currentUnitPreference() === 'metric' ? 'imperial' : 'metric'
+  localStorage.setItem('unitPreference', newUnit)
+  window.showPreferredUnit()
   // console.log(newUnit)
 }
 
 window.showPreferredUnit = () => {
-  const unit = currentUnitPreference()
+  const unit = window.currentUnitPreference()
   document.querySelectorAll(`.unit-${unit}`).forEach(el => el.classList.remove('hidden'))
-  const hiddenUnit = unit === "metric" ? "imperial" : "metric"
+  const hiddenUnit = unit === 'metric' ? 'imperial' : 'metric'
   document.querySelectorAll(`.unit-${hiddenUnit}`).forEach(el => el.classList.add('hidden'))
 }
 
 // SHOW Activities
-toggleActivities = (_event) => {
+window.toggleActivities = (event) => {
+  console.log(event)
   // TODO: Make this work
   // document.querySelectorAll(".activityList").forEach(el => el.classList.toggle("hidden"))
 }
@@ -173,10 +173,12 @@ document.addEventListener('turbo:load', () => {
   // Function to loop update Strava
   window.updateStravaInBackground()
 
+  // TODO: can these all be defined not on the window since we have eslint?
+
   // Toggle activities
-  document.querySelector('#toggleIndividualActivities')?.addEventListener("click", toggleActivities)
+  document.querySelector('#toggleIndividualActivities')?.addEventListener('click', window.toggleActivities)
 
   // Add the click selector to the toggle button
-  document.querySelectorAll("a.toggleUnitPreference").forEach(el => el.addEventListener("click", toggleUnitPreference))
-  showPreferredUnit()
+  document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
+  window.showPreferredUnit()
 })
