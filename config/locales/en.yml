@@ -29,3 +29,9 @@
 
 en:
   hello: "Hello world"
+  date:
+    formats:
+      month_date: "%b %-d"
+  time:
+    formats:
+      convert_time: "%FT%T%z"
