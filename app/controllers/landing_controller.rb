@@ -2,6 +2,7 @@ class LandingController < ApplicationController
   def index
     @competition = Competition.current || Competition.create(start_date: Date.parse("2024-5-1"))
     @competition_users = @competition.competition_users_included.includes(:user).score_ordered
+    @page_title = "May is Bike Month"
   end
 
   def update_strava
