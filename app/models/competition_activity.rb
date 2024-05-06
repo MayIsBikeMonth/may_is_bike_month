@@ -35,6 +35,7 @@ class CompetitionActivity < ApplicationRecord
 
   scope :included_in_competition, -> { where(included_in_competition: true) }
   scope :excluded_from_competition, -> { where(included_in_competition: false) }
+  scope :start_ordered, -> { reorder(start_at: :asc) }
 
   delegate :competition, to: :competition_user, allow_nil: true
 

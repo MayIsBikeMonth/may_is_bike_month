@@ -58,7 +58,7 @@ class CompetitionUser < ApplicationRecord
           dates: competition_activities.pluck(:activity_dates_strings).flatten.uniq,
           distance: competition_activities.sum(:distance_meters), # skip _meters, for space saving
           elevation: competition_activities.sum(:elevation_meters) # skip _meters, for space saving
-        }.merge(skip_ids ? {} : {ids: competition_activities.pluck(:id)})
+        }.merge(skip_ids ? {} : {ids: competition_activities.start_ordered.map(&:id)}) # Order IDs so they show up ordered
       else
         raise "competition_activities must be an ActiveRecord::Relation"
       end
