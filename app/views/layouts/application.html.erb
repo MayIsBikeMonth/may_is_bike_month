@@ -15,6 +15,9 @@
       <link href="/favicon.ico" rel="icon" sizes="192x192">
       <link rel="apple-touch-icon-precomposed apple-touch-icon" href="/apple-touch-icon.png" />
     <% end %>
+    <% unless display_dev_info? %>
+      <style>.only-dev-visible {display: none !important;} </style>
+    <% end %>
   </head>
   <body class="bg-white antialiased">
   <!--

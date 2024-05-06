@@ -37,5 +37,38 @@ RSpec.describe UpdateCompetitionUserJob, type: :job do
 
       expect { described_class.enqueue_current }.not_to change(described_class.jobs, :count)
     end
+
+    context "data exists" do
+      let(:time) { Time.current - 5.minutes }
+      it "doesn't update" do
+        expect(competition_user.score).to eq 0
+        VCR.use_cassette("update_competition_user_job", match_requests_on: [:path]) do
+          instance.perform(competition_user.id)
+        end
+        competition_user.reload.update_column(:updated_at, time)
+
+        VCR.use_cassette("update_competition_user_job", match_requests_on: [:path]) do
+          instance.perform(competition_user.id)
+        end
+        expect(competition_user.reload.updated_at).to be_within(1).of(time)
+      end
+    end
+
+    context "data changes slightly" do
+      let(:time) { Time.current - 5.minutes }
+      it "doesn't update" do
+        expect(competition_user.score).to eq 0
+        VCR.use_cassette("update_competition_user_job", match_requests_on: [:path]) do
+          instance.perform(competition_user.id)
+        end
+        competition_user.reload.update_columns(updated_at: time, score: 0)
+
+        VCR.use_cassette("update_competition_user_job", match_requests_on: [:path]) do
+          instance.perform(competition_user.id)
+        end
+        expect(competition_user.reload.updated_at).to be_within(1).of(Time.current)
+        expect(competition_user.score).to be > 3
+      end
+    end
   end
 end
