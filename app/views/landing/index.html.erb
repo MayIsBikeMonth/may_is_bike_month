@@ -70,7 +70,9 @@
             id="competition_user-<%= competition_user.id %>"
             class="border-r-2 border-b-2 <% index % 2 == 1 ? 'bg-gray-50' : 'bg-white' %>"
           >
-            <%= render partial:"competition_user_row", locals: {competition_user: competition_user} %>
+            <% cache competition_user do %>
+              <%= render partial:"competition_user_row", locals: {competition_user: competition_user} %>
+            <% end %>
           </tr>
         <% end %>
       </tbody>
