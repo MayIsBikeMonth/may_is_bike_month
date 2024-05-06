@@ -32,7 +32,7 @@ class CompetitionUser < ApplicationRecord
   scope :included_in_current_competition, -> {
     included_in_competition.joins(:competition).where(competitions: {current: true})
   }
-  scope :score_ordered, -> { reorder(score_integer: :desc) }
+  scope :score_ordered, -> { reorder(score: :desc) }
 
   delegate :display_name, to: :user, allow_nil: true
 
@@ -81,7 +81,7 @@ class CompetitionUser < ApplicationRecord
     end
     self.score = score_from_score_data
     # Ordering and comparing small decimal differences has some surprises. Convert to integers
-    self.score_integer = score * 100_000
+    self.score_integer = score * 100_000_000
   end
 
   def update_score_data!
