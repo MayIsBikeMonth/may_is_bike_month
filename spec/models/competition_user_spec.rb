@@ -76,7 +76,6 @@ RSpec.describe CompetitionUser, type: :model do
 
       expect(competition_user1.score).to be > 1.0
       expect(competition_user2.score).to be > 1.0
-      expect(competition_user2.score_integer).to be > competition_user1.score_integer
       expect(CompetitionUser.score_ordered.pluck(:id)).to eq([competition_user2.id, competition_user1.id])
     end
   end

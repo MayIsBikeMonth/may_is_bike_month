@@ -7,7 +7,6 @@
 #  included_in_competition :boolean          default(FALSE), not null
 #  score                   :decimal(, )
 #  score_data              :jsonb
-#  score_integer           :integer
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  competition_id          :bigint
@@ -80,8 +79,6 @@ class CompetitionUser < ApplicationRecord
       included_activity_types.map(&:strip).reject(&:blank?)
     end
     self.score = score_from_score_data
-    # Ordering and comparing small decimal differences has some surprises. Convert to integers
-    self.score_integer = score * 100_000_000
   end
 
   def update_score_data!
