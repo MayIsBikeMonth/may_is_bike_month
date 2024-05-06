@@ -3,7 +3,7 @@
   <% if display_dev_info? %><code class="only-dev-visible-small"><%= competition_user.id %></code><% end %>
 </th>
 
-<% competition_user.score_data["periods"].each_with_index do |score_period, inx| %>
+<% (competition_user.score_data&.dig("periods") || []).each_with_index do |score_period, inx| %>
   <% # TODO: if the date is before the period.start_date, skip rendering! %>
 
   <td id="cu-<%= competition_user.id %>_period-<%= inx %>" class="border-r-2 align-top">
@@ -62,22 +62,22 @@
   <div class="grid grid-cols-3">
     <div class="px-1 border-r pt-2 elevation-cell text-right">
       <small class="hidden unit-metric">
-        <%= number_display(competition_user.score_data["elevation"]) %>
+        <%= number_display(competition_user.elevation_meters) %>
       </small>
       <small class="hidden unit-imperial">
-        <%= number_display(meters_to_feet(competition_user.score_data["elevation"])) %>
+        <%= number_display(meters_to_feet(competition_user.elevation_meters)) %>
       </small>
     </div>
     <div class="px-1 border-r pt-2 text-right">
       <span class="hidden unit-metric">
-        <%= number_display(competition_user.score_data["distance"] / 1000, round_to: 1) %>
+        <%= number_display(competition_user.distance_meters / 1000, round_to: 1) %>
       </span>
       <span class="hidden unit-imperial">
-        <%= number_display(meters_to_miles(competition_user.score_data["distance"]), round_to: 1) %>
+        <%= number_display(meters_to_miles(competition_user.distance_meters), round_to: 1) %>
       </span>
     </div>
     <div class="px-1 pt-2 text-right">
-      <%= number_display(competition_user.score_data["dates"].count) %>
+      <%= number_display(competition_user.activity_dates.count) %>
     </div>
   </div>
 </td>

@@ -68,6 +68,18 @@ class CompetitionUser < ApplicationRecord
     !included_in_competition
   end
 
+  def distance_meters
+    score_data&.dig("distance") || 0
+  end
+
+  def elevation_meters
+    score_data&.dig("elevation") || 0
+  end
+
+  def activity_dates
+    score_data&.dig("dates") || []
+  end
+
   def included_activity_type?(activity_type)
     included_activity_types.include?(activity_type)
   end
