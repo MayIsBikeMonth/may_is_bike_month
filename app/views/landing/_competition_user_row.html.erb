@@ -1,5 +1,6 @@
 <th scope="row" class="px-2 py-1 font-medium whitespace-nowrap border-l-2 border-r-2">
   <%= link_to competition_user.display_name, strava_user_url(competition_user.user), class: "underline" %>
+  <% if display_dev_info? %><code class="only-dev-visible-small"><%= competition_user.id %></code><% end %>
 </th>
 
 <% competition_user.score_data["periods"].each_with_index do |score_period, inx| %>
