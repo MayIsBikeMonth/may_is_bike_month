@@ -7,7 +7,6 @@
 #  included_in_competition :boolean          default(FALSE), not null
 #  score                   :decimal(, )
 #  score_data              :jsonb
-#  score_integer           :integer
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  competition_id          :bigint
@@ -32,7 +31,7 @@ class CompetitionUser < ApplicationRecord
   scope :included_in_current_competition, -> {
     included_in_competition.joins(:competition).where(competitions: {current: true})
   }
-  scope :score_ordered, -> { reorder(score_integer: :desc) }
+  scope :score_ordered, -> { reorder(score: :desc) }
 
   delegate :display_name, to: :user, allow_nil: true
 
@@ -58,7 +57,7 @@ class CompetitionUser < ApplicationRecord
           dates: competition_activities.pluck(:activity_dates_strings).flatten.uniq,
           distance: competition_activities.sum(:distance_meters), # skip _meters, for space saving
           elevation: competition_activities.sum(:elevation_meters) # skip _meters, for space saving
-        }.merge(skip_ids ? {} : {ids: competition_activities.pluck(:id)})
+        }.merge(skip_ids ? {} : {ids: competition_activities.start_ordered.map(&:id)}) # Order IDs so they show up ordered
       else
         raise "competition_activities must be an ActiveRecord::Relation"
       end
@@ -80,8 +79,6 @@ class CompetitionUser < ApplicationRecord
       included_activity_types.map(&:strip).reject(&:blank?)
     end
     self.score = score_from_score_data
-    # Ordering and comparing small decimal differences has some surprises. Convert to integers
-    self.score_integer = score * 100_000
   end
 
   def update_score_data!
