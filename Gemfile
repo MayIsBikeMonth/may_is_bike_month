@@ -40,6 +40,9 @@ gem "omniauth-strava"
 gem "omniauth-rails_csrf_protection", "~> 1.0" # IDK, somehow it's required too
 gem "faraday" # Used to make bare requests to strava
 
+# Admin
+gem "activeadmin"
+
 group :production, :staging do
   gem "honeybadger" # Error reporting
   # gem "skylight" # Performance, add when needed
