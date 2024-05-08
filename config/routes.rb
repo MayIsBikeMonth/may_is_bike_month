@@ -15,6 +15,6 @@ Rails.application.routes.draw do
     mount Sidekiq::Web, at: "/sidekiq"
   end
 
-  devise_config = ActiveAdmin::Devise.config
+  # devise_config = ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 end
