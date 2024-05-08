@@ -14,4 +14,7 @@ Rails.application.routes.draw do
   authenticate :user, lambda { |u| u.developer? } do
     mount Sidekiq::Web, at: "/sidekiq"
   end
+
+  devise_config = ActiveAdmin::Devise.config
+  ActiveAdmin.routes(self)
 end

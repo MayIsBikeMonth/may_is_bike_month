@@ -46,6 +46,15 @@ class ApplicationController < ActionController::Base
     after_sign_in_path_for(resource) || user_root_url
   end
 
+  def ensure_user_admin!
+    if current_user.blank?
+      redirect_to_root_unless_user_present!
+    elsif !current_user.admin_access?
+      flash[:error] = "Not authorized"
+      redirect_to user_root_url, status: :see_other
+    end
+  end
+
   protected
 
   def redirect_to_root_unless_user_present!
@@ -60,15 +69,6 @@ class ApplicationController < ActionController::Base
     store_return_to
     redirect_to root_url, status: :see_other
     false
-  end
-
-  def ensure_user_admin!
-    if current_user.blank?
-      redirect_to_root_unless_user_present!
-    elsif !current_user.admin_access?
-      flash[:error] = "Not authorized"
-      redirect_to user_root_url, status: :see_other
-    end
   end
 
   def store_return_to
