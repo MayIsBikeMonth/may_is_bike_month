@@ -23,7 +23,7 @@ module MayIsBikeMonth
     config.load_defaults 7.1
 
     config.redis_default_url = ENV.fetch("REDIS_URL", "redis://localhost:6379")
-    config.redis_cache_url = ENV.fetch("REDIS_CACHE_URL", "#{config.redis_default_url}")
+    config.redis_cache_url = ENV.fetch("REDIS_CACHE_URL", config.redis_default_url)
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
