@@ -44,5 +44,15 @@
     <div class="px-2 xl:px-4 pb-20 pt-4">
       <%= yield %>
     </div>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-63Y0BHVCS8"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-63Y0BHVCS8');
+    </script>
   </body>
 </html>
