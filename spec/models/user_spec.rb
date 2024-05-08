@@ -73,4 +73,21 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "after_commit" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:start_date) { Time.current.beginning_of_month }
+    let(:competition) { FactoryBot.create(:competition, start_date: start_date - 1.year, current: false) }
+    let(:competition_current) { FactoryBot.create(:competition, start_date: start_date, current: true) }
+    let(:updated_at) { Time.current - 1.day }
+    let!(:competition_user) { FactoryBot.create(:competition_user, user:, competition: competition, updated_at:) }
+    let!(:competition_user_current) { FactoryBot.create(:competition_user, user:, competition: competition_current, updated_at:) }
+    it "touches current_competition_user" do
+      expect(CompetitionUser.included_in_current_competition.pluck(:id)).to eq([competition_user_current.id])
+      Competition.current(re_memoize: true)
+      user.update(display_name: "New name")
+      expect(competition_user.reload.updated_at).to be_within(1).of updated_at
+      expect(competition_user_current.reload.updated_at).to be_within(1).of Time.current
+    end
+  end
 end

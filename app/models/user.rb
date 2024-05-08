@@ -34,6 +34,7 @@ class User < ApplicationRecord
   has_many :competition_activities, through: :competition_users
 
   before_validation :set_calculated_attributes
+  after_commit :update_current_competition_user
 
   class << self
     def stored_strava_auth(auth_cred)
@@ -79,7 +80,7 @@ class User < ApplicationRecord
   end
 
   def current_competition_user
-    competition_users.where(competition_id: Competition.current.id).last
+    competition_users.current_competition.last
   end
 
   def strava_auth_needs_refresh?
@@ -100,6 +101,11 @@ class User < ApplicationRecord
     self.strava_info ||= {}
     self.strava_username = strava_info["username"] if strava_info["username"].present?
     self.display_name ||= calculated_name
+  end
+
+  # Bust cache
+  def update_current_competition_user
+    current_competition_user&.touch
   end
 
   private

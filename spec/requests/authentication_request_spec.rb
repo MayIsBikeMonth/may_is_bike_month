@@ -93,6 +93,7 @@ RSpec.describe "Authentication", type: :request do
     end
     let!(:competition) { FactoryBot.create(:competition, current: true) }
     it "auths" do
+      Competition.current(re_memoize: true)
       expect do
         post path
       end.to change(User, :count).by 1
