@@ -26,11 +26,10 @@ class CompetitionUser < ApplicationRecord
   before_validation :set_calculated_attributes
   validates_uniqueness_of :user_id, scope: [:competition_id], allow_nil: false
 
+  scope :current_competition, -> { joins(:competition).where(competitions: {current: true}) }
   scope :included_in_competition, -> { where(included_in_competition: true) }
   scope :excluded_from_competition, -> { where(included_in_competition: false) }
-  scope :included_in_current_competition, -> {
-    included_in_competition.joins(:competition).where(competitions: {current: true})
-  }
+  scope :included_in_current_competition, -> { included_in_competition.current_competition }
   scope :score_ordered, -> { reorder(score: :desc) }
 
   delegate :display_name, to: :user, allow_nil: true
@@ -62,6 +61,10 @@ class CompetitionUser < ApplicationRecord
         raise "competition_activities must be an ActiveRecord::Relation"
       end
     end
+  end
+
+  def current_competition?
+    competition_id == Competition.current&.id
   end
 
   def excluded_from_competition?

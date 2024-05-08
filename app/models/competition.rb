@@ -28,8 +28,9 @@ class Competition < ApplicationRecord
   validates_presence_of :end_date, :start_date, :slug
   validates :end_date, comparison: {greater_than: :start_date}
 
-  def self.current
-    where(current: true).last
+  def self.current(re_memoize: false)
+    @current = nil if re_memoize # Primarily for testing
+    @current ||= where(current: true).last
   end
 
   def self.period_sundays(start_date, end_date)

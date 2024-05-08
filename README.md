@@ -47,7 +47,7 @@ This is a Rails re-write of the [Phoenix/Elixir May is Bike Month app](https://g
 Create a new competition with:
 
 ```ruby
-competition = Competition.create(start_date: Date.parse("2025-05-01"), display_name: "2025")
+competition = Competition.create(start_date: "2025-05-01", display_name: "2025")
 competition.create_competition_users
 ```
 

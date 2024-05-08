@@ -8,6 +8,14 @@ RSpec.describe Competition, type: :model do
     end
   end
 
+  describe "start_date" do
+    it "accepts a string" do
+      competition = Competition.new(start_date: "2024-5-1")
+      expect(competition).to be_valid
+      expect(competition.start_date).to eq Date.parse("2024-5-1")
+    end
+  end
+
   describe "set_current" do
     let(:competition1) { FactoryBot.create(:competition, start_date: Date.parse("2023-5-1"), display_name: nil, current: true) }
     let(:competition2) { FactoryBot.create(:competition, start_date: Time.current - 1.day) }
