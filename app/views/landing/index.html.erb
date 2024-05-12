@@ -68,7 +68,7 @@
         <% @competition_users.each_with_index do |competition_user, index| %>
           <tr
             id="competition_user-<%= competition_user.id %>"
-            class="border-r-2 border-b-2 <% index % 2 == 1 ? 'bg-gray-50' : 'bg-white' %>"
+            class="border-r-2 border-b-2 odd:bg-white even:bg-gray-100"
           >
             <% cache competition_user do %>
               <%= render partial:"competition_user_row", locals: {competition_user: competition_user} %>
