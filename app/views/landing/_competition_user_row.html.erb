@@ -34,7 +34,7 @@
       </div>
     </div>
     <% if score_period["ids"].count > 0 %>
-      <ul class="list-disc pl-3.5 pt-1 hidden activityList">
+      <ul class="list-disc pl-3.5 pt-1 hidden activityList ml-1">
         <% score_period["ids"].each do |id| %>
           <% competition_activity = competition_user.competition_activities.find(id) %>
           <li class="text-sm mb-1 leading-none">
