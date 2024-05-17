@@ -14,11 +14,16 @@
 <div class="relative overflow-x-scroll py-4 -mx-2 xl:-mx-1">
   <div class="relative max-w-full min-w-[1300px] px-1">
     <table class="w-full text-sm text-left text-gray-800" id="competition-table">
-      <thead class="text-xs text-gray-500 bg-gray-50 border-2">
+      <thead class="text-xs text-gray-500 bg-gray-50 border-2 border-b-gray-400">
         <tr>
-          <th scope="col" class="border-r-2"></th>
-          <% @competition.periods.each do |period| %>
-            <th class="border-r-2">
+          <th scope="col" class="border-r-2 border-r-gray-400"></th>
+          <th scope="col" class="text-black border-r-2 border-r-gray-400 lg:hidden">
+            <%= render partial: "/landing/total_cell" %>
+          </th>
+          <% period_count = @competition.periods.count - 1 %>
+          <% @competition.periods.each_with_index do |period, inx| %>
+            <% border_class = period_count == inx ? "lg:border-r-gray-400" : "" %>
+            <th class="border-r-2 <%= border_class %>">
               <span class="block text-md text-center py-2">
                 <%= l Date.parse(period[:start_date]), format: :month_date %> - <%= l Date.parse(period[:end_date]), format: :month_date %>
               </span>
@@ -39,25 +44,8 @@
               </div>
             </th>
           <% end %>
-          <th scope="col" class="text-black">
-            <span class="block text-md text-center py-2">
-              Total
-            </span>
-            <div class="grid grid-cols-3 min-w-[200px]">
-              <div class="px-1 pb-1 border-r elevation-cell text-center">
-                ⬆️
-                <span class="font-normal">
-                  <span class="hidden unit-metric">m</span><span class="hidden unit-imperial">feet</span>
-                </span>
-              </div>
-              <div class="px-1 pb-1 border-r text-center">
-                ➡️
-                <span class="font-normal">
-                  <span class="hidden unit-metric">km</span><span class="hidden unit-imperial">miles</span>
-                </span>
-              </div>
-              <div class="px-1 pb-1 text-center">Days</div>
-            </div>
+          <th scope="col" class="text-black hidden lg:table-cell">
+            <%= render partial: "/landing/total_cell" %>
           </th>
           <th scope="col" class="score-cell border-l">
             <span class="block pt-7">Score</span>
@@ -68,10 +56,10 @@
         <% @competition_users.each_with_index do |competition_user, index| %>
           <tr
             id="competition_user-<%= competition_user.id %>"
-            class="border-r-2 border-b-2 <% index % 2 == 1 ? 'bg-gray-50' : 'bg-white' %>"
+            class="border-r-2 border-b-2 odd:bg-white even:bg-gray-100"
           >
             <% cache competition_user do %>
-              <%= render partial:"competition_user_row", locals: {competition_user: competition_user} %>
+              <%= render partial: "/landing/competition_user_row", locals: {competition_user: competition_user} %>
             <% end %>
           </tr>
         <% end %>

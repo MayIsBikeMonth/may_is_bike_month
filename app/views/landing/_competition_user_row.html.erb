@@ -1,12 +1,17 @@
-<th scope="row" class="px-2 py-1 font-medium whitespace-nowrap border-l-2 border-r-2">
+<th scope="row" class="px-2 py-1 font-medium whitespace-nowrap border-l-2 border-r-2 border-r-gray-400">
   <%= link_to competition_user.display_name, strava_user_url(competition_user.user), class: "underline" %>
   <code class="only-dev-visible text-xs"><%= competition_user.id %></code>
 </th>
 
+<td scope="col" class="text-black font-bold border-b-2 border-r-2 border-r-gray-400 lg:hidden">
+  <%= render partial:"/landing/total_cell", locals: {competition_user: competition_user} %>
+</td>
+
+<% period_count = (competition_user.score_data&.dig("periods")&.count || 1) - 1 %>
 <% (competition_user.score_data&.dig("periods") || []).each_with_index do |score_period, inx| %>
   <% # TODO: if the date is before the period.start_date, skip rendering! %>
-
-  <td id="cu-<%= competition_user.id %>_period-<%= inx %>" class="border-r-2 align-top">
+  <% border_class = period_count == inx ? "lg:border-r-gray-400" : "" %>
+  <td id="cu-<%= competition_user.id %>_period-<%= inx %>" class="border-r-2 align-top <%= border_class %>">
     <div class="grid grid-cols-3">
       <div class="px-1 border-r py-1 elevation-cell text-right">
         <small class="hidden unit-metric">
@@ -29,7 +34,7 @@
       </div>
     </div>
     <% if score_period["ids"].count > 0 %>
-      <ul class="list-disc pl-3.5 pt-1 hidden activityList">
+      <ul class="list-disc pl-3.5 pt-1 hidden activityList ml-0.5">
         <% score_period["ids"].each do |id| %>
           <% competition_activity = competition_user.competition_activities.find(id) %>
           <li class="text-sm mb-1 leading-none">
@@ -58,26 +63,6 @@
   </td>
 <% end %>
 
-<td scope="col" class="text-black font-bold border-r-2 border-b-2">
-  <div class="grid grid-cols-3">
-    <div class="px-1 border-r pt-2 elevation-cell text-right">
-      <small class="hidden unit-metric">
-        <%= number_display(competition_user.elevation_meters) %>
-      </small>
-      <small class="hidden unit-imperial">
-        <%= number_display(meters_to_feet(competition_user.elevation_meters)) %>
-      </small>
-    </div>
-    <div class="px-1 border-r pt-2 text-right">
-      <span class="hidden unit-metric">
-        <%= number_display(competition_user.distance_meters / 1000, round_to: 1) %>
-      </span>
-      <span class="hidden unit-imperial">
-        <%= number_display(meters_to_miles(competition_user.distance_meters), round_to: 1) %>
-      </span>
-    </div>
-    <div class="px-1 pt-2 text-right">
-      <%= number_display(competition_user.activity_dates.count) %>
-    </div>
-  </div>
+<td scope="col" class="text-black font-bold border-r-2 border-b-2 hidden lg:table-cell">
+  <%= render partial: "/landing/total_cell", locals: {competition_user: competition_user} %>
 </td>
