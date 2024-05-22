@@ -5,7 +5,7 @@ shared_context :logged_in_as_user do
   before { sign_in user }
 end
 
-shared_context :logged_in_as_superuser do
+shared_context :logged_in_as_admin do
   let(:user) { FactoryBot.create(:user_admin) }
   before { sign_in user }
 end

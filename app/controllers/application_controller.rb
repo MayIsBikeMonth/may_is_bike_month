@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  include TranzitoUtils::SetPeriod
   ESBUILD_ERROR_RENDERED = Rails.env.development?
   include RenderEsbuildErrors if ESBUILD_ERROR_RENDERED
 

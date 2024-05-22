@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.base-link {
+  @apply underline decoration-1 hover:decoration-2 active:decoration-2;
+}
+
+.base-link.active {
+  @apply active:decoration-2;
+}
+
 .only-dev-visible, .only-dev-visible-small {
   border: 1px solid #9400d3;
   background: rgba(148,0,211,.1);
