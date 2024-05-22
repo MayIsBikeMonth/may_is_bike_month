@@ -11,14 +11,12 @@ RSpec.describe "Authentication", type: :request do
       end
     end
 
-    # This should be skipped because of the send_to_root! in SessionsController
-    # But it isn't, fuck it
-    # context "sign in" do
-    #   it "redirect" do
-    #     get "/users/sign_in"
-    #     expect(response.code).to eq "404"
-    #   end
-    # end
+    context "sign in" do
+      it "redirect" do
+        get "/users/sign_in"
+        expect(response).to redirect_to root_path
+      end
+    end
   end
 
   describe "/users/auth/strava post" do
