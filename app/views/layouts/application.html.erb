@@ -35,9 +35,10 @@
           <%= button_to "Sign in", user_strava_omniauth_authorize_path, method: :post, data: { turbo: false } %>
         </li>
       <% elsif in_admin? %>
-        <%= active_link admin_competition_users_path, "Competition Users", class: "main-nav-link ml-2", match_controller: true %>
-        <%= active_link "Competitions", admin_competitions_path, class: "main-nav-link ml-2", match_controller: true %>
-        <%= link_to "Exit", user_root_url, class: "main-nav-link ml-auto less-strong" %>
+        <span class="hidden sm:inline-block ml-2 text-lg font-semibold">May Is Bike Month Admin</span>
+        <%= active_link "Competition Users", admin_competition_users_path, class: "base-link ml-2", match_controller: true %>
+        <%= active_link "Competitions", admin_competitions_path, class: "base-link ml-2", match_controller: true %>
+        <%= link_to "Exit", user_root_url, class: "base-link ml-auto less-strong" %>
       <% else %>
         <% if current_user.admin_access? %>
           <%= link_to "admin", admin_root_path, class: "mr-4 base-link" %>
