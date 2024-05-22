@@ -2,7 +2,7 @@
 # The values disaplayed here are the default ones. Uncomment and change them to fit your needs.
 Avo.configure do |config|
   ## == Routing ==
-  config.root_path = '/avo'
+  config.root_path = '/admin'
   # used only when you have custom `map` configuration in your config.ru
   # config.prefix_path = "/internal"
 
@@ -22,9 +22,9 @@ Avo.configure do |config|
   end
 
   ## == Authentication ==
-  # config.current_user_method = {}
-  # config.authenticate_with do
-  # end
+  Avo.configure do |config|
+    config.current_user_method = :current_user
+  end
 
   ## == Authorization ==
   # config.authorization_methods = {
