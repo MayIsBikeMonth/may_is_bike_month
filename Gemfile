@@ -78,3 +78,4 @@ gem "rack-mini-profiler", require: false # If you can't see it you can't make it
 gem "bootsnap", ">= 1.1.0", require: false # Reduces boot times through caching; required in config/boot.rb
 
 gem "dockerfile-rails", ">= 1.6", group: :development
+gem "avo", ">= 3.2"
