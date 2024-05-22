@@ -1,5 +1,5 @@
 class SessionsController < Devise::SessionsController
-  before_action :send_to_root!, only: [:new, :create, :edit]
+  before_action :send_to_root!, only: [:new, :create]
 
   # IDK why this is failing, but -- I don't think it's a vulnerability because it 500s so...
   def send_to_root!
