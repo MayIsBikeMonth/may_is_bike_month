@@ -1,27 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-/*@import "sections/tables";*/
-
-.base-link {
-  @apply underline decoration-1 hover:decoration-2 active:decoration-2;
-}
-
-.base-link.active {
-  @apply active:decoration-2;
-}
-
-.only-dev-visible, .only-dev-visible-small {
-  border: 1px solid #9400d3;
-  background: rgba(148,0,211,.1);
-}
-.only-dev-visible-small {
-  font-size: 80%;
-}
-
-
-/* TABLES - SHOULD BE IN SEPARATE */
-
 .container-padded {
   /* Add a little padding to the bottom */
   @apply py-2 w-full;
@@ -86,8 +62,8 @@
 }
 
 .full-screen-table {
-  /*  @apply px-container-pad px-0 max-w-full;*/
-  @apply px-0 max-w-full;
+/*  @apply px-container-pad px-0 max-w-full;*/
+@apply px-0 max-w-full;
 }
 
 /* override tranzito_utils styles */
@@ -109,9 +85,7 @@
 */
 
 .sortable .sortable-link {
-/*  @apply text-bodytext underline;*/
-  @apply base-link;
-
+  @apply text-bodytext underline;
   &.sortable-link-narrow {
     @apply inline-block mr-3;
   }

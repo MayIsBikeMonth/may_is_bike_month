@@ -1,0 +1,68 @@
+<h1 class="standard-top-offset mb-4">
+  Admin Competitions
+</h1>
+<%#= render partial: "/shared/current_header", locals: {collection: @competitions, render_period: false} %>
+
+<% skip_sortable ||= false %>
+
+<div class="full-screen-table mb-4">
+  <table class="table table-sm table-striped thead-light">
+    <thead class="sortable">
+      <tr>
+        <th>
+          <%= sortable "start_date", skip_sortable: skip_sortable %>
+        </th>
+        <th>
+          <%= sortable "end_date", skip_sortable: skip_sortable %>
+        </th>
+        <th>Current?</th>
+        <th>
+          <small><%= sortable "created_at", skip_sortable: skip_sortable %></small>
+        </th>
+        <% if display_dev_info? %>
+          <th>
+            <small><%= sortable "updated_at", skip_sortable: skip_sortable %></small>
+          </th>
+        <% end %>
+        <th>
+          <%= sortable "display_name", skip_sortable: skip_sortable %>
+        </th>
+        <th>Users included</th>
+        <th>
+          <small class="text-gray-800">Users excluded</small>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @competitions.each do |competition| %>
+        <tr>
+          <td>
+            <%= l competition.start_date, format: :month_date %>
+          </td>
+          <td>
+            <%= l competition.end_date, format: :month_date %>
+          </td>
+          <td class="table-cell-check">
+            <%= check_mark if competition.current %>
+          </td>
+          <td>
+            <% if display_dev_info? %><code class="only-dev-visible-small"><%= competition.id %></code><% end %>
+            <small class="convertTime"><%= l(competition.created_at, format: :convert_time) %></small>
+          </td>
+          <% if display_dev_info? %>
+            <td>
+              <span class="less-strong only-dev-visible">
+                <small class="convertTime"><%= l(competition.updated_at, format: :convert_time) %></small>
+              </span>
+            </td>
+          <% end %>
+          <td>
+            <%= competition.display_name %>
+          </td>
+          <td><%= admin_number_display(competition.competition_users_included.count) %></td>
+          <td><%= admin_number_display(competition.competition_users_excluded.count) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

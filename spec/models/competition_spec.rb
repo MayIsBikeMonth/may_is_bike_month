@@ -5,6 +5,9 @@ RSpec.describe Competition, type: :model do
     let(:competition) { FactoryBot.create(:competition) }
     it "is valid" do
       expect(competition).to be_valid
+      expect(Competition.friendly_find_id(competition.id.to_s)).to eq competition.id
+      expect(Competition.friendly_find_id(competition.slug)).to eq competition.id
+      expect(Competition.friendly_find_id(competition.display_name)).to eq competition.id
     end
   end
 
@@ -21,7 +24,7 @@ RSpec.describe Competition, type: :model do
     let(:competition2) { FactoryBot.create(:competition, start_date: Time.current - 1.day) }
     it "sets current, unsets all others" do
       expect(competition1.reload.current).to be_truthy
-      expect(competition1.display_name).to eq "2023"
+      expect(competition1.display_name).to eq "MIBM 2023"
       expect(competition2.reload.current).to be_truthy
       expect(competition1.reload.current).to be_falsey
     end

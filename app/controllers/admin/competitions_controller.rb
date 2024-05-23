@@ -11,10 +11,12 @@ class Admin::CompetitionsController < Admin::BaseController
   private
 
   def sortable_columns
-    %w[created_at updated_at email username]
+    %w[start_date end_date created_at updated_at display_name]
   end
 
   def searched_competitions
-    Competition.where(@created_at => @time_range)
+    @time_range_column = sort_column if %w[start_date end_date created_at updated_at].include?(sort_column)
+    @time_range_column ||= 'start_date'
+    Competition.where(@time_range_column => @time_range)
   end
 end

@@ -29,6 +29,18 @@ module ApplicationHelper
     end
   end
 
+  def check_mark
+    "&#x2713;".html_safe
+  end
+
+  def cross_mark
+    "&#x274C;".html_safe
+  end
+
+  def search_emoji
+    "🔎"
+  end
+
   private
 
   def short_date_string_gsub(activity_date)

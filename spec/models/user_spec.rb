@@ -6,6 +6,9 @@ RSpec.describe User, type: :model do
 
     it "is valid" do
       expect(user).to be_valid
+      expect(User.friendly_find_id(user.display_name)).to eq user.id
+      expect(User.friendly_find_id(user.strava_username)).to eq user.id
+      expect(User.friendly_find_id(user.id.to_s)).to eq user.id
     end
     context "no strava username" do
       let(:user1) { FactoryBot.create(:user, strava_username: "") }
