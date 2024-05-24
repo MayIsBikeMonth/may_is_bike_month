@@ -4,5 +4,8 @@
 
 import { application } from './application'
 
+import AdminCurrentHeaderController from './admin_current_header_controller'
 import HelloController from './hello_controller'
+
+application.register('admin-current-header', AdminCurrentHeaderController)
 application.register('hello', HelloController)

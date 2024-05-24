@@ -16,12 +16,13 @@ module Admin
 
     def competition_subject
       return @competition_subject if defined?(@competition_subject)
-      competition_param = params.permit(:competition_id) || params.permit(:search_competition_id)
-      @competition_subject = Competition.friendly_find(competition_param)
+      competition_params = params.permit(:competition_id, :search_competition_id)
+      competition_id = competition_params[:competition_id] || competition_params[:search_competition_id]
+      @competition_subject = Competition.friendly_find(competition_id)
     end
 
     def searchable_competitions
-      Competition.order(start_at: :desc)
+      Competition.order(start_date: :desc)
     end
   end
 end

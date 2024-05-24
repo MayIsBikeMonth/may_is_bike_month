@@ -1,7 +1,8 @@
 <h1 class="standard-top-offset mb-4">
   Admin Competition Users
 </h1>
-<%#= render partial: "/shared/current_header", locals: {collection: @competitions, render_period: false} %>
+
+<%= render partial: "/shared/current_header", locals: {collection: @competition_users, include_competition_select: true, render_period: false} %>
 
 <% skip_sortable ||= false %>
 <% include_competition ||= competition_subject.blank? %>

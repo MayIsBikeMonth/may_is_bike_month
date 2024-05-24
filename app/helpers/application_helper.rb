@@ -29,6 +29,15 @@ module ApplicationHelper
     end
   end
 
+  def sortable_params
+    @sortable_params ||= sortable_search_params.as_json.map do |k, v|
+      # Skip default sort parameters, to reduce unnecessary params
+      next if v.blank? || k == "sort" && v == default_column ||
+        k == "sort_direction" && v == default_direction
+      [k, v]
+    end.compact.to_h.with_indifferent_access
+  end
+
   def check_mark
     "&#x2713;".html_safe
   end
