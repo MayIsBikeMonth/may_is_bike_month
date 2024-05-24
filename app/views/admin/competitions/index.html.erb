@@ -59,7 +59,10 @@
           <td>
             <%= competition.display_name %>
           </td>
-          <td><%= admin_number_display(competition.competition_users_included.count) %></td>
+          <td>
+            <%= link_to admin_number_display(competition.competition_users_included.count), admin_competition_users_path(search_competition_id: competition.slug), class: "base-link" %>
+
+          </td>
           <td><%= admin_number_display(competition.competition_users_excluded.count) %></td>
         </tr>
       <% end %>
