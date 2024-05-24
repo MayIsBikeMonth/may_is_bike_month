@@ -2,7 +2,7 @@ module Admin
   class BaseController < ApplicationController
     before_action :ensure_user_admin!
 
-    helper_method :user_subject, :competition_subject
+    helper_method :user_subject, :competition_subject, :searchable_competitions
 
     def user_subject
       return @user_subject if defined?(@user_subject)
@@ -18,6 +18,10 @@ module Admin
       return @competition_subject if defined?(@competition_subject)
       competition_param = params.permit(:competition_id) || params.permit(:search_competition_id)
       @competition_subject = Competition.friendly_find(competition_param)
+    end
+
+    def searchable_competitions
+      Competition.order(start_at: :desc)
     end
   end
 end

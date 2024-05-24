@@ -25,8 +25,8 @@
         <strong><%= current_competition.display_name %></strong>
         <em class="less-strong">
           &ndash; view <%= viewing.downcase %> for
-          <% if @searchable_competitions.present? %>
-            <%= select_tag :search_competition_id, options_for_select(@searchable_competitions.map { |s| [s.humanize, s] }, selected: competition_subject), class: "form-control-inline updateOnChange mx-1", "data-updateUrl" => url_for(sortable_params.merge(search_competition_id: "UpdateThis")) %>
+          <% if searchable_competitions.present? %>
+            <%= select_tag :search_competition_id, options_for_select(searchable_competitions.map { |s| [s.display_name, s.id] }, selected: competition_subject), class: "form-control-inline updateOnChange mx-1", "data-updateUrl" => url_for(sortable_params.merge(search_competition_id: "UpdateThis")) %>
             <% unless competition_subject.blank? %> or for <% end %>
           <% end %>
           <% if current_competition.blank? %>
