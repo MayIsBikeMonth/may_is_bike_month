@@ -29,7 +29,7 @@
     github.com/MayIsBikeMonth/may_is_bike_month
 
   -->
-    <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end mt-1 mb-2">
+    <ul class="relative z-10 flex items-center gap-4 px-2 lg:px-4 justify-end mt-1 mb-2">
       <% if current_user.blank? %>
         <li>
           <%= button_to "Sign in", user_strava_omniauth_authorize_path, method: :post, data: { turbo: false } %>

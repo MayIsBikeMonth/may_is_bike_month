@@ -1,7 +1,7 @@
-<h1 class="text-xl mb-4">
+<h1 class="mb-4">
   <%= @competition.display_name %>
 
-  <a id="toggleIndividualActivities" class="text-blue-800 underline cursor-pointer text-sm ml-2">
+  <a id="toggleIndividualActivities" class="text-blue-800 base-link text-sm ml-2">
     <span class="toggleActivities-hidden">Show</span>
     <span class="toggleActivities-shown hidden">Hide</span>
     activities
@@ -72,13 +72,13 @@
   <h4 class="text-lg">
     <span class="hidden unit-metric">
       Distance and elevation are in metric.
-      <a class="underline cursor-pointer toggleUnitPreference">
+      <a class="base-link toggleUnitPreference">
         Switch to imperial
       </a>
     </span>
     <span class="hidden unit-imperial">
       Distance and elevation are in imperial.
-      <a class="underline cursor-pointer toggleUnitPreference">Switch to metric</a>
+      <a class="base-link toggleUnitPreference">Switch to metric</a>
     </span>
   </h4>
 </div>

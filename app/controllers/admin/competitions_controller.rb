@@ -14,6 +14,10 @@ class Admin::CompetitionsController < Admin::BaseController
     %w[start_date end_date created_at updated_at display_name]
   end
 
+  def latest_period_date
+    Time.current + 1.year
+  end
+
   def searched_competitions
     @time_range_column = sort_column if %w[start_date end_date created_at updated_at].include?(sort_column)
     @time_range_column ||= 'start_date'
