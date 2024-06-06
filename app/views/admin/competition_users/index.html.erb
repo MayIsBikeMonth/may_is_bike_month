@@ -39,25 +39,25 @@
           <td>
             <%= link_to competition_user.display_name, edit_admin_competition_user_path(competition_user), class: "base-link" %>
             <% if display_dev_info? %><code class="only-dev-visible-small"><%= competition_user.id %></code><% end %>
-          <td>
-            <span class="convertTime"><%= l(competition_user.created_at, format: :convert_time) %></span>
-          </td>
-          <% if include_competition %>
             <td>
-              <%= competition_user.competition.display_name %>
+              <span class="convertTime"><%= l(competition_user.created_at, format: :convert_time) %></span>
             </td>
-          <% end %>
-          <% if display_dev_info? %>
-            <td>
-              <small class="convertTime"><%= l(competition_user.updated_at, format: :convert_time) %></small>
+            <% if include_competition %>
+              <td>
+                <%= competition_user.competition.display_name %>
+              </td>
+            <% end %>
+            <% if display_dev_info? %>
+              <td>
+                <small class="convertTime"><%= l(competition_user.updated_at, format: :convert_time) %></small>
+              </td>
+            <% end %>
+            <td><%= admin_number_display(competition_user.competition_activities.count) %></td>
+            <td class="table-cell-check">
+              <%= check_mark if competition_user.included_in_competition %>
             </td>
-          <% end %>
-          <td><%= admin_number_display(competition_user.competition_activities.count) %></td>
-          <td class="table-cell-check">
-            <%= check_mark if competition_user.included_in_competition %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>

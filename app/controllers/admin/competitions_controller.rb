@@ -20,7 +20,7 @@ class Admin::CompetitionsController < Admin::BaseController
 
   def searched_competitions
     @time_range_column = sort_column if %w[start_date end_date created_at updated_at].include?(sort_column)
-    @time_range_column ||= 'start_date'
+    @time_range_column ||= "start_date"
     Competition.where(@time_range_column => @time_range)
   end
 end

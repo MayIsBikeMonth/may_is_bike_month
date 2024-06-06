@@ -21,7 +21,7 @@ RSpec.describe base_url, type: :request do
 
   context "signed in as admin" do
     include_context :logged_in_as_admin
-    let(:competition_user)  {FactoryBot.create(:competition_user) }
+    let(:competition_user) { FactoryBot.create(:competition_user) }
 
     describe "index" do
       it "renders" do
