@@ -136,6 +136,14 @@ class CompetitionActivity < ApplicationRecord
     activity_dates_strings.map { |d| Date.parse(d) }
   end
 
+  def manual_entry?
+    TranzitoUtils::Normalize.boolean(strava_data&.dig("manual"))
+  end
+
+  def entered_after_competition_ended?
+    (created_at || Time.current) > competition.end_date
+  end
+
   def strava_url
     "https://www.strava.com/activities/#{strava_id}"
   end
