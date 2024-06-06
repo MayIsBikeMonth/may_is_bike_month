@@ -243,7 +243,6 @@ RSpec.describe CompetitionActivity, type: :model do
 
     context 'created_at before end of competition' do
       it 'has included_distance_meters of distance_meters' do
-        pp competition_activity.send(:competition_end_at_time)
         competition_activity.update(created_at: competition.end_date.end_of_day)
         expect(competition_activity).to be_valid
         expect(competition_activity.manual_entry?).to be_truthy

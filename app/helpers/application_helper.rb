@@ -30,7 +30,13 @@ module ApplicationHelper
   end
 
   def competition_activity_display(competition_activity)
-    competition_activity.display_name
+    content_tag(:span) do
+      concat(competition_activity.display_name)
+      if competition_activity.manual_entry? && competition_activity.entered_after_competition_ended?
+        concat(" ")
+        concat(content_tag(:em, "ignored, manual entry after competition ended", class: "less-strong"))
+      end
+    end
   end
 
   def sortable_params
