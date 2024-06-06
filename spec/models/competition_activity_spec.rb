@@ -40,7 +40,6 @@ RSpec.describe CompetitionActivity, type: :model do
         timezone: "America/Los_Angeles",
         start_at: Time.at(1714705152),
         display_name: "Rainbow",
-        distance_meters: 3611.4,
         elevation_meters: 11.0,
         moving_seconds: 844
       }
@@ -237,18 +236,20 @@ RSpec.describe CompetitionActivity, type: :model do
       expect(competition_activity).to be_valid
       expect(competition_activity.manual_entry?).to be_truthy
       expect(competition_activity.entered_after_competition_ended?).to be_truthy
-      expect(competition_activity.distance_meters).to eq 7000.7
-      expect(competition_activity.included_distance_meters).to eq 0
+      expect(competition_activity.strava_distance_meters).to eq 7000.7
+      expect(competition_activity.distance_meters).to eq 0
+      expect(competition_activity.activity_dates).to eq([Date.parse("2024-5-21")])
     end
 
     context "created_at before end of competition" do
-      it "has included_distance_meters of distance_meters" do
+      it "has strava_distance_meters of distance_meters" do
         competition_activity.update(created_at: competition.end_date.end_of_day)
         expect(competition_activity).to be_valid
         expect(competition_activity.manual_entry?).to be_truthy
         expect(competition_activity.entered_after_competition_ended?).to be_falsey
+        expect(competition_activity.strava_distance_meters).to eq 7000.7
         expect(competition_activity.distance_meters).to eq 7000.7
-        expect(competition_activity.included_distance_meters).to eq 7000.7
+        expect(competition_activity.activity_dates).to eq([Date.parse("2024-5-21")])
       end
     end
   end

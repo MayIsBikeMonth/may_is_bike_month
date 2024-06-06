@@ -90,7 +90,6 @@ class CompetitionActivity < ApplicationRecord
         timezone: timezone,
         start_at: TranzitoUtils::TimeParser.parse(passed_data["start_date"]),
         display_name: passed_data["name"],
-        distance_meters: passed_data["distance"],
         elevation_meters: passed_data["total_elevation_gain"],
         moving_seconds: passed_data["moving_time"]
       }
@@ -144,6 +143,10 @@ class CompetitionActivity < ApplicationRecord
     (created_at || Time.current) > competition_end_at_time
   end
 
+  def strava_distance_meters
+    strava_data&.dig("distance")
+  end
+
   def strava_url
     "https://www.strava.com/activities/#{strava_id}"
   end
@@ -151,9 +154,9 @@ class CompetitionActivity < ApplicationRecord
   def set_calculated_attributes
     self.strava_data = strava_data.except(*IGNORED_STRAVA_KEYS)
     self.attributes = self.class.strava_attrs_from_data(strava_data)
+    self.distance_meters = included_distance_meters
     self.activity_dates_strings = calculated_activity_dates_in_period.map(&:to_s)
     self.included_in_competition = calculated_included_in_competition
-    self.included_distance_meters = calculated_included_distance_meters
   end
 
   def calculated_included_in_competition
@@ -213,11 +216,11 @@ class CompetitionActivity < ApplicationRecord
     competition.end_date.in_time_zone(timezone).end_of_day + 2.hours
   end
 
-  def calculated_included_distance_meters
+  def included_distance_meters
     if manual_entry? && entered_after_competition_ended?
       0
     else
-      distance_meters
+      strava_distance_meters
     end
   end
 end
