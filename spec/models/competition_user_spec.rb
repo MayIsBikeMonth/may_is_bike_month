@@ -63,8 +63,8 @@ RSpec.describe CompetitionUser, type: :model do
   end
 
   describe "scoring" do
-    let(:competition_user1) { FactoryBot.create(:competition_user) }
-    let(:competition) { competition_user1.competition }
+    let(:competition) { FactoryBot.create(:competition, start_date: Time.parse("2024-05-01")) }
+    let(:competition_user1) { FactoryBot.create(:competition_user, competition:) }
     let(:competition_user2) { FactoryBot.create(:competition_user, competition:) }
     let!(:competition_activity1) { FactoryBot.create(:competition_activity, competition_user: competition_user1, distance_meters: 10000) }
     let!(:competition_activity2) { FactoryBot.create(:competition_activity, competition_user: competition_user2, distance_meters: 20000) }

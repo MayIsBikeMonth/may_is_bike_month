@@ -5,7 +5,7 @@ RSpec.describe CompetitionActivity, type: :model do
   let(:strava_data) { JSON.parse(strava_data_fixture) }
 
   describe "factory" do
-    let(:competition) { FactoryBot.create(:competition) }
+    let(:competition) { FactoryBot.create(:competition, start_date: Time.parse("2024-05-01")) }
     let(:start_at) { Time.at(1714779274) }
     let(:competition_activity) do
       FactoryBot.create(:competition_activity,
