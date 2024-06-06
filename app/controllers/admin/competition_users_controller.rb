@@ -15,7 +15,7 @@ class Admin::CompetitionUsersController < Admin::BaseController
   def update
     if @competition_user.update(permitted_params)
       flash[:success] = "User updated"
-      redirect_back(fallback_location: admin_competition_users_path, status: :see_other)
+      redirect_to(admin_competition_users_path, status: :see_other)
     else
       render :edit, status: :see_other
     end
@@ -37,11 +37,15 @@ class Admin::CompetitionUsersController < Admin::BaseController
     competition_users.where(@time_range_column => @time_range)
   end
 
-  def permitted_params
-    params.require(:competition_user).permit(:username, :role)
+  def update_included_param
+    params.permit(:update_included)
   end
 
-  def find_user
-    @competition_user = CompetitionUser.friendly_find!(params[:id])
+  def permitted_params
+    params.require(:competition_user).permit(:display_name, :included_in_competition)
+  end
+
+  def find_competition_user
+    @competition_user = CompetitionUser.find(params[:id])
   end
 end

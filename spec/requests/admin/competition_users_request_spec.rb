@@ -21,6 +21,8 @@ RSpec.describe base_url, type: :request do
 
   context "signed in as admin" do
     include_context :logged_in_as_admin
+    let(:competition_user)  {FactoryBot.create(:competition_user) }
+
     describe "index" do
       it "renders" do
         get base_url
@@ -47,11 +49,24 @@ RSpec.describe base_url, type: :request do
       end
     end
 
-    describe "update" do
+    describe "edit" do
       it "renders" do
-        get base_url
+        get "#{base_url}/#{competition_user.id}/edit"
         expect(response.code).to eq "200"
-        expect(response).to render_template("admin/competition_users/index")
+        expect(response).to render_template("admin/competition_users/edit")
+      end
+    end
+
+    describe "update" do
+      let(:valid_params) { {display_name: "New Name", included_in_competition: false} }
+      it "renders" do
+        patch "#{base_url}/#{competition_user.id}", params: {
+          competition_user: valid_params
+        }
+        expect(flash[:success]).to be_present
+        expect(response).to redirect_to admin_competition_users_path
+        expect(competition_user.reload.display_name).to eq "New Name"
+        expect(competition_user.included_in_competition).to be_falsey
       end
     end
   end
