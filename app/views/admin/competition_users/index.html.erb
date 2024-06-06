@@ -8,7 +8,7 @@
 <% include_competition ||= competition_subject.blank? %>
 
 <div class="full-screen-table mb-4">
-  <table class="table table-sm table-striped table-bordered">
+  <table class="table table-sm table-bordered">
     <thead class="sortable">
       <tr>
         <th>
@@ -35,7 +35,7 @@
     </thead>
     <tbody>
       <% @competition_users.each do |competition_user| %>
-        <tr>
+        <tr class="odd:bg-white even:bg-gray-100">
           <td>
             <%= link_to competition_user.display_name, edit_admin_competition_user_path(competition_user), class: "base-link" %>
             <% if display_dev_info? %><code class="only-dev-visible-small"><%= competition_user.id %></code><% end %>
