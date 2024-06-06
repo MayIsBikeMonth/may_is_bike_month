@@ -12,6 +12,7 @@ export default class extends Controller {
 
   updatePage (event) {
     const updateUrl = event.target.getAttribute('data-updateUrl')
-    location.href = updateUrl.replace('UpdateThis', event.target.value) // eslint-disable-line
+      .replace('UpdateThis', event.target.value)
+    location.href = updateUrl // eslint-disable-line
   }
 }

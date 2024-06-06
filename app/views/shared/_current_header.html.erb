@@ -12,15 +12,17 @@
       <%= viewing %>
       <% if competition_subject.present? %>
         for competition: <strong><%= competition_subject.display_name %></strong>
+      <% else %>
+        for all competitions
       <% end %>
       <em class="less-strong">
-        &ndash; view <%= viewing.downcase %> for
+        &ndash; view for
         <% if searchable_competitions.present? %>
-          <%= select_tag :search_competition_id, options_for_select(searchable_competitions.map { |s| [s.display_name, s.id] }, selected: competition_subject), class: "form-control-inline updateOnChange mx-1", "data-updateUrl" => url_for(sortable_params.merge(search_competition_id: "UpdateThis")) %>
+          <%= select_tag :search_competition_id, options_for_select(searchable_competitions.map { |s| [s.display_name, s.id] },competition_subject.id), class: "form-control-inline updateOnChange mx-1", "data-updateUrl" => url_for(sortable_params.merge(search_competition_id: "UpdateThis")) %>
           <% unless competition_subject.blank? %> or for <% end %>
         <% end %>
         <% if competition_subject.present? %>
-          <%= link_to "all competitions", url_for(sortable_params.merge(search_competition: nil)) %>
+          <%= link_to "all competitions", url_for(sortable_params.merge(search_competition_id: nil)) %>
         <% end %>
       </em>
     </p>
