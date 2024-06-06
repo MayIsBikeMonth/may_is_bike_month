@@ -1,6 +1,5 @@
 FactoryBot.define do
   factory :competition do
-    start_date { Time.parse("2024-05-01") }
-    display_name { start_date.year }
+    start_date { Time.current.beginning_of_month.to_date }
   end
 end

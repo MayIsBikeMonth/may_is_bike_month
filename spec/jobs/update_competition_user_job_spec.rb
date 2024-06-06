@@ -20,8 +20,8 @@ RSpec.describe UpdateCompetitionUserJob, type: :job do
 
   describe "perform" do
     let(:user) { FactoryBot.create(:user_with_strava_token) }
-    let(:competition_user) { FactoryBot.create(:competition_user, user: user) }
-    let(:competition) { competition_user.competition }
+    let(:competition) { FactoryBot.create(:competition, start_date: Time.parse("2024-05-01")) }
+    let(:competition_user) { FactoryBot.create(:competition_user, user:, competition:) }
 
     it "updates user score" do
       expect(competition.start_date).to eq Date.parse("2024-5-1")

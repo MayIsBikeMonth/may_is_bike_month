@@ -1,0 +1,63 @@
+<h1 class="standard-top-offset mb-4">
+  Admin Competition Users
+</h1>
+
+<%= render partial: "/shared/current_header", locals: {collection: @competition_users, include_competition_select: true, render_period: false} %>
+
+<% skip_sortable ||= false %>
+<% include_competition ||= competition_subject.blank? %>
+
+<div class="full-screen-table mb-4">
+  <table class="table table-sm table-striped table-bordered">
+    <thead class="sortable">
+      <tr>
+        <th>
+          <%= sortable "display_name", skip_sortable: skip_sortable %>
+        </th>
+        <th>
+          <small><%= sortable "created_at", skip_sortable: skip_sortable %></small>
+        </th>
+        <% if include_competition %>
+          <th>
+            <%= sortable "competition_id", skip_sortable: skip_sortable %>
+          </th>
+        <% end %>
+        <% if display_dev_info? %>
+          <th>
+            <small><%= sortable "updated_at", skip_sortable: skip_sortable %></small>
+          </th>
+        <% end %>
+        <th>
+          Activities
+        </th>
+        <th>Included?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @competition_users.each do |competition_user| %>
+        <tr>
+          <td>
+            <%= link_to competition_user.display_name, edit_admin_competition_user_path(competition_user), class: "base-link" %>
+            <% if display_dev_info? %><code class="only-dev-visible-small"><%= competition_user.id %></code><% end %>
+            <td>
+              <span class="convertTime"><%= l(competition_user.created_at, format: :convert_time) %></span>
+            </td>
+            <% if include_competition %>
+              <td>
+                <%= competition_user.competition.display_name %>
+              </td>
+            <% end %>
+            <% if display_dev_info? %>
+              <td>
+                <small class="convertTime"><%= l(competition_user.updated_at, format: :convert_time) %></small>
+              </td>
+            <% end %>
+            <td><%= admin_number_display(competition_user.competition_activities.count) %></td>
+            <td class="table-cell-check">
+              <%= check_mark if competition_user.included_in_competition %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>

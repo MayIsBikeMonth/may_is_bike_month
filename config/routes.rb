@@ -11,6 +11,12 @@ Rails.application.routes.draw do
 
   resource :account, only: %i[edit update]
 
+  namespace :admin do
+    root to: "competition_users#index"
+    resources :competitions, only: %i[index]
+    resources :competition_users, only: %i[index edit update]
+  end
+
   authenticate :user, lambda { |u| u.developer? } do
     mount Sidekiq::Web, at: "/sidekiq"
   end

@@ -1,0 +1,59 @@
+<h1 class="standard-top-offset mb-4">Edit User</h1>
+
+<div class="row sm:grid-cols-2">
+  <div class="col">
+    <table class="table-list">
+      <tbody>
+        <tr>
+          <td>Created</td>
+          <td>
+            <span class="convertTime"><%= l(@competition_user.created_at, format: :convert_time) %></span>
+          </td>
+        </tr>
+        <tr>
+          <td>Updated</td>
+          <td>
+            <small class="convertTime"><%= l(@competition_user.updated_at, format: :convert_time) %></small>
+          </td>
+        </tr>
+        <tr>
+          <td>Activities</td>
+          <td>
+            <%= admin_number_display(@competition_user.competition_activities.count) %>
+          </td>
+        </tr>
+        <tr>
+          <td>Activities in competition</td>
+          <td>
+            <%= admin_number_display(@competition_user.competition_activities.included_in_competition.count) %>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col"></div>
+</div>
+
+<%= form_with(model: @competition_user, url: admin_competition_user_path(@competition_user), method: :patch, class: "mt-8 pb-2") do |f| %>
+  <%= render partial: "/shared/errors", locals: {obj: @competition_user, name: "User"} %>
+
+  <div class="row sm:grid-cols-2">
+    <div class="col">
+      <div class="mb-3">
+        <%= f.label :display_name, class: "block mb-1 text-sm font-medium text-gray-900" %>
+        <%= f.text_field :display_name, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full max-w-80 p-2.5", required: true %>
+      </div>
+    </div>
+    <div class="col">
+      <div class="mb-3">
+        <%= f.label :included_in_competition, class: "form-control-check" do %>
+          <%= f.check_box :included_in_competition %>
+          Included in competition?
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="form-row-btn">
+    <%= f.submit "save", class: "btn" %>
+  </div>
+<% end %>

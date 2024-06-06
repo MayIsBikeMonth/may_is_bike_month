@@ -1,0 +1,69 @@
+<h1 class="standard-top-offset mb-4">
+  Admin Competitions
+</h1>
+<%#= render partial: "/shared/current_header", locals: {collection: @competitions, render_period: false} %>
+
+<% skip_sortable ||= false %>
+
+<div class="full-screen-table mb-4">
+  <table class="table table-sm table-striped table-bordered">
+    <thead class="sortable">
+      <tr>
+        <th>
+          <%= sortable "start_date", skip_sortable: skip_sortable %>
+        </th>
+        <th>
+          <%= sortable "end_date", skip_sortable: skip_sortable %>
+        </th>
+        <th>Current?</th>
+        <th>
+          <small><%= sortable "created_at", skip_sortable: skip_sortable %></small>
+        </th>
+        <% if display_dev_info? %>
+          <th class="only-dev-visible">
+            <small><%= sortable "updated_at", skip_sortable: skip_sortable %></small>
+          </th>
+        <% end %>
+        <th>
+          <%= sortable "display_name", skip_sortable: skip_sortable %>
+        </th>
+        <th>Users included</th>
+        <th>
+          <small class="text-gray-800">Users excluded</small>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @competitions.each do |competition| %>
+        <tr>
+          <td>
+            <%= l competition.start_date, format: :month_date %>
+            <% if display_dev_info? %><code class="only-dev-visible-small"><%= competition.id %></code><% end %>
+          </td>
+          <td>
+            <%= l competition.end_date, format: :month_date %>
+          </td>
+          <td class="table-cell-check">
+            <%= check_mark if competition.current %>
+          </td>
+          <td>
+            <small class="convertTime"><%= l(competition.created_at, format: :convert_time) %></small>
+          </td>
+          <% if display_dev_info? %>
+            <td>
+              <small class="convertTime"><%= l(competition.updated_at, format: :convert_time) %></small>
+            </td>
+          <% end %>
+          <td>
+            <%= competition.display_name %>
+          </td>
+          <td>
+            <%= link_to admin_number_display(competition.competition_users_included.count), admin_competition_users_path(search_competition_id: competition.slug), class: "base-link" %>
+
+          </td>
+          <td><%= admin_number_display(competition.competition_users_excluded.count) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

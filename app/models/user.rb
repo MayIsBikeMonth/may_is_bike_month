@@ -21,6 +21,8 @@
 #  strava_id           :string
 #
 class User < ApplicationRecord
+  include FriendlyFindable
+
   ROLE_ENUM = {basic_user: 0, admin: 1, developer: 2}.freeze
 
   # Include default devise modules. Others available are:
@@ -66,16 +68,10 @@ class User < ApplicationRecord
       end
     end
 
-    def friendly_find(str)
-      if n.is_a?(Integer) || n.match(/\A\d*\z/).present?
-        where(id: n).first || where(strava_id: n).first
-      else
-        find_by_strava_username(str)
-      end
-    end
-
-    def friendly_find!(str)
-      friendly_find(str) || raise(ActiveRecord::RecordNotFound)
+    # Override FriendlyFindable
+    def friendly_find_slug(str = nil)
+      return nil if str.blank?
+      find_by_display_name(str) || find_by_strava_username(str)
     end
   end
 

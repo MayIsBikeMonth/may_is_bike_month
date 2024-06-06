@@ -3,6 +3,7 @@
 # Table name: competition_users
 #
 #  id                      :bigint           not null, primary key
+#  display_name            :text
 #  included_activity_types :jsonb
 #  included_in_competition :boolean          default(FALSE), not null
 #  score                   :decimal(, )
@@ -31,8 +32,6 @@ class CompetitionUser < ApplicationRecord
   scope :excluded_from_competition, -> { where(included_in_competition: false) }
   scope :included_in_current_competition, -> { included_in_competition.current_competition }
   scope :score_ordered, -> { reorder(score: :desc) }
-
-  delegate :display_name, to: :user, allow_nil: true
 
   class << self
     def score_for(dates:, distance:, **)
@@ -88,6 +87,7 @@ class CompetitionUser < ApplicationRecord
   end
 
   def set_calculated_attributes
+    self.display_name ||= user&.display_name
     self.included_activity_types = if included_activity_types.blank?
       competition&.activity_types || Competition::DEFAULT_ACTIVITY_TYPES
     else

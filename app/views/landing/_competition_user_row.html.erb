@@ -1,5 +1,5 @@
 <th scope="row" class="px-2 py-1 font-medium whitespace-nowrap border-l-2 border-r-2 border-r-gray-400">
-  <%= link_to competition_user.display_name, strava_user_url(competition_user.user), class: "underline" %>
+  <%= link_to competition_user.display_name, strava_user_url(competition_user.user), class: "base-link" %>
   <code class="only-dev-visible text-xs"><%= competition_user.id %></code>
 </th>
 
@@ -44,7 +44,7 @@
             <a
               href=<%= competition_activity.strava_url %>
               target="_blank"
-              class="text-blue-800 underline pr-1"
+              class="text-blue-800 base-link pr-1"
             >
               <%= competition_activity.display_name %>
             </a>

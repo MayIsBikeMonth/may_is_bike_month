@@ -12,6 +12,8 @@
 #  updated_at   :datetime         not null
 #
 class Competition < ApplicationRecord
+  include FriendlyFindable
+
   DEFAULT_ACTIVITY_TYPES = %w[Ride Velomobile Handcycle].freeze
 
   has_many :competition_users
@@ -95,8 +97,8 @@ class Competition < ApplicationRecord
   def set_calculated_attributes
     self.end_date ||= start_date&.end_of_month
     self.start_date ||= end_date&.beginning_of_month
-    self.display_name ||= start_date&.year
-    self.slug ||= display_name&.gsub(/\s/, "-")
+    self.display_name ||= "MIBM #{start_date&.year}"
+    self.slug = Slugifyer.slugify(display_name)
 
     set_current if in_period?(Time.current.to_date)
   end
