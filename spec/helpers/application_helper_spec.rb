@@ -14,19 +14,19 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
-  describe 'competition_activity_display' do
+  describe "competition_activity_display" do
     let(:competition_activity) { FactoryBot.create(:competition_activity) }
-    let(:target) { '<span>Cool ride</span>' }
-    it 'renders' do
+    let(:target) { "<span>Cool ride</span>" }
+    it "renders" do
       expect(competition_activity_display(competition_activity)).to eq target
     end
-    context 'with manual_entry entered_after_competition_ended' do
+    context "with manual_entry entered_after_competition_ended" do
       before do
         allow(competition_activity).to receive(:manual_entry?).and_return(true)
         allow(competition_activity).to receive(:entered_after_competition_ended?).and_return(true)
       end
       let(:target) { '<span>Cool ride <em class="less-strong">ignored, manual entry after competition ended</em></span>' }
-      it 'renders' do
+      it "renders" do
         expect(competition_activity_display(competition_activity)).to eq target
       end
     end

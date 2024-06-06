@@ -226,14 +226,14 @@ RSpec.describe CompetitionActivity, type: :model do
     end
   end
 
-  describe 'manual_entry?' do
+  describe "manual_entry?" do
     let(:competition) { FactoryBot.create(:competition, start_date: Time.parse("2024-05-01")) }
-    let(:competition_user) {FactoryBot.create(:competition_user, competition:) }
+    let(:competition_user) { FactoryBot.create(:competition_user, competition:) }
     let(:strava_data_json) { '{"id":11582104480,"name":"MIBM to 555","type":"Ride","manual":true,"athlete":{"id":7097811,"resource_state":1},"commute":false,"flagged":false,"gear_id":"b11587114","private":false,"trainer":false,"distance":7000.7,"pr_count":0,"timezone":"(GMT-08:00) America/Los_Angeles","max_speed":0,"upload_id":null,"end_latlng":[],"has_kudoed":false,"sport_type":"Ride","start_date":"2024-05-21T15:49:00Z","utc_offset":-25200.0,"visibility":"everyone","external_id":null,"kudos_count":0,"moving_time":1791,"photo_count":0,"elapsed_time":1791,"start_latlng":[],"workout_type":10,"athlete_count":1,"average_speed":3.909,"comment_count":0,"has_heartrate":false,"location_city":null,"location_state":null,"resource_state":2,"location_country":"United States","start_date_local":"2024-05-21T08:49:00Z","achievement_count":0,"from_accepted_tag":false,"heartrate_opt_out":false,"total_photo_count":0,"total_elevation_gain":112.5,"display_hide_heartrate_option":false}' }
     let(:strava_data) { JSON.parse(strava_data_json) }
     let(:competition_activity) { CompetitionActivity.find_or_create_if_valid(competition_user:, strava_data:) }
 
-    it 'is manual_entry? and is entered_after_competition_ended? has 0 distance' do
+    it "is manual_entry? and is entered_after_competition_ended? has 0 distance" do
       expect(competition_activity).to be_valid
       expect(competition_activity.manual_entry?).to be_truthy
       expect(competition_activity.entered_after_competition_ended?).to be_truthy
@@ -241,8 +241,8 @@ RSpec.describe CompetitionActivity, type: :model do
       expect(competition_activity.included_distance_meters).to eq 0
     end
 
-    context 'created_at before end of competition' do
-      it 'has included_distance_meters of distance_meters' do
+    context "created_at before end of competition" do
+      it "has included_distance_meters of distance_meters" do
         competition_activity.update(created_at: competition.end_date.end_of_day)
         expect(competition_activity).to be_valid
         expect(competition_activity.manual_entry?).to be_truthy
