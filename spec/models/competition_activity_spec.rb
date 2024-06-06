@@ -233,10 +233,24 @@ RSpec.describe CompetitionActivity, type: :model do
     let(:strava_data) { JSON.parse(strava_data_json) }
     let(:competition_activity) { CompetitionActivity.find_or_create_if_valid(competition_user:, strava_data:) }
 
-    it 'is manual_entry? and is entered_after_competition_ended?' do
+    it 'is manual_entry? and is entered_after_competition_ended? has 0 distance' do
       expect(competition_activity).to be_valid
       expect(competition_activity.manual_entry?).to be_truthy
       expect(competition_activity.entered_after_competition_ended?).to be_truthy
+      expect(competition_activity.distance_meters).to eq 7000.7
+      expect(competition_activity.included_distance_meters).to eq 0
+    end
+
+    context 'created_at before end of competition' do
+      it 'has included_distance_meters of distance_meters' do
+        pp competition_activity.send(:competition_end_at_time)
+        competition_activity.update(created_at: competition.end_date.end_of_day)
+        expect(competition_activity).to be_valid
+        expect(competition_activity.manual_entry?).to be_truthy
+        expect(competition_activity.entered_after_competition_ended?).to be_falsey
+        expect(competition_activity.distance_meters).to eq 7000.7
+        expect(competition_activity.included_distance_meters).to eq 7000.7
+      end
     end
   end
 end

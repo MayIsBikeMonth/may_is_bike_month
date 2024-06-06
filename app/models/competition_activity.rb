@@ -141,7 +141,7 @@ class CompetitionActivity < ApplicationRecord
   end
 
   def entered_after_competition_ended?
-    (created_at || Time.current) > competition.end_date
+    (created_at || Time.current) > competition_end_at_time
   end
 
   def strava_url
@@ -153,6 +153,7 @@ class CompetitionActivity < ApplicationRecord
     self.attributes = self.class.strava_attrs_from_data(strava_data)
     self.activity_dates_strings = calculated_activity_dates_in_period.map(&:to_s)
     self.included_in_competition = calculated_included_in_competition
+    self.included_distance_meters = calculated_included_distance_meters
   end
 
   def calculated_included_in_competition
@@ -206,5 +207,17 @@ class CompetitionActivity < ApplicationRecord
     return false if override_activity_dates_strings.nil?
 
     override_activity_dates_strings.map { |str| Date.parse(str.strip) }
+  end
+
+  def competition_end_at_time
+    competition.end_date.in_time_zone(timezone).end_of_day + 2.hours
+  end
+
+  def calculated_included_distance_meters
+    if manual_entry? && entered_after_competition_ended?
+      0
+    else
+      distance_meters
+    end
   end
 end

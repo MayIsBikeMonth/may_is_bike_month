@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_06_053245) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_06_062332) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -29,6 +29,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_06_053245) do
     t.boolean "included_in_competition", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.float "included_distance_meters"
     t.index ["competition_user_id"], name: "index_competition_activities_on_competition_user_id"
   end
 

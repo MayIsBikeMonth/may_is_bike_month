@@ -29,6 +29,10 @@ module ApplicationHelper
     end
   end
 
+  def competition_activity_display(competition_activity)
+    competition_activity.display_name
+  end
+
   def sortable_params
     @sortable_params ||= sortable_search_params.as_json.map do |k, v|
       # Skip default sort parameters, to reduce unnecessary params
