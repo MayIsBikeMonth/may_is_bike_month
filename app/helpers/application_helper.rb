@@ -29,6 +29,16 @@ module ApplicationHelper
     end
   end
 
+  def competition_activity_display(competition_activity)
+    content_tag(:span) do
+      concat(competition_activity.display_name)
+      if competition_activity.manual_entry? && competition_activity.entered_after_competition_ended?
+        concat(" ")
+        concat(content_tag(:em, "ignored, manual entry after competition ended", class: "less-strong"))
+      end
+    end
+  end
+
   def sortable_params
     @sortable_params ||= sortable_search_params.as_json.map do |k, v|
       # Skip default sort parameters, to reduce unnecessary params
