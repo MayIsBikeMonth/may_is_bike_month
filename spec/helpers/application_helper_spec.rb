@@ -25,7 +25,7 @@ RSpec.describe ApplicationHelper, type: :helper do
         allow(competition_activity).to receive(:manual_entry?).and_return(true)
         allow(competition_activity).to receive(:entered_after_competition_ended?).and_return(true)
       end
-      let(:target) { '<span>Cool ride <em class="less-strong">ignored, manual entry after competition ended</em></span>' }
+      let(:target) { '<span>Cool ride <strong title="ignored, manual entry after competition ended">?</strong>' }
       it "renders" do
         expect(competition_activity_display(competition_activity)).to eq target
       end
