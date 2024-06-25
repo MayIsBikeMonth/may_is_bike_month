@@ -52,7 +52,7 @@ class CompetitionUser < ApplicationRecord
         BLANK_SCORE.merge(skip_ids ? {} : {ids: []})
       elsif competition_activities.is_a?(ActiveRecord::Relation) # Active record collection
         {
-          dates: competition_activities.pluck(:activity_dates_strings).flatten.uniq,
+          dates: competition_activities.included_dates_strings,
           distance: competition_activities.sum(:distance_meters), # skip _meters, for space saving
           elevation: competition_activities.sum(:elevation_meters) # skip _meters, for space saving
         }.merge(skip_ids ? {} : {ids: competition_activities.start_ordered.map(&:id)}) # Order IDs so they show up ordered
