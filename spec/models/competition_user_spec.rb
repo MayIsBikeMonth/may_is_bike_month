@@ -39,10 +39,10 @@ RSpec.describe CompetitionUser, type: :model do
     end
     let!(:competition_activity3) do
       FactoryBot.create(:competition_activity, competition:, start_at: time1 + 1.day,
-        distance_meters: competition.daily_distance_requirement-1)
+        distance_meters: competition.daily_distance_requirement - 1)
     end
     it "returns the dates that have scores" do
-      expect(CompetitionActivity.pluck(:activity_dates_strings).flatten.uniq).to eq(["2024-05-02","2024-05-03"])
+      expect(CompetitionActivity.pluck(:activity_dates_strings).flatten.uniq).to eq(["2024-05-02", "2024-05-03"])
       expect(CompetitionActivity.included_dates_strings).to eq(["2024-05-02"])
     end
   end

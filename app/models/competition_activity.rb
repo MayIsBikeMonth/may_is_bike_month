@@ -105,7 +105,7 @@ class CompetitionActivity < ApplicationRecord
     end
 
     def included_dates_strings(competition: nil)
-      daily_distance = self.first.competition.daily_distance_requirement
+      daily_distance = first.competition.daily_distance_requirement
       # This is generally called for just a single user in a single period,
       # plucking should be more performant than checking all the dates
       pluck(:activity_dates_strings).flatten.uniq.select do |date|
