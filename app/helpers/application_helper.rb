@@ -34,7 +34,7 @@ module ApplicationHelper
       concat(competition_activity.display_name)
       if competition_activity.manual_entry? && competition_activity.entered_after_competition_ended?
         concat(" ")
-        concat(content_tag(:em, "ignored, manual entry after competition ended", class: "less-strong"))
+        concat(content_tag(:strong, "?", title: "ignored, manual entry after competition ended"))
       end
     end
   end
