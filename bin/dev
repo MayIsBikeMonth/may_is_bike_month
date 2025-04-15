@@ -1,12 +1,16 @@
 #!/usr/bin/env sh
 
-touch log/development.log
-> log/development.log # Clear out development log, otherwise it balloons
-> log/test.log # Clear out test log too
+if ! gem list foreman -i --silent; then
+  echo "Installing foreman..."
+  gem install foreman
+fi
 
-# Start redis in the background, if it isn't started already
-touch log/redis.log
-> log/redis.log
-redis-server > log/redis.log &
+# Default to port 3000 if not specified
+export PORT="${PORT:-3000}"
+
+# Let the debug gem allow remote connections,
+# but avoid loading until `debugger` is called
+export RUBY_DEBUG_OPEN="true"
+export RUBY_DEBUG_LAZY="true"
 
 exec foreman start -f Procfile.dev "$@"
