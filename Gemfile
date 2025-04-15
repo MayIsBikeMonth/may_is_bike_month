@@ -1,9 +1,8 @@
 source "https://rubygems.org"
 
-ruby "3.2.3"
+ruby "3.4.3"
 
-# Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.1.3", ">= 7.1.3.1"
+gem "rails"
 gem "puma" # Use Puma as the app server
 gem "rack-cors" # Make cors requests
 
