@@ -1,5 +1,5 @@
 class Admin::CompetitionsController < Admin::BaseController
-  include TranzitoUtils::SortableTable
+  # include TranzitoUtils::SortableTable
   before_action :set_period, only: [:index]
 
   def index

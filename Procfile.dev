@@ -1,5 +1,3 @@
 web: bundle exec puma -t 5:5 -p 3010 -e ${RACK_ENV:-development}
-js: yarn build --watch
 worker_hard: bundle exec rerun --background --dir app,db,lib --pattern '{**/*.rb}' -- bundle exec sidekiq
-log: tail -f log/development.log
 css: bin/rails tailwindcss:watch

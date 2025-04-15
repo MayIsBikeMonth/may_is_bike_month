@@ -1,5 +1,5 @@
 class Admin::CompetitionUsersController < Admin::BaseController
-  include TranzitoUtils::SortableTable
+  # include TranzitoUtils::SortableTable
   before_action :set_period, only: [:index]
   before_action :find_competition_user, except: [:index]
 

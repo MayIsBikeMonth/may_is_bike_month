@@ -84,7 +84,7 @@ class CompetitionActivity < ApplicationRecord
 
     def parse_strava_local_time(time_str, timezone)
       # WHY THE FUCK do they put a Z at the end? This time doesn't have a zone :(
-      TranzitoUtils::TimeParser.parse(time_str.gsub(/Z\Z/i, ""), timezone)
+      TimeParser.parse(time_str.gsub(/Z\Z/i, ""), timezone)
     end
 
     def strava_attrs_from_data(passed_data)
@@ -92,7 +92,7 @@ class CompetitionActivity < ApplicationRecord
       {
         strava_id: passed_data["id"].to_s,
         timezone: timezone,
-        start_at: TranzitoUtils::TimeParser.parse(passed_data["start_date"]),
+        start_at: TimeParser.parse(passed_data["start_date"]),
         display_name: passed_data["name"],
         elevation_meters: passed_data["total_elevation_gain"],
         moving_seconds: passed_data["moving_time"]
@@ -149,7 +149,7 @@ class CompetitionActivity < ApplicationRecord
   end
 
   def manual_entry?
-    TranzitoUtils::Normalize.boolean(strava_data&.dig("manual"))
+    InputNormalizer.boolean(strava_data&.dig("manual"))
   end
 
   def entered_after_competition_ended?

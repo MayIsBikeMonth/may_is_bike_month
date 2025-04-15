@@ -1,5 +1,9 @@
 module ApplicationHelper
-  include TranzitoUtils::Helpers
+  # include TranzitoUtils::Helpers
+
+  def page_title
+    "Something" # originally pulled from tranzito
+  end
 
   def number_display(number, round_to: 0)
     content_tag(:span,

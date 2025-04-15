@@ -16,11 +16,8 @@ gem "sidekiq-failures" # Show sidekiq failures
 
 # Frontend stuff
 gem "propshaft" # For Assets Pipeline
-# gem "jsbundling-rails" # required for new sourcemaps stuff
 gem "turbo-rails" # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "stimulus-rails"
-gem "tranzito_utils" # For timeparser, sortable, etc
-
 gem "importmap-rails" # New JS setup
 gem "tailwindcss-rails" # Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
 gem "view_component" # view components!

@@ -153,9 +153,6 @@ GEM
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
       railties (>= 6.0.0)
-    inline_svg (1.9.0)
-      activesupport (>= 3.0)
-      nokogiri (>= 1.6)
     io-console (0.8.0)
     irb (1.15.2)
       pp (>= 0.6.0)
@@ -164,18 +161,6 @@ GEM
     json (2.7.2)
     jwt (2.8.1)
       base64
-    kaminari (1.2.2)
-      activesupport (>= 4.1.0)
-      kaminari-actionview (= 1.2.2)
-      kaminari-activerecord (= 1.2.2)
-      kaminari-core (= 1.2.2)
-    kaminari-actionview (1.2.2)
-      actionview
-      kaminari-core (= 1.2.2)
-    kaminari-activerecord (1.2.2)
-      activerecord
-      kaminari-core (= 1.2.2)
-    kaminari-core (1.2.2)
     language_server-protocol (3.17.0.3)
     lint_roller (1.1.0)
     listen (3.0.8)
@@ -438,11 +423,6 @@ GEM
     thor (1.3.2)
     tilt (2.3.0)
     timeout (0.4.3)
-    tranzito_utils (1.3.1)
-      coderay
-      inline_svg
-      kaminari
-      rails (>= 6.0)
     turbo-rails (2.0.5)
       actionpack (>= 6.0.0)
       activejob (>= 6.0.0)
@@ -519,7 +499,6 @@ DEPENDENCIES
   standard
   stimulus-rails
   tailwindcss-rails
-  tranzito_utils
   turbo-rails
   tzinfo-data
   vcr

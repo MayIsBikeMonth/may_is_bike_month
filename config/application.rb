@@ -20,7 +20,7 @@ Bundler.require(*Rails.groups)
 module MayIsBikeMonth
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 8.0
+    config.load_defaults 7.1
 
     config.redis_default_url = ENV.fetch("REDIS_URL", "redis://localhost:6379")
     config.redis_cache_url = ENV.fetch("REDIS_CACHE_URL", config.redis_default_url)
