@@ -64,6 +64,14 @@ module ApplicationHelper
     "🔎"
   end
 
+  def in_admin?
+    controller_namespace == "admin"
+  end
+
+  def admin_number_display(number)
+    content_tag(:span, number_with_delimiter(number), class: ((number == 0) ? "less-less-strong" : ""))
+  end
+
   private
 
   def short_date_string_gsub(activity_date)
