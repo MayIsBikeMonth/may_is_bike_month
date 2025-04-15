@@ -57,7 +57,7 @@ end
 
 group :development do
   gem "rerun" # For restarting sidekiq on file changes
-  gem "hotwire-livereload" # Livereload!
+  gem "hotwire-livereload", "~> 1.4.1" # reasoning in github.com/bikeindex/bike_index/pull/2759
   gem "annotaterb" # Annotate models with schema info
 end
 

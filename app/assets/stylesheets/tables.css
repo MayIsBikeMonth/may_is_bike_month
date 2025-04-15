@@ -4,6 +4,7 @@
 }
 
 .table, .table-list {
+  background: purple !important;
   @apply w-full text-left;
 
   & thead {
@@ -83,7 +84,7 @@
 
 .sortable .sortable-link {
 /*  @apply text-bodytext underline;*/
-  @apply base-link;
+/*  @apply base-link;*/
 
   &.sortable-link-narrow {
     @apply inline-block mr-3;

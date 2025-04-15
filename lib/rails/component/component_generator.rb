@@ -1,7 +1,7 @@
 
 # frozen_string_literal: true
 
-# Based on https://github.com/github/view_component/blob/master/lib/rails/generators/component/component_generator.rb
+# Based on https://github.com/bikeindex/bike_index/blob/main/lib/rails/generators/component/component_generator.rb
 
 class ComponentGenerator < Rails::Generators::NamedBase
   source_root File.expand_path("templates", __dir__)
