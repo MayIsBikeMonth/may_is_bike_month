@@ -13,6 +13,11 @@
 #  competition_id          :bigint
 #  user_id                 :bigint
 #
+# Indexes
+#
+#  index_competition_users_on_competition_id  (competition_id)
+#  index_competition_users_on_user_id         (user_id)
+#
 class CompetitionUser < ApplicationRecord
   BLANK_SCORE = {dates: [], distance: 0, elevation: 0}.freeze
   belongs_to :competition

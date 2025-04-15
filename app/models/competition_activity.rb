@@ -18,6 +18,10 @@
 #  competition_user_id             :bigint
 #  strava_id                       :string
 #
+# Indexes
+#
+#  index_competition_activities_on_competition_user_id  (competition_user_id)
+#
 class CompetitionActivity < ApplicationRecord
   IGNORED_STRAVA_KEYS = %w[
     laps
