@@ -18,7 +18,7 @@ class StravaRequest < ApplicationRecord
 
   belongs_to :user
 
-  enum kind: KIND_ENUM
+  enum :kind, KIND_ENUM
 
   scope :success_response, -> { where(status: SUCCESS_CODES) }
   scope :error_response, -> { where.not(status: SUCCESS_CODES) }

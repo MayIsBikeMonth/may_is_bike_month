@@ -22,6 +22,11 @@ gem "turbo-rails" # Hotwire's SPA-like page accelerator [https://turbo.hotwired.
 gem "stimulus-rails"
 gem "tranzito_utils" # For timeparser, sortable, etc
 
+# gem "importmap-rails" # New JS setup
+# gem "tailwindcss-rails" # Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
+# gem "view_component" # view components!
+# gem "lookbook" # view_component preview
+
 # Make logging - more useful and ingestible
 gem "lograge" # Structure log data, put it in single lines to improve the functionality
 gem "logstash-event" # Use logstash format for logging data
@@ -55,10 +60,9 @@ group :development, :test do
 end
 
 group :development do
-  gem "listen", ">= 3.0.5", "< 3.2"
   gem "rerun" # For restarting sidekiq on file changes
   gem "hotwire-livereload" # Livereload!
-  gem "annotate" # Annotate models with schema info
+  gem "annotaterb" # Annotate models with schema info
 end
 
 group :test do

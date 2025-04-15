@@ -30,7 +30,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :trackable, :omniauthable,
     :rememberable
 
-  enum role: ROLE_ENUM
+  enum :role, ROLE_ENUM
 
   has_many :competition_users
   has_many :competition_activities, through: :competition_users
