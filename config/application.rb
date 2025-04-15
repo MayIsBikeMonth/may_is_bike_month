@@ -20,7 +20,7 @@ Bundler.require(*Rails.groups)
 module MayIsBikeMonth
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
+    config.load_defaults 8.0
 
     config.redis_default_url = ENV.fetch("REDIS_URL", "redis://localhost:6379")
     config.redis_cache_url = ENV.fetch("REDIS_CACHE_URL", config.redis_default_url)
@@ -37,6 +37,19 @@ module MayIsBikeMonth
     #
     config.time_zone = "America/Los_Angeles"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Enable instrumentation for ViewComponents (used by rack-mini-profiler)
+    config.view_component.instrumentation_enabled = true
+    config.view_component.use_deprecated_instrumentation_name = false # Stop annoying deprecation message
+    # ^ remove after upgrading to ViewComponent 4
+    config.default_preview_layout = "component_preview"
+    config.view_component.preview_paths << "#{Rails.root}/app/components/"
+    # This is ugly but necessary, see github.com/ViewComponent/view_component/issues/1064
+    initializer "app_assets", after: "importmap.assets" do
+      Rails.application.config.assets.paths << Rails.root.join("app")
+    end
+    config.importmap.cache_sweepers << Rails.root.join("app/components") # Sweep importmap cache
+    config.lookbook.preview_display_options = {theme: ["light", "dark"]} # Add dynamic 'theme' display option
 
     config.generators do |g|
       g.factory_bot "true"

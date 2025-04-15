@@ -22,10 +22,10 @@ gem "turbo-rails" # Hotwire's SPA-like page accelerator [https://turbo.hotwired.
 gem "stimulus-rails"
 gem "tranzito_utils" # For timeparser, sortable, etc
 
-# gem "importmap-rails" # New JS setup
-# gem "tailwindcss-rails" # Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
-# gem "view_component" # view components!
-# gem "lookbook" # view_component preview
+gem "importmap-rails" # New JS setup
+gem "tailwindcss-rails" # Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
+gem "view_component" # view components!
+gem "lookbook" # view_component preview
 
 # Make logging - more useful and ingestible
 gem "lograge" # Structure log data, put it in single lines to improve the functionality
