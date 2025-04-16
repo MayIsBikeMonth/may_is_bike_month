@@ -29,7 +29,9 @@ group :red_green_refactor, halt_on_fail: true do
     # Jobs
     watch(%r{^app/jobs/(.+)\.rb$}) { |m| "#{rspec.spec_dir}/jobs/#{m[1]}_spec.rb" }
     # Our special folders
-    watch(%r{^app/integrations/(.+)\.rb$}) { |m| "#{rspec.spec_dir}/integrations/#{m[1]}_spec.rb" }
     watch(%r{^app/services/(.+)\.rb$}) { |m| "#{rspec.spec_dir}/services/#{m[1]}_spec.rb" }
+    # components
+    watch(%r{^app/components/(.+)rb$}) { |m| "spec/components/#{m[1]}_spec.rb" }
+    watch(%r{^app/components/(.+)rb$}) { |m| "spec/components/#{m[1]}_system_spec.rb" }
   end
 end

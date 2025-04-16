@@ -11,6 +11,10 @@
 #  updated_at     :datetime         not null
 #  user_id        :bigint
 #
+# Indexes
+#
+#  index_strava_requests_on_user_id  (user_id)
+#
 class StravaRequest < ApplicationRecord
   UPDATE_DELAY = 60
   KIND_ENUM = {get_activities: 0, get_athlete: 1}.freeze
@@ -18,7 +22,7 @@ class StravaRequest < ApplicationRecord
 
   belongs_to :user
 
-  enum kind: KIND_ENUM
+  enum :kind, KIND_ENUM
 
   scope :success_response, -> { where(status: SUCCESS_CODES) }
   scope :error_response, -> { where.not(status: SUCCESS_CODES) }

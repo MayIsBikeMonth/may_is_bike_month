@@ -9,4 +9,9 @@ touch log/redis.log
 > log/redis.log
 redis-server > log/redis.log &
 
+# Let the debug gem allow remote connections,
+# but avoid loading until `debugger` is called
+export RUBY_DEBUG_OPEN="true"
+export RUBY_DEBUG_LAZY="true"
+
 exec foreman start -f Procfile.dev "$@"

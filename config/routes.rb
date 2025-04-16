@@ -17,6 +17,8 @@ Rails.application.routes.draw do
     resources :competition_users, only: %i[index edit update]
   end
 
+  mount Lookbook::Engine, at: "/lookbook"
+
   authenticate :user, lambda { |u| u.developer? } do
     mount Sidekiq::Web, at: "/sidekiq"
   end

@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
 
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
     <% if Rails.env.development? %>
       <link href="/favicon-dev.ico" rel="icon" sizes="192x192">
       <%= hotwire_livereload_tags %>
@@ -20,6 +19,7 @@
         .only-dev-visible {display: none !important;}
       </style>
     <% end %>
+    <%= javascript_importmap_tags %>
   </head>
   <body class="bg-white antialiased">
     <!--

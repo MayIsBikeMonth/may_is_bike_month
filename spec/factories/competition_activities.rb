@@ -14,7 +14,7 @@ FactoryBot.define do
     timezone { "America/Los_Angeles" }
 
     strava_data do
-      tz_offset = TranzitoUtils::TimeParser.parse_timezone(timezone).utc_offset
+      tz_offset = TimeZoneParser.parse(timezone).utc_offset
       {
         "id" => strava_id.to_i,
         "name" => "Cool ride",

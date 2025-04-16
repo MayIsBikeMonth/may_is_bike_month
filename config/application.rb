@@ -28,7 +28,7 @@ module MayIsBikeMonth
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w[assets tasks])
+    config.autoload_lib(ignore: %w[assets tasks rails])
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -37,6 +37,20 @@ module MayIsBikeMonth
     #
     config.time_zone = "America/Los_Angeles"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Enable instrumentation for ViewComponents (used by rack-mini-profiler)
+    config.view_component.instrumentation_enabled = true
+    config.view_component.use_deprecated_instrumentation_name = false # Stop annoying deprecation message
+    # ^ remove after upgrading to ViewComponent 4
+    config.default_preview_layout = "component_preview"
+    config.view_component.preview_paths << "#{Rails.root}/app/components/"
+    # This is maybe necessary, see github.com/ViewComponent/view_component/issues/1064 ?
+    # But it breaks propshaft
+    # initializer "app_assets", after: "importmap.assets" do
+    #   Rails.application.config.assets.paths << Rails.root.join("app")
+    # end
+    config.importmap.cache_sweepers << Rails.root.join("app/components") # Sweep importmap cache
+    config.lookbook.preview_display_options = {theme: ["light", "dark"]} # Add dynamic 'theme' display option
 
     config.generators do |g|
       g.factory_bot "true"

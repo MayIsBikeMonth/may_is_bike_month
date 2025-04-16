@@ -4,6 +4,8 @@ module.exports = {
     './app/helpers/**/*.rb',
     './app/assets/stylesheets/**/*.css',
     './app/javascript/**/*.js',
-    './public/*.html'
-  ]
+    './public/*.html',
+    './app/components/**/*.{erb,haml,html,rb}'
+  ],
+  darkMode: 'selector'
 }

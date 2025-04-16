@@ -19,13 +19,13 @@
         <tr>
           <td>Activities</td>
           <td>
-            <%= admin_number_display(@competition_user.competition_activities.count) %>
+            <%= number_display(@competition_user.competition_activities.count) %>
           </td>
         </tr>
         <tr>
           <td>Activities in competition</td>
           <td>
-            <%= admin_number_display(@competition_user.competition_activities.included_in_competition.count) %>
+            <%= number_display(@competition_user.competition_activities.included_in_competition.count) %>
           </td>
         </tr>
       </tbody>

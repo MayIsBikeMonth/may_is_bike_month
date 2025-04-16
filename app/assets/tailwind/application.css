@@ -1,20 +1,18 @@
-@import "./tables";
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+@import "tailwindcss";
+@config "../../../config/tailwind.config.js";
 
 h1 { @apply text-2xl; }
 h2 { @apply text-xl; }
 h3 { @apply text-lg; }
 h4 { @apply font-bold; }
 
-.base-link {
-  @apply cursor-pointer underline decoration-1 hover:decoration-2 active:decoration-2;
-}
-.base-link.active {
-  @apply active:decoration-2;
+@layer components {
+  .base-link {
+    @apply cursor-pointer underline decoration-1 hover:decoration-2 active:decoration-2;
+  }
+  .base-link.active {
+    @apply active:decoration-2;
+  }
 }
 
 .only-dev-visible, .only-dev-visible-small {
@@ -33,3 +31,7 @@ h4 { @apply font-bold; }
   @apply cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300
     font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none;
  }
+
+
+
+@import "../stylesheets/tables.css";

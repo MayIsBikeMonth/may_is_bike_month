@@ -83,7 +83,7 @@
 
 .sortable .sortable-link {
 /*  @apply text-bodytext underline;*/
-  @apply base-link;
+/*  @apply base-link;*/
 
   &.sortable-link-narrow {
     @apply inline-block mr-3;
