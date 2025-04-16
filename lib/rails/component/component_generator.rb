@@ -1,4 +1,3 @@
-
 # frozen_string_literal: true
 
 # Based on https://github.com/bikeindex/bike_index/blob/main/lib/rails/generators/component/component_generator.rb

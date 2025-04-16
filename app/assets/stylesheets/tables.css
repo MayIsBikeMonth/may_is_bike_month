@@ -4,7 +4,6 @@
 }
 
 .table, .table-list {
-  background: purple !important;
   @apply w-full text-left;
 
   & thead {

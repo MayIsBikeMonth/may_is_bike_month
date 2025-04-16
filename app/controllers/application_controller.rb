@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  # include TranzitoUtils::SetPeriod
+  include SetPeriod
 
   before_action do
     if Rails.env.production? && current_user.present?

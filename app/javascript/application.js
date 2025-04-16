@@ -17,7 +17,6 @@ window.Stimulus = application
 
 // lazyLoadControllersFrom('components', application)
 
-
 // Entry point for the build script in your package.json
 // import "@hotwired/turbo-rails" // eslint-disable-line
 // // Import flowbite, a tailwind component library, for interactions

@@ -52,7 +52,7 @@
                 <small class="convertTime"><%= l(competition_user.updated_at, format: :convert_time) %></small>
               </td>
             <% end %>
-            <td><%= admin_number_display(competition_user.competition_activities.count) %></td>
+            <td><%= number_display(competition_user.competition_activities.count) %></td>
             <td class="table-cell-check">
               <%= check_mark if competition_user.included_in_competition %>
             </td>
