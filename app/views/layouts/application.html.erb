@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <%= javascript_importmap_tags %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
 
     <% if Rails.env.development? %>
@@ -19,7 +20,6 @@
         .only-dev-visible {display: none !important;}
       </style>
     <% end %>
-    <%= javascript_importmap_tags %>
   </head>
   <body class="bg-white antialiased">
     <!--
@@ -32,7 +32,7 @@
     <ul class="relative z-10 flex items-center gap-4 px-2 lg:px-4 justify-end mt-1 mb-2">
       <% if current_user.blank? %>
         <li>
-          <%= button_to "Sign in", user_strava_omniauth_authorize_path, method: :post, data: { turbo: false } %>
+          <%= button_to "Sign in", user_strava_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "base-link" %>
         </li>
       <% elsif in_admin? %>
         <span class="hidden sm:inline-block ml-2 text-lg font-semibold">May Is Bike Month Admin</span>

@@ -37,11 +37,15 @@
       <% @competitions.each do |competition| %>
         <tr class="odd:bg-white even:bg-gray-100">
           <td>
-            <%= l competition.start_date, format: :month_date %>
+            <%= competition.start_date %>
             <% if display_dev_info? %><code class="only-dev-visible-small"><%= competition.id %></code><% end %>
           </td>
           <td>
-            <%= l competition.end_date, format: :month_date %>
+            <% if competition.start_date.year == competition.end_date.year %>
+              <%= l competition.end_date, format: :month_date %>
+            <% else %>
+              <%= competition.end_date %>
+            <% end %>
           </td>
           <td class="table-cell-check">
             <%= check_mark if competition.current %>

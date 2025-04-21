@@ -54,6 +54,10 @@ class Competition < ApplicationRecord
     end
   end
 
+  def previous_competition
+    self.class.order(:start_date).where("id < ?", id).last
+  end
+
   # Method now, could be an attribute later
   def daily_distance_requirement
     3_219 # 2 miles
