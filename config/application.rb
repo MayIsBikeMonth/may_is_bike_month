@@ -49,7 +49,7 @@ module MayIsBikeMonth
     # initializer "app_assets", after: "importmap.assets" do
     #   Rails.application.config.assets.paths << Rails.root.join("app")
     # end
-    config.importmap.cache_sweepers << Rails.root.join("app/components") # Sweep importmap cache
+    # config.importmap.cache_sweepers << Rails.root.join("app/components") # Sweep importmap cache
     config.lookbook.preview_display_options = {theme: ["light", "dark"]} # Add dynamic 'theme' display option
 
     config.generators do |g|

@@ -6,14 +6,16 @@ import { Application } from '@hotwired/stimulus'
 // Lazy load all controllers
 import { lazyLoadControllersFrom } from '@hotwired/stimulus-loading'
 
+const application = Application.start()
+
 // Configure Stimulus development experience
 application.debug = false
 window.Stimulus = application
 
-// lazyLoadControllersFrom('components', application)
+lazyLoadControllersFrom('components', application)
 
 document.addEventListener('turbo:load', () => {
-  console.log("lllll")
+  console.log("turbo:loaded")
 
   if (!window.timeLocalizer) window.timeLocalizer = new TimeLocalizer()
   window.timeLocalizer.localize()

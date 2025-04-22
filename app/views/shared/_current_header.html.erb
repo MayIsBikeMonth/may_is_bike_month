@@ -2,29 +2,8 @@
 
 <%# NOTE: when you add new search_ params here, also add it to hidden_search_fields %>
 <% viewing ||= controller_name.humanize %>
-<% cheader_keys = %w[user_id competition_id] %>
-<% include_competition_select ||= false %>
-<% header_present ||= (cheader_keys & params.keys).any? || include_competition_select %>
+<%# cheader_keys =  %>
+<%# include_competition_select ||= false %>
+<%# header_present ||= (cheader_keys & params.keys).any? || include_competition_select %>
+<%= render(Admin::CurrentHeader::Component.new(viewing:, include_competition_select:, competition_subject:)) %>
 
-<% if header_present %>
-  <div class="mb-6" data-controller="admin-current-header">
-    <p class="mb-2">
-      <%= viewing %>
-      <% if competition_subject.present? %>
-        for competition: <strong><%= competition_subject.display_name %></strong>
-      <% else %>
-        for all competitions
-      <% end %>
-      <span class="less-strong">
-        <em>&ndash; view for</em>
-        <% if searchable_competitions.present? %>
-          <%= select_tag :search_competition_id, options_for_select(searchable_competitions.map { |s| [s.display_name, s.id] }, competition_subject&.id), prompt: "Choose competition", class: "form-control-inline updateOnChange mx-1", "data-updateUrl" => url_for(sortable_params.merge(search_competition_id: "UpdateThis")) %>
-          <% unless competition_subject.blank? %> <em>or for</em> <% end %>
-        <% end %>
-        <% if competition_subject.present? %>
-          <%= link_to "all competitions", url_for(sortable_params.merge(search_competition_id: nil)), class: "base-link" %>
-        <% end %>
-      </em>
-    </p>
-  </div>
-<% end %>

@@ -1,9 +1,12 @@
-// 2023-7-30 - Added setDateInputField
+// TODO: add ability to show in og time zone
+// 2024-11-24 - refactor code to better take advantage of luxon
+// 2024-11-13 - switch moment to luxon!
 // 2023-8-25 - Updated withPreposition
+// 2023-7-30 - Added setDateInputField
 
-import moment from 'moment-timezone'
+import { DateTime } from 'luxon'
 
-// TimeParser updates all HTML elements with class '.convertTime', making them:
+// TimeLocalizer updates all HTML elements with class '.convertTime', making them:
 // - Human readable
 // - Displayed with time in provided timezone
 // - With context relevant data (e.g. today shows hour, last month just date)
@@ -11,32 +14,33 @@ import moment from 'moment-timezone'
 // - If elements have classes '.preciseTime' or '.preciseTimeSeconds', includes extra specificity in output
 // - If elements have class '.withPreposition' it includes preposition (to make time fit better in a sentence)
 // - Requires elements have HTML content of a time string (e.g. a unix timestamp)
-// - if the window has timeParserSingleFormat truthy, all times are a single format, for consistency
+// - if the window has timeLocalizerSingleFormat truthy, all times are a single format, for consistency
 //   ... except elements that have classes '.variableFormat'
 //
 // Imported and initialized like this:
-// if (!window.timeParser) { window.timeParser = new TimeParser() }
-// window.timeParser.localize() // updates all the elements on the page with the localized time
+// if (!window.timeLocalizer) { window.timeLocalizer = new TimeLocalizer() }
+// window.timeLocalizer.localize() // updates all the elements on the page with the localized time
 //
 // To get span with the localized time:
 // localizedTimeHtml("1604337131", {})
 //
 // You can add this to a react component:
-// componentDidUpdate() { window.timeParser.localize() }
+// componentDidUpdate() { window.timeLocalizer.localize() }
 
-export default class TimeParser {
+export default class TimeLocalizer {
   constructor () {
     if (!window.localTimezone) {
-      window.localTimezone = moment.tz.guess()
+      window.localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
     }
-    this.singleFormat = !!window.timeParserSingleFormat
+    this.singleFormat = !!window.timeLocalizerSingleFormat
     this.localTimezone = window.localTimezone
-    moment.tz.setDefault(this.localTimezone)
-    this.yesterdayStart = moment().subtract(1, 'day').startOf('day')
-    this.todayStart = moment().startOf('day')
-    this.todayEnd = moment().endOf('day')
-    this.tomorrowEnd = moment().add(1, 'day').endOf('day')
-    this.todayYear = moment().year()
+    // Create all DateTime instances with the local timezone
+    this.now = DateTime.local().setZone(this.localTimezone)
+    this.yesterdayStart = this.now.minus({ days: 1 }).startOf('day') - 1
+    this.todayStart = this.now.startOf('day')
+    this.todayEnd = this.now.endOf('day')
+    this.tomorrowEnd = this.now.plus({ days: 1 }).endOf('day')
+    this.todayYear = this.now.year
   }
 
   // Directly render localized time elements. Returns an HTML string
@@ -121,13 +125,13 @@ export default class TimeParser {
   // If we're display time with the hour, we have different formats based on whether we include seconds
   // this manages that functionality
   hourFormat (time, baseTimeFormat, includeSeconds, withPreposition) {
-    const prefix = withPreposition ? 'at ' : ''
+    const prefix = withPreposition ? ' at ' : ''
     if (includeSeconds) {
-      return `${prefix}${time.format(baseTimeFormat)}:<small>${time.format(
+      return `${prefix}${time.toFormat(baseTimeFormat)}:<small>${time.toFormat(
         'ss'
-      )}</small> ${time.format('a')}`
+      )}</small> ${time.toFormat('a')}`
     } else {
-      return prefix + time.format(`${baseTimeFormat}a`)
+      return prefix + time.toFormat(`${baseTimeFormat} a`)
     }
   }
 
@@ -138,57 +142,47 @@ export default class TimeParser {
     includeSeconds,
     withPreposition
   ) {
-    let prefix = ''
-    // If we're doing inconsistent formatting, add a prefix if we're dealing with yesterday or today (not the future)
-    if (
-      !singleFormat &&
-      time < this.tomorrowEnd &&
-      time > this.yesterdayStart
-    ) {
-      // If we're dealing with yesterday or tomorrow, we prepend that
-      if (time < this.todayStart) {
-        prefix = 'Yesterday '
-      } else if (time > this.todayEnd) {
-        prefix = 'Tomorrow '
-      }
-      return (
-        prefix + this.hourFormat(time, 'h:mm', includeSeconds, withPreposition)
-      )
-    }
-    if (withPreposition) {
-      prefix = 'on '
-    }
+    const currentThreeDays = (time < this.tomorrowEnd && time > this.yesterdayStart)
 
     // If it's preciseTime (or preciseTimeSeconds), always show the hours and mins
-    if (preciseTime || includeSeconds) {
-      // Make the time less-strong, otherwise it's hard to separate from the date
-      const hourEl = `<span class="less-strong">${this.hourFormat(
-        time,
-        'h:mm',
-        includeSeconds,
-        withPreposition
-      )}</span>`
-      // Only show the year if it isn't this year
-      if (singleFormat || time.year() - this.todayYear !== 0) {
-        return prefix + time.format('YYYY-MM-DD ') + hourEl
-      } else {
-        return prefix + time.format('MMM Do ') + hourEl
-      }
+    let hourEl = (preciseTime || includeSeconds || currentThreeDays) ? ` ${this.hourFormat(time, 'h:mm', includeSeconds, withPreposition)}` : ''
+
+    if (singleFormat) {
+      return time.toFormat('yyyy-MM-dd') + hourEl
     }
-    // Otherwise, format in basic format
-    if (singleFormat || time.year() - this.todayYear !== 0) {
-      return prefix + time.format('YYYY-MM-DD')
-    } else {
-      if (withPreposition) {
-        return prefix + time.format('MMM Do')
+
+    // If not withPreposition, include a comma
+    if (!withPreposition && hourEl.length > 0) {
+      hourEl = ', ' + hourEl
+    }
+
+    let prefix = ''
+    // If we're doing inconsistent formatting, add a prefix if we're dealing with yesterday or today (not the future)
+    if (currentThreeDays) {
+      // If we're dealing with yesterday or tomorrow, we prepend that
+      if (time < this.todayStart) {
+        prefix = 'Yesterday'
+      } else if (time > this.todayEnd) {
+        prefix = 'Tomorrow'
       } else {
-        return prefix + time.format('MMM Do')
+        prefix = 'Today'
       }
+      return (
+        // Always return yday, today, tomorrow with hours
+        prefix + hourEl
+      )
+    }
+
+    // Only show the year if it isn't this year
+    if (time.year - this.todayYear !== 0) {
+      return prefix + time.toLocaleString({ month: 'short', day: 'numeric', year: 'numeric' }) + hourEl
+    } else {
+      return prefix + time.toLocaleString({ month: 'short', day: 'numeric' }) + hourEl
     }
   }
 
   preciseTimeSeconds (time) {
-    return time.format('YYYY-MM-DD h:mm:ss a')
+    return time.toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS)
   }
 
   setHiddenTimezoneFields (el) {
@@ -199,7 +193,7 @@ export default class TimeParser {
     const text = el.getAttribute('data-initialtime')
     if (text.length > 0) {
       // Format that at least Chrome expects for field
-      el.value = moment(text, moment.ISO_8601).format('YYYY-MM-DDTHH:mm')
+      el.value = DateTime.fromISO(text).toFormat('yyyy-MM-dd\'T\'HH:mm')
     }
   }
 
@@ -207,9 +201,9 @@ export default class TimeParser {
     // If time is only a number, parse as a timestamp
     // Otherwise, parse as ISO_8601 which is the default time string
     if (/^\d+$/.test(text)) {
-      return moment.unix(text)
+      return DateTime.fromSeconds(parseInt(text))
     } else if (text !== null) {
-      return moment(text, moment.ISO_8601)
+      return DateTime.fromISO(text)
     }
     // REMOVED time.isValid because time isn't defined
     if (text === null) {
@@ -218,7 +212,7 @@ export default class TimeParser {
   }
 
   writeTimezone (el) {
-    el.textContent = moment().format('z')
+    el.textContent = this.now.toFormat('z')
     el.classList.remove('convertTimezone')
   }
 }
