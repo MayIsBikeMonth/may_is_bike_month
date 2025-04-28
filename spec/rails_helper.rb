@@ -41,6 +41,23 @@ end
 #
 Rails.root.glob("spec/support/**/*.rb").sort.each { |f| require f }
 
+# Include capybara for view component system specs
+require "capybara/rails"
+require "capybara/rspec"
+Capybara.register_driver :chrome_headless do |app|
+  options = Selenium::WebDriver::Chrome::Options.new
+  options.add_argument("--headless")
+  options.add_argument("--window-size=1920,1080")
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+end
+# Configure Capybara
+Capybara.configure do |config|
+  config.default_driver = :chrome_headless
+  config.javascript_driver = :chrome_headless
+end
+require "view_component/test_helpers"
+require "view_component/system_test_helpers"
+
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
 begin
@@ -55,6 +72,12 @@ RSpec.configure do |config|
   config.include Devise::Test::IntegrationHelpers, type: :request
   # Our stuff
   config.include RequestSpecHelpers, type: :request
+
+  # View components
+  config.include ViewComponent::TestHelpers, type: :component
+  config.include ViewComponent::SystemTestHelpers, type: :component
+  config.include Capybara::RSpecMatchers, type: :component
+  config.before(:each, :js, type: :system) { driven_by(:selenium_chrome_headless) }
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false

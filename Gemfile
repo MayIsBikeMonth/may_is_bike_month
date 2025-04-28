@@ -59,6 +59,7 @@ group :development do
   gem "rerun" # For restarting sidekiq on file changes
   gem "hotwire-livereload", "~> 1.4.1" # reasoning in github.com/bikeindex/bike_index/pull/2759
   gem "annotaterb" # Annotate models with schema info
+  gem "listen" # auto-reloading lookbook
 end
 
 group :test do
@@ -67,6 +68,8 @@ group :test do
   gem "rails-controller-testing" # Assert testing views
   gem "vcr" # Stub external HTTP requests
   gem "webmock" # mocking for VCR
+  gem "capybara" # For view components
+  gem "selenium-webdriver" # For capybara
 end
 
 # Performance Stuff

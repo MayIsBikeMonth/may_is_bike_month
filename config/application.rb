@@ -44,12 +44,6 @@ module MayIsBikeMonth
     # ^ remove after upgrading to ViewComponent 4
     config.default_preview_layout = "component_preview"
     config.view_component.preview_paths << "#{Rails.root}/app/components/"
-    # This is maybe necessary, see github.com/ViewComponent/view_component/issues/1064 ?
-    # But it breaks propshaft
-    # initializer "app_assets", after: "importmap.assets" do
-    #   Rails.application.config.assets.paths << Rails.root.join("app")
-    # end
-    config.importmap.cache_sweepers << Rails.root.join("app/components") # Sweep importmap cache
     config.lookbook.preview_display_options = {theme: ["light", "dark"]} # Add dynamic 'theme' display option
 
     config.generators do |g|

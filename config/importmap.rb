@@ -9,5 +9,5 @@ pin "luxon", to: "https://cdn.jsdelivr.net/npm/luxon@3.5.0/build/es6/luxon.js"
 
 # Our javascript!
 pin_all_from "app/javascript/controllers", under: "controllers"
-pin_all_from "app/components", under: "components"
+pin_all_from "app/components", under: "components", to: ""
 pin_all_from "app/javascript/utils", under: "utils", to: "utils"

@@ -2,7 +2,7 @@
   Admin Competition Users
 </h1>
 
-<%= render partial: "/shared/current_header", locals: {collection: @competition_users, include_competition_select: true, render_period: false} %>
+<%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, include_competition_select: true, competition_subject:, searchable_competitions:, render_period: false, s_params: sortable_params)) %>
 
 <% skip_sortable ||= false %>
 <% include_competition ||= competition_subject.blank? %>

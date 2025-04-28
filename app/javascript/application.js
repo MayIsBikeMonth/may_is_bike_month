@@ -1,21 +1,26 @@
-import '@hotwired/turbo-rails'
+import "@hotwired/turbo-rails"
+import TimeLocalizer from 'utils/time_localizer'
 
 // Import stimulus controllers
 import { Application } from '@hotwired/stimulus'
 // Lazy load all controllers
 import { lazyLoadControllersFrom } from '@hotwired/stimulus-loading'
 
-/* global Turbo */
-// Disable Turbo by default, only enable on case-by-case
-// You must include data-turbo="true" on the elements you want to enable turbo on
-Turbo.session.drive = false
 const application = Application.start()
 
 // Configure Stimulus development experience
 application.debug = false
 window.Stimulus = application
 
-// lazyLoadControllersFrom('components', application)
+lazyLoadControllersFrom('components', application)
+
+document.addEventListener('turbo:load', () => {
+  console.log("turbo:loaded")
+
+  if (!window.timeLocalizer) window.timeLocalizer = new TimeLocalizer()
+  window.timeLocalizer.localize()
+
+})
 
 // Entry point for the build script in your package.json
 // import "@hotwired/turbo-rails" // eslint-disable-line
