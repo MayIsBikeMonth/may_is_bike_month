@@ -390,7 +390,14 @@ GEM
       rubocop-ast (>= 1.30.0, < 2.0)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
+    rubyzip (2.4.1)
     securerandom (0.4.1)
+    selenium-webdriver (4.31.0)
+      base64 (~> 0.2)
+      logger (~> 1.4)
+      rexml (~> 3.2, >= 3.2.5)
+      rubyzip (>= 1.2.2, < 3.0)
+      websocket (~> 1.0)
     shellany (0.0.1)
     sidekiq (7.2.2)
       concurrent-ruby (< 2)
@@ -453,6 +460,7 @@ GEM
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
+    websocket (1.2.11)
     websocket-driver (0.7.7)
       base64
       websocket-extensions (>= 0.1.0)
@@ -487,6 +495,7 @@ DEPENDENCIES
   hotwire-livereload (~> 1.4.1)
   htmlbeautifier
   importmap-rails
+  listen
   lograge
   logstash-event
   lookbook
@@ -504,6 +513,7 @@ DEPENDENCIES
   rerun
   rspec-rails
   rubocop
+  selenium-webdriver
   sidekiq
   sidekiq-failures
   sinatra

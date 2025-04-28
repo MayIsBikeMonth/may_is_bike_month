@@ -77,7 +77,7 @@ RSpec.configure do |config|
   config.include ViewComponent::TestHelpers, type: :component
   config.include ViewComponent::SystemTestHelpers, type: :component
   config.include Capybara::RSpecMatchers, type: :component
-  # config.before(:each, :js, type: :system) { driven_by(:selenium_chrome_headless) }
+  config.before(:each, :js, type: :system) { driven_by(:selenium_chrome_headless) }
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false

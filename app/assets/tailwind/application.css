@@ -15,6 +15,14 @@ h4 { @apply font-bold; }
   }
 }
 
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  input:where([type=button],[type=reset],[type=submit]):not(:disabled) {
+    cursor: pointer;
+  }
+}
+
 .only-dev-visible, .only-dev-visible-small {
   border: 1px solid #9400d3;
   background: rgba(148,0,211,.1);
