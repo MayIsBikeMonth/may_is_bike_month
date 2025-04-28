@@ -14,7 +14,7 @@ RSpec.describe Admin::CurrentHeader::Component, type: :component do
     }
   end
   let(:options) { default_options }
-  let(:instance) {  described_class.new(**options) }
+  let(:instance) { described_class.new(**options) }
   let(:component) { render_inline(instance) }
 
   it "renders" do

@@ -3,9 +3,7 @@
 module Admin
   module CurrentHeader
     class Component < ApplicationComponent
-      def initialize(viewing:, include_competition_select: false, competition_subject: nil,
-        searchable_competitions:, render_period: false, s_params:)
-
+      def initialize(viewing:, searchable_competitions:, s_params:, include_competition_select: false, competition_subject: nil, render_period: false)
         @viewing = viewing
         @include_competition_select = include_competition_select
         @s_params = s_params
