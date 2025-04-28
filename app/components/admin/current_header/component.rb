@@ -12,8 +12,10 @@ module Admin
         @competition_subject = competition_subject
         @searchable_competitions = searchable_competitions
         @render_period = render_period
+      end
 
-        @header_present = (header_keys & @s_params.keys).any? || @include_competition_select
+      def render?
+        (header_keys & @s_params.keys).any? || @include_competition_select
       end
 
       private

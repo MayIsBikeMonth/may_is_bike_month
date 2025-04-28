@@ -1,9 +1,0 @@
-<%# NOTE: THIS IS ONLY FOR Admin Views right now %>
-
-<%# NOTE: when you add new search_ params here, also add it to hidden_search_fields %>
-<% viewing ||= controller_name.humanize %>
-<%# cheader_keys =  %>
-<%# include_competition_select ||= false %>
-<%# header_present ||= (cheader_keys & params.keys).any? || include_competition_select %>
-<%= render(Admin::CurrentHeader::Component.new(viewing:, include_competition_select:, competition_subject:)) %>
-

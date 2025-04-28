@@ -4,6 +4,7 @@ import { Controller } from '@hotwired/stimulus'
 export default class extends Controller {
   connect () {
     console.log("current header")
+
     const updatePage = this.updatePage // eslint-disable-line
     document.querySelectorAll('.updateOnChange')
       .forEach(el => el.addEventListener('change', updatePage))

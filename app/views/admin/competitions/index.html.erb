@@ -1,7 +1,8 @@
 <h1 class="standard-top-offset mb-4">
   Admin Competitions
 </h1>
-<%#= render partial: "/shared/current_header", locals: {collection: @competitions, render_period: false} %>
+
+<%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, competition_subject:, searchable_competitions:, render_period: false, s_params: sortable_params)) %>
 
 <% skip_sortable ||= false %>
 

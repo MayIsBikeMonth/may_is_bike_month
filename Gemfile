@@ -67,6 +67,7 @@ group :test do
   gem "rails-controller-testing" # Assert testing views
   gem "vcr" # Stub external HTTP requests
   gem "webmock" # mocking for VCR
+  gem "capybara" # For view components
 end
 
 # Performance Stuff
