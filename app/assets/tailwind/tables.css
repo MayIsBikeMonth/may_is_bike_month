@@ -168,21 +168,14 @@ table.sticky-headers {
 }
 
 table.sticky-headers thead th {
-/*  padding: 3px;*/
   position: sticky;
   top: 0;
-  z-index: 1;
-  /*width: 25vw;
-  background: white;*/
-}
-
-table.sticky-headers tbody th {
-  position: relative;
-}
-
-/*table.sticky-headers thead th:first-child {
-  position: sticky;
-  left: 0;
   z-index: 2;
 }
-*/
+
+/* Have to figure out how to match the background to the even/odd */
+/*table.sticky-headers tbody th {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}*/
