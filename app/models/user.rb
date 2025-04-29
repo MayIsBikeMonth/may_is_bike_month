@@ -104,6 +104,10 @@ class User < ApplicationRecord
     current_competition_user&.touch
   end
 
+  def strava_user_url
+    "https://www.strava.com/athletes/#{strava_id}"
+  end
+
   private
 
   def refresh_strava_token!

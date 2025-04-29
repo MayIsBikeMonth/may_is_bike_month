@@ -13,6 +13,10 @@ class ApplicationComponentPreview < ViewComponent::Preview
     subclass.layout "component_preview"
   end
 
+  def preview_competition_user
+    CompetitionUser.find(ENV.fetch("LOOKBOOK_COMPETITION_USER_ID", 1))
+  end
+
   private
 
   def template

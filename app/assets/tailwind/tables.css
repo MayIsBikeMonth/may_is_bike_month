@@ -160,3 +160,22 @@
   }
 }
 
+/* set up sticky headers */
+
+table.sticky-headers {
+  table-layout: fixed;
+  position: relative;
+}
+
+table.sticky-headers thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* Have to figure out how to match the background to the even/odd */
+/*table.sticky-headers tbody th {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}*/

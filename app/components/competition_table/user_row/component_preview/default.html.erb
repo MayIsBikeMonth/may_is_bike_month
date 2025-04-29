@@ -1,0 +1,15 @@
+<% competition_user = defined?(preview_competition_user) ? preview_competition_user : CompetitionUser.find(ENV.fetch("LOOKBOOK_COMPETITION_USER_ID", 1)) %>
+<% competition = competition_user.competition %>
+
+<div class="relative py-4 -mx-2 xl:-mx-1">
+  <div class="relative max-w-full min-w-[1300px] px-1">
+    <table class="w-full text-sm text-left text-gray-800 sticky-headers" id="competition-table">
+      <thead class="">
+        <%= render(CompetitionTable::TableHeader::Component.new(competition: competition)) %>
+      </thead>
+      <tbody>
+        <%= render(CompetitionTable::UserRow::Component.new(competition_user: competition_user, activities_expanded: true)) %>
+      </tbody>
+    </table>
+  </div>
+</div>

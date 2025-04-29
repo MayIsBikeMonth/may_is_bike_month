@@ -16,36 +16,14 @@ module ApplicationHelper
       class: ((number == 0) ? "opacity-50" : nil))
   end
 
-  def strava_user_url(user)
-    "https://www.strava.com/athletes/#{user.strava_id}"
-  end
-
-  # Not the right place for this, but good enuf for now
+  # Not the right place for this, but good enuf for now. Also in ApplicationComponent
   def meters_to_feet(number)
     number * 3.28084
   end
 
-  # Not the right place for this, but good enuf for now
+  # Not the right place for this, but good enuf for now. Also in ApplicationComponent
   def meters_to_miles(number)
     number / 1609.344
-  end
-
-  def activity_dates_display(activity_dates)
-    if activity_dates.count > 1
-      short_date_string_gsub(activity_dates.first)
-    else
-      activity_dates.map { |d| short_date_string_gsub(d) }.to_sentence
-    end
-  end
-
-  def competition_activity_display(competition_activity)
-    content_tag(:span) do
-      concat(competition_activity.display_name)
-      if competition_activity.manual_entry? && competition_activity.entered_after_competition_ended?
-        concat(" ")
-        concat(content_tag(:strong, "?", title: "ignored, manual entry after competition ended"))
-      end
-    end
   end
 
   def sortable_params
@@ -90,10 +68,6 @@ module ApplicationHelper
     current_page?(link_path) || matches_controller && active_path[:action] == link_path[:action]
   rescue # This mainly fails in testing - but why not rescue always
     false
-  end
-
-  def short_date_string_gsub(activity_date)
-    activity_date.gsub(/\A\d\d\d\d-/, "")
   end
 
   def default_action_name_title
