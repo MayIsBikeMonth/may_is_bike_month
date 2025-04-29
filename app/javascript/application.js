@@ -1,4 +1,4 @@
-import "@hotwired/turbo-rails"
+import '@hotwired/turbo-rails'
 import TimeLocalizer from 'utils/time_localizer'
 
 // Import stimulus controllers
@@ -14,23 +14,6 @@ window.Stimulus = application
 
 lazyLoadControllersFrom('components', application)
 
-document.addEventListener('turbo:load', () => {
-  console.log("turbo:loaded")
-
-  if (!window.timeLocalizer) window.timeLocalizer = new TimeLocalizer()
-  window.timeLocalizer.localize()
-
-})
-
-// Entry point for the build script in your package.json
-// import "@hotwired/turbo-rails" // eslint-disable-line
-// // Import flowbite, a tailwind component library, for interactions
-// import 'flowbite'
-
-// import TimeParser from './scripts/time_parser'
-// import log from './scripts/log'
-// import './controllers'
-
 // const toggleChecks = (event) => {
 //   const checked = event.target.checked
 //   event.target.closest('.toggleChecksWrapper')
@@ -44,26 +27,27 @@ document.addEventListener('turbo:load', () => {
 //     .forEach(el => el.addEventListener('change', toggleChecks))
 // }
 
-// const pageWidth = window.outerWidth
-// const enableFullscreenTableOverflow = () => {
-//   document.querySelectorAll('.full-screen-table table').forEach(el => {
-//     const tableWidth = el.offsetWidth
-//     if (tableWidth > pageWidth) {
-//       log.debug('overflown')
-//       el.closest('.full-screen-table').classList.add('full-screen-table-overflown')
-//     }
-//   })
-// }
+const enableFullscreenTableOverflow = () => {
+  const pageWidth = window.outerWidth
+  document.querySelectorAll('.full-screen-table table').forEach(el => {
+    const tableWidth = el.offsetWidth
+    if (tableWidth > pageWidth) {
+      // console.debug('overflown')
+      el.closest('.full-screen-table').classList.add('full-screen-table-overflown')
+    }
+  })
+}
 
-// const setMaxWidths = () => {
-//   if (pageWidth < 501) {
-//     document.querySelectorAll('.maxWScreen')
-//       .forEach(el => {
-//         // 8px on either side of padding
-//         el.style.maxWidth = `${pageWidth - 16}px`
-//       })
-//   }
-// }
+const setMaxWidths = () => {
+  const pageWidth = window.outerWidth
+  if (pageWidth < 501) {
+    document.querySelectorAll('.maxWScreen')
+      .forEach(el => {
+        // 8px on either side of padding
+        el.style.maxWidth = `${pageWidth - 16}px`
+      })
+  }
+}
 
 // // Internal
 // const elementsFromSelectorOrElements = (selOrEl) => {
@@ -132,62 +116,62 @@ document.addEventListener('turbo:load', () => {
 
 // // MIBM SPECIFIC Functions
 
-// window.currentUnitPreference = () => {
-//   let unitPreference = localStorage.getItem('unitPreference')
-//   if (unitPreference === null || unitPreference !== 'metric') {
-//     unitPreference = 'imperial'
-//   } else {
-//     unitPreference = 'metric'
-//   }
-//   localStorage.setItem('unitPreference', unitPreference)
-//   return unitPreference
-// }
+window.currentUnitPreference = () => {
+  let unitPreference = localStorage.getItem('unitPreference')
+  if (unitPreference === null || unitPreference !== 'metric') {
+    unitPreference = 'imperial'
+  } else {
+    unitPreference = 'metric'
+  }
+  localStorage.setItem('unitPreference', unitPreference)
+  return unitPreference
+}
 
-// window.toggleUnitPreference = (event = false) => {
-//   event && event.preventDefault()
-//   const newUnit = window.currentUnitPreference() === 'metric' ? 'imperial' : 'metric'
-//   localStorage.setItem('unitPreference', newUnit)
-//   window.showPreferredUnit()
-//   // console.log(newUnit)
-// }
+window.toggleUnitPreference = (event = false) => {
+  event && event.preventDefault()
+  const newUnit = window.currentUnitPreference() === 'metric' ? 'imperial' : 'metric'
+  localStorage.setItem('unitPreference', newUnit)
+  window.showPreferredUnit()
+  // console.log(newUnit)
+}
 
-// window.showPreferredUnit = () => {
-//   const unit = window.currentUnitPreference()
-//   document.querySelectorAll(`.unit-${unit}`).forEach(el => el.classList.remove('hidden'))
-//   const hiddenUnit = unit === 'metric' ? 'imperial' : 'metric'
-//   document.querySelectorAll(`.unit-${hiddenUnit}`).forEach(el => el.classList.add('hidden'))
-// }
+window.showPreferredUnit = () => {
+  const unit = window.currentUnitPreference()
+  document.querySelectorAll(`.unit-${unit}`).forEach(el => el.classList.remove('hidden'))
+  const hiddenUnit = unit === 'metric' ? 'imperial' : 'metric'
+  document.querySelectorAll(`.unit-${hiddenUnit}`).forEach(el => el.classList.add('hidden'))
+}
 
-// const currentActivityVisibility = () => {
-//   let activityVisibility = localStorage.getItem('activityVisibility')
-//   if (activityVisibility === null || activityVisibility !== 'show-all') {
-//     activityVisibility = 'hidden'
-//   } else {
-//     activityVisibility = 'show-all'
-//   }
-//   localStorage.setItem('activityVisibility', activityVisibility)
-//   return activityVisibility
-// }
+const currentActivityVisibility = () => {
+  let activityVisibility = localStorage.getItem('activityVisibility')
+  if (activityVisibility === null || activityVisibility !== 'show-all') {
+    activityVisibility = 'hidden'
+  } else {
+    activityVisibility = 'show-all'
+  }
+  localStorage.setItem('activityVisibility', activityVisibility)
+  return activityVisibility
+}
 
-// const showActivityVisibility = () => {
-//   if (currentActivityVisibility() === 'hidden') {
-//     document.querySelectorAll('.activityList').forEach(el => el.classList.add('hidden'))
-//     document.querySelectorAll('.toggleActivities-shown').forEach(el => el.classList.add('hidden'))
-//     document.querySelectorAll('.toggleActivities-hidden').forEach(el => el.classList.remove('hidden'))
-//   } else {
-//     document.querySelectorAll('.activityList, .toggleActivities-shown').forEach(el => el.classList.remove('hidden'))
-//     document.querySelectorAll('.toggleActivities-hidden').forEach(el => el.classList.add('hidden'))
-//     document.querySelectorAll('.toggleActivities-shown').forEach(el => el.classList.remove('hidden'))
-//   }
-// }
+const showActivityVisibility = () => {
+  if (currentActivityVisibility() === 'hidden') {
+    document.querySelectorAll('.activityList').forEach(el => el.classList.add('hidden'))
+    document.querySelectorAll('.toggleActivities-shown').forEach(el => el.classList.add('hidden'))
+    document.querySelectorAll('.toggleActivities-hidden').forEach(el => el.classList.remove('hidden'))
+  } else {
+    document.querySelectorAll('.activityList, .toggleActivities-shown').forEach(el => el.classList.remove('hidden'))
+    document.querySelectorAll('.toggleActivities-hidden').forEach(el => el.classList.add('hidden'))
+    document.querySelectorAll('.toggleActivities-shown').forEach(el => el.classList.remove('hidden'))
+  }
+}
 
-// const toggleActivities = () => {
-//   document.querySelectorAll('.activityList').forEach(el => el.classList.toggle('hidden'))
-//   const newVisibility = currentActivityVisibility() === 'hidden' ? 'show-all' : 'hidden'
-//   localStorage.setItem('activityVisibility', newVisibility)
-//   // console.log(newVisibility, currentActivityVisibility())
-//   showActivityVisibility()
-// }
+const toggleActivities = () => {
+  document.querySelectorAll('.activityList').forEach(el => el.classList.toggle('hidden'))
+  const newVisibility = currentActivityVisibility() === 'hidden' ? 'show-all' : 'hidden'
+  localStorage.setItem('activityVisibility', newVisibility)
+  // console.log(newVisibility, currentActivityVisibility())
+  showActivityVisibility()
+}
 
 // // Make a request to internal endpoint that updates Strava
 // window.updateStravaInBackground = async function () {
@@ -214,8 +198,6 @@ document.addEventListener('turbo:load', () => {
 //   setMaxWidths()
 
 //   // When JS is enabled, some things should be hidden and some things should be shown
-//   document.querySelectorAll('.hiddenNoJs').forEach(el => el.classList.remove('hiddenNoJs'))
-//   document.querySelectorAll('.hiddenOnJs').forEach(el => el.classList.add('hidden'))
 
 //   document.querySelectorAll('.expandSiblingsEllipse')
 //     .forEach(el => el.addEventListener('click', expandSiblingsEllipse))
@@ -233,3 +215,25 @@ document.addEventListener('turbo:load', () => {
 //   document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
 //   window.showPreferredUnit()
 // })
+
+document.addEventListener('turbo:load', () => {
+  console.log('turbo:loaded')
+
+  if (!window.timeLocalizer) window.timeLocalizer = new TimeLocalizer()
+  window.timeLocalizer.localize()
+
+  enableFullscreenTableOverflow()
+  setMaxWidths()
+
+  // Add the click selector to the toggle button
+  document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
+  window.showPreferredUnit()
+
+  // Toggle activities
+  showActivityVisibility()
+  document.querySelector('#toggleIndividualActivities')?.addEventListener('click', toggleActivities)
+
+  // Add the click selector to the toggle button
+  document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
+  window.showPreferredUnit()
+})

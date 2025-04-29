@@ -1,0 +1,44 @@
+<% if @competition_user.present? %>
+  <%# Render the total for the competition user %>
+  <div class="grid grid-cols-3">
+    <div class="px-1 border-r pt-2 elevation-cell text-right">
+      <small class="<%= unit_class_metric %>">
+        <%= number_display(@competition_user.elevation_meters) %>
+      </small>
+      <small class="<%= unit_class_imperial %>">
+        <%= number_display(meters_to_feet(@competition_user.elevation_meters)) %>
+      </small>
+    </div>
+    <div class="px-1 border-r pt-2 text-right">
+      <span class="<%= unit_class_metric %>">
+        <%= number_display(@competition_user.distance_meters / 1000, round_to: 1) %>
+      </span>
+      <span class="<%= unit_class_imperial %>">
+        <%= number_display(meters_to_miles(@competition_user.distance_meters), round_to: 1) %>
+      </span>
+    </div>
+    <div class="px-1 pt-2 text-right">
+      <%= number_display(@competition_user.activity_dates.count) %>
+    </div>
+  </div>
+<% else %>
+  <%# Render the header total %>
+  <span class="block text-md text-center py-2">
+    Total
+  </span>
+  <div class="grid grid-cols-3 min-w-[200px]">
+    <div class="px-1 pb-1 border-r elevation-cell text-center">
+      ⬆️
+      <span class="font-normal">
+        <span class="<%= unit_class_metric %>">m</span><span class="<%= unit_class_imperial %>">feet</span>
+      </span>
+    </div>
+    <div class="px-1 pb-1 border-r text-center">
+      ➡️
+      <span class="font-normal">
+        <span class="<%= unit_class_metric %>">km</span><span class="<%= unit_class_imperial %>">miles</span>
+      </span>
+    </div>
+    <div class="px-1 pb-1 text-center">Days</div>
+  </div>
+<% end %>

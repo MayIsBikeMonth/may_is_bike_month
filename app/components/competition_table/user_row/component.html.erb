@@ -1,0 +1,74 @@
+<tr
+  class="border-r-2 border-b-2 odd:bg-white even:bg-gray-100"
+  data-controller="competition-table--user-row--component">
+
+  <th scope="row" class="px-2 py-1 font-medium whitespace-nowrap border-l-2 border-r-2 border-r-gray-400">
+    <%= link_to @competition_user.display_name, @competition_user.user.strava_user_url, class: "base-link" %>
+    <code class="only-dev-visible text-xs"><%= @competition_user.id %></code>
+  </th>
+
+  <td scope="col" class="text-black font-bold border-b-2 border-r-2 border-r-gray-400 lg:hidden">
+    <%= render(CompetitionTable::TotalCell::Component.new(competition_user: @competition_user)) %>
+  </td>
+
+  <% period_count = (@competition_user.score_data&.dig("periods")&.count || 1) - 1 %>
+  <% (@competition_user.score_data&.dig("periods") || []).each_with_index do |score_period, inx| %>
+    <% # TODO: if the date is before the period.start_date, skip rendering! %>
+    <% border_class = period_count == inx ? "lg:border-r-gray-400" : "" %>
+    <td id="cu-<%= @competition_user.id %>_period-<%= inx %>" class="border-r-2 align-top <%= border_class %>">
+      <div class="grid grid-cols-3">
+        <div class="px-1 border-r py-1 elevation-cell text-right">
+          <small class="<%= unit_class_metric %>">
+            <%= number_display(score_period["elevation"]) %>
+          </small>
+          <small class="<%= unit_class_imperial %>">
+            <%= number_display(meters_to_feet(score_period["elevation"])) %>
+          </small>
+        </div>
+        <div class="px-1 border-r py-1 text-right">
+          <span class="<%= unit_class_metric %>">
+            <%= number_display(score_period["distance"] / 1000, round_to: 1) %>
+          </span>
+          <span class="<%= unit_class_imperial %> text-right">
+            <%= number_display(meters_to_miles(score_period["distance"]), round_to: 1) %>
+          </span>
+        </div>
+        <div class="px-1 py-1 text-right">
+          <%= number_display(score_period["dates"].count) %>
+        </div>
+      </div>
+      <% if score_period["ids"].count > 0 %>
+        <ul class="list-disc pl-3.5 pt-1 hidden activityList ml-0.5">
+          <% score_period["ids"].each do |id| %>
+            <% competition_activity = @competition_user.competition_activities.find(id) %>
+            <li class="text-sm mb-1 leading-none">
+              <span class="text-gray-500 text-xs">
+                <%= activity_dates_display(competition_activity.activity_dates_strings) %>
+              </span>
+              <a
+                href=<%= competition_activity.strava_url %>
+                target="_blank"
+                class="text-blue-800 base-link pr-1"
+              >
+                <%= competition_activity_display(competition_activity) %>
+              </a>
+              <span class="text-gray-500 text-xs">
+                <span class="<%= unit_class_metric %>">
+                  <%= number_display(competition_activity.distance_meters / 1000, round_to: 1) %>
+                </span>
+                <span class="<%= unit_class_imperial %>">
+                  <%= number_display(meters_to_miles(competition_activity.distance_meters), round_to: 1) %>
+                </span>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </td>
+  <% end %>
+
+  <td scope="col" class="text-black font-bold border-r-2 border-b-2 hidden lg:table-cell">
+    <%= render(CompetitionTable::TotalCell::Component.new(competition_user: @competition_user)) %>
+  </td>
+
+</div>

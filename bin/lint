@@ -27,6 +27,6 @@ chdir APP_ROOT do
   else
     system!("bundle exec standardrb --fix")
     system!("bundle exec htmlbeautifier --keep-blank-lines 1 #{html_files}")
-    # system!("yarn lint")
+    system!("yarn lint")
   end
 end
