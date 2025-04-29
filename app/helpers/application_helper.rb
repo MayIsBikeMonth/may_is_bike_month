@@ -70,10 +70,6 @@ module ApplicationHelper
     false
   end
 
-  # def short_date_string_gsub(activity_date)
-  #   activity_date.gsub(/\A\d\d\d\d-/, "")
-  # end
-
   def default_action_name_title
     if action_name == "show"
       # Take up less space for admin

@@ -27,16 +27,6 @@ lazyLoadControllersFrom('components', application)
 //     .forEach(el => el.addEventListener('change', toggleChecks))
 // }
 
-const enableFullscreenTableOverflow = () => {
-  const pageWidth = window.outerWidth
-  document.querySelectorAll('.full-screen-table table').forEach(el => {
-    const tableWidth = el.offsetWidth
-    if (tableWidth > pageWidth) {
-      // console.debug('overflown')
-      el.closest('.full-screen-table').classList.add('full-screen-table-overflown')
-    }
-  })
-}
 
 // // Internal
 // const elementsFromSelectorOrElements = (selOrEl) => {
@@ -210,8 +200,6 @@ document.addEventListener('turbo:load', () => {
 
   if (!window.timeLocalizer) window.timeLocalizer = new TimeLocalizer()
   window.timeLocalizer.localize()
-
-  // enableFullscreenTableOverflow()
 
   // This is set on the window on the view pages (but not the lookbook pages)
   if (window.enableToggles) {
