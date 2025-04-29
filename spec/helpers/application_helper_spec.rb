@@ -14,24 +14,6 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
-  describe "competition_activity_display" do
-    let(:competition_activity) { FactoryBot.create(:competition_activity) }
-    let(:target) { "<span>Cool ride</span>" }
-    it "renders" do
-      expect(competition_activity_display(competition_activity)).to eq target
-    end
-    context "with manual_entry entered_after_competition_ended" do
-      before do
-        allow(competition_activity).to receive(:manual_entry?).and_return(true)
-        allow(competition_activity).to receive(:entered_after_competition_ended?).and_return(true)
-      end
-      let(:target) { '<span>Cool ride <strong title="ignored, manual entry after competition ended">?</strong></span>' }
-      it "renders" do
-        expect(competition_activity_display(competition_activity)).to eq target
-      end
-    end
-  end
-
   describe "active_link" do
     context "match_controller" do
       let(:request) { double("request", url: root_path) }

@@ -1,0 +1,33 @@
+<tr class="text-xs text-gray-500 border-2 border-b-gray-400 border-t-0">
+  <th scope="col" class="border-r-2 border-r-gray-400 bg-gray-50 border-t-0"></th>
+  <th scope="col" class="text-black border-r-2 border-r-gray-400 lg:hidden bg-gray-50 border-t-0">
+    <%= render(CompetitionTable::TotalCell::Component.new) %>
+  </th>
+  <% period_count = @competition.periods.count - 1 %>
+  <% @competition.periods.each_with_index do |period, inx| %>
+    <% border_class = period_count == inx ? "lg:border-r-gray-400" : "" %>
+    <th class="border-r-2 <%= border_class %> bg-gray-50 border-t-0">
+      <span class="block text-md text-center py-2  border-t-gray-400">
+        <%= l Date.parse(period[:start_date]), format: :month_date %> - <%= l Date.parse(period[:end_date]), format: :month_date %>
+      </span>
+      <div class="grid grid-cols-3 min-w-[180px]">
+        <div class="px-1 pb-1 border-r elevation-cell text-center">
+          ⬆️
+          <span class="font-normal">
+            <span class="<%= unit_class_metric %>">m</span><span class="<%= unit_class_imperial %>">feet</span>
+          </span>
+        </div>
+        <div class="px-1 pb-1 border-r text-center">
+          ➡️
+          <span class="font-normal">
+            <span class="<%= unit_class_metric %>">km</span><span class="<%= unit_class_imperial %>">miles</span>
+          </span>
+        </div>
+        <div class="px-1 pb-1 text-center">Days</div>
+      </div>
+    </th>
+  <% end %>
+  <th scope="col" class="text-black hidden lg:table-cell bg-gray-50 border-t-0">
+    <%= render(CompetitionTable::TotalCell::Component.new) %>
+  </th>
+</tr>

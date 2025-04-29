@@ -26,24 +26,6 @@ module ApplicationHelper
     number / 1609.344
   end
 
-  # def activity_dates_display(activity_dates)
-  #   if activity_dates.count > 1
-  #     short_date_string_gsub(activity_dates.first)
-  #   else
-  #     activity_dates.map { |d| short_date_string_gsub(d) }.to_sentence
-  #   end
-  # end
-
-  # def competition_activity_display(competition_activity)
-  #   content_tag(:span) do
-  #     concat(competition_activity.display_name)
-  #     if competition_activity.manual_entry? && competition_activity.entered_after_competition_ended?
-  #       concat(" ")
-  #       concat(content_tag(:strong, "?", title: "ignored, manual entry after competition ended"))
-  #     end
-  #   end
-  # end
-
   def sortable_params
     @sortable_params ||= sortable_search_params.as_json.map do |k, v|
       # Skip default sort parameters, to reduce unnecessary params

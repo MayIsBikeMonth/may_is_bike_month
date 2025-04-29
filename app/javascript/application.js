@@ -38,17 +38,6 @@ const enableFullscreenTableOverflow = () => {
   })
 }
 
-const setMaxWidths = () => {
-  const pageWidth = window.outerWidth
-  if (pageWidth < 501) {
-    document.querySelectorAll('.maxWScreen')
-      .forEach(el => {
-        // 8px on either side of padding
-        el.style.maxWidth = `${pageWidth - 16}px`
-      })
-  }
-}
-
 // // Internal
 // const elementsFromSelectorOrElements = (selOrEl) => {
 //   if (typeof (selOrEl) === 'string') {
@@ -222,18 +211,20 @@ document.addEventListener('turbo:load', () => {
   if (!window.timeLocalizer) window.timeLocalizer = new TimeLocalizer()
   window.timeLocalizer.localize()
 
-  enableFullscreenTableOverflow()
-  setMaxWidths()
+  // enableFullscreenTableOverflow()
 
-  // Add the click selector to the toggle button
-  document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
-  window.showPreferredUnit()
+  // This is set on the window on the view pages (but not the lookbook pages)
+  if (window.enableToggles) {
+    // Add the click selector to the toggle button
+    document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
+    window.showPreferredUnit()
 
-  // Toggle activities
-  showActivityVisibility()
-  document.querySelector('#toggleIndividualActivities')?.addEventListener('click', toggleActivities)
+    // Toggle activities
+    showActivityVisibility()
+    document.querySelector('#toggleIndividualActivities')?.addEventListener('click', toggleActivities)
 
-  // Add the click selector to the toggle button
-  document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
-  window.showPreferredUnit()
+    // Add the click selector to the toggle button
+    document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
+    window.showPreferredUnit()
+  }
 })

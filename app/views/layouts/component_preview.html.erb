@@ -4,6 +4,10 @@
     <title>May Is Bike Month</title>
     <%= stylesheet_link_tag "tailwind" %>
     <%= javascript_importmap_tags %>
+    <%# This shouldn't be necessary - lookbook should live update :/ %>
+    <% if Rails.env.development? %>
+      <%= hotwire_livereload_tags %>
+    <% end %>
   </head>
   <%# NOTE: This sets the theme %>
   <body class="<%= params.dig(:lookbook, :display, :theme) %>">

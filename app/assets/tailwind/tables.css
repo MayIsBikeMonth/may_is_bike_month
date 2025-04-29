@@ -160,3 +160,29 @@
   }
 }
 
+/* set up sticky headers */
+
+table.sticky-headers {
+  table-layout: fixed;
+  position: relative;
+}
+
+table.sticky-headers thead th {
+/*  padding: 3px;*/
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  /*width: 25vw;
+  background: white;*/
+}
+
+table.sticky-headers tbody th {
+  position: relative;
+}
+
+/*table.sticky-headers thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+*/

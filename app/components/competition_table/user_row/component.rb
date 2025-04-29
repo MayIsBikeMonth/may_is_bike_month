@@ -2,9 +2,10 @@
 
 module CompetitionTable::UserRow
   class Component < ApplicationComponent
-    def initialize(competition_user:, initial_unit: DEFAULT_INITIAL_UNIT)
+    def initialize(competition_user:, initial_unit: DEFAULT_INITIAL_UNIT, activities_expanded: false)
       @competition_user = competition_user
       @initial_unit = initial_unit
+      @activities_expanded = activities_expanded
     end
 
     private

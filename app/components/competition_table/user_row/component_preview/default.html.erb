@@ -1,49 +1,14 @@
 <% competition_user = defined?(preview_competition_user) ? preview_competition_user : CompetitionUser.find(ENV.fetch("LOOKBOOK_COMPETITION_USER_ID", 1)) %>
 <% competition = competition_user.competition %>
 
-<div class="relative overflow-x-scroll py-4 -mx-2 xl:-mx-1">
+<div class="relative py-4 -mx-2 xl:-mx-1">
   <div class="relative max-w-full min-w-[1300px] px-1">
-    <table class="w-full text-sm text-left text-gray-800" id="competition-table">
-      <thead class="text-xs text-gray-500 bg-gray-50 border-2 border-b-gray-400">
-        <tr>
-          <th scope="col" class="border-r-2 border-r-gray-400"></th>
-          <th scope="col" class="text-black border-r-2 border-r-gray-400 lg:hidden">
-            <%= render(CompetitionTable::TotalCell::Component.new) %>
-          </th>
-          <% period_count = competition.periods.count - 1 %>
-          <% competition.periods.each_with_index do |period, inx| %>
-            <% border_class = period_count == inx ? "lg:border-r-gray-400" : "" %>
-            <th class="border-r-2 <%= border_class %>">
-              <span class="block text-md text-center py-2">
-                <%= l Date.parse(period[:start_date]), format: :month_date %> - <%= l Date.parse(period[:end_date]), format: :month_date %>
-              </span>
-              <div class="grid grid-cols-3 min-w-[180px]">
-                <div class="px-1 pb-1 border-r elevation-cell text-center">
-                  ⬆️
-                  <span class="font-normal">
-                    <span class="hidden unit-metric">m</span><span class="hidden unit-imperial">feet</span>
-                  </span>
-                </div>
-                <div class="px-1 pb-1 border-r text-center">
-                  ➡️
-                  <span class="font-normal">
-                    <span class="hidden unit-metric">km</span><span class="hidden unit-imperial">miles</span>
-                  </span>
-                </div>
-                <div class="px-1 pb-1 text-center">Days</div>
-              </div>
-            </th>
-          <% end %>
-          <th scope="col" class="text-black hidden lg:table-cell">
-            <%= render(CompetitionTable::TotalCell::Component.new) %>
-          </th>
-          <th scope="col" class="score-cell border-l">
-            <span class="block pt-7">Score</span>
-          </th>
-        </tr>
+    <table class="w-full text-sm text-left text-gray-800 sticky-headers" id="competition-table">
+      <thead class="">
+        <%= render(CompetitionTable::TableHeader::Component.new(competition: competition)) %>
       </thead>
       <tbody>
-        <%= render(CompetitionTable::UserRow::Component.new(competition_user:)) %>
+        <%= render(CompetitionTable::UserRow::Component.new(competition_user: competition_user, activities_expanded: true)) %>
       </tbody>
     </table>
   </div>

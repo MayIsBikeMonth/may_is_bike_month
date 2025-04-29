@@ -12,11 +12,11 @@ class ApplicationComponent < ViewComponent::Base
   private
 
   def unit_class_metric
-    "unit-metric #{@initial_unit == 'metric' ? '' : 'hidden'}"
+    "unit-metric #{(@initial_unit == "metric") ? "" : "hidden"}"
   end
 
   def unit_class_imperial
-    "unit-imperial #{@initial_unit == 'imperial' ? '' : 'hidden'}"
+    "unit-imperial #{(@initial_unit == "imperial") ? "" : "hidden"}"
   end
 
   def number_display(number, round_to: 0)
