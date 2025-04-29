@@ -27,7 +27,6 @@ lazyLoadControllersFrom('components', application)
 //     .forEach(el => el.addEventListener('change', toggleChecks))
 // }
 
-
 // // Internal
 // const elementsFromSelectorOrElements = (selOrEl) => {
 //   if (typeof (selOrEl) === 'string') {
