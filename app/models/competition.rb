@@ -78,6 +78,10 @@ class Competition < ApplicationRecord
     end
   end
 
+  def year
+    start_date&.year
+  end
+
   # I think this is less performant than the the comparison
   # if it isn't (or isn't much), than maybe #in_period? should use this instead
   def dates_in_period(passed_dates_or_times)
@@ -101,10 +105,11 @@ class Competition < ApplicationRecord
   def set_calculated_attributes
     self.end_date ||= start_date&.end_of_month
     self.start_date ||= end_date&.beginning_of_month
-    self.display_name ||= "MIBM #{start_date&.year}"
+    self.display_name ||= "MIBM #{year}"
     self.slug = Slugifyer.slugify(display_name)
 
-    set_current if in_period?(Time.current.to_date)
+    # Set current if it's in the period or of it was updated to be current
+    set_current if in_period?(Time.current.to_date) || current_changed? && current
   end
 
   private

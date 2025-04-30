@@ -1,54 +1,14 @@
+<%= render partial: "/shared/competition" %>
+
 <script>
-  window.enableToggles = true
+  window.shouldUpdateStravaInBackground = true
 </script>
 
-<h1 class="mb-4">
-  <%= @competition.display_name %>
-
-  <a id="toggleIndividualActivities" class="text-blue-800 base-link text-sm ml-2">
-    <span class="toggleActivities-hidden">Show all</span>
-    <span class="toggleActivities-shown hidden">Hide all</span>
-    activities
-  </a>
-</h1>
-
-<div class="relative py-4 -mx-2 xl:-mx-1">
-  <div class="relative max-w-full min-w-[1300px] px-1">
-    <table class="w-full text-sm text-left text-gray-800 sticky-headers" id="competition-table">
-      <thead class="">
-        <%= render(CompetitionTable::TableHeader::Component.new(competition: @competition)) %>
-      </thead>
-      <tbody>
-        <% @competition_users.each do |competition_user| %>
-          <% cache competition_user do %>
-            <%= render(CompetitionTable::UserRow::Component.new(competition_user:)) %>
-          <% end %>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div class="mt-10">
-  <h4 class="text-lg">
-    <span class="hidden unit-metric">
-      Distance and elevation are in metric.
-      <a class="base-link toggleUnitPreference">
-        Switch to imperial
-      </a>
-    </span>
-    <span class="hidden unit-imperial">
-      Distance and elevation are in imperial.
-      <a class="base-link toggleUnitPreference">Switch to metric</a>
-    </span>
-  </h4>
-</div>
-
-<% if StravaRequest.most_recent_update.present? %>
-  <small id="strava_requests_updated_at">
-    Updated at:
-    <span class="convertTime">
-      <%= l StravaRequest.most_recent_update, format: :convert_time %>
-    </span>
-  </small>
+<% if @previous_competitions.any? %>
+  <p class="mt-5">
+    View results from:
+    <%= @previous_competitions.map do |competition|
+        link_to(competition.year, competition_path(competition.slug), class: "base-link")
+      end.to_sentence.html_safe %>
+  </p>
 <% end %>

@@ -68,7 +68,7 @@ lazyLoadControllersFrom('components', application)
 // const scrollToStoredLocation = () => {
 //   const storedAnchor = localStorage.getItem('storedAnchorLocation')
 //   if (storedAnchor) {
-//     log.debug(`scrolling to stored anchor: ${storedAnchor}`)
+//     console.log(`scrolling to stored anchor: ${storedAnchor}`)
 //     window.location.hash = storedAnchor
 //     localStorage.removeItem('storedAnchorLocation')
 //   }
@@ -151,19 +151,19 @@ const toggleActivities = () => {
   showActivityVisibility()
 }
 
-// // Make a request to internal endpoint that updates Strava
-// window.updateStravaInBackground = async function () {
-//   const response = await fetch('/update_strava')
-//   const updateResponse = await response.json()
-//   console.log(updateResponse)
-//   setInterval(function () {
-//     window.updateStravaInBackground()
-//     // Manual page reload
-//     window.location.reload()
-//   }, 600000) // ~ 10 minutes
+// Make a request to internal endpoint that updates Strava
+window.updateStravaInBackground = async function () {
+  const response = await fetch('/update_strava')
+  const updateResponse = await response.json()
+  console.log(updateResponse)
+  setInterval(function () {
+    window.updateStravaInBackground()
+    // Manual page reload
+    window.location.reload()
+  }, 600000) // ~ 10 minutes
 
-//   // TODO: update the page based on updates
-// }
+  // TODO: update the page based on updates, actioncable
+}
 
 // document.addEventListener('turbo:load', () => {
 //   scrollToStoredLocation()
@@ -196,6 +196,10 @@ const toggleActivities = () => {
 
 document.addEventListener('turbo:load', () => {
   console.log('turbo:loaded')
+
+  if (window.shouldUpdateStravaInBackground) {
+    window.updateStravaInBackground()
+  }
 
   if (!window.timeLocalizer) window.timeLocalizer = new TimeLocalizer()
   window.timeLocalizer.localize()

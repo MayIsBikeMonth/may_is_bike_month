@@ -16,6 +16,9 @@
         <th>
           <%= sortable "end_date", skip_sortable: skip_sortable %>
         </th>
+        <th>
+          <%= sortable "display_name", skip_sortable: skip_sortable %>
+        </th>
         <th>Current?</th>
         <th>
           <small><%= sortable "created_at", skip_sortable: skip_sortable %></small>
@@ -25,9 +28,7 @@
             <small><%= sortable "updated_at", skip_sortable: skip_sortable %></small>
           </th>
         <% end %>
-        <th>
-          <%= sortable "display_name", skip_sortable: skip_sortable %>
-        </th>
+
         <th>Users included</th>
         <th>
           <small class="text-gray-800">Users excluded</small>
@@ -48,6 +49,10 @@
               <%= competition.end_date %>
             <% end %>
           </td>
+          <td>
+            <%= competition.display_name %>
+            <code class="only-dev-visible-small"><%= competition.slug %></code>
+          </td>
           <td class="table-cell-check">
             <%= check_mark if competition.current %>
           </td>
@@ -59,9 +64,6 @@
               <small class="convertTime"><%= l(competition.updated_at, format: :convert_time) %></small>
             </td>
           <% end %>
-          <td>
-            <%= competition.display_name %>
-          </td>
           <td>
             <%= link_to number_display(competition.competition_users_included.count), admin_competition_users_path(search_competition_id: competition.slug), class: "base-link" %>
 
