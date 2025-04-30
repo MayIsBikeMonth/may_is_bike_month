@@ -9,7 +9,7 @@ module FriendlyFindable
     def friendly_find(str)
       return nil if str.blank?
       if integer_str?(str)
-        find_by_id(str)
+        find_by_id(str) || friendly_find_slug(str)
       else
         friendly_find_slug(str)
       end

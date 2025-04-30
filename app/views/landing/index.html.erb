@@ -1,1 +1,14 @@
 <%= render partial: "/shared/competition" %>
+
+<script>
+  window.shouldUpdateStravaInBackground = true
+</script>
+
+<% if @previous_competitions.any? %>
+  <p class="mt-5">
+    View results from:
+    <%= @previous_competitions.map do |competition|
+        link_to(competition.year, competition_path(competition.slug), class: "base-link")
+      end.to_sentence.html_safe %>
+  </p>
+<% end %>
