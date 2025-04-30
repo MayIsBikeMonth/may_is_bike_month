@@ -4,7 +4,6 @@ class LandingController < ApplicationController
     @competition_users = @competition.competition_users_included
       .includes(:user, :competition_activities).score_ordered
     @page_title = "May is Bike Month"
-    @previous_competitions = Competition.where.not(id: @competition.id).order(start_date: :desc)
   end
 
   def update_strava

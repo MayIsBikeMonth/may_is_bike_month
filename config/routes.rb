@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   root "landing#index"
   get "/update_strava", to: "landing#update_strava"
 
+  resources :competitions, only: %i[show]
+
   resource :account, only: %i[edit update]
 
   namespace :admin do

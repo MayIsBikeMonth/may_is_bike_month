@@ -21,12 +21,26 @@ RSpec.describe Competition, type: :model do
 
   describe "set_current" do
     let(:competition1) { FactoryBot.create(:competition, start_date: Date.parse("2023-5-1"), display_name: nil, current: true) }
-    let(:competition2) { FactoryBot.create(:competition, start_date: Time.current - 1.day) }
+    let(:competition2) { FactoryBot.create(:competition, start_date: start_date) }
+    let(:start_date) { Time.current - 1.day }
     it "sets current, unsets all others" do
       expect(competition1.reload.current).to be_truthy
       expect(competition1.display_name).to eq "MIBM 2023"
       expect(competition2.reload.current).to be_truthy
       expect(competition1.reload.current).to be_falsey
+    end
+
+    context "with future, but set current" do
+      let(:start_date) { Time.current + 1.week }
+      it "sets current, unsets all others" do
+        expect(competition1.reload.current).to be_truthy
+        expect(competition1.display_name).to eq "MIBM 2023"
+        expect(competition2.reload.current).to be_falsey
+
+        competition2.update(current: true)
+        expect(competition1.reload.current).to be_falsey
+        expect(competition2.reload.current).to be_truthy
+      end
     end
   end
 
