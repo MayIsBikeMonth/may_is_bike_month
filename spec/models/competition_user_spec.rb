@@ -13,7 +13,7 @@ RSpec.describe CompetitionUser, type: :model do
     let(:included_activity_types) { nil }
     it "is default" do
       expect(competition_user).to be_valid
-      expect(competition_user.included_activity_types).to eq(["Ride", "Velomobile", "Handcycle"])
+      expect(competition_user.included_activity_types).to eq(%w[EBikeRide Handcycle Ride Velomobile])
     end
     context "specified include_activity_types_string" do
       let(:included_activity_types) { ["Virtual Ride", "Ride ", ""] }
@@ -21,7 +21,7 @@ RSpec.describe CompetitionUser, type: :model do
         expect(competition_user).to be_valid
         expect(competition_user.score).to eq 0
         competition_user.reload
-        expect(competition_user.included_activity_types).to eq(["Virtual Ride", "Ride"])
+        expect(competition_user.included_activity_types).to eq(["Ride", "Virtual Ride"])
       end
     end
   end
