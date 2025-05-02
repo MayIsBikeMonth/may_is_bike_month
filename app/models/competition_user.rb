@@ -97,7 +97,7 @@ class CompetitionUser < ApplicationRecord
       competition&.activity_types || Competition::DEFAULT_ACTIVITY_TYPES
     else
       included_activity_types.map(&:strip).reject(&:blank?)
-    end
+    end.sort
     self.score = score_from_score_data
   end
 
