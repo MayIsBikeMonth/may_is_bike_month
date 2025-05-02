@@ -14,7 +14,7 @@
 class Competition < ApplicationRecord
   include FriendlyFindable
 
-  DEFAULT_ACTIVITY_TYPES = %w[Ride Velomobile Handcycle].freeze
+  DEFAULT_ACTIVITY_TYPES = %w[EBikeRide Handcycle Ride Velomobile].freeze
 
   has_many :competition_users
   has_many :competition_users_included, -> { included_in_competition },
