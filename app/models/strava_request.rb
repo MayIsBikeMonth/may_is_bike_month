@@ -19,6 +19,8 @@ class StravaRequest < ApplicationRecord
   UPDATE_DELAY = 60
   KIND_ENUM = {get_activities: 0, get_athlete: 1}.freeze
   SUCCESS_CODES = [200, 201].freeze
+  # As of 2025-5-5, we get 3000 per day
+  MAXIMUM_REQUESTS_PER_HOUR = (ENV["STRAVA_MAX_REQUESTS_PER_HOUR"] || 150)&.to_i
 
   belongs_to :user
 
@@ -36,7 +38,13 @@ class StravaRequest < ApplicationRecord
       maximum(:created_at)
     end
 
+    def over_rate_limit?
+      where("created_at > ?", Time.current - 1.hour).count > MAXIMUM_REQUESTS_PER_HOUR
+    end
+
     def update_due?
+      return false if over_rate_limit?
+
       updated_at = most_recent_update
       updated_at.blank? || updated_at < (Time.current - UPDATE_DELAY)
     end
