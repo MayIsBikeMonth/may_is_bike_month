@@ -16,9 +16,12 @@
 #  index_strava_requests_on_user_id  (user_id)
 #
 class StravaRequest < ApplicationRecord
-  UPDATE_DELAY = 60
   KIND_ENUM = {get_activities: 0, get_athlete: 1}.freeze
   SUCCESS_CODES = [200, 201].freeze
+  # As of 2025-5-5, we get 3000 per day
+  MAXIMUM_REQUESTS_PER_DAY = (ENV["STRAVA_MAX_REQUESTS_PER_HOUR"] || 3_000)&.to_i
+  # 2025 has 19 competitors - chose 5 minutes since we won't hit it much overnight
+  UPDATE_DELAY = 5.minutes
 
   belongs_to :user
 
@@ -36,7 +39,16 @@ class StravaRequest < ApplicationRecord
       maximum(:created_at)
     end
 
+    def over_rate_limit?
+      responses = where("created_at > ?", Time.current - 24.hours).success_response.count
+      current_competition_users = Competition.current&.competition_users_included&.count || 0
+      # if we're making requests, it will be for every user - so make sure we have space
+      (responses + current_competition_users) > MAXIMUM_REQUESTS_PER_DAY
+    end
+
     def update_due?
+      return false if over_rate_limit?
+
       updated_at = most_recent_update
       updated_at.blank? || updated_at < (Time.current - UPDATE_DELAY)
     end

@@ -1,4 +1,6 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+  include Devise::Controllers::Rememberable
+
   skip_before_action :verify_authenticity_token, only: :strava
 
   def strava
@@ -9,6 +11,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
 
     if @user.persisted?
+      remember_me(@user)
+
       flash[:success] = "Signed in!"
       sign_in_and_redirect @user, event: :authentication
     else

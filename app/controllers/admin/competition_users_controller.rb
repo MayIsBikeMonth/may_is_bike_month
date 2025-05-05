@@ -25,7 +25,7 @@ class Admin::CompetitionUsersController < Admin::BaseController
   private
 
   def sortable_columns
-    %w[created_at updated_at email username]
+    %w[updated_at created_at email username]
   end
 
   def searched_competition_users
