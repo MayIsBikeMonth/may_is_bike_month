@@ -4,7 +4,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   skip_before_action :verify_authenticity_token, only: :strava
 
   def strava
-    pp request.env
     @user = User.from_omniauth(request.env["omniauth.auth"].uid, request.env["omniauth.auth"])
     @competition = Competition.current
     if @competition.present?
