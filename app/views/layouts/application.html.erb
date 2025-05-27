@@ -50,8 +50,8 @@
 
       <% end %>
     </ul>
-    <div class="px-2 xl:px-4 pb-20 pt-4">
-      <%= render_flash_messages %>
+    <%= render_flash_messages %>
+    <div class="<%= @skip_wrapper_class ? "" : "wrapper-class" %>">
       <%= yield %>
     </div>
 

@@ -5,10 +5,12 @@
 </script>
 
 <% if @previous_competitions.any? %>
-  <p class="mt-5">
-    View results from:
-    <%= @previous_competitions.map do |competition|
-        link_to(competition.year, competition_path(competition.slug), class: "base-link")
-      end.to_sentence.html_safe %>
-  </p>
+  <div class="wrapper-class">
+    <p class="mt-5">
+      View results from:
+      <%= @previous_competitions.map do |competition|
+          link_to(competition.year, competition_path(competition.slug), class: "base-link")
+        end.to_sentence.html_safe %>
+    </p>
+  </div>
 <% end %>
