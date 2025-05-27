@@ -29,8 +29,31 @@
   </div>
 </div>
 
-<div class="mt-10">
-  <h4 class="text-lg">
+<div class="mt-8">
+  <% if @competition.show_rules? %>
+    <div class="mt-4">
+      <h4 class="text-lg">Rules:</h4>
+      <ul class="list-disc list-inside">
+        <li>Winner is the person who rides the most days in <%= @competition.period_display %>.</li>
+        <li>Ties are broken by total distance.</li>
+        <li>
+          You have to ride at least
+          <%# NOTE: This duplicates ApplicationComponent.unit_class_imperial & unit_class_metric %>
+          <span class="unit-metric hidden"">
+            <%= number_display(@competition.daily_distance_requirement / 1000, round_to: 0) %>
+            kilometers
+          </span>
+          <span class="unit-imperial">
+            <%= number_display(meters_to_miles(@competition.daily_distance_requirement), round_to: 0) %>
+            miles
+          </span>
+          in a day for it to count.
+        </li>
+      </ul>
+    </div>
+  <% end %>
+
+  <h4 class="text-lg pt-5">
     <span class="hidden unit-metric">
       Distance and elevation are in metric.
       <a class="base-link toggleUnitPreference">
