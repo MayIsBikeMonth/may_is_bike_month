@@ -9,7 +9,25 @@ class Admin::CompetitionsController < Admin::BaseController
       .includes(:competition_users)
   end
 
+  def new
+    @competition = Competition.new
+  end
+
+  def create
+    @competition = Competition.new(permitted_params)
+    if @competition.save
+      flash[:success] = "Competition was successfully created."
+      redirect_to admin_competitions_path
+    else
+      render :new
+    end
+  end
+
   private
+
+  def permitted_params
+    params.require(:competition).permit(:name, :start_date, :end_date, :current)
+  end
 
   def sortable_columns
     %w[start_date end_date created_at updated_at display_name]

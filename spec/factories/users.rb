@@ -22,6 +22,6 @@ FactoryBot.define do
 
     factory :user_developer, traits: [:developer_access]
 
-    factory :user_admin, traits: [:admin_access]
+    factory :user_admin, traits: [:admin_access, :with_active_strava_token]
   end
 end

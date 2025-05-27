@@ -36,6 +36,7 @@ module MayIsBikeMonth
     # in config/environments, which are processed later.
     #
     config.time_zone = "America/Los_Angeles"
+    config.active_support.to_time_preserves_timezone = :zone
     # config.eager_load_paths << Rails.root.join("extras")
 
     # Enable instrumentation for ViewComponents (used by rack-mini-profiler)

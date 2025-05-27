@@ -1,6 +1,8 @@
-<h1 class="standard-top-offset mb-4">
-  Admin Competitions
-</h1>
+<div class="flex justify-between items-center mb-4">
+  <h1>Admin Competitions</h1>
+  <%= link_to "New Competition", new_admin_competition_path,
+      class: "base-link" %>
+</div>
 
 <%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, competition_subject:, searchable_competitions:, render_period: false, s_params: sortable_params)) %>
 

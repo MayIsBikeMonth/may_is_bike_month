@@ -1,0 +1,29 @@
+<%= form_with model: @competition, url: admin_competitions_path, local: true, class: "max-w-md mx-auto bg-white shadow-lg rounded-lg p-6 space-y-6" do |form| %>
+  <% if @competition.errors.any? %>
+    <%= render partial: "shared/errors", locals: { obj: @competition } %>
+  <% end %>
+
+  <div class="space-y-4">
+    <div class="space-y-2">
+      <%= form.label :start_date, class: "block text-sm font-medium text-gray-700" %>
+      <%= form.date_field :start_date,
+          class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200",
+          required: true %>
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <div class="flex items-center">
+        <%= form.check_box :current,
+            class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition duration-200",
+            id: "competition_current" %>
+        <%= form.label :current, "Current Competition",
+            class: "ml-2 text-sm font-medium text-gray-700 cursor-pointer",
+            for: "competition_current" %>
+        </div>
+      </div>
+
+      <div class="pt-4">
+        <%= form.submit class: "w-full btn" %>
+      </div>
+    </div>
+  <% end %>
