@@ -1,19 +1,20 @@
 <script>
   window.enableToggles = true
 </script>
+<div class="wrapper-class">
+  <h1 class="mb-4">
+    <%= @competition.display_name %>
 
-<h1 class="mb-4">
-  <%= @competition.display_name %>
+    <a id="toggleIndividualActivities" class="text-blue-800 base-link text-sm ml-2">
+      <span class="toggleActivities-hidden">Show all</span>
+      <span class="toggleActivities-shown hidden">Hide all</span>
+      activities
+    </a>
+  </h1>
+</div>
 
-  <a id="toggleIndividualActivities" class="text-blue-800 base-link text-sm ml-2">
-    <span class="toggleActivities-hidden">Show all</span>
-    <span class="toggleActivities-shown hidden">Hide all</span>
-    activities
-  </a>
-</h1>
-
-<div class="overflow-x-scroll py-4">
-  <div class="relative max-w-full min-w-[1300px] px-1">
+<div class="overflow-x-scroll py-4 px-2 xl:px-4">
+  <div class="relative max-w-full min-w-[1300px]">
     <table class="w-full text-sm text-left text-gray-800 sticky-headers" id="competition-table">
       <thead class="">
         <%= render(CompetitionTable::TableHeader::Component.new(competition: @competition)) %>
@@ -29,8 +30,31 @@
   </div>
 </div>
 
-<div class="mt-10">
-  <h4 class="text-lg">
+<div class="wrapper-class">
+  <% if @competition.show_rules? %>
+    <div class="mt-4">
+      <h4 class="text-lg">Rules:</h4>
+      <ul class="list-disc list-inside">
+        <li>Winner is the person who rides the most days in <%= @competition.period_display %>.</li>
+        <li>Ties are broken by total distance.</li>
+        <li>
+          You have to ride at least
+          <%# NOTE: This duplicates ApplicationComponent.unit_class_imperial & unit_class_metric %>
+          <span class="unit-metric hidden"">
+            <%= number_display(@competition.daily_distance_requirement / 1000, round_to: 0) %>
+            kilometers
+          </span>
+          <span class="unit-imperial">
+            <%= number_display(meters_to_miles(@competition.daily_distance_requirement), round_to: 0) %>
+            miles
+          </span>
+          in a day for it to count.
+        </li>
+      </ul>
+    </div>
+  <% end %>
+
+  <h4 class="text-lg pt-6">
     <span class="hidden unit-metric">
       Distance and elevation are in metric.
       <a class="base-link toggleUnitPreference">
@@ -42,13 +66,13 @@
       <a class="base-link toggleUnitPreference">Switch to metric</a>
     </span>
   </h4>
-</div>
 
-<% if StravaRequest.most_recent_update.present? %>
-  <small id="strava_requests_updated_at">
-    Updated at:
-    <span class="convertTime">
-      <%= l StravaRequest.most_recent_update, format: :convert_time %>
-    </span>
-  </small>
-<% end %>
+  <% if StravaRequest.most_recent_update.present? %>
+    <small id="strava_requests_updated_at">
+      Updated at:
+      <span class="convertTime">
+        <%= l StravaRequest.most_recent_update, format: :convert_time %>
+      </span>
+    </small>
+  <% end %>
+</div>

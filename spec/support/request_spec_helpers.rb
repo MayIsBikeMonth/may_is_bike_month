@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 shared_context :logged_in_as_user do
-  let(:user) { FactoryBot.create(:user) }
-  before { sign_in user }
+  let!(:user) { FactoryBot.create(:user) }
+  before { sign_in(user, scope: :user) }
 end
 
 shared_context :logged_in_as_admin do
-  let(:user) { FactoryBot.create(:user_admin) }
-  before { sign_in user }
+  let!(:user) { FactoryBot.create(:user_admin) }
+  before { sign_in(user, scope: :user) }
 end
 
 # Request spec helpers that are included in all request specs via Rspec.configure (rails_helper)

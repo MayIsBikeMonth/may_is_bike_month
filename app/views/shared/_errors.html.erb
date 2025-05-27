@@ -1,4 +1,5 @@
-<%# Rendering errors requires an `obj` and also a `name` %>
+<%# Rendering errors requires an `obj` %>
+<% name ||= obj.class.name.titleize %>
 <% if obj.errors.any? %>
   <div id="errorMessage" class="alert alert-error mb-4" role="alert">
     <div class="alert-header">
