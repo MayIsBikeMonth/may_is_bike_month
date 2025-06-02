@@ -86,11 +86,6 @@ class Competition < ApplicationRecord
     start_date&.strftime("%B")
   end
 
-  # stub for now - TODO: import previous competition data, which was just based on distance
-  def show_rules?
-    true
-  end
-
   # I think this is less performant than the the comparison
   # if it isn't (or isn't much), than maybe #in_period? should use this instead
   def dates_in_period(passed_dates_or_times)
