@@ -517,7 +517,6 @@ DEPENDENCIES
   redis
   rerun
   rspec-rails
-  rubocop
   selenium-webdriver
   sidekiq
   sidekiq-failures
