@@ -20,7 +20,7 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRES_DB: rails_test
+          POSTGRES_DB: may_is_bike_month_development
           POSTGRES_USER: rails
           POSTGRES_PASSWORD: password
         # needed because the postgres container does not provide a healthcheck
@@ -35,16 +35,6 @@ jobs:
         ports:
           - 6379:6379
         options: --entrypoint redis-server
-
-    env:
-      # RAILS_ENV: development
-      # PGHOST: localhost
-      # PGPORT: 5432
-      # PGUSER: postgres
-      # PGPASSWORD: password
-      # RAILS_ENV: dev
-      DATABASE_URL: "postgres://rails:password@localhost:5432/rails_test"
-      PARALLEL_TEST_FIRST_IS_1: true
 
     steps:
       - name: Get CPU cores
@@ -69,10 +59,18 @@ jobs:
         with:
           node-version-file: '.tool-versions'
           cache: 'yarn'
-      - name: Set up database
-        run: bin/rails db:create db:schema:load db:migrate db:seed
-
+      
       # Copy .env so that ENV vars are in place (even if they're dummy values)
       - name: Copy .env.template
         run: cp .env.template .env
+      
+      - name: Set up database
+        env:
+          RAILS_ENV: development
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: rails
+          PGPASSWORD: password
+          DATABASE_URL: "postgres://rails:password@localhost:5432/may_is_bike_month_development"
+        run: bin/rails db:create db:schema:load db:migrate db:seed
 
