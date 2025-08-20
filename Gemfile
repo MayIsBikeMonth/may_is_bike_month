@@ -49,6 +49,7 @@ group :development, :test do
   gem "foreman" # Process runner for local work
   gem "dotenv-rails" # Add environmental variables for importing things
   gem "rspec-rails" # Test framework
+  gem "turbo_tests" # parallel test running locally
   gem "factory_bot_rails" # mocking/stubbing
   gem "rubocop"
   gem "standard" # Ruby linter

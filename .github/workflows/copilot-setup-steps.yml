@@ -69,7 +69,10 @@ jobs:
         with:
           node-version-file: '.tool-versions'
           cache: 'yarn'
-
       - name: Set up database
         run: bin/rails db:create db:schema:load db:migrate db:seed
+
+      # Copy .env so that ENV vars are in place (even if they're dummy values)
+      - name: Copy .env.template
+        run: cp .env.template .env
 
