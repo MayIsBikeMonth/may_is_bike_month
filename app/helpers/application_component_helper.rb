@@ -14,12 +14,10 @@ module ApplicationComponentHelper
                 class: (number.zero? ? 'opacity-50' : nil))
   end
 
-  # Not the right place for this, but good enuf for now. Also in ApplicationHelper
   def meters_to_feet(number)
     number * 3.28084
   end
 
-  # Not the right place for this, but good enuf for now. Also in ApplicationHelper
   def meters_to_miles(number)
     number / 1609.344
   end

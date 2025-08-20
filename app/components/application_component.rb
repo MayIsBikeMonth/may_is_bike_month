@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# ApplicationComponent provides base functionality for all ViewComponents
+# Base class for all ViewComponents in the application
 class ApplicationComponent < ViewComponent::Base
   include ApplicationComponentHelper
 
