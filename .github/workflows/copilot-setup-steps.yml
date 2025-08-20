@@ -14,6 +14,14 @@ jobs:
     permissions:
       contents: read
 
+    env:
+      RAILS_ENV: development
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: rails
+      PGPASSWORD: password
+      DATABASE_URL: "postgres://rails:password@localhost:5432/may_is_bike_month_development"
+
     services:
       postgres:
         image: postgres:17-alpine
@@ -58,19 +66,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: '.tool-versions'
-          cache: 'yarn'
       
       # Copy .env so that ENV vars are in place (even if they're dummy values)
       - name: Copy .env.template
         run: cp .env.template .env
       
       - name: Set up database
-        env:
-          RAILS_ENV: development
-          PGHOST: localhost
-          PGPORT: 5432
-          PGUSER: rails
-          PGPASSWORD: password
-          DATABASE_URL: "postgres://rails:password@localhost:5432/may_is_bike_month_development"
         run: bin/rails db:create db:schema:load db:migrate db:seed
 
