@@ -7,15 +7,15 @@ RSpec.describe ApplicationComponent, type: :component do
 
   describe "number_display" do
     let(:target) { "<span>1</span>" }
-    
+
     it "renders" do
       rendered = render_inline(component) { |c| c.number_display(1) }
       expect(rendered.to_html).to include target
     end
-    
+
     context "with round_to" do
       let(:target) { "<span>1.0</span>" }
-      
+
       it "renders" do
         rendered = render_inline(component) { |c| c.number_display(1, round_to: 1) }
         expect(rendered.to_html).to include target

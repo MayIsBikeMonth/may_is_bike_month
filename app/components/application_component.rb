@@ -4,5 +4,5 @@
 class ApplicationComponent < ViewComponent::Base
   include ApplicationComponentHelper
 
-  DEFAULT_INITIAL_UNIT = 'imperial'
+  DEFAULT_INITIAL_UNIT = "imperial"
 end
