@@ -2,10 +2,18 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: 500
+  <% if ENV["PGHOST"].present? %>
   host: <%= ENV["PGHOST"] %>
+  <% end %>
+  <% if ENV["PGPORT"].present? %>
   port: <%= ENV["PGPORT"] %>
+  <% end %>
+  <% if ENV["PGUSER"].present? %>
   username: <%= ENV["PGUSER"] %>
+  <% end %>
+  <% if ENV["PGPASSWORD"].present? %>
   password: <%= ENV["PGPASSWORD"] %>
+  <% end %>
 
 development:
   <<: *default

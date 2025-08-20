@@ -36,6 +36,13 @@ jobs:
           - 6379:6379
         options: --entrypoint redis-server
 
+    env:
+      RAILS_ENV: development
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: rails
+      PGPASSWORD: password
+
     steps:
       - name: Get CPU cores
         id: cpu-info
@@ -65,12 +72,10 @@ jobs:
         run: cp .env.template .env
       
       - name: Set up database
-        env:
-          RAILS_ENV: development
-          PGHOST: localhost
-          PGPORT: 5432
-          PGUSER: rails
-          PGPASSWORD: password
-          DATABASE_URL: "postgres://rails:password@localhost:5432/may_is_bike_month_development"
-        run: bin/rails db:create db:schema:load db:migrate db:seed
+        run: |
+          echo "PGHOST=$PGHOST"
+          echo "PGPORT=$PGPORT"
+          echo "PGUSER=$PGUSER"
+          echo "RAILS_ENV=$RAILS_ENV"
+          bundle exec rails db:create db:schema:load db:migrate db:seed
 
