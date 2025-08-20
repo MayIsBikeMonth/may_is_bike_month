@@ -10,10 +10,6 @@ _We recommend [asdf-vm](https://asdf-vm.com/#/) for managing versions of Ruby an
 
 - [Ruby](http://www.ruby-lang.org/en/)
 
-- [Rails](http://rubyonrails.org/)
-
-- [Node](https://nodejs.org/en/) & [yarn](https://yarnpkg.com/en/)
-
 - PostgreSQL
 
 - [Redis](http://redis.io/)
