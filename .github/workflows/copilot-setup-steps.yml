@@ -9,11 +9,7 @@ on:
 jobs:
   copilot-setup-steps:
     runs-on: ubuntu-latest
-
-    # Read permission required to be able to clone the repository in setup
-    permissions:
-      contents: read
-
+    
     env:
       RAILS_ENV: development
       PGHOST: localhost
@@ -21,6 +17,10 @@ jobs:
       PGUSER: rails
       PGPASSWORD: password
       DATABASE_URL: "postgres://rails:password@localhost:5432/may_is_bike_month_development"
+
+    # Read permission required to be able to clone the repository in setup
+    permissions:
+      contents: read
 
     services:
       postgres:
