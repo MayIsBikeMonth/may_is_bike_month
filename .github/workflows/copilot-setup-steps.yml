@@ -74,14 +74,7 @@ jobs:
       - name: Copy .env.template
         run: cp .env.template .env
       
-      - name: Debug environment variables
-        run: |
-          echo "PGHOST=${PGHOST}"
-          echo "PGPORT=${PGPORT}"
-          echo "PGUSER=${PGUSER}"
-          echo "RAILS_ENV=${RAILS_ENV}"
-          echo "DATABASE_URL=${DATABASE_URL}"
-      
+
       - name: Set up database
         run: bin/rails db:create db:schema:load db:migrate db:seed
 
