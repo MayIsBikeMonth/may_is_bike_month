@@ -9,7 +9,7 @@ module ApplicationComponentHelper
   end
 
   def number_display(number, round_to: 0)
-    content_tag(:span, number_with_delimiter(number.to_f.round(round_to)), class: (number.zero? ? "opacity-50" : nil))
+    content_tag(:span, number_with_delimiter(number.to_f.round(round_to)), class: ((number == 0) ? "opacity-50" : nil))
   end
 
   def meters_to_feet(number)

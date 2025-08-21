@@ -59,7 +59,7 @@ module ApplicationHelper
 
   private
 
-  def current_page_active?(link_path, match_controller: false)
+  def current_page_active?(link_path, match_controller = false)
     link_path = Rails.application.routes.recognize_path(link_path)
     active_path = Rails.application.routes.recognize_path(request.url)
     matches_controller = active_path[:controller] == link_path[:controller]
