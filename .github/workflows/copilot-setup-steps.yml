@@ -6,19 +6,19 @@ on:
     paths:
       - .github/workflows/copilot-setup-steps.yml
 
+
+env:
+  RAILS_ENV: development
+  PGHOST: "127.0.0.1"
+  PGPORT: "5432"
+  PGUSER: rails
+  PGPASSWORD: password
+  # DATABASE_URL: "postgres://rails:password@127.0.0.1:5432/may_is_bike_month_development"
+  PARALLEL_TEST_FIRST_IS_1: true
+
 jobs:
   copilot-setup-steps:
     runs-on: ubuntu-latest
-    
-    env:
-      CI: true
-      RAILS_ENV: development
-      PGHOST: "127.0.0.1"
-      PGPORT: "5432"
-      PGUSER: rails
-      PGPASSWORD: password
-      # DATABASE_URL: "postgres://rails:password@127.0.0.1:5432/may_is_bike_month_development"
-      PARALLEL_TEST_FIRST_IS_1: true
 
     # Read permission required to be able to clone the repository in setup
     permissions:
