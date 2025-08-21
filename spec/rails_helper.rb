@@ -46,6 +46,8 @@ Rails.root.glob("spec/support/**/*.rb").sort.each { |f| require f }
 require "capybara/rails"
 require "capybara/rspec"
 Capybara.register_driver :chrome_headless do |app|
+  # Add a bunch of options to prevent chrome from calling home
+  # (calling home breaks on copilot, because of the firewall, and raises errors)
   options = Selenium::WebDriver::Chrome::Options.new
   args = %w[
     --headless --window-size=1920,1080 --no-sandbox
