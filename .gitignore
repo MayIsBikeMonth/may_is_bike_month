@@ -39,3 +39,6 @@
 !/app/assets/builds/.keep
 
 /node_modules
+
+# Ignore vendored gems
+/vendor/bundle
