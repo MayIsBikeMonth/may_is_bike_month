@@ -17,7 +17,7 @@ jobs:
       PGPORT: "5432"
       PGUSER: rails
       PGPASSWORD: password
-      DATABASE_URL: "postgres://rails:password@127.0.0.1:5432/may_is_bike_month_development"
+      # DATABASE_URL: "postgres://rails:password@127.0.0.1:5432/may_is_bike_month_development"
       PARALLEL_TEST_FIRST_IS_1: true
 
     # Read permission required to be able to clone the repository in setup
@@ -75,6 +75,13 @@ jobs:
       - name: Copy .env.template
         run: cp .env.template .env
       
+      - name: Debug environment variables
+        run: |
+          echo "PGHOST=${PGHOST}"
+          echo "PGPORT=${PGPORT}"
+          echo "PGUSER=${PGUSER}"
+          echo "RAILS_ENV=${RAILS_ENV}"
+          echo "DATABASE_URL=${DATABASE_URL}"
 
       - name: Set up database
         run: bin/rails db:create db:schema:load db:migrate db:seed
