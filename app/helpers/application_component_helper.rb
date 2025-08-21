@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# Shared helper methods for ApplicationComponent and ApplicationHelper
 module ApplicationComponentHelper
   def raise_if_invalid_value!(attribute, value, options = {})
     return if options.include?(value)

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# ApplicationHelper provides shared helper methods for views
 module ApplicationHelper
   include ApplicationComponentHelper
 
