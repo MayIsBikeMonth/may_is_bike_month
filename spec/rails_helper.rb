@@ -51,7 +51,16 @@ Capybara.register_driver :chrome_headless do |app|
     --headless --window-size=1920,1080 --no-sandbox
     --disable-sync --disable-extensions --disable-logging
     --disable-background-networking --disable-component-update
-    --disable-client-side-phishing-detection
+    --disable-client-side-phishing-detection --disable-default-apps
+    --disable-translate --disable-background-timer-throttling
+    --disable-backgrounding-occluded-windows --disable-features=TranslateUI
+    --disable-ipc-flooding-protection --no-first-run
+    --disable-gpu --disable-dev-shm-usage --disable-setuid-sandbox
+    --disable-web-security --no-zygote --single-process
+    --disable-features=VizDisplayCompositor --disable-breakpad
+    --disable-crash-reporter --disable-crash-dump --disable-notifications
+    --mute-audio --no-default-browser-check --no-pings
+    --disable-domain-reliability --disable-features=AutofillServerCommunication
   ]
   args.each { |arg| options.add_argument(arg) }
   Capybara::Selenium::Driver.new(app, browser: :chrome, options:)
