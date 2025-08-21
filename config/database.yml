@@ -2,14 +2,13 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: 500
+  port: <%= ENV.fetch("PGPORT", 5432) %>
   <% if ENV["CI"] %>
-  host: <%= "127.0.0.1" %>
-  port: <%= 5432 %>
-  username: <%= "rails" %>
-  password: <%= "password" %>
+  host: 127.0.0.1
+  username: rails
+  password: password
   <% else %>
   host: <%= ENV["PGHOST"] %>
-  port: <%= ENV["PGPORT"] %>
   username: <%= ENV["PGUSER"] %>
   password: <%= ENV["PGPASSWORD"] %>
   <% end %>
