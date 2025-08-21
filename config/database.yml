@@ -2,10 +2,17 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: 500
-  host: <%= ENV["PGHOST"] || "127.0.0.1" %>
-  port: <%= ENV["PGPORT"] || 5432 %>
-  username: <%= ENV["PGUSER"] || "rails" %>
-  password: <%= ENV["PGPASSWORD"] || "password" %>
+  <% if ENV["CI"] %>
+  host: <%= "127.0.0.1" %>
+  port: <%= 5432 %>
+  username: <%= "rails" %>
+  password: <%= "password" %>
+  <% else %>
+  host: <%= ENV["PGHOST"] %>
+  port: <%= ENV["PGPORT"] %>
+  username: <%= ENV["PGUSER"] %>
+  password: <%= ENV["PGPASSWORD"] %>
+  <% end %>
 
 development:
   <<: *default
