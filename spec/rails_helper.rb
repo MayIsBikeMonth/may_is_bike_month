@@ -47,27 +47,14 @@ require "capybara/rails"
 require "capybara/rspec"
 Capybara.register_driver :chrome_headless do |app|
   options = Selenium::WebDriver::Chrome::Options.new
-  options.add_argument("--headless")
-  options.add_argument("--window-size=1920,1080")
-  options.add_argument("--disable-background-networking")
-  options.add_argument("--disable-background-timer-throttling")
-  options.add_argument("--disable-breakpad")
-  options.add_argument("--disable-component-extensions-with-background-pages")
-  options.add_argument("--disable-extensions")
-  options.add_argument("--disable-features=TranslateUI,BlinkGenPropertyTrees")
-  options.add_argument("--disable-ipc-flooding-protection")
-  options.add_argument("--disable-logging")
-  options.add_argument("--disable-notifications")
-  options.add_argument("--disable-offer-store-unmasked-wallet-cards")
-  options.add_argument("--disable-offer-upload-credit-cards")
-  options.add_argument("--disable-setuid-sandbox")
-  options.add_argument("--disable-speech-api")
-  options.add_argument("--disable-sync")
-  options.add_argument("--disable-web-security")
-  options.add_argument("--no-sandbox")
-  options.add_argument("--disable-client-side-phishing-detection")
-  options.add_argument("--disable-component-update")
-  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+  args = %w[
+    --headless --window-size=1920,1080 --no-sandbox
+    --disable-sync --disable-extensions --disable-logging
+    --disable-background-networking --disable-component-update
+    --disable-client-side-phishing-detection
+  ]
+  args.each { |arg| options.add_argument(arg) }
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options:)
 end
 # Configure Capybara
 Capybara.configure do |config|
