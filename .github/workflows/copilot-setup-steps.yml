@@ -67,7 +67,4 @@ jobs:
         run: cp .env.template .env
       
       - name: Set up database
-        run: |
-          bin/rails db:create db:schema:load db:migrate db:seed
-          bin/rake parallel:setup
-
+        run: bin/rails db:create db:schema:load db:migrate db:seed

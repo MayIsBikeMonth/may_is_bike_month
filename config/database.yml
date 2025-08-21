@@ -8,7 +8,7 @@ default: &default
   username: rails
   password: password
   <% else %>
-  host: <%= ENV["PGHOST"] %>
+  host: <%= ENV.fetch("PGHOST", "localhost") %>
   username: <%= ENV["PGUSER"] %>
   password: <%= ENV["PGPASSWORD"] %>
   <% end %>
