@@ -37,9 +37,6 @@ jobs:
         options: --entrypoint redis-server
     env:
       PARALLEL_TEST_FIRST_IS_1: true
-      # Chrome configuration to prevent external connections and firewall violations
-      CHROME_DEVEL_SANDBOX: /usr/bin/google-chrome-sandbox
-      CHROMIUM_FLAGS: "--disable-sync --disable-extensions --disable-logging --disable-background-networking --disable-component-update --disable-client-side-phishing-detection --disable-default-apps --disable-translate --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-features=TranslateUI --disable-ipc-flooding-protection --no-first-run --disable-gpu --disable-dev-shm-usage --disable-setuid-sandbox --disable-web-security --no-zygote --single-process --disable-features=VizDisplayCompositor --disable-breakpad --disable-crash-reporter --disable-crash-dump --disable-notifications --mute-audio --no-default-browser-check --no-pings --disable-domain-reliability --disable-features=AutofillServerCommunication --disable-site-isolation-trials --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --enable-automation --headless=new --no-service-autorun --password-store=basic --test-type=webdriver --use-mock-keychain --disable-renderer-backgrounding --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-features=Translate --no-sandbox"
     steps:
       - name: Get CPU cores
         id: cpu-info
@@ -73,29 +70,4 @@ jobs:
         run: |
           bin/rails db:create db:schema:load db:migrate db:seed
           bin/rake parallel:setup
-
-      # Configure Chrome for testing to prevent firewall violations
-      - name: Configure Chrome for CI testing
-        run: |
-          # Create Chrome config directory
-          mkdir -p ~/.config/google-chrome/
-          # Create policy file to disable external connections
-          cat > ~/.config/google-chrome/policies.json << 'EOF'
-          {
-            "BackgroundModeEnabled": false,
-            "ComponentUpdatesEnabled": false,
-            "DefaultSearchProviderEnabled": false,
-            "MetricsReportingEnabled": false,
-            "SafeBrowsingEnabled": false,
-            "SigninAllowed": false,
-            "SyncDisabled": true,
-            "UserFeedbackAllowed": false,
-            "AutofillServerWhitelist": [],
-            "ExtensionInstallBlacklist": ["*"],
-            "DefaultWebBluetoothGuardSetting": 2,
-            "DefaultWebUsbGuardSetting": 2
-          }
-          EOF
-          # Set Chrome flags for system-wide use
-          echo '--disable-sync --disable-extensions --disable-background-networking --disable-component-update --disable-client-side-phishing-detection --disable-default-apps --disable-translate --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-features=TranslateUI --disable-ipc-flooding-protection --no-first-run --disable-crash-reporter --disable-notifications --mute-audio --no-default-browser-check --no-pings --disable-domain-reliability --disable-features=AutofillServerCommunication --disable-site-isolation-trials --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --enable-automation --headless=new --no-service-autorun --password-store=basic --test-type=webdriver --use-mock-keychain --no-sandbox' > ~/.config/google-chrome/chrome_flags.conf
 
