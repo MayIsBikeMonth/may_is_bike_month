@@ -2,7 +2,7 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: 500
-  <% if ENV["PGHOST"] || ENV["COPILOT_RUNNER"] %>
+  <% if ENV["PGHOST"] || ENV["CI"] %>
   host: <%= ENV["PGHOST"] || "127.0.0.1" %>
   port: <%= ENV["PGPORT"] || 5432 %>
   username: <%= ENV["PGUSER"] || "rails" %>
