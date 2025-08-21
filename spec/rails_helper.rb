@@ -1,6 +1,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require "spec_helper"
 ENV["RAILS_ENV"] ||= "test"
+ENV["PARALLEL_TEST_FIRST_IS_1"] = "true" # number parallel databases correctly
 require_relative "../config/environment"
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
@@ -45,10 +46,26 @@ Rails.root.glob("spec/support/**/*.rb").sort.each { |f| require f }
 require "capybara/rails"
 require "capybara/rspec"
 Capybara.register_driver :chrome_headless do |app|
+  # Add a bunch of options to prevent chrome from calling home
+  # (calling home breaks on copilot, because of the firewall, and raises errors)
   options = Selenium::WebDriver::Chrome::Options.new
-  options.add_argument("--headless")
-  options.add_argument("--window-size=1920,1080")
-  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+  args = %w[
+    --headless --window-size=1920,1080 --no-sandbox
+    --disable-sync --disable-extensions --disable-logging
+    --disable-background-networking --disable-component-update
+    --disable-client-side-phishing-detection --disable-default-apps
+    --disable-translate --disable-background-timer-throttling
+    --disable-backgrounding-occluded-windows --disable-features=TranslateUI
+    --disable-ipc-flooding-protection --no-first-run
+    --disable-gpu --disable-dev-shm-usage --disable-setuid-sandbox
+    --disable-web-security --no-zygote --single-process
+    --disable-features=VizDisplayCompositor --disable-breakpad
+    --disable-crash-reporter --disable-crash-dump --disable-notifications
+    --mute-audio --no-default-browser-check --no-pings
+    --disable-domain-reliability --disable-features=AutofillServerCommunication
+  ]
+  args.each { |arg| options.add_argument(arg) }
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options:)
 end
 # Configure Capybara
 Capybara.configure do |config|

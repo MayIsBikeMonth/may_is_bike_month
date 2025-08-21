@@ -1,7 +1,13 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  pool: 500
+  <% if ENV["PGHOST"] || ENV["COPILOT_RUNNER"] %>
+  host: <%= ENV["PGHOST"] || "127.0.0.1" %>
+  port: <%= ENV["PGPORT"] || 5432 %>
+  username: <%= ENV["PGUSER"] || "rails" %>
+  password: <%= ENV["PGPASSWORD"] || "password" %>
+  <% end %>
 
 development:
   <<: *default
@@ -9,7 +15,7 @@ development:
 
 test:
   <<: *default
-  database: may_is_bike_month_rails_test
+  database: may_is_bike_month_rails_test<%= ENV["TEST_ENV_NUMBER"] %>
 
 production:
   <<: *default

@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "3.4.3"
+ruby "3.4.5"
 
 gem "rails"
 gem "puma" # Use Puma as the app server
@@ -49,8 +49,8 @@ group :development, :test do
   gem "foreman" # Process runner for local work
   gem "dotenv-rails" # Add environmental variables for importing things
   gem "rspec-rails" # Test framework
+  gem "turbo_tests" # parallel test running locally
   gem "factory_bot_rails" # mocking/stubbing
-  gem "rubocop"
   gem "standard" # Ruby linter
   gem "htmlbeautifier" # html linting
 end
