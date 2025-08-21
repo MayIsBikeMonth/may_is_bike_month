@@ -4,8 +4,8 @@ default: &default
   pool: 500
   host: <%= ENV["PGHOST"] || "127.0.0.1" %>
   port: <%= ENV["PGPORT"] || 5432 %>
-  username: <%= ENV["PGUSER"] %>
-  password: <%= ENV["PGPASSWORD"] %>
+  username: <%= ENV["PGUSER"] || "rails" %>
+  password: <%= ENV["PGPASSWORD"] || "password" %>
 
 development:
   <<: *default
