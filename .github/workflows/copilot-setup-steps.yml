@@ -77,11 +77,12 @@ jobs:
       
       - name: Debug environment variables
         run: |
-          echo "PGHOST=${PGHOST}"
-          echo "PGPORT=${PGPORT}"
-          echo "PGUSER=${PGUSER}"
-          echo "RAILS_ENV=${RAILS_ENV}"
-          echo "DATABASE_URL=${DATABASE_URL}"
+          echo "CI=${CI} <----> ${vars.CI}"
+          echo "PGHOST=${PGHOST} <----> ${vars.PGHOST}"
+          echo "PGPORT=${PGPORT} <----> ${vars.PGPORT}"
+          echo "PGUSER=${PGUSER} <----> ${vars.PGUSER}"
+          echo "RAILS_ENV=${RAILS_ENV} <----> ${vars.RAILS_ENV}"
+          echo "DATABASE_URL=${DATABASE_URL} <----> ${vars.DATABASE_URL}"
 
       - name: Set up database
         run: bin/rails db:create db:schema:load db:migrate db:seed
