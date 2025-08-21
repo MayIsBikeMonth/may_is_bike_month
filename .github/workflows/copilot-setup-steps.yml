@@ -6,15 +6,6 @@ on:
     paths:
       - .github/workflows/copilot-setup-steps.yml
 
-
-env:
-  RAILS_ENV: development
-  PGHOST: "127.0.0.1"
-  PGPORT: "5432"
-  PGUSER: rails
-  PGPASSWORD: password
-  # DATABASE_URL: "postgres://rails:password@127.0.0.1:5432/may_is_bike_month_development"
-
 jobs:
   copilot-setup-steps:
     runs-on: ubuntu-latest
@@ -77,19 +68,14 @@ jobs:
       
       - name: Debug environment variables
         run: |
-          echo "CI=${CI} <---->"
-          echo "PGHOST=${PGHOST} <---->"
-          echo "PGPORT=${PGPORT} <---->"
-          echo "PGUSER=${PGUSER} <---->"
-          echo "RAILS_ENV=${RAILS_ENV} <---->"
-          echo "DATABASE_URL=${DATABASE_URL} <---->"
+          echo "CI=${CI} <----"
+          echo "PGHOST=${PGHOST} <----"
+          echo "PGPORT=${PGPORT} <----"
+          echo "PGUSER=${PGUSER} <----"
+          echo "RAILS_ENV=${RAILS_ENV} <----"
+          echo "DATABASE_URL=${DATABASE_URL} <----"
+          echo "PARALLEL_TEST_FIRST_IS_1=${PARALLEL_TEST_FIRST_IS_1} <----"
 
-          echo "CI ${vars.CI}"
-          echo "PGHOST ${vars.PGHOST}"
-          echo "PGPORT ${vars.PGPORT}"
-          echo "PGUSER ${vars.PGUSER}"
-          echo "RAILS_ENV ${vars.RAILS_ENV}"
-          echo "DATABASE_URL ${vars.DATABASE_URL}"
 
       - name: Set up database
         run: |
