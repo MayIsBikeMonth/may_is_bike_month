@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
+      CI: true
       RAILS_ENV: development
       PGHOST: "127.0.0.1"
       PGPORT: "5432"
