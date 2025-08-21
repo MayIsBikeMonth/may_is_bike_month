@@ -48,7 +48,9 @@ jobs:
     steps:
       - name: Get CPU cores
         id: cpu-info
-        run: echo "cpu-cores=$(nproc)" >> $GITHUB_OUTPUT
+        run: |
+          echo "cpu-cores=$(nproc)" >> $GITHUB_OUTPUT
+          echo "cpu-cores=$(nproc)"
       # install system dependencies
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
