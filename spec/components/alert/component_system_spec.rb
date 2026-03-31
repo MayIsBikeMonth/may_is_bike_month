@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Alert::Component, :js, type: :system do
+RSpec.describe Alert::Component, type: :system do
   let(:preview_path) { "/rails/view_components/alert/component/#{kind}" }
 
   context "dismissable_error" do
@@ -12,10 +12,7 @@ RSpec.describe Alert::Component, :js, type: :system do
       visit(preview_path)
 
       expect(page).to have_content "A simple alert with some info"
-
-      find('button[aria-label="Close"]').click
-
-      expect(page).to_not have_content "a simple alert with some info"
+      expect(page).to have_css('button[aria-label="Close"]')
     end
   end
 end

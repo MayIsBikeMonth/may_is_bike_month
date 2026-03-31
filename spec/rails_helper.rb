@@ -4,11 +4,10 @@ ENV["PARALLEL_TEST_FIRST_IS_1"] = "true" # number parallel databases correctly
 require_relative "../config/environment"
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require "rspec/rails"
-require "sidekiq/testing"
+Sidekiq.testing!(:fake)
 
 require "vcr"
 require "view_component/test_helpers"
-require "view_component/system_test_helpers"
 require "capybara/rspec"
 
 VCR.configure do |config|
@@ -30,36 +29,6 @@ end
 
 Rails.root.glob("spec/support/**/*.rb").sort_by(&:to_s).each { |f| require f }
 
-# Include capybara for view component system specs
-require "capybara/rails"
-Capybara.register_driver :chrome_headless do |app|
-  # Add a bunch of options to prevent chrome from calling home
-  # (calling home breaks on copilot, because of the firewall, and raises errors)
-  options = Selenium::WebDriver::Chrome::Options.new
-  args = %w[
-    --headless --window-size=1920,1080 --no-sandbox
-    --disable-sync --disable-extensions --disable-logging
-    --disable-background-networking --disable-component-update
-    --disable-client-side-phishing-detection --disable-default-apps
-    --disable-translate --disable-background-timer-throttling
-    --disable-backgrounding-occluded-windows --disable-features=TranslateUI
-    --disable-ipc-flooding-protection --no-first-run
-    --disable-gpu --disable-dev-shm-usage --disable-setuid-sandbox
-    --disable-web-security --no-zygote --single-process
-    --disable-features=VizDisplayCompositor --disable-breakpad
-    --disable-crash-reporter --disable-crash-dump --disable-notifications
-    --mute-audio --no-default-browser-check --no-pings
-    --disable-domain-reliability --disable-features=AutofillServerCommunication
-  ]
-  args.each { |arg| options.add_argument(arg) }
-  Capybara::Selenium::Driver.new(app, browser: :chrome, options:)
-end
-# Configure Capybara
-Capybara.configure do |config|
-  config.default_driver = :chrome_headless
-  config.javascript_driver = :chrome_headless
-end
-
 begin
   ActiveRecord::Migration.maintain_test_schema!
 rescue ActiveRecord::PendingMigrationError => e
@@ -73,8 +42,10 @@ RSpec.configure do |config|
 
   # View component test helpers
   config.include ViewComponent::TestHelpers, type: :component
-  config.include ViewComponent::SystemTestHelpers, type: :component
   config.include Capybara::RSpecMatchers, type: :component
+
+  # Use rack_test for system specs (no browser needed)
+  config.before(:each, type: :system) { driven_by :rack_test }
 
   config.use_transactional_fixtures = true
   config.render_views = true

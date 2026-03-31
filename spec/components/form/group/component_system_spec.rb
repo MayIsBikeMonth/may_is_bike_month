@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Form::Group::Component, :js, type: :system do
+RSpec.describe Form::Group::Component, type: :system do
   it "renders label and input" do
     visit "/lookbook/preview/form/group/kinds"
 

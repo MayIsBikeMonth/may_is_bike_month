@@ -4,7 +4,6 @@ gem "rails", "~> 8.1.2"
 gem "pg", "~> 1.1" # Use postgresql as the database for Active Record
 gem "redis" # Redis itself
 gem "sidekiq" # Background job processing (with redis)
-gem "sinatra" # Used for sidekiq web
 
 # Server
 gem "puma" # Use the Puma web server
@@ -82,7 +81,6 @@ group :test do
   gem "vcr" # Stub external HTTP requests
   gem "webmock" # mocking for VCR
   gem "capybara" # For view components
-  gem "selenium-webdriver" # For capybara
   gem "rails-controller-testing" # Assert testing views
   gem "turbo_tests" # Parallel test execution
   gem "rspec-retry", require: false # Retry flaky test failures on CI
