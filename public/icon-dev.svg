@@ -1,0 +1,28 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tongueFade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4B0082" stop-opacity="0"/>
+      <stop offset="25%" stop-color="#4B0082" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="grooveFade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity="0"/>
+      <stop offset="30%" stop-color="#7C3AED" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#7C3AED" stop-opacity="0.5"/>
+    </linearGradient>
+  </defs>
+  <!-- Pink background -->
+  <rect width="512" height="512" rx="64" fill="#EC4899"/>
+  <!-- Tongue shape -->
+  <path d="
+    M 60 40
+    Q 60 10, 110 10
+    L 402 10
+    Q 452 10, 452 40
+    L 452 300
+    Q 452 500, 256 500
+    Q 60 500, 60 300
+    Z
+  " fill="url(#tongueFade)"/>
+  <!-- Center groove -->
+  <rect x="248" y="10" width="16" height="370" rx="8" fill="url(#grooveFade)"/>
+</svg>

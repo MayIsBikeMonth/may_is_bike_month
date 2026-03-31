@@ -1,4 +1,6 @@
 module ApplicationHelper
+  include ApplicationComponentHelper
+
   def page_title
     return @page_title if defined?(@page_title)
     prefix = (in_admin? ? "🧰" : "HeartHeartBeat")
@@ -8,12 +10,6 @@ module ApplicationHelper
       default_action_name_title,
       controller_title_for_action
     ].compact.join(" ")
-  end
-
-  def number_display(number, round_to: 0)
-    content_tag(:span,
-      number_with_delimiter(number.to_f.round(round_to)),
-      class: ((number == 0) ? "opacity-50" : nil))
   end
 
   # Not the right place for this, but good enuf for now. Also in ApplicationComponent
@@ -65,17 +61,20 @@ module ApplicationHelper
     link_to(raw(link_text), link_path, html_options).html_safe
   end
 
-  private
-
   def current_page_active?(link_path, match_controller = false)
-    link_path = Rails.application.routes.recognize_path(link_path)
-    active_path = Rails.application.routes.recognize_path(request.url)
-    matches_controller = active_path[:controller] == link_path[:controller]
-    return true if match_controller && matches_controller
-    current_page?(link_path) || matches_controller && active_path[:action] == link_path[:action]
-  rescue # This mainly fails in testing - but why not rescue always
-    false
+    if match_controller
+      begin
+        link_controller = Rails.application.routes.recognize_path(link_path)[:controller]
+        Rails.application.routes.recognize_path(request.url)[:controller] == link_controller
+      rescue
+        false
+      end
+    else
+      current_page?(link_path)
+    end
   end
+
+  private
 
   def default_action_name_title
     if action_name == "show"
@@ -87,8 +86,7 @@ module ApplicationHelper
 
   def controller_title_for_action
     return @controller_display_name if defined?(@controller_display_name)
-    # No need to include parking
-    c_name = controller_name.gsub("parking_location", "location")
+    c_name = controller_name
     return c_name.titleize if %(index).include?(action_name)
     c_name.singularize.titleize
   end

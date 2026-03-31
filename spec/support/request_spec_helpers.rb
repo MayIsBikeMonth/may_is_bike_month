@@ -1,13 +1,18 @@
 # frozen_string_literal: true
 
 shared_context :logged_in_as_user do
-  let!(:user) { FactoryBot.create(:user) }
-  before { sign_in(user, scope: :user) }
+  let(:user) { FactoryBot.create(:user) }
+  before { sign_in user }
 end
 
 shared_context :logged_in_as_admin do
-  let!(:user) { FactoryBot.create(:user_admin) }
-  before { sign_in(user, scope: :user) }
+  let(:user) { FactoryBot.create(:user_admin) }
+  before { sign_in user }
+end
+
+RSpec.shared_context :test_csrf_token do
+  before { ActionController::Base.allow_forgery_protection = true }
+  after { ActionController::Base.allow_forgery_protection = false }
 end
 
 # Request spec helpers that are included in all request specs via Rspec.configure (rails_helper)

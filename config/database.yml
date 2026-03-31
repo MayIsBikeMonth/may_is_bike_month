@@ -1,11 +1,14 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  pool: 500
+  pool: <%= ENV.fetch("DB_POOL") { 1000 } %>
+
+default_local: &default_local
+  <<: *default
   port: <%= ENV.fetch("PGPORT", 5432) %>
   <% if ENV["CI"] %>
   host: 127.0.0.1
-  username: rails
+  username: postgres
   password: password
   <% else %>
   host: <%= ENV.fetch("PGHOST", "localhost") %>
@@ -14,13 +17,16 @@ default: &default
   <% end %>
 
 development:
-  <<: *default
-  database: may_is_bike_month_development
+  <<: *default_local
+  database: may_is_bike_month_development<%= ENV["CONDUCTOR_WORKSPACE_NAME"] %>
 
 test:
-  <<: *default
-  database: may_is_bike_month_rails_test<%= ENV["TEST_ENV_NUMBER"] %>
+  <<: *default_local
+  database: may_is_bike_month_test<%= ENV["CONDUCTOR_WORKSPACE_NAME"] %><%= ENV["TEST_ENV_NUMBER"] %>
 
 production:
   <<: *default
   database: may_is_bike_month
+  host: "<%= ENV["POSTGRESQL_ADDRESS"] %>"
+  username: "<%= ENV["POSTGRESQL_USERNAME"] %>"
+  password: "<%= ENV["POSTGRESQL_PASSWORD"] %>"

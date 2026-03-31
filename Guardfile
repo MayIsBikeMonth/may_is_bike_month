@@ -1,37 +1,34 @@
 directories %w[app spec config]
 
 group :red_green_refactor, halt_on_fail: true do
-  guard :rspec, failed_mode: :focus, cmd: "bundle exec rspec" do
-    require "guard/rspec/dsl"
-    dsl = Guard::RSpec::Dsl.new(self)
+  rspec_options = {
+    cmd: "bin/rspec -f progress",
+    cmd_additional_args: "--require rails_helper --no-profile --order defined",
+    run_all: {
+      cmd: "turbo_tests --quiet --test-options='-f documentation -o /dev/null -f progress",
+      cmd_additional_args: "'"
+    },
+    failed_mode: :focus,
+    all_after_pass: false
+  }
 
-    # RSpec files
-    rspec = dsl.rspec
-    watch(rspec.spec_helper) { rspec.spec_dir }
-    watch(rspec.spec_files)
+  guard :rspec, rspec_options do
+    watch(%r{^spec/.+_spec\.rb$})
+    watch(%r{^config/initializers/(.+)\.rb$}) { |m| "spec/initializers/#{m[1]}_spec.rb" }
 
-    # Ruby files
-    ruby = dsl.ruby
-    dsl.watch_spec_files_for(ruby.lib_files)
+    watch("config/routes.rb") { "spec/routing" }
+    watch("app/controllers/application_controller.rb") { "spec/controllers" }
 
-    # Rails files
-    rails = dsl.rails(view_extensions: %w[erb haml slim])
-    dsl.watch_spec_files_for(rails.app_files)
-    # dsl.watch_spec_files_for(rails.views)
+    watch(%r{^app/controllers/(.+)_controller\.rb$}) { |m| "spec/requests/#{m[1]}_request_spec.rb" }
+    watch(%r{^app/controllers/(.+)_controller\.rb$}) { |m| "spec/requests/#{m[1]}_controller_spec.rb" }
 
-    watch(rails.controllers) { |m| rspec.spec.call("requests/#{m[1]}_request") }
-
-    # Rails config changes
-    watch(rails.spec_helper) { rspec.spec_dir }
-    watch(rails.routes) { "#{rspec.spec_dir}/routing" }
-    watch(rails.app_controller) { "#{rspec.spec_dir}/requests" }
-
-    # Jobs
-    watch(%r{^app/jobs/(.+)\.rb$}) { |m| "#{rspec.spec_dir}/jobs/#{m[1]}_spec.rb" }
-    # Our special folders
-    watch(%r{^app/services/(.+)\.rb$}) { |m| "#{rspec.spec_dir}/services/#{m[1]}_spec.rb" }
-    # components
+    watch(%r{^app/services/(.+)\.rb$}) { |m| "spec/services/#{m[1]}_spec.rb" }
+    watch(%r{^app/jobs/(.+)\.rb$}) { |m| "spec/jobs/#{m[1]}_spec.rb" }
+    watch(%r{^app/models/concerns/(.+)\.rb$}) { |m| "spec/models/concerns/#{m[1]}_spec.rb" }
     watch(%r{^app/components/(.+)rb$}) { |m| "spec/components/#{m[1]}_spec.rb" }
     watch(%r{^app/components/(.+)rb$}) { |m| "spec/components/#{m[1]}_system_spec.rb" }
+
+    watch(%r{^app/(.+)\.rb$}) { |m| "spec/#{m[1]}_spec.rb" }
+    watch(%r{^app/(.*)(\.erb|\.haml)$}) { |m| "spec/#{m[1]}#{m[2]}_spec.rb" }
   end
 end

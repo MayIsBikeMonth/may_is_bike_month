@@ -1,0 +1,27 @@
+<%= render(UI::Card::Component.new) do %>
+  <%= render(UI::Header::Component.new(text: "Sign up")) %>
+
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), builder: MayIsBikeMonthFormBuilder) do |f| %>
+    <%= render(UI::AlertForErrors::Component.new(object: resource)) %>
+
+    <%= render(Form::Group::Component.new(form_builder: f, attribute: :name, html_options: {autofocus: true, autocomplete: "name"})) %>
+    <%= render(Form::Group::Component.new(form_builder: f, attribute: :email, kind: :email_field, html_options: {autocomplete: "email"})) %>
+
+    <div class="mb-4">
+      <%= f.label :password, class: Form::Group::Component::LABEL_CLASSES %>
+      <%= f.password_field :password, autocomplete: "new-password", class: Form::Input::Component::INPUT_CLASSES %>
+      <p class="text-xs mt-1 text-gray-500 dark:text-gray-400">
+        (<%= @minimum_password_length %> characters minimum)
+      </p>
+    </div>
+
+    <div class="mb-4">
+      <%= f.label :password_confirmation, class: Form::Group::Component::LABEL_CLASSES %>
+      <%= f.password_field :password_confirmation, autocomplete: "new-password", class: Form::Input::Component::INPUT_CLASSES %>
+    </div>
+
+    <%= render(UI::Button::Component.new(text: "Sign up", color: :primary, kind: :submit)) %>
+  <% end %>
+
+  <%= render "devise/shared/links" %>
+<% end %>

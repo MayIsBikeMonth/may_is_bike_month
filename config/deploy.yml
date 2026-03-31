@@ -1,0 +1,75 @@
+<% server_ip = "165.232.157.112" %>
+<% app_name = "seth_template" %>
+<% app_host = "test.bikeicorn.com" %>
+
+# Name of your application. Used to uniquely configure containers.
+service: <%= app_name %>
+
+# Name of the container image (use your-user/app-name on external registries).
+image: sethherr/<%= app_name %>
+
+# Deploy to these servers.
+servers:
+  web:
+    - <%= server_ip %>
+
+proxy:
+  ssl: true
+  host: <%= app_host %>
+  healthcheck:
+    path: /up
+
+# Where you keep your container images.
+registry:
+  server: ghcr.io
+  username: sethherr
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# Inject ENV variables into containers (secrets come from .kamal/secrets).
+env:
+  secret:
+    - RAILS_MASTER_KEY
+    - HONEYBADGER_API_KEY
+    - POSTGRESQL_PASSWORD
+  clear:
+    POSTGRESQL_ADDRESS: <%= app_name %>-db
+    POSTGRESQL_USERNAME: <%= app_name %>
+
+# Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
+# "bin/kamal logs -r job" will tail logs from the first server in the job section.
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  dbc: app exec --interactive --reuse "bin/rails dbconsole --include-password"
+
+# Use a persistent storage volume for local Active Storage files.
+# Recommended to change this to a mounted volume path that is backed up off server.
+volumes:
+  - "<%= app_name %>_storage:/rails/storage"
+
+# Bridge fingerprinted assets, like JS and CSS, between versions to avoid
+# hitting 404 on in-flight requests. Combines all files from new and old
+# version inside the asset_path.
+asset_path: /rails/public/assets
+
+# Configure the image builder.
+builder:
+  arch: amd64
+  # Build image via remote server (useful for faster amd64 builds on arm64 computers)
+  remote: ssh://root@<%= server_ip %>
+
+accessories:
+  db:
+    image: postgres:17
+    host: <%= server_ip %>
+    port: "127.0.0.1:5432:5432"
+    env:
+      clear:
+        POSTGRES_USER: <%= app_name %>
+        POSTGRES_DB: <%= app_name %>_production
+      secret:
+        - POSTGRES_PASSWORD
+    directories:
+      - <%= app_name %>_db_data:/var/lib/postgresql/data

@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   root "landing#index"
   get "/update_strava", to: "landing#update_strava"
 
+  get "up" => "rails/health#show", :as => :rails_health_check
+
   resources :competitions, only: %i[show]
 
   resource :account, only: %i[edit update]
@@ -19,7 +21,7 @@ Rails.application.routes.draw do
     resources :competition_users, only: %i[index edit update]
   end
 
-  mount Lookbook::Engine, at: "/lookbook"
+  mount Lookbook::Engine, at: "/lookbook" if defined?(Lookbook)
 
   authenticate :user, lambda { |u| u.developer? } do
     mount Sidekiq::Web, at: "/sidekiq"
