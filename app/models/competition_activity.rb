@@ -79,7 +79,7 @@ class CompetitionActivity < ApplicationRecord
 
     # remove the leading UTC offset
     def parse_strava_timezone(string)
-      string.gsub(/\([^\)]*\)/, "").strip
+      string.gsub(/\([^)]*\)/, "").strip
     end
 
     def parse_strava_local_time(time_str, timezone)

@@ -1,0 +1,10 @@
+{
+  "ignored_warnings": [
+    {
+      "fingerprint": "cb38e655e366e5419001b11a03afd60a22a74cbbad465ade12a678111aa57e8c",
+      "note": "Only link_to outputs are joined - all values are already HTML-safe"
+    }
+  ],
+  "updated": "2026-04-01",
+  "brakeman_version": "8.0.4"
+}

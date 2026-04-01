@@ -1,11 +1,14 @@
 <!DOCTYPE html>
+
 <html>
   <head>
     <title><%= page_title %></title>
+
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="May is Bike Month">
     <meta name="mobile-web-app-capable" content="yes">
+
     <%= tag.meta name: "honeybadger-api-key", content: ENV["HONEYBADGER_API_KEY"] %>
     <%= tag.meta name: "honeybadger-environment", content: Rails.env %>
     <%= csrf_meta_tags %>
@@ -19,9 +22,13 @@
       <%= hotwire_livereload_tags %>
     <% else %>
       <link href="/favicon.ico" rel="icon" sizes="192x192">
-      <link rel="apple-touch-icon-precomposed apple-touch-icon" href="/apple-touch-icon.png" />
+      <link
+        rel="apple-touch-icon-precomposed apple-touch-icon"
+        href="/apple-touch-icon.png"
+      >
       <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <% end %>
+
     <%= javascript_importmap_tags %>
 
     <% unless display_dev_info? %>
@@ -30,21 +37,29 @@
       </style>
     <% end %>
   </head>
+
   <body class="bg-white antialiased">
     <!--
 
-    Source Code:
+  Source Code:
 
-    github.com/MayIsBikeMonth/may_is_bike_month
+  github.com/MayIsBikeMonth/may_is_bike_month
 
   -->
-    <ul class="relative z-10 flex items-center gap-4 px-2 lg:px-4 justify-end mt-1 mb-2">
+    <ul
+      class="
+        relative z-10 flex items-center gap-4 px-2 lg:px-4 justify-end mt-1
+        mb-2
+      "
+    >
       <% if current_user.blank? %>
         <li>
           <%= button_to "Sign in", user_strava_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "twlink" %>
         </li>
       <% elsif in_admin? %>
-        <span class="hidden sm:inline-block ml-2 text-lg font-semibold">May Is Bike Month Admin</span>
+        <span class="hidden sm:inline-block ml-2 text-lg font-semibold">
+          May Is Bike Month Admin
+        </span>
         <%= active_link "Competition Users", admin_competition_users_path, class: "twlink ml-2", match_controller: true %>
         <%= active_link "Competitions", admin_competitions_path, class: "twlink ml-2", match_controller: true %>
         <%= link_to "Exit", user_root_url, class: "twlink ml-auto less-strong" %>
@@ -54,18 +69,23 @@
         <% end %>
         <li>Hi <%= current_user.display_name %></li>
         <li>
-          <%= button_to "logout", destroy_user_session_path, method: :delete, data: {turbo: false}, class: "twlink"%>
+          <%= button_to "logout", destroy_user_session_path, method: :delete, data: {turbo: false}, class: "twlink" %>
         </li>
-
       <% end %>
     </ul>
+
     <%= render_flash_messages %>
+
     <div class="<%= @skip_wrapper_class ? "" : "wrapper-class" %>">
       <%= yield %>
     </div>
 
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-63Y0BHVCS8"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-63Y0BHVCS8"
+    ></script>
+
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}

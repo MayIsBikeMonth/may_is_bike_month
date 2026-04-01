@@ -3,10 +3,14 @@
 
 <div class="relative py-4 -mx-2 xl:-mx-1">
   <div class="relative max-w-full min-w-[1300px] px-1">
-    <table class="w-full text-sm text-left text-gray-800 sticky-headers" id="competition-table">
-      <thead class="">
+    <table
+      class="w-full text-sm text-left text-gray-800 sticky-headers"
+      id="competition-table"
+    >
+      <thead>
         <%= render(CompetitionTable::TableHeader::Component.new(competition: competition)) %>
       </thead>
+
       <tbody>
         <%= render(CompetitionTable::UserRow::Component.new(competition_user: competition_user, activities_expanded: true)) %>
       </tbody>
