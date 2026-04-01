@@ -5,7 +5,8 @@ group :red_green_refactor, halt_on_fail: true do
     cmd: "bin/rspec -f progress",
     cmd_additional_args: "--require rails_helper --no-profile --order defined",
     run_all: {
-      cmd: "bin/rspec -f documentation -o /dev/null -f progress"
+      cmd: "turbo_tests --quiet --test-options='-f documentation -o /dev/null -f progress",
+      cmd_additional_args: "'"
     },
     failed_mode: :focus,
     all_after_pass: false

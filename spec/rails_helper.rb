@@ -1,5 +1,6 @@
 require "spec_helper"
 ENV["RAILS_ENV"] ||= "test"
+ENV["PARALLEL_TEST_FIRST_IS_1"] = "true" # number parallel databases correctly
 require_relative "../config/environment"
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require "rspec/rails"
