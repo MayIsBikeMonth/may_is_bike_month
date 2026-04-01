@@ -8,6 +8,7 @@
   <div class="wrapper-class pt-2!">
     <p>
       View results from:
+      <%# html_safe is ok here - all values are link_to outputs (already escaped) %>
       <%= @previous_competitions.map { |competition|
         link_to(competition.year, competition_path(competition.slug), class: "twlink")
       }.to_sentence.html_safe %>
