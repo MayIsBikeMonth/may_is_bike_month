@@ -14,12 +14,12 @@
     <%= yield :head %>
 
     <% if Rails.env.development? %>
-      <link href="/icon-dev.png" rel="icon" type="image/png">
+      <link href="/favicon-dev.ico" rel="icon" sizes="192x192">
       <%= stylesheet_link_tag :app %>
       <%= hotwire_livereload_tags %>
     <% else %>
-      <link href="/icon.png" rel="icon" type="image/png">
-      <link rel="apple-touch-icon" href="/icon.png">
+      <link href="/favicon.ico" rel="icon" sizes="192x192">
+      <link rel="apple-touch-icon-precomposed apple-touch-icon" href="/apple-touch-icon.png" />
       <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <% end %>
     <%= javascript_importmap_tags %>
