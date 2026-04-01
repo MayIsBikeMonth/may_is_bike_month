@@ -6,7 +6,7 @@
 
 <% if @previous_competitions.any? %>
   <div class="wrapper-class pt-2!">
-    <p class="">
+    <p>
       View results from:
       <%= @previous_competitions.map do |competition|
           link_to(competition.year, competition_path(competition.slug), class: "twlink")

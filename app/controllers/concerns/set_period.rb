@@ -2,6 +2,7 @@
 
 module SetPeriod
   extend ActiveSupport::Concern
+
   DEFAULT_EARLIEST_TIME = Time.at(1714460400).freeze # 2024-4-30 0:00:00 -7
   PERIOD_TYPES = %w[hour day month year week all next_week next_month].freeze
 

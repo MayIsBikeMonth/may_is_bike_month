@@ -16,6 +16,9 @@
     "lint_check": "npm run js:lint_check && npm run html:lint_check && npm run html:format_check"
   },
   "standard": {
+    "globals": [
+      "localStorage"
+    ],
     "ignore": [
       "/app/assets/",
       "/public/"

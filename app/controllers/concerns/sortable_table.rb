@@ -2,6 +2,7 @@
 
 module SortableTable
   extend ActiveSupport::Concern
+
   SORT_DIRECTIONS = %w[asc desc].freeze
 
   included do

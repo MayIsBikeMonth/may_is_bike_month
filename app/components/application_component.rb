@@ -14,11 +14,11 @@ class ApplicationComponent < ViewComponent::Base
   private
 
   def unit_class_metric
-    "unit-metric #{(@initial_unit == "metric") ? "" : "hidden"}"
+    "unit-metric #{"hidden" unless @initial_unit == "metric"}"
   end
 
   def unit_class_imperial
-    "unit-imperial #{(@initial_unit == "imperial") ? "" : "hidden"}"
+    "unit-imperial #{"hidden" unless @initial_unit == "imperial"}"
   end
 
   # Not the right place for this, but good enuf for now. Also in ApplicationHelper
