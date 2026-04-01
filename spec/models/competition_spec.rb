@@ -22,7 +22,7 @@ RSpec.describe Competition, type: :model do
   describe "set_current" do
     let(:competition1) { FactoryBot.create(:competition, start_date: Date.parse("2023-5-1"), display_name: nil, current: true) }
     let(:competition2) { FactoryBot.create(:competition, start_date: start_date) }
-    let(:start_date) { Time.current - 1.day }
+    let(:start_date) { Time.current.beginning_of_month.to_date }
     it "sets current, unsets all others" do
       expect(competition1.reload.current).to be_truthy
       expect(competition1.display_name).to eq "MIBM 2023"

@@ -1,0 +1,6 @@
+parallel: true
+
+ignore:
+  - "public/**/*"
+  - "node_modules/**/*"
+  - "spec/vcr_cassettes/*"

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Alert::Component, :js, type: :system do
+RSpec.describe Alert::Component, type: :system do
   let(:preview_path) { "/rails/view_components/alert/component/#{kind}" }
 
   context "dismissable_error" do

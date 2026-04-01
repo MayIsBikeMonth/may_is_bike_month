@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe CompetitionTable::UserRow::Component, :js, type: :system do
+RSpec.describe CompetitionTable::UserRow::Component, type: :system do
   let(:preview_path) { "/rails/view_components/competition_table/user_row/component/default" }
 
   xit "default preview" do

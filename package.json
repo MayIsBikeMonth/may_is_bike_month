@@ -1,29 +1,18 @@
 {
-  "name": "mayisbikemonthn",
-  "private": false,
-  "dependencies": {},
-  "scripts": {
-    "lint": "standard --fix"
-  },
+  "name": "may_is_bike_month",
   "devDependencies": {
-    "standard": "^17.1.0"
+    "standard": "*"
+  },
+  "scripts": {
+    "js:lint": "standard --fix",
+    "js:lint_check": "standard",
+    "lint": "npm run js:lint",
+    "lint_check": "npm run js:lint_check"
   },
   "standard": {
-    "globals": [
-      "$",
-      "_",
-      "alert",
-      "confirm",
-      "fetch",
-      "localStorage"
-    ],
     "ignore": [
-      "/public/*",
-      "node_modules/*"
-    ],
-    "env": [
-      "jest"
+      "/app/assets/",
+      "/public/"
     ]
-  },
-  "packageManager": "yarn@1.22.17"
+  }
 }

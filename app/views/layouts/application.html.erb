@@ -3,18 +3,27 @@
   <head>
     <title><%= page_title %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="May is Bike Month">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= tag.meta name: "honeybadger-api-key", content: ENV["HONEYBADGER_API_KEY"] %>
+    <%= tag.meta name: "honeybadger-environment", content: Rails.env %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= javascript_importmap_tags %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+
+    <%= yield :head %>
 
     <% if Rails.env.development? %>
       <link href="/favicon-dev.ico" rel="icon" sizes="192x192">
+      <%= stylesheet_link_tag :app %>
       <%= hotwire_livereload_tags %>
     <% else %>
       <link href="/favicon.ico" rel="icon" sizes="192x192">
       <link rel="apple-touch-icon-precomposed apple-touch-icon" href="/apple-touch-icon.png" />
+      <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <% end %>
+    <%= javascript_importmap_tags %>
+
     <% unless display_dev_info? %>
       <style>
         .only-dev-visible {display: none !important;}

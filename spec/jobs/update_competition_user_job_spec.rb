@@ -9,7 +9,7 @@ RSpec.describe UpdateCompetitionUserJob, type: :job do
     let!(:competition_user) { FactoryBot.create(:competition_user, competition:) }
     let!(:competition_user_excluded) { FactoryBot.create(:competition_user, included_in_competition: false, competition:) }
     let!(:competition_user_older_competition) { FactoryBot.create(:competition_user, competition: competition_older) }
-    before { Sidekiq::Worker.clear_all }
+    before { Sidekiq::Job.clear_all }
 
     it "enqueues the current user" do
       expect(UpdateCompetitionUserJob.jobs.count).to eq 0

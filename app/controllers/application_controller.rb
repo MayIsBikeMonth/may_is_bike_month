@@ -1,5 +1,8 @@
 class ApplicationController < ActionController::Base
+  include Pagy::Method
   include SetPeriod
+
+  before_action :enable_rack_profiler
 
   before_action do
     if Rails.env.production? && current_user.present?
@@ -7,13 +10,12 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  before_action :enable_rack_profiler
-
   helper_method :display_dev_info?, :user_root_url, :controller_namespace
 
   def append_info_to_payload(payload)
     super
     payload[:ip] = forwarded_ip_address
+    payload[:u_id] = current_user&.id
   end
 
   def forwarded_ip_address
@@ -47,6 +49,15 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  def per_page
+    (params[:per_page].presence || 20).to_i.clamp(1, 100)
+  end
+
+  def page
+    page_i = (params[:page].presence || 1).to_i
+    (page_i > 0) ? page_i : 1
+  end
+
   def redirect_to_root_unless_user_present!
     if current_user.present?
       user_redirect_to = permitted_user_redirect_path(session.delete(:user_return_to))
@@ -70,6 +81,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def controller_namespace
+    @controller_namespace ||= (self.class.module_parent.name != "Object") ? self.class.module_parent.name.downcase : nil
+  end
+
   def store_return_to
     return if request.xhr? || not_stored_paths.include?(request.path)
     # Don't overwrite existing unless it's for an admin path
@@ -87,9 +102,5 @@ class ApplicationController < ActionController::Base
   def permitted_user_redirect_path(path = nil)
     return nil if path.blank? || path.start_with?("/")
     path
-  end
-
-  def controller_namespace
-    @controller_namespace ||= (self.class.module_parent.name != "Object") ? self.class.module_parent.name.downcase : nil
   end
 end

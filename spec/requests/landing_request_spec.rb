@@ -12,7 +12,7 @@ RSpec.describe "/landing", type: :request do
 
   describe "get update_strava" do
     let!(:competition_user) { FactoryBot.create(:competition_user) }
-    before { Sidekiq::Worker.clear_all }
+    before { Sidekiq::Job.clear_all }
 
     it "enqueues jobs and returns json" do
       expect(UpdateCompetitionUserJob.jobs.count).to eq 0

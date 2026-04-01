@@ -10,12 +10,6 @@ module ApplicationHelper
     ].compact.join(" ")
   end
 
-  def number_display(number, round_to: 0)
-    content_tag(:span,
-      number_with_delimiter(number.to_f.round(round_to)),
-      class: ((number == 0) ? "opacity-50" : nil))
-  end
-
   # Not the right place for this, but good enuf for now. Also in ApplicationComponent
   def meters_to_feet(number)
     number * 3.28084
@@ -68,13 +62,16 @@ module ApplicationHelper
   private
 
   def current_page_active?(link_path, match_controller = false)
-    link_path = Rails.application.routes.recognize_path(link_path)
-    active_path = Rails.application.routes.recognize_path(request.url)
-    matches_controller = active_path[:controller] == link_path[:controller]
-    return true if match_controller && matches_controller
-    current_page?(link_path) || matches_controller && active_path[:action] == link_path[:action]
-  rescue # This mainly fails in testing - but why not rescue always
-    false
+    if match_controller
+      begin
+        link_controller = Rails.application.routes.recognize_path(link_path)[:controller]
+        Rails.application.routes.recognize_path(request.url)[:controller] == link_controller
+      rescue
+        false
+      end
+    else
+      current_page?(link_path)
+    end
   end
 
   def default_action_name_title

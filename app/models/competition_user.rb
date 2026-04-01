@@ -29,8 +29,9 @@ class CompetitionUser < ApplicationRecord
   has_many :competition_activities_excluded, -> { excluded_from_competition },
     class_name: "CompetitionActivity"
 
-  before_validation :set_calculated_attributes
   validates_uniqueness_of :user_id, scope: [:competition_id], allow_nil: false
+
+  before_validation :set_calculated_attributes
 
   scope :current_competition, -> { joins(:competition).where(competitions: {current: true}) }
   scope :included_in_competition, -> { where(included_in_competition: true) }

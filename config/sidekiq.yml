@@ -1,2 +1,7 @@
+---
+:queues:
+  - default
+  - low_priority
+
 production:
   :concurrency: 5

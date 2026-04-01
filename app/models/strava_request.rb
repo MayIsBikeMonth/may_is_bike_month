@@ -23,9 +23,9 @@ class StravaRequest < ApplicationRecord
   # 2025 has 19 competitors - chose 5 minutes since we won't hit it much overnight
   UPDATE_DELAY = 5.minutes
 
-  belongs_to :user
-
   enum :kind, KIND_ENUM
+
+  belongs_to :user
 
   scope :success_response, -> { where(status: SUCCESS_CODES) }
   scope :error_response, -> { where.not(status: SUCCESS_CODES) }

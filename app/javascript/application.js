@@ -1,18 +1,28 @@
 import '@hotwired/turbo-rails'
-import TimeLocalizer from 'utils/time_localizer'
+import '@honeybadger-io/js'
+import 'controllers'
+import 'chartkick'
+import 'Chart.bundle'
+import TimeLocalizer from '@bikeindex/time-localizer'
 
-// Import stimulus controllers
-import { Application } from '@hotwired/stimulus'
-// Lazy load all controllers
-import { lazyLoadControllersFrom } from '@hotwired/stimulus-loading'
+/* global Honeybadger */
+const honeybadgerApiKey = document.querySelector('meta[name="honeybadger-api-key"]')?.content
+if (honeybadgerApiKey) {
+  Honeybadger.configure({
+    apiKey: honeybadgerApiKey,
+    environment: document.querySelector('meta[name="honeybadger-environment"]')?.content
+  })
+}
 
-const application = Application.start()
+function localizeTime () {
+  if (!window.timeLocalizer) window.timeLocalizer = new TimeLocalizer()
+  window.timeLocalizer.localize()
+}
 
-// Configure Stimulus development experience
-application.debug = false
-window.Stimulus = application
-
-lazyLoadControllersFrom('components', application)
+document.addEventListener('DOMContentLoaded', localizeTime)
+document.addEventListener('turbo:load', localizeTime)
+document.addEventListener('turbo:render', localizeTime)
+document.addEventListener('turbo:frame-render', localizeTime)
 
 // const toggleChecks = (event) => {
 //   const checked = event.target.checked
@@ -92,7 +102,7 @@ lazyLoadControllersFrom('components', application)
 //   return true
 // }
 
-// // MIBM SPECIFIC Functions
+// MIBM SPECIFIC Functions
 
 window.currentUnitPreference = () => {
   let unitPreference = localStorage.getItem('unitPreference')
@@ -195,14 +205,9 @@ window.updateStravaInBackground = async function () {
 // })
 
 document.addEventListener('turbo:load', () => {
-  console.log('turbo:loaded')
-
   if (window.shouldUpdateStravaInBackground) {
     window.updateStravaInBackground()
   }
-
-  if (!window.timeLocalizer) window.timeLocalizer = new TimeLocalizer()
-  window.timeLocalizer.localize()
 
   // This is set on the window on the view pages (but not the lookbook pages)
   if (window.enableToggles) {

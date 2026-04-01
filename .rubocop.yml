@@ -1,0 +1,4 @@
+inherit_gem:
+  standard: config/base.yml
+
+inherit_from: .rubocop_custom.yml

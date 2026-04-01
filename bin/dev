@@ -1,17 +1,24 @@
-#!/usr/bin/env sh
-
+#!/bin/bash
 touch log/development.log
 > log/development.log # Clear out development log, otherwise it balloons
 > log/test.log # Clear out test log too
 
-# Start redis in the background, if it isn't started already
+# Start Redis in the background, if it isn't started already
 touch log/redis.log
 > log/redis.log
 redis-server > log/redis.log &
+
+export DEV_PORT=${CONDUCTOR_PORT:-${DEV_PORT:-4247}}
+export BASE_URL=http://localhost:$DEV_PORT
 
 # Let the debug gem allow remote connections,
 # but avoid loading until `debugger` is called
 export RUBY_DEBUG_OPEN="true"
 export RUBY_DEBUG_LAZY="true"
 
-exec foreman start -f Procfile.dev "$@"
+# If there is a development specific environment file
+if test -f .env.development; then
+  bundle exec foreman start -f Procfile.dev --env .env.development
+else
+  bundle exec foreman start -f Procfile.dev
+fi
