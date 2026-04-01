@@ -10,7 +10,7 @@ RSpec.describe ApplicationComponentHelper, type: :helper do
       let(:number) { 1234 }
 
       it "formats numbers with delimiter" do
-        expect(result).to eq '<span>1,234</span>'
+        expect(result).to eq "<span>1,234</span>"
       end
     end
 
@@ -26,7 +26,7 @@ RSpec.describe ApplicationComponentHelper, type: :helper do
       let(:number) { 42 }
 
       it "does not apply class" do
-        expect(result).to eq '<span>42</span>'
+        expect(result).to eq "<span>42</span>"
       end
     end
   end

@@ -25,10 +25,9 @@ class Competition < ApplicationRecord
   has_many :competition_activities_included, -> { included_in_competition },
     through: :competition_users, class_name: "CompetitionActivity"
 
-  before_validation :set_calculated_attributes
-
   validates_presence_of :end_date, :start_date, :slug
   validates :end_date, comparison: {greater_than: :start_date}
+  before_validation :set_calculated_attributes
 
   def self.current(re_memoize: false)
     @current = nil if re_memoize # Primarily for testing
