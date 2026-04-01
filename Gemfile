@@ -46,6 +46,7 @@ gem "honeybadger" # Exception and uptime monitoring
 # Deploy
 gem "kamal", require: false # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
 
+
 # Performance
 gem "fast_blank" # high performance replacement String#blank?
 gem "flamegraph", require: false
