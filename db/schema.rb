@@ -10,79 +10,79 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_06_06_053245) do
+ActiveRecord::Schema[8.1].define(version: 2024_06_06_053245) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "competition_activities", force: :cascade do |t|
+    t.jsonb "activity_dates_strings"
     t.bigint "competition_user_id"
+    t.datetime "created_at", null: false
     t.string "display_name"
     t.float "distance_meters"
-    t.integer "moving_seconds"
     t.float "elevation_meters"
-    t.string "timezone"
-    t.datetime "start_at"
-    t.jsonb "activity_dates_strings"
+    t.boolean "included_in_competition", default: false, null: false
+    t.integer "moving_seconds"
     t.jsonb "override_activity_dates_strings"
+    t.datetime "start_at"
     t.jsonb "strava_data"
     t.string "strava_id"
-    t.boolean "included_in_competition", default: false, null: false
-    t.datetime "created_at", null: false
+    t.string "timezone"
     t.datetime "updated_at", null: false
     t.index ["competition_user_id"], name: "index_competition_activities_on_competition_user_id"
   end
 
   create_table "competition_users", force: :cascade do |t|
     t.bigint "competition_id"
-    t.bigint "user_id"
-    t.boolean "included_in_competition", default: false, null: false
-    t.jsonb "score_data"
-    t.jsonb "included_activity_types"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.decimal "score"
     t.text "display_name"
+    t.jsonb "included_activity_types"
+    t.boolean "included_in_competition", default: false, null: false
+    t.decimal "score"
+    t.jsonb "score_data"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["competition_id"], name: "index_competition_users_on_competition_id"
     t.index ["user_id"], name: "index_competition_users_on_user_id"
   end
 
   create_table "competitions", force: :cascade do |t|
-    t.string "display_name"
-    t.string "slug"
-    t.date "end_date"
-    t.date "start_date"
-    t.boolean "current"
     t.datetime "created_at", null: false
+    t.boolean "current"
+    t.string "display_name"
+    t.date "end_date"
+    t.string "slug"
+    t.date "start_date"
     t.datetime "updated_at", null: false
   end
 
   create_table "strava_requests", force: :cascade do |t|
-    t.bigint "user_id"
+    t.datetime "created_at", null: false
     t.jsonb "error_response"
+    t.integer "kind"
     t.jsonb "parameters"
     t.integer "status"
-    t.integer "kind"
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["user_id"], name: "index_strava_requests_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "encrypted_password", default: "", null: false
-    t.datetime "remember_created_at"
-    t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string "current_sign_in_ip"
-    t.string "last_sign_in_ip"
-    t.integer "role", default: 0
-    t.string "strava_username"
-    t.string "strava_id"
-    t.string "display_name"
-    t.text "image_url"
-    t.jsonb "strava_info"
-    t.jsonb "strava_auth"
     t.datetime "created_at", null: false
+    t.datetime "current_sign_in_at"
+    t.string "current_sign_in_ip"
+    t.string "display_name"
+    t.string "encrypted_password", default: "", null: false
+    t.text "image_url"
+    t.datetime "last_sign_in_at"
+    t.string "last_sign_in_ip"
+    t.datetime "remember_created_at"
+    t.integer "role", default: 0
+    t.integer "sign_in_count", default: 0, null: false
+    t.jsonb "strava_auth"
+    t.string "strava_id"
+    t.jsonb "strava_info"
+    t.string "strava_username"
     t.datetime "updated_at", null: false
   end
 end
