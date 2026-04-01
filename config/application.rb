@@ -35,16 +35,16 @@ module MayIsBikeMonth
 
     # Enable instrumentation for ViewComponents (used by rack-mini-profiler)
     config.view_component.instrumentation_enabled = true
-    config.view_component.use_deprecated_instrumentation_name = false
     config.view_component.default_preview_layout = "component_preview"
-    config.view_component.preview_paths << "#{Rails.root}/app/components/"
+
+
     # Add app/components to view paths for component preview templates
     initializer "append_component_views", after: :set_autoload_paths do
       ActiveSupport.on_load(:action_controller) do
         prepend_view_path Rails.root.join("app/components")
       end
     end
-    config.importmap.cache_sweepers << Rails.root.join("app/components") if config.respond_to?(:importmap) && config.importmap&.cache_sweepers # Sweep importmap cache
+    config.importmap.cache_sweepers << Rails.root.join("app/components")
     config.lookbook.preview_display_options = {theme: ["light", "dark"]} if defined?(Lookbook)
 
     config.generators do |g|

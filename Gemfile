@@ -19,7 +19,7 @@ gem "importmap-rails" # Use JavaScript with ESM import maps
 gem "turbo-rails" # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "stimulus-rails" # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem "tailwindcss-rails" # Tailwind for css
-gem "view_component", "~> 3.0" # view components! (pinned for lookbook compatibility)
+gem "view_component" # view components!
 gem "lookbook" # view_component rendering
 gem "pagy" # pagination
 gem "chartkick" # Display charts
@@ -29,7 +29,7 @@ gem "groupdate" # Required for charts
 gem "devise"
 gem "multi_json" # Required by omniauth-strava
 gem "omniauth-strava"
-gem "omniauth-rails_csrf_protection", "~> 1.0"
+gem "omniauth-rails_csrf_protection"
 gem "faraday" # Used to make bare requests to strava
 
 # File storage
