@@ -10,6 +10,13 @@ module Navbar
 
     private
 
+    def current_page_active?(link_path)
+      link_controller = Rails.application.routes.recognize_path(link_path)[:controller]
+      Rails.application.routes.recognize_path(helpers.request.url)[:controller] == link_controller
+    rescue
+      false
+    end
+
     def user_dropdown_options
       options = []
       if @current_user.admin_access?

@@ -48,7 +48,7 @@
       <% if @admin %>
         <%= render(UI::ButtonLink::Component.new(
           text: "Users", href: admin_root_path,
-          active: helpers.current_page_active?(admin_root_path, true)
+          active: current_page_active?(admin_root_path)
         )) %>
         <%= link_to "Exit Admin", root_path, class: "twlink text-sm" %>
       <% elsif @current_user.blank? %>
