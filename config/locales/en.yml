@@ -5,7 +5,7 @@ en:
       month_date: "%b %-d"
   time:
     formats:
-      convert_time: "%FT%T%z"
+      localize_time: "%FT%T%z"
       hour: "%-l%P"                             # 8pm
       hour_minute: "%-l:%M%P"                   # 8:30pm
       date: "%b %e"                             # Aug 5

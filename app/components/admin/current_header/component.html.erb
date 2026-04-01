@@ -13,7 +13,7 @@
         <% unless @competition_subject.blank? %> <em>or for</em> <% end %>
       <% end %>
       <% if @competition_subject.present? %>
-        <%= link_to "all competitions", url_for(@s_params.merge(search_competition_id: nil)), class: "base-link" %>
+        <%= link_to "all competitions", url_for(@s_params.merge(search_competition_id: nil)), class: "twlink" %>
       <% end %>
     </em>
   </p>

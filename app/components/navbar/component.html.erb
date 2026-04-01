@@ -1,0 +1,68 @@
+<nav class="bg-white border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+  <div
+    class="
+      max-w-screen-xl flex flex-wrap items-center justify-between mx-auto
+      px-4 py-3
+    "
+  >
+    <% if @admin %>
+      <%= link_to admin_root_path, class: "flex items-center space-x-3" do %>
+        <span class="relative h-6 w-6 inline-block overflow-visible">
+          <img
+            src="/apple-touch-icon.png"
+            class="h-8 w-8 rounded"
+            alt=""
+          >
+        </span>
+
+        <span class="text-lg font-semibold text-gray-900 dark:text-white">
+          May is Bike Month
+        </span>
+
+        <span
+          class="
+            text-xs font-medium text-indigo-600 dark:text-indigo-400
+            bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full
+          "
+        >
+          Admin
+        </span>
+      <% end %>
+    <% else %>
+      <%= link_to @user_root_url, class: "flex items-center space-x-3" do %>
+        <span class="relative h-6 w-6 inline-block overflow-visible">
+          <img
+            src="/apple-touch-icon.png"
+            class="h-8 w-8 rounded"
+            alt=""
+          >
+        </span>
+
+        <span class="text-lg font-semibold text-gray-900 dark:text-white sm:text-xl">
+          May is Bike Month
+        </span>
+      <% end %>
+    <% end %>
+
+    <div class="flex items-center space-x-3">
+      <% if @admin %>
+        <%= render(UI::ButtonLink::Component.new(
+          text: "Users", href: admin_root_path,
+          active: current_page_active?(admin_root_path)
+        )) %>
+        <%= link_to "Exit Admin", root_path, class: "twlink text-sm" %>
+      <% elsif @current_user.blank? %>
+        <%= link_to "Log in", new_user_session_path, class: "twlink text-sm" %>
+      <% else %>
+        <%= render(UI::Dropdown::Component.new(
+          name: "User",
+          options: user_dropdown_options,
+          button_content: avatar_button_content,
+          button_class: "flex items-center text-sm rounded-full focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600 cursor-pointer",
+          header: user_dropdown_header,
+          id: "user-menu-button"
+        )) %>
+      <% end %>
+    </div>
+  </div>
+</nav>
