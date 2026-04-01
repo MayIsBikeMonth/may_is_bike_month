@@ -7,7 +7,7 @@ if Rails.env != "test"
 
   Rack::MiniProfiler.config.storage_options = {url: ENV.fetch("REDIS_URL", "redis://localhost:6379")}
   Rack::MiniProfiler.config.storage = Rack::MiniProfiler::RedisStore
-  Rack::MiniProfiler.config.position = "right"
+  Rack::MiniProfiler.config.position = "bottom-right"
 
   Rack::MiniProfilerRails.subscribe("render.view_component") do |_name, start, finish, _id, payload|
     Rack::MiniProfilerRails.render_notification_handler(

@@ -7,7 +7,6 @@ gem "sidekiq" # Background job processing (with redis)
 
 # Server
 gem "puma" # Use the Puma web server
-gem "thruster", require: false # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma
 gem "rack-cors" # Make cors requests
 
 # Make logging - more useful and ingestible
@@ -42,10 +41,6 @@ gem "tzinfo-data", platforms: %i[windows jruby] # Windows does not include zonei
 
 # Error tracking
 gem "honeybadger" # Exception and uptime monitoring
-
-# Deploy
-gem "kamal", require: false # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
-
 
 # Performance
 gem "fast_blank" # high performance replacement String#blank?
@@ -84,6 +79,5 @@ group :test do
   gem "capybara" # For view components
   gem "selenium-webdriver" # Browser driver for system specs
   gem "rails-controller-testing" # Assert testing views
-  gem "turbo_tests" # Parallel test execution
   gem "rspec-retry", require: false # Retry flaky test failures on CI
 end

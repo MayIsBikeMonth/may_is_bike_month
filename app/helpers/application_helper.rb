@@ -59,6 +59,8 @@ module ApplicationHelper
     link_to(raw(link_text), link_path, html_options).html_safe
   end
 
+  private
+
   def current_page_active?(link_path, match_controller = false)
     if match_controller
       begin
@@ -72,8 +74,6 @@ module ApplicationHelper
     end
   end
 
-  private
-
   def default_action_name_title
     if action_name == "show"
       # Take up less space for admin
@@ -84,7 +84,8 @@ module ApplicationHelper
 
   def controller_title_for_action
     return @controller_display_name if defined?(@controller_display_name)
-    c_name = controller_name
+    # No need to include parking
+    c_name = controller_name.gsub("parking_location", "location")
     return c_name.titleize if %(index).include?(action_name)
     c_name.singularize.titleize
   end
