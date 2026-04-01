@@ -84,7 +84,8 @@ module ApplicationHelper
 
   def controller_title_for_action
     return @controller_display_name if defined?(@controller_display_name)
-    c_name = controller_name
+    # No need to include parking
+    c_name = controller_name.gsub("parking_location", "location")
     return c_name.titleize if %(index).include?(action_name)
     c_name.singularize.titleize
   end

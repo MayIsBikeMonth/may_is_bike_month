@@ -3,7 +3,6 @@ class ApplicationController < ActionController::Base
   include SetPeriod
 
   before_action :enable_rack_profiler
-  before_action :store_return_to
 
   before_action do
     if Rails.env.production? && current_user.present?
@@ -87,12 +86,16 @@ class ApplicationController < ActionController::Base
   end
 
   def store_return_to
-    return if current_user.present? ||
-      devise_controller? ||
-      !request.get? ||
-      request.xhr?
+    return if request.xhr? || not_stored_paths.include?(request.path)
+    # Don't overwrite existing unless it's for an admin path
+    if session[:user_return_to].blank? || request.path.start_with?("/admin")
+      session[:user_return_to] = request.fullpath
+    end
+    session[:user_return_to]
+  end
 
-    store_location_for(:user, request.fullpath)
+  def not_stored_paths
+    ["/"]
   end
 
   # TODO: actually clean things.
