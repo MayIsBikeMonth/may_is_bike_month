@@ -16,7 +16,7 @@
         </span>
 
         <span class="text-lg font-semibold text-gray-900 dark:text-white">
-          Seth Template
+          May is Bike Month
         </span>
 
         <span
@@ -39,7 +39,7 @@
         </span>
 
         <span class="text-lg font-semibold text-gray-900 dark:text-white sm:text-xl">
-          Seth Template
+          May is Bike Month
         </span>
       <% end %>
     <% end %>
@@ -47,16 +47,12 @@
     <div class="flex items-center space-x-3">
       <% if @admin %>
         <%= render(UI::ButtonLink::Component.new(
-          text: "Users", href: admin_users_path,
-          active: helpers.current_page_active?(admin_users_path, true)
+          text: "Users", href: admin_root_path,
+          active: helpers.current_page_active?(admin_root_path, true)
         )) %>
         <%= link_to "Exit Admin", root_path, class: "twlink text-sm" %>
       <% elsif @current_user.blank? %>
         <%= link_to "Log in", new_user_session_path, class: "twlink text-sm" %>
-        <%= render(UI::ButtonLink::Component.new(
-          text: "Sign up", href: new_user_registration_path,
-          color: :primary, active: helpers.current_page_active?(new_user_registration_path)
-        )) %>
       <% else %>
         <%= render(UI::Dropdown::Component.new(
           name: "User",

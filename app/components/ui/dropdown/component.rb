@@ -13,11 +13,11 @@ module UI
         @placement = placement || placement_for(drop_direction)
       end
 
+      private
+
       def floating_ui_placement
         @placement
       end
-
-      private
 
       def placement_for(direction)
         case direction

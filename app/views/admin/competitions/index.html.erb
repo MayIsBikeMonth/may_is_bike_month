@@ -1,7 +1,7 @@
 <div class="flex justify-between items-center mb-4">
   <h1>Admin Competitions</h1>
   <%= link_to "New Competition", new_admin_competition_path,
-      class: "base-link" %>
+      class: "twlink" %>
 </div>
 
 <%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, competition_subject:, searchable_competitions:, render_period: false, s_params: sortable_params)) %>
@@ -67,7 +67,7 @@
             </td>
           <% end %>
           <td>
-            <%= link_to number_display(competition.competition_users_included.count), admin_competition_users_path(search_competition_id: competition.slug), class: "base-link" %>
+            <%= link_to number_display(competition.competition_users_included.count), admin_competition_users_path(search_competition_id: competition.slug), class: "twlink" %>
 
           </td>
           <td><%= number_display(competition.competition_users_excluded.count) %></td>

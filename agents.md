@@ -47,7 +47,7 @@ This project uses Stimulus.js for JavaScript interactivity and Tailwind CSS for 
 
 The `bin/dev` command handles building and updating tailwind and JS.
 
-- basic links should use the `base-link` class
+- basic links should use the `twlink` class
 
 This project also uses the ViewComponent gem to render components.
 
