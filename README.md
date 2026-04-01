@@ -11,9 +11,11 @@ _We recommend [asdf-vm](https://asdf-vm.com/#/) for managing versions of Ruby an
 - PostgreSQL
 - [Redis](http://redis.io/)
 
-## Local Development
+## Local working
 
 You will need the `STRAVA_CLIENT_ID`, `STRAVA_SECRET` for your [Strava app](https://www.strava.com/settings/api)
+
+Run these commands in the terminal, from the directory the project is in.
 
 ```bash
 # Copy the .env.template in to be your .env - and fill in your strava secrets
