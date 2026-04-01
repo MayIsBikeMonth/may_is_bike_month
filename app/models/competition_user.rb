@@ -30,6 +30,7 @@ class CompetitionUser < ApplicationRecord
     class_name: "CompetitionActivity"
 
   validates_uniqueness_of :user_id, scope: [:competition_id], allow_nil: false
+
   before_validation :set_calculated_attributes
 
   scope :current_competition, -> { joins(:competition).where(competitions: {current: true}) }

@@ -24,6 +24,7 @@ class StravaRequest < ApplicationRecord
   UPDATE_DELAY = 5.minutes
 
   enum :kind, KIND_ENUM
+
   belongs_to :user
 
   scope :success_response, -> { where(status: SUCCESS_CODES) }

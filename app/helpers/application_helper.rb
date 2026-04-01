@@ -59,6 +59,8 @@ module ApplicationHelper
     link_to(raw(link_text), link_path, html_options).html_safe
   end
 
+  private
+
   def current_page_active?(link_path, match_controller = false)
     if match_controller
       begin
@@ -71,8 +73,6 @@ module ApplicationHelper
       current_page?(link_path)
     end
   end
-
-  private
 
   def default_action_name_title
     if action_name == "show"

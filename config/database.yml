@@ -27,6 +27,3 @@ test:
 production:
   <<: *default
   database: may_is_bike_month
-  host: "<%= ENV["POSTGRESQL_ADDRESS"] %>"
-  username: "<%= ENV["POSTGRESQL_USERNAME"] %>"
-  password: "<%= ENV["POSTGRESQL_PASSWORD"] %>"
