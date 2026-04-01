@@ -8,9 +8,10 @@
   <div class="wrapper-class pt-2!">
     <p>
       View results from:
-      <%= safe_join(@previous_competitions.map { |competition|
+      <% links = @previous_competitions.map { |competition|
         link_to(competition.year, competition_path(competition.slug), class: "twlink")
-      }, ", ") %>
+      } %>
+      <%= links.size <= 2 ? safe_join(links, " and ") : safe_join([safe_join(links[0..-2], ", "), links[-1]], ", and ") %>
     </p>
   </div>
 <% end %>
