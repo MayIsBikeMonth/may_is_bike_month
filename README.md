@@ -11,25 +11,20 @@ _We recommend [asdf-vm](https://asdf-vm.com/#/) for managing versions of Ruby an
 - PostgreSQL
 - [Redis](http://redis.io/)
 
-## local working
+## Local working
 
 You will need the `STRAVA_CLIENT_ID`, `STRAVA_SECRET` for your [Strava app](https://www.strava.com/settings/api)
 
 Run these commands in the terminal, from the directory the project is in.
 
 ```bash
-# Install the ruby gems with
-bundle install
-# Install the node packages with
-yarn install
-# Create and migrate the databases
-bundle exec rake db:create db:migrate db:test:prepare
 # Copy the .env.template in to be your .env - and fill in your strava secrets
 cp .env.template .env
-# start the dev server
-./bin/dev
+# Install dependencies, create and migrate the databases
+bin/setup
+# Start the dev server
+bin/dev
 ```
-
 
 View the dev server at [localhost:3010](http://localhost:3010)
 
