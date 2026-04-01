@@ -1,0 +1,85 @@
+<% time_zone ||= nil %>
+<% if time_zone.present? %>
+  <script>
+    window.localTimezone = <%= time_zone.to_json %>;
+  </script>
+<% end %>
+
+<h2 class="text-sm mb-4">
+  <span class="opacity-65">Local time zone:</span>
+  <span class="localizeTimezone"></span>
+</h2>
+
+<h6 class="mt-2 opacity-65 mb-1 text-sm">
+  format <code>:convert_time</code>
+</h6>
+
+<p id="current-time">
+  <span class="text-sm opacity-65">Current time:</span>
+  <%= render(UI::Time::Component.new(time: Time.current)) %>
+</p>
+
+<p>
+  <span class="text-sm opacity-65">Yesterday:</span>
+  <%= render(UI::Time::Component.new(time: Time.current - 1.day)) %>
+</p>
+
+<p>
+  <span class="text-sm opacity-65">Tomorrow:</span>
+  <span class="localizeTime">
+    <%= render(UI::Time::Component.new(time: Time.current + 1.day)) %>
+  </span>
+</p>
+
+<p>
+  <span class="text-sm opacity-65">One week ago:</span>
+  <span class="localizeTime">
+    <%= render(UI::Time::Component.new(time: Time.current - 7.days)) %>
+  </span>
+</p>
+
+<p>
+  <span class="text-sm opacity-65">One year ago:</span>
+  <span class="localizeTime">
+    <%= render(UI::Time::Component.new(time: Time.current - 1.year)) %>
+  </span>
+</p>
+
+<p>
+  <span class="text-sm opacity-65">Yesterday (precise time):</span>
+  <span class="localizeTime preciseTime">
+    <%= l (Time.current - 1.day), format: :convert_time %>
+  </span>
+</p>
+
+<p>
+  <span class="text-sm opacity-65">One year ago (precise time seconds):</span>
+  <span class="localizeTime preciseTimeSeconds">
+    <%= l (Time.current - 1.year), format: :convert_time %>
+  </span>
+</p>
+
+<hr class="mt-5 border-gray-200" />
+<% time_2024 = Time.parse("2024-01-31 14:00").in_time_zone('Central Time (US & Canada)') %>
+<h6 class="mt-2 opacity-65 mb-1 text-sm" id="2024-time">
+  2024 Time:
+  <span class="localizeTime preciseTime" data-timezone="<%= time_2024.time_zone %>">
+    <%= l time_2024, format: :convert_time %>
+  </span>
+</h6>
+<p>
+  <span class="text-sm opacity-65">format: <code>:hour</code>:</span>
+  <%= render(UI::Time::Component.new(time: time_2024, format: :hour)) %>
+</p>
+<p>
+  <span class="text-sm opacity-65">format: <code>:hour</code>, timezone_if_different: true:</span>
+  <%= render(UI::Time::Component.new(time: time_2024, format: :hour, timezone_if_different: true)) %>
+</p>
+<p>
+  <span class="text-sm opacity-65">format: <code>:date_hour</code>:</span>
+  <%= render(UI::Time::Component.new(time: time_2024, format: :date_hour)) %>
+</p>
+<p>
+  <span class="text-sm opacity-65">format: <code>:date_hour</code>, timezone_if_different: true:</span>
+  <%= render(UI::Time::Component.new(time: time_2024, format: :date_hour, timezone_if_different: true)) %>
+</p>
