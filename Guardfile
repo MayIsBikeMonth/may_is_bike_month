@@ -2,7 +2,7 @@ directories %w[app spec config]
 
 group :red_green_refactor, halt_on_fail: true do
   rspec_options = {
-    cmd: "bin/rspec -f progress",
+    cmd: "bundle exec rspec -f progress",
     cmd_additional_args: "--require rails_helper --no-profile --order defined",
     run_all: {
       cmd: "turbo_tests --quiet --test-options='-f documentation -o /dev/null -f progress",
