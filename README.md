@@ -16,15 +16,15 @@ _We recommend [asdf-vm](https://asdf-vm.com/#/) for managing versions of Ruby an
 You will need the `STRAVA_CLIENT_ID`, `STRAVA_SECRET` for your [Strava app](https://www.strava.com/settings/api)
 
 ```bash
-bundle install
+# Copy the .env.template in to be your .env - and fill in your strava secrets
 cp .env.template .env
-bin/rails db:create db:migrate
+# Install dependencies, create and migrate the databases
+bin/setup
+# Start the dev server
 bin/dev
 ```
 
 View the dev server at [localhost:3010](http://localhost:3010)
-
-Shared env defaults (`REDIS_URL`, `DEV_PORT`, `BASE_URL`) are set in `bin/env` and sourced by both `bin/dev` and `bin/setup`.
 
 
 Some development options:
