@@ -12,7 +12,7 @@
 </h2>
 
 <h6 class="mt-2 opacity-65 mb-1 text-sm">
-  format <code>:convert_time</code>
+  format <code>:localize_time</code>
 </h6>
 
 <p id="current-time">
@@ -53,7 +53,7 @@
   <span class="text-sm opacity-65">Yesterday (precise time):</span>
 
   <span class="localizeTime preciseTime">
-    <%= l (Time.current - 1.day), format: :convert_time %>
+    <%= l (Time.current - 1.day), format: :localize_time %>
   </span>
 </p>
 
@@ -61,6 +61,6 @@
   <span class="text-sm opacity-65">One year ago (precise time seconds):</span>
 
   <span class="localizeTime preciseTimeSeconds">
-    <%= l (Time.current - 1.year), format: :convert_time %>
+    <%= l (Time.current - 1.year), format: :localize_time %>
   </span>
 </p>

@@ -72,8 +72,8 @@
   <% if StravaRequest.most_recent_update.present? %>
     <small id="strava_requests_updated_at">
       Updated at:
-      <span class="convertTime">
-        <%= l StravaRequest.most_recent_update, format: :convert_time %>
+      <span class="localizeTime">
+        <%= l StravaRequest.most_recent_update, format: :localize_time %>
       </span>
     </small>
   <% end %>

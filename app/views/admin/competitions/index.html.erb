@@ -59,11 +59,11 @@
             <%= check_mark if competition.current %>
           </td>
           <td>
-            <small class="convertTime"><%= l(competition.created_at, format: :convert_time) %></small>
+            <small class="localizeTime"><%= l(competition.created_at, format: :localize_time) %></small>
           </td>
           <% if display_dev_info? %>
             <td>
-              <small class="convertTime"><%= l(competition.updated_at, format: :convert_time) %></small>
+              <small class="localizeTime"><%= l(competition.updated_at, format: :localize_time) %></small>
             </td>
           <% end %>
           <td>
