@@ -3,7 +3,54 @@ name: "CI"
 on:
   push: # Run on all pushes
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  lint_and_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Install JS dependencies
+        run: npm install
+
+      - name: Lint Ruby for consistent style
+        run: bundle exec standardrb --no-fix
+        if: success() || failure()
+
+      - name: Lint Ruby with custom rules
+        run: bundle exec rubocop -c .rubocop_custom.yml
+        if: success() || failure()
+
+      - name: Lint JavaScript
+        run: npm run js:lint_check
+        if: success() || failure()
+
+      - name: Lint ERB templates
+        run: npm run html:lint_check
+        if: success() || failure()
+
+      - name: Check ERB formatting
+        run: npm run html:format_check
+        if: success() || failure()
+
+      - name: Audit gems for known security vulnerabilities
+        run: bundle exec bundler-audit --update
+        if: success() || failure()
+
+      - name: Scan for common Rails security vulnerabilities using static analysis
+        run: bin/brakeman --no-pager
+        if: success() || failure()
+
   test:
     name: "Run tests"
     runs-on: ubuntu-latest

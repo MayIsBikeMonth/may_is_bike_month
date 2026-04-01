@@ -1,13 +1,19 @@
 {
   "name": "may_is_bike_month",
   "devDependencies": {
+    "@herb-tools/formatter": "*",
+    "@herb-tools/linter": "*",
     "standard": "*"
   },
   "scripts": {
     "js:lint": "standard --fix",
     "js:lint_check": "standard",
-    "lint": "npm run js:lint",
-    "lint_check": "npm run js:lint_check"
+    "html:lint": "herb-lint --fix --format=simple",
+    "html:lint_check": "herb-lint --format=simple --github",
+    "html:format": "herb-format .",
+    "html:format_check": "herb-format --check .",
+    "lint": "npm run js:lint && npm run html:lint && npm run html:format",
+    "lint_check": "npm run js:lint_check && npm run html:lint_check && npm run html:format_check"
   },
   "standard": {
     "ignore": [

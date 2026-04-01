@@ -1,17 +1,20 @@
 import '@hotwired/turbo-rails'
-import '@honeybadger-io/js'
 import 'controllers'
 import 'chartkick'
 import 'Chart.bundle'
 import TimeLocalizer from '@bikeindex/time-localizer'
 
-/* global Honeybadger */
+// Load honeybadger dynamically so ad blockers don't break the entire app
 const honeybadgerApiKey = document.querySelector('meta[name="honeybadger-api-key"]')?.content
 if (honeybadgerApiKey) {
-  Honeybadger.configure({
-    apiKey: honeybadgerApiKey,
-    environment: document.querySelector('meta[name="honeybadger-environment"]')?.content
-  })
+  import('@honeybadger-io/js')
+    .then(({ default: Honeybadger }) => {
+      Honeybadger.configure({
+        apiKey: honeybadgerApiKey,
+        environment: document.querySelector('meta[name="honeybadger-environment"]')?.content
+      })
+    })
+    .catch(() => {})
 }
 
 function localizeTime () {

@@ -6,24 +6,35 @@
       <tbody>
         <tr>
           <td>Created</td>
+
           <td>
-            <span class="localizeTime"><%= l(@competition_user.created_at, format: :localize_time) %></span>
+            <span class="localizeTime">
+              <%= l(@competition_user.created_at, format: :localize_time) %>
+            </span>
           </td>
         </tr>
+
         <tr>
           <td>Updated</td>
+
           <td>
-            <small class="localizeTime"><%= l(@competition_user.updated_at, format: :localize_time) %></small>
+            <small class="localizeTime">
+              <%= l(@competition_user.updated_at, format: :localize_time) %>
+            </small>
           </td>
         </tr>
+
         <tr>
           <td>Activities</td>
+
           <td>
             <%= number_display(@competition_user.competition_activities.count) %>
           </td>
         </tr>
+
         <tr>
           <td>Activities in competition</td>
+
           <td>
             <%= number_display(@competition_user.competition_activities.included_in_competition.count) %>
           </td>
@@ -31,6 +42,7 @@
       </tbody>
     </table>
   </div>
+
   <div class="col"></div>
 </div>
 
@@ -44,15 +56,16 @@
         <%= f.text_field :display_name, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full max-w-80 p-2.5", required: true %>
       </div>
     </div>
+
     <div class="col">
       <div class="mb-3">
         <%= f.label :included_in_competition, class: "form-control-check" do %>
-          <%= f.check_box :included_in_competition %>
-          Included in competition?
+          <%= f.check_box :included_in_competition %> Included in competition?
         <% end %>
       </div>
     </div>
   </div>
+
   <div class="form-row-btn">
     <%= f.submit "save", class: "btn" %>
   </div>

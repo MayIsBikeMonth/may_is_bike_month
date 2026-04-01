@@ -36,6 +36,9 @@ FileUtils.chdir APP_ROOT do
         system!("bundle exec rubocop -c .rubocop_custom.yml -A #{file}")
       elsif file.end_with?(".js", ".ts", ".jsx", ".tsx")
         system!("npm run js:lint -- #{file}")
+      elsif file.end_with?(".erb")
+        system!("npx herb-lint --fix --format=simple #{file}")
+        system!("npx herb-format #{file}")
       else
         raise "Unknown file type: #{file}"
       end
