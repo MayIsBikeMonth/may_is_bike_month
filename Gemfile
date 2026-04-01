@@ -81,6 +81,7 @@ group :test do
   gem "vcr" # Stub external HTTP requests
   gem "webmock" # mocking for VCR
   gem "capybara" # For view components
+  gem "selenium-webdriver" # Browser driver for system specs
   gem "rails-controller-testing" # Assert testing views
   gem "turbo_tests" # Parallel test execution
   gem "rspec-retry", require: false # Retry flaky test failures on CI

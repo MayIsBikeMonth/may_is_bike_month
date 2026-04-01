@@ -3,10 +3,13 @@
 require "rails_helper"
 
 RSpec.describe UI::Alert::Component, type: :system do
-  it "dismissable alert renders close button" do
+  it "is dismissable" do
     visit "/lookbook/preview/ui/alert/dismissable_variants"
 
     expect(page).to have_content "Dismissable"
-    expect(page).to have_css('button[aria-label="Close"]')
+
+    first('button[aria-label="Close"]').click
+
+    expect(page).to have_css('[role="alert"]') # at least one alert remains (the other variant)
   end
 end

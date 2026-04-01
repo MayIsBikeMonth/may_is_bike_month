@@ -15,20 +15,20 @@ fi
 echo "Tearing down Conductor workspace: $CONDUCTOR_WORKSPACE_NAME"
 
 # Drop workspace-specific development databases
-for db in "seth_template_development${CONDUCTOR_WORKSPACE_NAME}"; do
+for db in "may_is_bike_month_development${CONDUCTOR_WORKSPACE_NAME}"; do
   echo "Dropping database: $db"
   dropdb --if-exists "$db" 2>/dev/null || true
 done
 
 # Drop workspace-specific test databases
-for db in "seth_template_test${CONDUCTOR_WORKSPACE_NAME}"; do
+for db in "may_is_bike_month_test${CONDUCTOR_WORKSPACE_NAME}"; do
   echo "Dropping database: $db"
   dropdb --if-exists "$db" 2>/dev/null || true
 done
 
 # Also drop parallel test databases (TEST_ENV_NUMBER suffixed)
 for i in $(seq 1 8); do
-  for db in "seth_template_test${CONDUCTOR_WORKSPACE_NAME}${i}"; do
+  for db in "may_is_bike_month_test${CONDUCTOR_WORKSPACE_NAME}${i}"; do
     dropdb --if-exists "$db" 2>/dev/null || true
   done
 done

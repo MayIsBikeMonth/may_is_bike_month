@@ -1,6 +1,6 @@
 <% server_ip = "165.232.157.112" %>
-<% app_name = "seth_template" %>
-<% app_host = "test.bikeicorn.com" %>
+<% app_name = "may_is_bike_month" %>
+<% app_host = "mayisbikemonth.org" %>
 
 # Name of your application. Used to uniquely configure containers.
 service: <%= app_name %>

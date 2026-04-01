@@ -453,7 +453,14 @@ GEM
     ruby-vips (2.3.0)
       ffi (~> 1.12)
       logger
+    rubyzip (3.2.2)
     securerandom (0.4.1)
+    selenium-webdriver (4.41.0)
+      base64 (~> 0.2)
+      logger (~> 1.4)
+      rexml (~> 3.2, >= 3.2.5)
+      rubyzip (>= 1.2.2, < 4.0)
+      websocket (~> 1.0)
     shellany (0.0.1)
     sidekiq (8.1.2)
       connection_pool (>= 3.0.0)
@@ -525,6 +532,7 @@ GEM
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
+    websocket (1.2.11)
     websocket-driver (0.8.0)
       base64
       websocket-extensions (>= 0.1.0)
@@ -587,6 +595,7 @@ DEPENDENCIES
   rerun
   rspec-rails
   rspec-retry
+  selenium-webdriver
   sidekiq
   stackprof
   standard (>= 1.41)

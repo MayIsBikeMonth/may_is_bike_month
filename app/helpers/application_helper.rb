@@ -1,6 +1,4 @@
 module ApplicationHelper
-  include ApplicationComponentHelper
-
   def page_title
     return @page_title if defined?(@page_title)
     prefix = (in_admin? ? "🧰" : "HeartHeartBeat")

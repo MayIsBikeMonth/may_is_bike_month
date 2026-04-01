@@ -44,8 +44,8 @@ RSpec.configure do |config|
   config.include ViewComponent::TestHelpers, type: :component
   config.include Capybara::RSpecMatchers, type: :component
 
-  # Use rack_test for system specs (no browser needed)
-  config.before(:each, type: :system) { driven_by :rack_test }
+  # Use headless Chrome for system specs
+  config.before(:each, type: :system) { driven_by :selenium, using: :headless_chrome }
 
   config.use_transactional_fixtures = true
   config.render_views = true

@@ -12,7 +12,10 @@ RSpec.describe Alert::Component, type: :system do
       visit(preview_path)
 
       expect(page).to have_content "A simple alert with some info"
-      expect(page).to have_css('button[aria-label="Close"]')
+
+      find('button[aria-label="Close"]').click
+
+      expect(page).to_not have_content "a simple alert with some info"
     end
   end
 end
