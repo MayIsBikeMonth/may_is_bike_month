@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class ApplicationComponentPreview < ViewComponent::Preview
-  include ActionView::Context
-
-  # Don't include this class in Lookbook
   def self.abstract_class
     name == "ApplicationComponentPreview"
   end
