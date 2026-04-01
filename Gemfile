@@ -83,6 +83,5 @@ group :test do
   gem "capybara" # For view components
   gem "selenium-webdriver" # Browser driver for system specs
   gem "rails-controller-testing" # Assert testing views
-  gem "turbo_tests" # Parallel test execution
   gem "rspec-retry", require: false # Retry flaky test failures on CI
 end
