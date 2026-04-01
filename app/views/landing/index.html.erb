@@ -8,9 +8,9 @@
   <div class="wrapper-class pt-2!">
     <p>
       View results from:
-      <%= @previous_competitions.map do |competition|
-          link_to(competition.year, competition_path(competition.slug), class: "twlink")
-        end.to_sentence.html_safe %>
+      <%= safe_join(@previous_competitions.map { |competition|
+        link_to(competition.year, competition_path(competition.slug), class: "twlink")
+      }, ", ") %>
     </p>
   </div>
 <% end %>
