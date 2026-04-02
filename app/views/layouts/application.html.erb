@@ -46,33 +46,11 @@
   github.com/MayIsBikeMonth/may_is_bike_month
 
   -->
-    <ul
-      class="
-        relative z-10 flex items-center gap-4 px-2 lg:px-4 justify-end mt-1
-        mb-2
-      "
-    >
-      <% if current_user.blank? %>
-        <li>
-          <%= button_to "Sign in", user_strava_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "twlink", form: { data: { controller: "theme", action: "submit->theme#setSignupCookie" } } %>
-        </li>
-      <% elsif in_admin? %>
-        <span class="hidden sm:inline-block ml-2 text-lg font-semibold">
-          May Is Bike Month Admin
-        </span>
-        <%= active_link "Competition Users", admin_competition_users_path, class: "twlink ml-2", match_controller: true %>
-        <%= active_link "Competitions", admin_competitions_path, class: "twlink ml-2", match_controller: true %>
-        <%= link_to "Exit", user_root_url, class: "twlink ml-auto less-strong" %>
-      <% else %>
-        <% if current_user.admin_access? %>
-          <%= link_to "admin", admin_root_path, class: "mr-4 twlink" %>
-        <% end %>
-        <li>Hi <%= current_user.display_name %></li>
-        <li>
-          <%= button_to "logout", destroy_user_session_path, method: :delete, data: {turbo: false}, class: "twlink" %>
-        </li>
-      <% end %>
-    </ul>
+    <% if in_admin? %>
+      <%= render(Navbar::Component.new(current_user:)) %>
+    <% else %>
+      <%= render(UserDropdown::Component.new(current_user:)) %>
+    <% end %>
 
     <div class="<%= @skip_wrapper_class ? "" : "wrapper-class" %>">
       <%= yield %>

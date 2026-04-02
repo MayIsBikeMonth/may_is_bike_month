@@ -7,6 +7,8 @@ export default class extends Controller {
   static values = { url: String, current: String }
 
   connect () {
+    // Don't override Lookbook's display theme setting on connect
+    if (window.inComponentPreview) return
     this.applyTheme(this.currentValue)
     this.highlightActive()
   }
