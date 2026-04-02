@@ -60,5 +60,5 @@ This project also uses the ViewComponent gem to render components.
 ```bash
 bundle install # install ruby dependencies
 bundle exec rails db:create db:migrate # create the databases
-cp .env.template .env
+cp .env.example .env
 ```
