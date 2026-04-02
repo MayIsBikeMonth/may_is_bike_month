@@ -1,6 +1,6 @@
 <div data-controller="modal" id="<%= @id %>">
   <% if trigger? %>
-    <span data-action="click->modal#open"><%= trigger %></span>
+    <%= trigger %>
   <% end %>
 
   <dialog

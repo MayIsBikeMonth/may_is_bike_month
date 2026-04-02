@@ -7,6 +7,7 @@ export default class extends Controller {
   static values = { url: String, current: String }
 
   connect () {
+    if (window.inComponentPreview) return
     this.applyTheme(this.currentValue)
     this.highlightActive()
   }

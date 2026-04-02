@@ -8,7 +8,7 @@ RSpec.describe SettingsModal::Component, :js, type: :system do
 
     expect(page).to have_no_css("dialog[open]")
 
-    find("span", text: "Open Settings").click
+    click_button("Open Settings")
 
     expect(page).to have_css("dialog[open]")
     expect(page).to have_content("Theme")

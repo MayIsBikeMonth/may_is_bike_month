@@ -8,7 +8,7 @@ RSpec.describe UI::Modal::Component, :js, type: :system do
 
     expect(page).to have_no_css("dialog[open]")
 
-    find("span", text: "Open Modal").click
+    click_button("Open Modal")
 
     expect(page).to have_css("dialog[open]")
     expect(page).to have_content("Modal body content")
