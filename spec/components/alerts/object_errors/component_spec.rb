@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe UI::AlertForErrors::Component, type: :component do
+RSpec.describe Alerts::ObjectErrors::Component, type: :component do
   let(:instance) { described_class.new(**options) }
   let(:component) { render_inline(instance) }
   let(:options) { {object:, name:} }
