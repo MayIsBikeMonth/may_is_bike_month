@@ -64,68 +64,8 @@ Some manual controls:
 
 Deploys to a DigitalOcean droplet with [Kamal](https://kamal-deploy.org/), using GHCR for container images and 1Password for secrets.
 
-### Prerequisites
-
-- [GitHub CLI](https://cli.github.com/) (`gh`) -- logged in with `write:packages` scope
-- [1Password CLI](https://developer.1password.com/docs/cli/) (`op`) -- logged in
-- [DigitalOcean CLI](https://docs.digitalocean.com/reference/doctl/) (`doctl`) -- logged in
-- [Docker](https://docs.docker.com/get-docker/) with the [buildx plugin](https://github.com/docker/buildx)
-
-### Create a droplet
-
-```bash
-# Add your SSH key to DigitalOcean (if not already added)
-doctl compute ssh-key import my-key --public-key-file ~/.ssh/id_ed25519.pub
-
-# Get your SSH key ID
-doctl compute ssh-key list
-
-# Create a droplet (s-1vcpu-2gb = $12/mo)
-doctl compute droplet create may-is-bike-month \
-  --region sfo3 \
-  --size s-1vcpu-2gb \
-  --image ubuntu-24-04-x64 \
-  --ssh-keys YOUR_SSH_KEY_ID \
-  --wait
-```
-
-Note the droplet's IP address from the output.
-
-### Point your domain
-
-Add a DNS A record pointing your domain to the droplet IP. If using Cloudflare, set it to **DNS only** (gray cloud, not proxied) so Let's Encrypt can issue a certificate.
-
-### Configure deployment
-
-```bash
-bin/setup_deploy
-```
-
-This will prompt for your deploy host, server IP, and GitHub username, then:
-- Update `config/deploy.yml` with your server and registry details
-- Update `.kamal/secrets` with your 1Password account
-- Update `config/environments/production.rb` with your mailer host
-- Create a 1Password item in the `Kamal` vault with `RAILS_MASTER_KEY`, `HONEYBADGER_API_KEY`, and `POSTGRESQL_PASSWORD`
-
-After running `bin/setup_deploy`, update the `HONEYBADGER_API_KEY` value in 1Password, then deploy:
-
-```bash
-bin/kamal setup
-```
-
-This first deploy will install Docker on the server, push the image to GHCR, boot a PostgreSQL container, provision a Let's Encrypt SSL certificate, and start the app.
-
-### Subsequent deploys
+Requires [GitHub CLI](https://cli.github.com/) (`gh`), [1Password CLI](https://developer.1password.com/docs/cli/) (`op`), and [Docker](https://docs.docker.com/get-docker/).
 
 ```bash
 bin/kamal deploy
-```
-
-### Useful aliases
-
-```bash
-bin/kamal console   # Rails console on the server
-bin/kamal shell     # Bash shell on the server
-bin/kamal logs      # Tail production logs
-bin/kamal dbc       # Database console
 ```
