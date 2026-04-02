@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module UI
-  module AlertForErrors
+module Alerts
+  module ObjectErrors
     class Component < ApplicationComponent
       def initialize(object:, name: nil, error_messages: nil, dismissable: false)
         @object = object

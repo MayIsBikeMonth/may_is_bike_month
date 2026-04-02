@@ -38,7 +38,7 @@
     <% end %>
   </head>
 
-  <body class="bg-white antialiased">
+  <body class="min-h-screen">
     <!--
 
   Source Code:
@@ -74,11 +74,11 @@
       <% end %>
     </ul>
 
-    <%= render_flash_messages %>
-
     <div class="<%= @skip_wrapper_class ? "" : "wrapper-class" %>">
       <%= yield %>
     </div>
+
+    <%= render Alerts::FlashMessages::Component.new(flash:) %>
 
     <!-- Google tag (gtag.js) -->
     <script
