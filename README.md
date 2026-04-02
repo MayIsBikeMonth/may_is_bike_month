@@ -59,3 +59,13 @@ Some manual controls:
   - If set to `competition_activity.override_activity_dates_strings = []`, it makes the activity `included_in_competition: false`
 
 - Manually set `CompetitionUser` permitted activity types with `included_activity_types` (a JSON array). This enables giving a single user permission for virtual rides (e.g. if they're injured)
+
+## Deployment
+
+Deploys to a DigitalOcean droplet with [Kamal](https://kamal-deploy.org/), using GHCR for container images and 1Password for secrets.
+
+Requires [GitHub CLI](https://cli.github.com/) (`gh`), [1Password CLI](https://developer.1password.com/docs/cli/) (`op`), and [Docker](https://docs.docker.com/get-docker/).
+
+```bash
+bin/kamal deploy
+```

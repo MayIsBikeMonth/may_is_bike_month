@@ -26,4 +26,7 @@ test:
 
 production:
   <<: *default
-  database: may_is_bike_month
+  host: <%= ENV.fetch("POSTGRESQL_ADDRESS", "localhost") %>
+  username: <%= ENV.fetch("POSTGRESQL_USERNAME", "may_is_bike_month") %>
+  password: <%= ENV["POSTGRES_PASSWORD"] %>
+  database: may_is_bike_month_production
