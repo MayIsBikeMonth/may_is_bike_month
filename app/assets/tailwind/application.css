@@ -6,24 +6,22 @@
   body {
     @apply text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-900 antialiased;
   }
-}
-
-h1 {
-  @apply text-2xl;
-}
-h2 {
-  @apply text-xl;
-}
-h3 {
-  @apply text-lg;
-}
-h4 {
-  @apply font-bold;
-}
-
-/* All buttons get pointer cursor */
-button, [role="button"], .btn {
-  cursor: pointer;
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
+  h3 {
+    @apply text-lg;
+  }
+  h4 {
+    @apply font-bold;
+  }
+  /* All buttons get pointer cursor */
+  button, [role="button"], .btn {
+    cursor: pointer;
+  }
 }
 
 @layer components {
