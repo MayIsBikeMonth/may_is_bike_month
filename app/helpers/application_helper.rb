@@ -41,13 +41,6 @@ module ApplicationHelper
     "🔎"
   end
 
-  def render_flash_messages
-    return if flash.blank?
-    kind, text = flash.first
-
-    render(Alert::Component.new(text:, kind:, dismissable: true, margin_classes: "my-2 wrapper-class"))
-  end
-
   def in_admin?
     controller_namespace == "admin"
   end
