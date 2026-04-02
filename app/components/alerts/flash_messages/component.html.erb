@@ -1,0 +1,12 @@
+<div
+  class="
+    fixed bottom-4 left-0 right-0 z-50 max-w-screen-xl mx-auto px-4
+    pointer-events-none
+  "
+>
+  <div class="max-w-xs space-y-2 pointer-events-auto">
+    <% messages.each do |msg| %>
+      <%= render UI::Alert::Component.new(text: msg[:text], kind: msg[:kind], dismissable: true, margin_classes: "mb-0") %>
+    <% end %>
+  </div>
+</div>
