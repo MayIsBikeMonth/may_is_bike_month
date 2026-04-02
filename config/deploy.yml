@@ -6,7 +6,7 @@
 service: <%= app_name %>
 
 # Name of the container image (use your-user/app-name on external registries).
-image: sethherr/<%= app_name %>
+image: mayisbikemonth/<%= app_name %>
 
 # Deploy to these servers.
 servers:
@@ -26,7 +26,7 @@ proxy:
 # Where you keep your container images.
 registry:
   server: ghcr.io
-  username: sethherr
+  username: mayisbikemonth
   password:
     - KAMAL_REGISTRY_PASSWORD
 
