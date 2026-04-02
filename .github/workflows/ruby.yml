@@ -2,6 +2,7 @@ name: "CI"
 
 on:
   push: # Run on all pushes
+  workflow_dispatch: # Allow manual trigger
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
