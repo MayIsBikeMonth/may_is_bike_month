@@ -35,15 +35,15 @@ env:
   secret:
     - RAILS_MASTER_KEY
     - HONEYBADGER_API_KEY
-    - POSTGRESQL_PASSWORD
+    - POSTGRES_PASSWORD
     - STRAVA_CLIENT_ID
     - STRAVA_SECRET
     - DEVISE_SECRET_KEY
     - DEVISE_PEPPER
   clear:
-    POSTGRESQL_ADDRESS: <%= app_name %>-db
+    POSTGRESQL_ADDRESS: shared-db
     POSTGRESQL_USERNAME: <%= app_name %>
-    REDIS_URL: redis://<%= app_name %>-redis:6379/0
+    REDIS_URL: redis://shared-redis:6379/0
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.
@@ -69,22 +69,22 @@ builder:
   # Build image via remote server (useful for faster amd64 builds on arm64 computers)
   remote: ssh://root@<%= server_ip %>
 
+# Shared accessories — used by all apps on this server.
+# Other apps should connect by container name (shared-db, shared-redis) and
+# NOT define these accessories in their own deploy.yml.
 accessories:
   redis:
+    service: shared
     image: redis:7
     host: <%= server_ip %>
-    port: "127.0.0.1:6379:6379"
     directories:
-      - <%= app_name %>_redis_data:/data
+      - shared_redis_data:/data
   db:
+    service: shared
     image: postgres:17
     host: <%= server_ip %>
-    port: "127.0.0.1:5432:5432"
     env:
-      clear:
-        POSTGRES_USER: <%= app_name %>
-        POSTGRES_DB: <%= app_name %>_production
       secret:
         - POSTGRES_PASSWORD
     directories:
-      - <%= app_name %>_db_data:/var/lib/postgresql/data
+      - shared_db_data:/var/lib/postgresql/data
