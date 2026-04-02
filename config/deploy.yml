@@ -34,6 +34,7 @@ registry:
 env:
   secret:
     - RAILS_MASTER_KEY
+    - SECRET_KEY_BASE
     - HONEYBADGER_API_KEY
     - POSTGRES_PASSWORD
     - STRAVA_CLIENT_ID
