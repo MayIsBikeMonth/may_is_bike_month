@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
-# Run database migrations automatically on deploy
-if [ "${RAILS_ENV}" = "production" ]; then
-  ./bin/rails db:migrate
+# If running the rails server then create or migrate existing database
+if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
+  ./bin/rails db:prepare
 fi
 
 exec "${@}"
