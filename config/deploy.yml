@@ -74,13 +74,13 @@ builder:
 # NOT define these accessories in their own deploy.yml.
 accessories:
   redis:
-    service: shared
+    service: shared-redis
     image: redis:7
     host: <%= server_ip %>
     directories:
       - shared_redis_data:/data
   db:
-    service: shared
+    service: shared-db
     image: postgres:17
     host: <%= server_ip %>
     env:
