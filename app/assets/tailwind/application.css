@@ -28,7 +28,7 @@ button, [role="button"], .btn {
 
 @layer components {
   .twlink {
-    @apply cursor-pointer underline decoration-1 hover:decoration-2 active:decoration-2;
+    @apply cursor-pointer underline decoration-1 hover:decoration-2 active:decoration-2 text-blue-600 dark:text-blue-400;
   }
 
   .dropdown-menu a,
@@ -37,7 +37,7 @@ button, [role="button"], .btn {
   }
 }
 .twlink.active {
-  @apply font-medium;
+  @apply font-medium active:decoration-2;
 }
 
 .wrapper-class {
