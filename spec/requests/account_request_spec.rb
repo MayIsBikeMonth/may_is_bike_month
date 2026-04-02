@@ -14,10 +14,11 @@ RSpec.describe "/account", type: :request do
     include_context :logged_in_as_user
 
     describe "edit" do
-      it "renders" do
+      it "renders with system theme selected by default" do
         get "#{base_path}/edit"
         expect(response.code).to eq "200"
         expect(response).to render_template("accounts/edit")
+        expect(response.body).to include('data-theme-current-value="system"')
       end
     end
   end

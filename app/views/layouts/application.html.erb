@@ -134,7 +134,7 @@
                 </li>
 
                 <li>
-                  <%= link_to "Logout", destroy_user_session_path, data: {turbo: false} %>
+                  <%= button_to "Logout", destroy_user_session_path, method: :delete, data: {turbo: false} %>
                 </li>
               </ul>
             </div>
@@ -195,7 +195,7 @@
                   <div
                     data-controller="theme"
                     data-theme-url-value="<%= account_path %>"
-                    data-theme-current-value="<%= current_user.try(:theme) || "" %>"
+                    data-theme-current-value="<%= current_user.try(:theme).presence || "system" %>"
                   >
                     <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-3">
                       Theme
