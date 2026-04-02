@@ -11,7 +11,7 @@ module SettingsModal
     private
 
     def theme_current_value
-      @current_user.try(:theme).presence || "system"
+      @current_user.try(:theme).presence || "theme_system"
     end
   end
 end

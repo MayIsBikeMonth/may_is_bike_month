@@ -20,7 +20,7 @@ RSpec.describe SettingsModal::Component, type: :component do
   it "defaults theme to system" do
     component = render_inline(described_class.new(current_user: user))
 
-    expect(component).to have_css('[data-theme-current-value="system"]')
+    expect(component).to have_css('[data-theme-current-value="theme_system"]')
   end
 
   it "renders theme options" do
@@ -28,7 +28,7 @@ RSpec.describe SettingsModal::Component, type: :component do
 
     expect(component).to have_css('[data-theme="theme_light"]')
     expect(component).to have_css('[data-theme="theme_dark"]')
-    expect(component).to have_css('[data-theme="system"]')
+    expect(component).to have_css('[data-theme="theme_system"]')
   end
 
   it "renders unit options" do
