@@ -1,5 +1,5 @@
 <ul class="relative flex items-center gap-4 px-2 lg:px-4 justify-end mt-2 mb-2">
-  <% if !signed_in? %>
+  <% if !@signed_in %>
     <%= render(SettingsModal::Component.new(current_user: @current_user)) do |settings_modal| %>
       <% settings_modal.with_trigger do %>
         <button

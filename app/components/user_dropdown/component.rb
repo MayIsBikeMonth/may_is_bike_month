@@ -9,8 +9,6 @@ module UserDropdown
 
     private
 
-    def signed_in? = @signed_in
-
     def admin_access? = @current_user&.admin_access?
 
     def avatar_url = @current_user.strava_info&.dig("profile_medium")
