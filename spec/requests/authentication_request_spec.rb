@@ -132,5 +132,29 @@ RSpec.describe "Authentication", type: :request do
         expect(User.last.theme).to eq "theme_light"
       end
     end
+
+    context "with signup_unit cookie set to metric" do
+      it "sets user unit to metric" do
+        Competition.current(re_memoize: true)
+        cookies[:signup_unit] = "metric"
+        expect do
+          post path
+        end.to change(User, :count).by 1
+
+        expect(User.last.unit).to eq "metric"
+      end
+    end
+
+    context "with signup_unit cookie set to imperial" do
+      it "sets user unit to imperial" do
+        Competition.current(re_memoize: true)
+        cookies[:signup_unit] = "imperial"
+        expect do
+          post path
+        end.to change(User, :count).by 1
+
+        expect(User.last.unit).to eq "imperial"
+      end
+    end
   end
 end

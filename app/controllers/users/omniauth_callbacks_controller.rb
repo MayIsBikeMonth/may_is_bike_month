@@ -11,7 +11,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
 
     if @user.persisted?
-      apply_signup_theme(@user)
+      apply_signup_preferences(@user)
       remember_me(@user)
 
       flash[:success] = "Signed in!"
@@ -25,10 +25,12 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   private
 
-  def apply_signup_theme(user)
+  def apply_signup_preferences(user)
+    attrs = {}
     theme = cookies.delete(:signup_theme)
-    return if theme.blank?
-    theme_value = (theme == "dark") ? :theme_dark : :theme_light
-    user.update(theme: theme_value)
+    attrs[:theme] = (theme == "dark") ? :theme_dark : :theme_light if theme.present?
+    unit = cookies.delete(:signup_unit)
+    attrs[:unit] = unit if unit.present?
+    user.update(attrs) if attrs.present?
   end
 end

@@ -51,10 +51,14 @@ export default class extends Controller {
     })
   }
 
-  setSignupCookie () {
+  setSignupCookies () {
     const theme = localStorage.getItem('theme')
     if (theme) {
       document.cookie = `signup_theme=${theme};path=/;max-age=300;SameSite=Lax`
+    }
+    const unit = localStorage.getItem('unitPreference')
+    if (unit) {
+      document.cookie = `signup_unit=${unit};path=/;max-age=300;SameSite=Lax`
     }
   }
 
