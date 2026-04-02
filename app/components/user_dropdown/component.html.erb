@@ -115,7 +115,7 @@
                 </button>
               </li>
 
-              <% if admin_access? %>
+              <% if @current_user&.admin_access? %>
                 <li><%= link_to "Admin", admin_root_path %></li>
               <% end %>
 
