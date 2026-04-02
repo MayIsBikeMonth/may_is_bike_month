@@ -126,8 +126,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/sethherr/may_is_bike_month:${{ github.sha }}
-            ghcr.io/sethherr/may_is_bike_month:latest
+            ghcr.io/mayisbikemonth/may_is_bike_month:${{ github.sha }}
+            ghcr.io/mayisbikemonth/may_is_bike_month:latest
           labels: service=may_is_bike_month
           cache-from: type=gha
           cache-to: type=gha,mode=max
