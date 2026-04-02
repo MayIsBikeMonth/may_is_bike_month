@@ -26,14 +26,7 @@
             data-dropdown-target="button"
             id="user-menu-button"
           >
-            <div
-              class="
-                w-7 h-7 rounded-full bg-blue-600 flex items-center
-                justify-center text-white text-xs font-medium
-              "
-            >
-              <%= @current_user.display_name.first.upcase %>
-            </div>
+            <%= avatar_content %>
 
             <%= @current_user.display_name %>
 
