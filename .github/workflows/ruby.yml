@@ -144,7 +144,9 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy with Kamal
-        run: bundle exec kamal deploy --skip-push
+        run: |
+          cp .kamal/secrets-ci .kamal/secrets
+          bundle exec kamal deploy --skip-push
         env:
           KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
