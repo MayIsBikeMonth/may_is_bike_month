@@ -70,8 +70,8 @@ builder:
   remote: ssh://root@<%= server_ip %>
 
 # Shared accessories — used by all apps on this server.
-# Other apps should connect by container name (shared-db, shared-redis) and
-# NOT define these accessories in their own deploy.yml.
+# Other apps can define the same accessories (Kamal will skip if already running).
+# WARNING: do not run `kamal accessory stop/remove` from any app — it affects all apps.
 accessories:
   redis:
     service: shared-redis
