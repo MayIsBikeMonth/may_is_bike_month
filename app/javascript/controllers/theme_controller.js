@@ -50,6 +50,7 @@ export default class extends Controller {
   }
 
   save (theme) {
+    if (!this.urlValue) return
     const token = document.querySelector('meta[name="csrf-token"]')?.content
     fetch(this.urlValue, {
       method: 'PATCH',

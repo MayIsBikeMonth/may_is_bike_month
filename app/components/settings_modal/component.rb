@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module UserSettingsModal
+module SettingsModal
   class Component < ApplicationComponent
     renders_one :trigger
 

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe UserSettingsModal::Component, type: :component do
+RSpec.describe SettingsModal::Component, type: :component do
   let(:user) { build(:user) }
 
   it "renders UI::Modal with settings content" do

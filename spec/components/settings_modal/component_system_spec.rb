@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe UserSettingsModal::Component, :js, type: :system do
+RSpec.describe SettingsModal::Component, :js, type: :system do
   it "opens and closes" do
-    visit "/lookbook/preview/user_settings_modal/default"
+    visit "/lookbook/preview/settings_modal/default"
 
     expect(page).to have_no_css("dialog[open]")
 

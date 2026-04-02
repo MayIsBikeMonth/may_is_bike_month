@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module UserSettingsModal
+module SettingsModal
   class ComponentPreview < ApplicationComponentPreview
     def default
-      render(UserSettingsModal::Component.new(current_user: User.new)) do |modal|
+      render(SettingsModal::Component.new(current_user: User.new)) do |modal|
         modal.with_trigger { "Open Settings" }
       end
     end
