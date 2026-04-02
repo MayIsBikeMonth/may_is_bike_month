@@ -22,7 +22,7 @@ module Navbar
       if @current_user.admin_access?
         options << helpers.link_to("Admin", helpers.admin_root_path)
       end
-      options << helpers.button_to("Logout", helpers.destroy_user_session_path, method: :delete, data: {turbo: false})
+      options << helpers.link_to("Logout", helpers.destroy_user_session_path, data: {turbo: false})
       options
     end
 
@@ -34,13 +34,8 @@ module Navbar
     end
 
     def avatar_button_content
-      avatar_url = @current_user.strava_info&.dig("profile_medium")
-      if avatar_url.present?
-        helpers.image_tag(avatar_url, alt: @current_user.display_name, class: "w-8 h-8 rounded-full object-cover")
-      else
-        helpers.content_tag(:div, @current_user.display_name.first.upcase,
-          class: "w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-medium")
-      end
+      helpers.content_tag(:div, @current_user.display_name.first.upcase,
+        class: "w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-medium")
     end
   end
 end
