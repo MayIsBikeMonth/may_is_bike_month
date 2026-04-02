@@ -49,6 +49,13 @@ export default class extends Controller {
     })
   }
 
+  setSignupCookie () {
+    const theme = localStorage.getItem('theme')
+    if (theme) {
+      document.cookie = `signup_theme=${theme};path=/;max-age=300;SameSite=Lax`
+    }
+  }
+
   save (theme) {
     if (!this.urlValue) return
     const token = document.querySelector('meta[name="csrf-token"]')?.content

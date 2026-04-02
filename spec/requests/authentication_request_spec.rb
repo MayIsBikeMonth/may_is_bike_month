@@ -106,6 +106,31 @@ RSpec.describe "Authentication", type: :request do
 
       expect(user.last_sign_in_at).to be_present
       expect(user.competition_users.pluck(:competition_id)).to eq([competition.id])
+      expect(user.theme).to eq "theme_system"
+    end
+
+    context "with signup_theme cookie set to dark" do
+      it "sets user theme to theme_dark" do
+        Competition.current(re_memoize: true)
+        cookies[:signup_theme] = "dark"
+        expect do
+          post path
+        end.to change(User, :count).by 1
+
+        expect(User.last.theme).to eq "theme_dark"
+      end
+    end
+
+    context "with signup_theme cookie set to light" do
+      it "sets user theme to theme_light" do
+        Competition.current(re_memoize: true)
+        cookies[:signup_theme] = "light"
+        expect do
+          post path
+        end.to change(User, :count).by 1
+
+        expect(User.last.theme).to eq "theme_light"
+      end
     end
   end
 end

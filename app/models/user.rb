@@ -16,7 +16,7 @@
 #  strava_auth         :jsonb
 #  strava_info         :jsonb
 #  strava_username     :string
-#  theme               :integer          default(0)
+#  theme               :integer          default("theme_system")
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  strava_id           :string

@@ -54,7 +54,7 @@
     >
       <% if current_user.blank? %>
         <li>
-          <%= button_to "Sign in", user_strava_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "twlink" %>
+          <%= button_to "Sign in", user_strava_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "twlink", form: { data: { controller: "theme", action: "submit->theme#setSignupCookie" } } %>
         </li>
       <% elsif in_admin? %>
         <span class="hidden sm:inline-block ml-2 text-lg font-semibold">
