@@ -11,10 +11,6 @@
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #
-# Indexes
-#
-#  index_competitions_on_slug  (slug) UNIQUE
-#
 class Competition < ApplicationRecord
   include FriendlyFindable
 

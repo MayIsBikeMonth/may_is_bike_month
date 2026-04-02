@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :competition do
-    sequence(:start_date) { |n| Date.new(2020 + n, 5, 1) }
+    start_date { Time.current.beginning_of_month.to_date }
   end
 end
