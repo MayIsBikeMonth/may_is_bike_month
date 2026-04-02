@@ -90,17 +90,16 @@ RSpec.describe "Authentication", type: :request do
       OmniAuth.config.add_mock(:strava, omniauth_data)
     end
     let!(:competition) { FactoryBot.create(:competition, current: true) }
-    let(:signup_theme) { nil }
-    let(:signup_unit) { nil }
-    let(:user) do
+
+    define_method(:signup_and_get_user) do |signup_cookies = {}|
       Competition.current(re_memoize: true)
-      cookies[:signup_theme] = signup_theme if signup_theme
-      cookies[:signup_unit] = signup_unit if signup_unit
+      signup_cookies.each { |k, v| cookies[k] = v }
       expect { post path }.to change(User, :count).by 1
       User.last
     end
 
     it "auths" do
+      user = signup_and_get_user
       expect(user.strava_id).to eq "2430215"
       expect(user.strava_username).to eq "sethherr"
       expect(user.display_name).to eq "seth herr"
@@ -113,34 +112,26 @@ RSpec.describe "Authentication", type: :request do
     end
 
     context "with signup_theme cookie set to dark" do
-      let(:signup_theme) { "dark" }
-
       it "sets user theme to theme_dark" do
-        expect(user.theme).to eq "theme_dark"
+        expect(signup_and_get_user(signup_theme: "dark").theme).to eq "theme_dark"
       end
     end
 
     context "with signup_theme cookie set to light" do
-      let(:signup_theme) { "light" }
-
       it "sets user theme to theme_light" do
-        expect(user.theme).to eq "theme_light"
+        expect(signup_and_get_user(signup_theme: "light").theme).to eq "theme_light"
       end
     end
 
     context "with signup_unit cookie set to metric" do
-      let(:signup_unit) { "metric" }
-
       it "sets user unit to metric" do
-        expect(user.unit).to eq "metric"
+        expect(signup_and_get_user(signup_unit: "metric").unit).to eq "metric"
       end
     end
 
     context "with signup_unit cookie set to imperial" do
-      let(:signup_unit) { "imperial" }
-
       it "sets user unit to imperial" do
-        expect(user.unit).to eq "imperial"
+        expect(signup_and_get_user(signup_unit: "imperial").unit).to eq "imperial"
       end
     end
   end
