@@ -2,6 +2,7 @@ name: "CI"
 
 on:
   push: # Run on all pushes
+  workflow_dispatch: # Allow manual trigger
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -101,7 +102,7 @@ jobs:
         run: bundle exec rspec
 
   deploy:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     needs: [lint_and_scan, test]
     runs-on: ubuntu-latest
     environment: production
