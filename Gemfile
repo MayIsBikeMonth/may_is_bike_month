@@ -7,6 +7,8 @@ gem "sidekiq" # Background job processing (with redis)
 
 # Server
 gem "puma" # Use the Puma web server
+gem "thruster", require: false # Asset compression and caching for Puma
+gem "kamal", require: false # Deploy with Kamal
 gem "rack-cors" # Make cors requests
 
 # Make logging - more useful and ingestible
