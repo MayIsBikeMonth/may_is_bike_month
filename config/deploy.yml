@@ -32,6 +32,10 @@ env:
     - RAILS_MASTER_KEY
     - HONEYBADGER_API_KEY
     - POSTGRESQL_PASSWORD
+    - STRAVA_CLIENT_ID
+    - STRAVA_SECRET
+    - DEVISE_SECRET_KEY
+    - DEVISE_PEPPER
   clear:
     POSTGRESQL_ADDRESS: <%= app_name %>-db
     POSTGRESQL_USERNAME: <%= app_name %>
