@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_02_142656) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_02_154530) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -84,6 +84,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_142656) do
     t.jsonb "strava_info"
     t.string "strava_username"
     t.integer "theme", default: 0
+    t.integer "unit", default: 0, null: false
     t.datetime "updated_at", null: false
   end
 end

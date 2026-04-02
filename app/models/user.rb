@@ -17,6 +17,7 @@
 #  strava_info         :jsonb
 #  strava_username     :string
 #  theme               :integer          default("theme_system")
+#  unit                :integer          default(0), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  strava_id           :string
@@ -26,6 +27,7 @@ class User < ApplicationRecord
 
   ROLE_ENUM = {basic_user: 0, admin: 1, developer: 2}.freeze
   THEME_ENUM = {theme_system: 0, theme_light: 1, theme_dark: 2}.freeze
+  UNIT_ENUM = {default: 0, metric: 1, imperial: 2}.freeze
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :validatabl
@@ -34,6 +36,7 @@ class User < ApplicationRecord
 
   enum :role, ROLE_ENUM
   enum :theme, THEME_ENUM
+  enum :unit, UNIT_ENUM
 
   has_many :competition_users
   has_many :competition_activities, through: :competition_users

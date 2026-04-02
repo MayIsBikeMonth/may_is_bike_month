@@ -4,6 +4,7 @@ import { Controller } from '@hotwired/stimulus'
 // Connects to data-controller="unit-preference"
 export default class extends Controller {
   static targets = ['option']
+  static values = { url: String }
 
   connect () {
     this.highlightActive()
@@ -15,6 +16,7 @@ export default class extends Controller {
     localStorage.setItem('unitPreference', unit)
     window.showPreferredUnit()
     this.highlightActive()
+    this.save(unit)
   }
 
   highlightActive () {
@@ -25,6 +27,20 @@ export default class extends Controller {
       el.classList.toggle('ring-blue-500', isActive)
       el.classList.toggle('opacity-60', !isActive)
       el.classList.toggle('opacity-100', isActive)
+    })
+  }
+
+  save (unit) {
+    if (!this.urlValue) return
+    const token = document.querySelector('meta[name="csrf-token"]')?.content
+    fetch(this.urlValue, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': token,
+        Accept: 'text/html'
+      },
+      body: JSON.stringify({ user: { unit } })
     })
   }
 }
