@@ -5,5 +5,10 @@ class AccountsController < ApplicationController
   end
 
   def update
+    if params[:user]&.key?(:theme)
+      current_user.update!(theme: params[:user][:theme])
+      head :ok
+      return
+    end
   end
 end
