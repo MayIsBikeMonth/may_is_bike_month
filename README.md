@@ -18,8 +18,8 @@ You will need the `STRAVA_CLIENT_ID`, `STRAVA_SECRET` for your [Strava app](http
 Run these commands in the terminal, from the directory the project is in.
 
 ```bash
-# Copy the .env.template in to be your .env - and fill in your strava secrets
-cp .env.template .env
+# Copy the .env.example in to be your .env - and fill in your strava secrets
+cp .env.example .env
 # Install dependencies, create and migrate the databases
 bin/setup
 # Start the dev server
