@@ -2,17 +2,14 @@
 
 module UserDropdown
   class Component < ApplicationComponent
-    def initialize(current_user:, in_admin: false)
+    def initialize(current_user:)
       @signed_in = current_user.present?
       @current_user = current_user || User.new
-      @in_admin = in_admin
     end
 
     private
 
     def signed_in? = @signed_in
-
-    def admin_view? = signed_in? && @in_admin
 
     def admin_access? = @current_user&.admin_access?
 

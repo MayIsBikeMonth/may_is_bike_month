@@ -36,15 +36,8 @@
       <% end %>
     <% end %>
     <li>
-      <%= helpers.button_to "Sign in", helpers.user_strava_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "twlink" %>
+      <%= button_to "Sign in", user_strava_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "twlink" %>
     </li>
-  <% elsif admin_view? %>
-    <span class="hidden sm:inline-block ml-2 text-lg font-semibold">
-      May Is Bike Month Admin
-    </span>
-    <%= helpers.active_link "Competition Users", helpers.admin_competition_users_path, class: "twlink ml-2", match_controller: true %>
-    <%= helpers.active_link "Competitions", helpers.admin_competitions_path, class: "twlink ml-2", match_controller: true %>
-    <%= helpers.link_to "Exit", helpers.root_url, class: "twlink ml-auto less-strong" %>
   <% else %>
     <%= render(SettingsModal::Component.new(current_user: @current_user)) do |settings_modal| %>
       <% settings_modal.with_trigger do %>
@@ -123,7 +116,7 @@
               </li>
 
               <% if admin_access? %>
-                <li><%= helpers.link_to "Admin", helpers.admin_root_path %></li>
+                <li><%= link_to "Admin", admin_root_path %></li>
               <% end %>
 
               <li>
@@ -131,7 +124,7 @@
               </li>
 
               <li>
-                <%= helpers.button_to "Logout", helpers.destroy_user_session_path, method: :delete, data: {turbo: false} %>
+                <%= button_to "Logout", destroy_user_session_path, method: :delete, data: {turbo: false} %>
               </li>
             </ul>
           </div>

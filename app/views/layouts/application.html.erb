@@ -46,7 +46,11 @@
   github.com/MayIsBikeMonth/may_is_bike_month
 
   -->
-    <%= render(UserDropdown::Component.new(current_user:, in_admin: in_admin?)) %>
+    <% if in_admin? %>
+      <%= render(Navbar::Component.new(current_user:)) %>
+    <% else %>
+      <%= render(UserDropdown::Component.new(current_user:)) %>
+    <% end %>
 
     <div class="<%= @skip_wrapper_class ? "" : "wrapper-class" %>">
       <%= yield %>

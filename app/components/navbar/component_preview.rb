@@ -2,17 +2,8 @@
 
 module Navbar
   class ComponentPreview < ApplicationComponentPreview
-    def logged_out
-      render(Navbar::Component.new(current_user: nil))
-    end
-
-    def logged_in
-      user = User.first
-      render(Navbar::Component.new(current_user: user))
-    end
-
-    def admin
-      render(Navbar::Component.new(current_user: nil, in_admin: true))
+    def default
+      render(Navbar::Component.new(current_user: User.new(display_name: "Admin", strava_username: "admin", role: :admin)))
     end
   end
 end
