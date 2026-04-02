@@ -30,7 +30,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     theme = cookies.delete(:signup_theme)
     attrs[:theme] = (theme == "dark") ? :theme_dark : :theme_light if theme.present?
     unit = cookies.delete(:signup_unit)
-    attrs[:unit] = unit if unit.present?
+    attrs[:unit] = unit if unit.present? && unit.in?(User::UNIT_ENUM.keys.map(&:to_s))
     user.update(attrs) if attrs.present?
   end
 end

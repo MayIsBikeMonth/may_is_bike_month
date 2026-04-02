@@ -7,7 +7,7 @@ class AccountsController < ApplicationController
   def update
     if params[:user]&.key?(:theme)
       current_user.update!(theme: params[:user][:theme])
-    elsif params[:user]&.key?(:unit)
+    elsif params[:user]&.key?(:unit) && params[:user][:unit].in?(User::UNIT_ENUM.keys.map(&:to_s))
       current_user.update!(unit: params[:user][:unit])
     end
     head :ok
