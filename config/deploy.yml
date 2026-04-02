@@ -12,6 +12,10 @@ image: sethherr/<%= app_name %>
 servers:
   web:
     - <%= server_ip %>
+  worker:
+    hosts:
+      - <%= server_ip %>
+    cmd: bundle exec sidekiq
 
 proxy:
   ssl: true
@@ -39,6 +43,7 @@ env:
   clear:
     POSTGRESQL_ADDRESS: <%= app_name %>-db
     POSTGRESQL_USERNAME: <%= app_name %>
+    REDIS_URL: redis://<%= app_name %>-redis:6379/0
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.
@@ -65,6 +70,12 @@ builder:
   remote: ssh://root@<%= server_ip %>
 
 accessories:
+  redis:
+    image: redis:7
+    host: <%= server_ip %>
+    port: "127.0.0.1:6379:6379"
+    directories:
+      - <%= app_name %>_redis_data:/data
   db:
     image: postgres:17
     host: <%= server_ip %>
