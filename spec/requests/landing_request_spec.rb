@@ -11,7 +11,8 @@ RSpec.describe "/landing", type: :request do
   end
 
   describe "get update_strava" do
-    let!(:competition_user) { FactoryBot.create(:competition_user) }
+    let(:competition) { FactoryBot.create(:competition, start_date: Time.current.beginning_of_month.to_date) }
+    let!(:competition_user) { FactoryBot.create(:competition_user, competition:) }
     before { Sidekiq::Job.clear_all }
 
     it "enqueues jobs and returns json" do
