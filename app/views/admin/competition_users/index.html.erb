@@ -16,7 +16,7 @@
   end
 
   table.column(sortable: "created_at") do |cu|
-    tag.span(l(cu.created_at, format: :localize_time), class: "localizeTime")
+    render(UI::Time::Component.new(time: cu.created_at))
   end
 
   if include_competition
@@ -25,7 +25,7 @@
 
   if show_dev_info
     table.column(sortable: "updated_at") do |cu|
-      tag.small(l(cu.updated_at, format: :localize_time), class: "localizeTime")
+      render(UI::Time::Component.new(time: cu.updated_at))
     end
   end
 

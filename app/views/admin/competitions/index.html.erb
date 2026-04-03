@@ -31,12 +31,12 @@
   table.column(label: "Current?") { |c| check_mark if c.current }
 
   table.column(sortable: "created_at") do |competition|
-    tag.small(l(competition.created_at, format: :localize_time), class: "localizeTime")
+    render(UI::Time::Component.new(time: competition.created_at))
   end
 
   if show_dev_info
     table.column(sortable: "updated_at") do |competition|
-      tag.small(l(competition.updated_at, format: :localize_time), class: "localizeTime")
+      render(UI::Time::Component.new(time: competition.updated_at))
     end
   end
 
