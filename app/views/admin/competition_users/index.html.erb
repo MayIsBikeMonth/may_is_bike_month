@@ -4,87 +4,32 @@
 
 <%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, include_competition_select: true, competition_subject:, searchable_competitions:, render_period: false, s_params: sortable_params)) %>
 
-<% skip_sortable ||= false %>
 <% include_competition ||= competition_subject.blank? %>
 
-<div class="full-screen-table mb-4">
-  <table class="table table-sm table-bordered">
-    <thead class="sortable">
-      <tr>
-        <th>
-          <%= sortable "display_name", skip_sortable: skip_sortable %>
-        </th>
+<%# Local var because cell blocks run via instance_exec in the table component context %>
+<% show_dev_info = display_dev_info? %>
 
-        <th>
-          <small>
-            <%= sortable "created_at", skip_sortable: skip_sortable %>
-          </small>
-        </th>
+<%= render(UI::Table::Component.new(records: @competition_users, render_sortable: true)) do |table|
+  table.column(sortable: "display_name") do |cu|
+    safe_join([link_to(cu.display_name, edit_admin_competition_user_path(cu), class: "twlink"),
+      (tag.code(cu.id, class: "only-dev-visible-small") if show_dev_info)].compact)
+  end
 
-        <% if include_competition %>
-          <th>
-            <%= sortable "competition_id", skip_sortable: skip_sortable %>
-          </th>
-        <% end %>
+  table.column(sortable: "created_at") do |cu|
+    render(UI::Time::Component.new(time: cu.created_at))
+  end
 
-        <% if display_dev_info? %>
-          <th>
-            <small>
-              <%= sortable "updated_at", skip_sortable: skip_sortable %>
-            </small>
-          </th>
-        <% end %>
+  if include_competition
+    table.column(sortable: "competition_id") { |cu| cu.competition.display_name }
+  end
 
-        <th>
-          Activities
-        </th>
+  if show_dev_info
+    table.column(sortable: "updated_at") do |cu|
+      render(UI::Time::Component.new(time: cu.updated_at))
+    end
+  end
 
-        <th>Included?</th>
-      </tr>
-    </thead>
+  table.column(label: "Activities") { |cu| number_display(cu.competition_activities.count) }
 
-    <tbody>
-      <% @competition_users.each do |competition_user| %>
-        <tr class="odd:bg-white even:bg-gray-100">
-          <td>
-            <%= link_to competition_user.display_name, edit_admin_competition_user_path(competition_user), class: "twlink" %>
-
-            <% if display_dev_info? %>
-              <code class="only-dev-visible-small">
-                <%= competition_user.id %>
-              </code>
-            <% end %>
-          </td>
-
-          <td>
-            <span class="localizeTime">
-              <%= l(competition_user.created_at, format: :localize_time) %>
-            </span>
-          </td>
-
-          <% if include_competition %>
-            <td>
-              <%= competition_user.competition.display_name %>
-            </td>
-          <% end %>
-
-          <% if display_dev_info? %>
-            <td>
-              <small class="localizeTime">
-                <%= l(competition_user.updated_at, format: :localize_time) %>
-              </small>
-            </td>
-          <% end %>
-
-          <td>
-            <%= number_display(competition_user.competition_activities.count) %>
-          </td>
-
-          <td class="table-cell-check">
-            <%= check_mark if competition_user.included_in_competition %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+  table.column(label: "Included?") { |cu| check_mark if cu.included_in_competition }
+end %>

@@ -7,99 +7,44 @@
 
 <%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, competition_subject:, searchable_competitions:, render_period: false, s_params: sortable_params)) %>
 
-<% skip_sortable ||= false %>
+<%# Local var because cell blocks run via instance_exec in the table component context %>
+<% show_dev_info = display_dev_info? %>
 
-<div class="full-screen-table mb-4">
-  <table class="table table-sm table-bordered">
-    <thead class="sortable">
-      <tr>
-        <th>
-          <%= sortable "start_date", skip_sortable: skip_sortable %>
-        </th>
+<%= render(UI::Table::Component.new(records: @competitions, render_sortable: true)) do |table|
+  table.column(sortable: "start_date") do |competition|
+    safe_join([competition.start_date.to_s,
+      (tag.code(competition.id, class: "only-dev-visible-small") if show_dev_info)].compact)
+  end
 
-        <th>
-          <%= sortable "end_date", skip_sortable: skip_sortable %>
-        </th>
+  table.column(sortable: "end_date") do |competition|
+    if competition.start_date.year == competition.end_date.year
+      l competition.end_date, format: :month_date
+    else
+      competition.end_date
+    end
+  end
 
-        <th>
-          <%= sortable "display_name", skip_sortable: skip_sortable %>
-        </th>
+  table.column(sortable: "display_name") do |competition|
+    safe_join([competition.display_name, " ", tag.code(competition.slug, class: "only-dev-visible-small")])
+  end
 
-        <th>Current?</th>
+  table.column(label: "Current?") { |c| check_mark if c.current }
 
-        <th>
-          <small>
-            <%= sortable "created_at", skip_sortable: skip_sortable %>
-          </small>
-        </th>
+  table.column(sortable: "created_at") do |competition|
+    render(UI::Time::Component.new(time: competition.created_at))
+  end
 
-        <% if display_dev_info? %>
-          <th class="only-dev-visible">
-            <small>
-              <%= sortable "updated_at", skip_sortable: skip_sortable %>
-            </small>
-          </th>
-        <% end %>
+  if show_dev_info
+    table.column(sortable: "updated_at") do |competition|
+      render(UI::Time::Component.new(time: competition.updated_at))
+    end
+  end
 
-        <th>Users included</th>
+  table.column(label: "Users included") do |competition|
+    link_to number_display(competition.competition_users_included.count), admin_competition_users_path(search_competition_id: competition.slug), class: "twlink"
+  end
 
-        <th>
-          <small class="text-gray-800">Users excluded</small>
-        </th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% @competitions.each do |competition| %>
-        <tr class="odd:bg-white even:bg-gray-100">
-          <td>
-            <%= competition.start_date %>
-
-            <% if display_dev_info? %>
-              <code class="only-dev-visible-small"><%= competition.id %></code>
-            <% end %>
-          </td>
-
-          <td>
-            <% if competition.start_date.year == competition.end_date.year %>
-              <%= l competition.end_date, format: :month_date %>
-            <% else %>
-              <%= competition.end_date %>
-            <% end %>
-          </td>
-
-          <td>
-            <%= competition.display_name %>
-            <code class="only-dev-visible-small"><%= competition.slug %></code>
-          </td>
-
-          <td class="table-cell-check">
-            <%= check_mark if competition.current %>
-          </td>
-
-          <td>
-            <small class="localizeTime">
-              <%= l(competition.created_at, format: :localize_time) %>
-            </small>
-          </td>
-
-          <% if display_dev_info? %>
-            <td>
-              <small class="localizeTime">
-                <%= l(competition.updated_at, format: :localize_time) %>
-              </small>
-            </td>
-          <% end %>
-
-          <td>
-            <%= link_to number_display(competition.competition_users_included.count), admin_competition_users_path(search_competition_id: competition.slug), class: "twlink" %>
-          </td>
-
-          <td>
-            <%= number_display(competition.competition_users_excluded.count) %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+  table.column(label: "Users excluded") do |competition|
+    number_display(competition.competition_users_excluded.count)
+  end
+end %>
