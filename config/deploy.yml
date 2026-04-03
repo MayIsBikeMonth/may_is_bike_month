@@ -1,6 +1,6 @@
 <% server_ip = "159.223.192.76" %>
 <% app_name = "may_is_bike_month" %>
-<% app_host = "secondary.mayisbikemonth.org" %>
+<% app_host = "mayisbikemonth.org" %>
 
 # Name of your application. Used to uniquely configure containers.
 service: <%= app_name %>
