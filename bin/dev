@@ -8,7 +8,7 @@ touch log/redis.log
 > log/redis.log
 redis-server > log/redis.log &
 
-source bin/env
+eval "$(ruby bin/env --export)"
 
 # Let the debug gem allow remote connections,
 # but avoid loading until `debugger` is called

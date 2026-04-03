@@ -5,7 +5,7 @@ if Rails.env != "test"
   # initialization is skipped so trigger it
   Rack::MiniProfilerRails.initialize!(Rails.application)
 
-  Rack::MiniProfiler.config.storage_options = {url: ENV.fetch("REDIS_URL", "redis://localhost:6379")}
+  Rack::MiniProfiler.config.storage_options = {url: ENV.fetch("REDIS_URL")}
   Rack::MiniProfiler.config.storage = Rack::MiniProfiler::RedisStore
   Rack::MiniProfiler.config.position = "bottom-right"
 
