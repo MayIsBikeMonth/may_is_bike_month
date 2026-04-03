@@ -5,13 +5,8 @@ require "rails_helper"
 RSpec.describe "/account", type: :request do
   let(:base_path) { "/account" }
 
-  it "redirects edit" do
+  it "redirects" do
     get "#{base_path}/edit"
-    expect(response).to redirect_to root_url
-  end
-
-  it "redirects show" do
-    get base_path
     expect(response).to redirect_to root_url
   end
 

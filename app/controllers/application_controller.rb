@@ -95,7 +95,7 @@ class ApplicationController < ActionController::Base
   end
 
   def not_stored_paths
-    ["/"]
+    ["/", "/account"]
   end
 
   # TODO: actually clean things.
