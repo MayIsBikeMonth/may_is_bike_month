@@ -76,6 +76,7 @@ end
 group :test do
   gem "guard", require: false
   gem "guard-rspec", require: false
+  gem "rb-readline", require: false
   gem "vcr" # Stub external HTTP requests
   gem "webmock" # mocking for VCR
   gem "capybara" # For view components

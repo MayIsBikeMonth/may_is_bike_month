@@ -13,7 +13,7 @@ Rails.application.routes.draw do
 
   resources :competitions, only: %i[show]
 
-  resource :account, only: %i[edit update]
+  resource :account, only: %i[show edit update]
 
   namespace :admin do
     root to: "competition_users#index"
