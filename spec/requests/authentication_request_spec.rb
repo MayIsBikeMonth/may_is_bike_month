@@ -90,22 +90,49 @@ RSpec.describe "Authentication", type: :request do
       OmniAuth.config.add_mock(:strava, omniauth_data)
     end
     let!(:competition) { FactoryBot.create(:competition, current: true) }
-    it "auths" do
-      Competition.current(re_memoize: true)
-      expect do
-        post path
-      end.to change(User, :count).by 1
 
-      user = User.last
+    define_method(:signup_and_get_user) do |signup_cookies = {}|
+      Competition.current(re_memoize: true)
+      signup_cookies.each { |k, v| cookies[k] = v }
+      expect { post path }.to change(User, :count).by 1
+      User.last
+    end
+
+    it "auths" do
+      user = signup_and_get_user
       expect(user.strava_id).to eq "2430215"
       expect(user.strava_username).to eq "sethherr"
       expect(user.display_name).to eq "seth herr"
       expect(user.strava_auth.keys).to match_array(%w[token refresh_token expires_at])
       expect(user.role).to eq "basic_user"
       expect(user.strava_info).to eq omniauth_data.dig(:extra, :raw_info).as_json
-
       expect(user.last_sign_in_at).to be_present
       expect(user.competition_users.pluck(:competition_id)).to eq([competition.id])
+      expect(user.theme).to eq "theme_system"
+    end
+
+    context "with signup_theme cookie set to dark" do
+      it "sets user theme to theme_dark" do
+        expect(signup_and_get_user(signup_theme: "dark").theme).to eq "theme_dark"
+      end
+    end
+
+    context "with signup_theme cookie set to light" do
+      it "sets user theme to theme_light" do
+        expect(signup_and_get_user(signup_theme: "light").theme).to eq "theme_light"
+      end
+    end
+
+    context "with signup_unit cookie set to metric" do
+      it "sets user unit to metric" do
+        expect(signup_and_get_user(signup_unit: "metric").unit).to eq "metric"
+      end
+    end
+
+    context "with signup_unit cookie set to imperial" do
+      it "sets user unit to imperial" do
+        expect(signup_and_get_user(signup_unit: "imperial").unit).to eq "imperial"
+      end
     end
   end
 end

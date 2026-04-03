@@ -36,7 +36,7 @@
       <% end %>
     <% end %>
     <li>
-      <%= button_to "Sign in", user_strava_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "twlink" %>
+      <%= button_to "Sign in", user_strava_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "twlink", form: { data: { controller: "theme", action: "submit->theme#setSignupCookies" } } %>
     </li>
   <% else %>
     <%= render(SettingsModal::Component.new(current_user: @current_user)) do |settings_modal| %>

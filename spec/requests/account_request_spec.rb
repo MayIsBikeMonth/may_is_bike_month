@@ -40,6 +40,24 @@ RSpec.describe "/account", type: :request do
           expect(user.reload.theme).to eq "theme_light"
         end
       end
+
+      it "updates unit to metric" do
+        expect(user.unit).to eq "default"
+        patch base_path, params: {user: {unit: "metric"}}, as: :json
+        expect(response.code).to eq "200"
+        expect(user.reload.unit).to eq "metric"
+      end
+
+      context "imperial" do
+        let(:user) { FactoryBot.create(:user, unit: :metric) }
+
+        it "updates unit to imperial" do
+          expect(user.unit).to eq "metric"
+          patch base_path, params: {user: {unit: "imperial"}}, as: :json
+          expect(response.code).to eq "200"
+          expect(user.reload.unit).to eq "imperial"
+        end
+      end
     end
   end
 end
