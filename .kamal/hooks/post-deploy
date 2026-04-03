@@ -1,6 +1,9 @@
 #!/bin/sh
 
+# Use --skip-rails-load to avoid booting the Rails environment,
+# which requires REDIS_URL and other env vars not available in CI.
 bundle exec honeybadger deploy \
+  --skip-rails-load \
   --repository https://github.com/MayIsBikeMonth/may_is_bike_month \
   --revision $KAMAL_VERSION \
   --environment production \
