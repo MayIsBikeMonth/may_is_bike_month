@@ -30,11 +30,11 @@ RSpec.describe "/account", type: :request do
     describe "update" do
       it "updates theme and unit" do
         expect(user.theme).to eq "theme_system"
-        expect(user.unit).to eq "default_imperial"
+        expect(user.unit).to eq "imperial"
         patch base_path, params: {user: {theme: "theme_dark"}}, as: :json
         expect(response.code).to eq "200"
         expect(user.reload.theme).to eq "theme_dark"
-        expect(user.unit).to eq "default_imperial"
+        expect(user.unit).to eq "imperial"
 
         patch base_path, params: {user: {unit: "metric"}}, as: :json
         expect(response.code).to eq "200"
