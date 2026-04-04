@@ -15,6 +15,10 @@ module UI
       def error
         render(UI::Button::Component.new(text: "Delete", color: :error))
       end
+
+      def secondary_with_data
+        render(UI::Button::Component.new(text: "Secondary with data", color: :secondary, data: {action: "click->modal#open"}))
+      end
       # @!endgroup
 
       # @!group Active

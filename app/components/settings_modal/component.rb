@@ -2,8 +2,6 @@
 
 module SettingsModal
   class Component < ApplicationComponent
-    renders_one :trigger
-
     def initialize(current_user:)
       @current_user = current_user
     end

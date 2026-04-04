@@ -12,7 +12,8 @@ module Alerts
       def messages
         @flash.filter_map do |type, message|
           next unless message.is_a?(String)
-          kind = %w[alert error].include?(type.to_s) ? :error : :notice
+          kind = type.to_sym
+          raise ArgumentError, "Unknown flash type: #{type}" unless UI::Alert::Component::KINDS.include?(kind)
           {text: message, kind:}
         end
       end

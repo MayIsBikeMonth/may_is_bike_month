@@ -2,20 +2,33 @@ import { Controller } from '@hotwired/stimulus'
 
 // Connects to data-controller="modal"
 export default class extends Controller {
-  static targets = ['dialog']
+  connect () {
+    this.boundOpen = this.openFromTrigger.bind(this)
+    this.triggers.forEach(el => el.addEventListener('click', this.boundOpen))
+  }
 
-  open () {
-    this.dialogTarget.showModal()
+  disconnect () {
+    this.triggers.forEach(el => el.removeEventListener('click', this.boundOpen))
+  }
+
+  openFromTrigger (event) {
+    this.trigger = event.currentTarget
+    this.trigger.classList.add('active')
+    this.element.showModal()
     document.body.classList.add('overflow-hidden')
   }
 
   close () {
-    this.dialogTarget.close()
+    this.element.close()
     document.body.classList.remove('overflow-hidden')
+    if (this.trigger) {
+      this.trigger.classList.remove('active')
+      this.trigger = null
+    }
   }
 
   backdropClick (event) {
-    if (event.target === this.dialogTarget) {
+    if (event.target === this.element) {
       this.close()
     }
   }
@@ -24,5 +37,9 @@ export default class extends Controller {
     if (event.key === 'Escape') {
       this.close()
     }
+  }
+
+  get triggers () {
+    return document.querySelectorAll(`[data-open-modal="${this.element.id}"]`)
   }
 }

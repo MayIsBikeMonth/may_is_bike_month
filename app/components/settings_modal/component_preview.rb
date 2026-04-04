@@ -3,9 +3,7 @@
 module SettingsModal
   class ComponentPreview < ApplicationComponentPreview
     def default
-      render(SettingsModal::Component.new(current_user: User.new)) do |modal|
-        modal.with_trigger { tag.button("Open Settings", type: "button", data: {action: "click->modal#open"}) }
-      end
+      {template: "settings_modal/component_preview/default"}
     end
   end
 end
