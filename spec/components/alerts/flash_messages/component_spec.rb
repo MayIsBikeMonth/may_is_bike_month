@@ -6,9 +6,11 @@ RSpec.describe Alerts::FlashMessages::Component, type: :component do
   let(:flash) { {} }
   let(:component) { render_inline(described_class.new(flash:)) }
 
-  it "renders empty when no flash messages" do
-    expect(component).to be_present
-    expect(component).to_not have_css('[role="alert"]')
+  context "when no flash messages" do
+    it "renders empty" do
+      expect(component).to be_present
+      expect(component).to_not have_css('[role="alert"]')
+    end
   end
 
   context "notice" do
@@ -30,12 +32,12 @@ RSpec.describe Alerts::FlashMessages::Component, type: :component do
     end
   end
 
-  context "alert type maps to error" do
-    let(:flash) { {alert: "Access denied"} }
+  context "success" do
+    let(:flash) { {success: "It worked"} }
 
-    it "renders as error kind" do
-      expect(component).to have_content("Access denied")
-      expect(component).to have_css('[role="alert"].text-red-800')
+    it "renders a success alert" do
+      expect(component).to have_content("It worked")
+      expect(component).to have_css('[role="alert"].text-green-800')
     end
   end
 
@@ -46,6 +48,14 @@ RSpec.describe Alerts::FlashMessages::Component, type: :component do
       expect(component).to have_css('[role="alert"]', count: 2)
       expect(component).to have_content("Saved")
       expect(component).to have_content("But check this")
+    end
+  end
+
+  context "unknown flash type" do
+    let(:flash) { {bogus: "wat"} }
+
+    it "raises ArgumentError" do
+      expect { component }.to raise_error(ArgumentError, /Unknown flash type: bogus/)
     end
   end
 
