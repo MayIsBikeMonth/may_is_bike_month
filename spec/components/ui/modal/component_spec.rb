@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe UI::Modal::Component, type: :component do
   it "renders dialog with title" do
-    component = render_inline(described_class.new(title: "Test Modal")) do |modal|
+    component = render_inline(described_class.new(id: "test-modal", title: "Test Modal")) do |modal|
       modal.with_body { "Modal body" }
     end
 
@@ -14,19 +14,10 @@ RSpec.describe UI::Modal::Component, type: :component do
   end
 
   it "renders with custom id" do
-    component = render_inline(described_class.new(title: "Test", id: "my-modal")) do |modal|
+    component = render_inline(described_class.new(id: "my-modal", title: "Test")) do |modal|
       modal.with_body { "content" }
     end
 
     expect(component).to have_css("#my-modal")
-  end
-
-  it "renders trigger slot" do
-    component = render_inline(described_class.new(title: "Test")) do |modal|
-      modal.with_trigger { "Open" }
-      modal.with_body { "content" }
-    end
-
-    expect(component).to have_text("Open")
   end
 end

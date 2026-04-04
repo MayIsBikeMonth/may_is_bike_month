@@ -83,4 +83,5 @@ group :test do
   gem "selenium-webdriver" # Browser driver for system specs
   gem "rails-controller-testing" # Assert testing views
   gem "rspec-retry", require: false # Retry flaky test failures on CI
+  gem "axe-core-rspec" # Accessibility testing
 end

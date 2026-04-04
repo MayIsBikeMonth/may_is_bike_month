@@ -25,13 +25,14 @@ module UI
 
       KINDS = %i[button submit]
 
-      def initialize(text: nil, color: :secondary, size: :md, active: false, html_class: nil, kind: nil)
+      def initialize(text: nil, color: :secondary, size: :md, active: false, html_class: nil, kind: nil, data: {})
         @text = text
         @color = COLORS.key?(color) ? color : :secondary
         @size = SIZES.key?(size) ? size : :md
         @kind = KINDS.include?(kind&.to_sym) ? kind.to_sym : KINDS.first
         @active = active
         @html_class = html_class
+        @data = data
       end
 
       def button_classes
@@ -41,7 +42,7 @@ module UI
       end
 
       def call
-        content_tag(:button, @text || content, class: button_classes, type: (@kind == :submit) ? "submit" : "button")
+        content_tag(:button, @text || content, class: button_classes, type: (@kind == :submit) ? "submit" : "button", data: @data)
       end
     end
   end
