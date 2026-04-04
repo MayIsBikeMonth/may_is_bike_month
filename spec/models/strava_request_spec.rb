@@ -12,12 +12,10 @@ RSpec.describe StravaRequest, type: :model do
     let(:response_status) { 200 }
     let(:user) { FactoryBot.create(:user_with_strava_token) }
     before do
-      VCR.turned_off do
-        WebMock.stub_request(:get, /strava.com\/api\/v3\/athlete\/activities/)
-          .to_return(status: response_status, body: response_body.to_json, headers: {"Content-Type" => "application/json"})
-      end
+      WebMock.stub_request(:get, /strava.com\/api\/v3\/athlete\/activities/)
+        .to_return(status: response_status, body: response_body.to_json, headers: {"Content-Type" => "application/json"})
     end
-    after { VCR.turned_off { WebMock.reset! } }
+    after { WebMock.reset! }
     it "creates a strava_request" do
       expect do
         StravaRequest.send(:record_request_for_user_activities, user: user, parameters: {per_page: "2"})

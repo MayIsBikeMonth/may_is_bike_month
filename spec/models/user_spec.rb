@@ -52,12 +52,10 @@ RSpec.describe User, type: :model do
       end
       let(:status) { 200 }
       before do
-        VCR.turned_off do
-          WebMock.stub_request(:post, /strava.com\/oauth\/token/)
-            .to_return(status:, body: strava_response.to_json, headers: {"Content-Type" => "application/json"})
-        end
+        WebMock.stub_request(:post, /strava.com\/oauth\/token/)
+          .to_return(status:, body: strava_response.to_json, headers: {"Content-Type" => "application/json"})
       end
-      after { VCR.turned_off { WebMock.reset! } }
+      after { WebMock.reset! }
       it "updates strava token" do
         expect(user.active_strava_token).to eq "vvv"
         user.reload
