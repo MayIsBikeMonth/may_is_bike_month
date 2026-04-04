@@ -8,31 +8,9 @@ RSpec.describe StravaRequest, type: :model do
   end
 
   describe "record_request_for_user_activities" do
-    let(:response_body) { [] }
-    let(:response_status) { 200 }
     let(:user) { FactoryBot.create(:user_with_strava_token) }
-    before do
-      WebMock.stub_request(:get, /strava.com\/api\/v3\/athlete\/activities/)
-        .to_return(status: response_status, body: response_body.to_json, headers: {"Content-Type" => "application/json"})
-    end
-    after { WebMock.reset! }
     it "creates a strava_request" do
-      expect do
-        StravaRequest.send(:record_request_for_user_activities, user: user, parameters: {per_page: "2"})
-      end.to change(StravaRequest, :count).by 1
-
-      strava_request = StravaRequest.last
-      expect(strava_request.user_id).to eq user.id
-      expect(strava_request.kind).to eq "get_activities"
-      expect(strava_request.success_response?).to be_truthy
-      expect(strava_request.error_response).to be_nil
-      expect(strava_request.parameters).to eq({"per_page" => "2"})
-    end
-
-    context "error response" do
-      let(:response_body) { {message: "An Error", errors: []} }
-      let(:response_status) { 401 }
-      it "creates a strava_request" do
+      VCR.use_cassette("strava_integration-get_activities-success", match_requests_on: [:path]) do
         expect do
           StravaRequest.send(:record_request_for_user_activities, user: user, parameters: {per_page: "2"})
         end.to change(StravaRequest, :count).by 1
@@ -40,9 +18,26 @@ RSpec.describe StravaRequest, type: :model do
         strava_request = StravaRequest.last
         expect(strava_request.user_id).to eq user.id
         expect(strava_request.kind).to eq "get_activities"
-        expect(strava_request.success_response?).to be_falsey
-        expect(strava_request.error_response).to eq response_body.as_json
+        expect(strava_request.success_response?).to be_truthy
+        expect(strava_request.error_response).to be_nil
         expect(strava_request.parameters).to eq({"per_page" => "2"})
+      end
+    end
+
+    context "error response" do
+      it "creates a strava_request" do
+        VCR.use_cassette("strava_integration-get_activities-error", match_requests_on: [:path]) do
+          expect do
+            StravaRequest.send(:record_request_for_user_activities, user: user, parameters: {per_page: "2"})
+          end.to change(StravaRequest, :count).by 1
+
+          strava_request = StravaRequest.last
+          expect(strava_request.user_id).to eq user.id
+          expect(strava_request.kind).to eq "get_activities"
+          expect(strava_request.success_response?).to be_falsey
+          expect(strava_request.error_response).to be_present
+          expect(strava_request.parameters).to eq({"per_page" => "2"})
+        end
       end
     end
   end

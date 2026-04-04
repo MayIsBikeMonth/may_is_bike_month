@@ -41,33 +41,20 @@ RSpec.describe User, type: :model do
 
     context "with expired token" do
       let(:expires_at) { Time.current - 1.hour }
-      let(:strava_response) do
-        {
-          access_token: "vvv",
-          expires_at: (Time.current + 2.days).to_i,
-          expires_in: "wut",
-          refresh_token: "qqq",
-          token_type: "wut"
-        }.as_json
-      end
-      let(:status) { 200 }
-      before do
-        WebMock.stub_request(:post, /strava.com\/oauth\/token/)
-          .to_return(status:, body: strava_response.to_json, headers: {"Content-Type" => "application/json"})
-      end
-      after { WebMock.reset! }
       it "updates strava token" do
-        expect(user.active_strava_token).to eq "vvv"
-        user.reload
-        expect(user.strava_auth).to eq({"token" => "vvv", "refresh_token" => "qqq", "expires_at" => strava_response["expires_at"]})
+        VCR.use_cassette("strava_integration-refresh_access_token-success", match_requests_on: [:path]) do
+          expect(user.active_strava_token).to eq "zzzzxxxxxxx"
+          user.reload
+          expect(user.strava_auth).to eq({"token" => "zzzzxxxxxxx", "refresh_token" => "xxxzzzz", "expires_at" => 1714533563})
+        end
       end
       context "with invalid strava response" do
-        let(:strava_response) { {message: "Bad Request", errors: [{resource: "RefreshToken", field: "refresh_token", code: "invalid"}]} }
-        let(:status) { 401 }
         it "doesn't update token" do
-          expect do
-            user.active_strava_token
-          end.to raise_error(/Bad Request/)
+          VCR.use_cassette("strava_integration-refresh_access_token-error", match_requests_on: [:path]) do
+            expect do
+              user.active_strava_token
+            end.to raise_error(/Bad Request/)
+          end
         end
       end
     end
