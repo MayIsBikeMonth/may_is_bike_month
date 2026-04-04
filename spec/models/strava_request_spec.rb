@@ -8,9 +8,16 @@ RSpec.describe StravaRequest, type: :model do
   end
 
   describe "record_request_for_user_activities" do
-    let(:response) { {json: [], status: 200} }
+    let(:response_body) { [] }
+    let(:response_status) { 200 }
     let(:user) { FactoryBot.create(:user_with_strava_token) }
-    before { allow(StravaIntegration).to receive(:get_activities).and_return(response.with_indifferent_access) }
+    before do
+      VCR.turned_off do
+        WebMock.stub_request(:get, /strava.com\/api\/v3\/athlete\/activities/)
+          .to_return(status: response_status, body: response_body.to_json, headers: {"Content-Type" => "application/json"})
+      end
+    end
+    after { VCR.turned_off { WebMock.reset! } }
     it "creates a strava_request" do
       expect do
         StravaRequest.send(:record_request_for_user_activities, user: user, parameters: {per_page: "2"})
@@ -25,7 +32,8 @@ RSpec.describe StravaRequest, type: :model do
     end
 
     context "error response" do
-      let(:response) { {json: {message: "An Error", errors: []}, status: 401} }
+      let(:response_body) { {message: "An Error", errors: []} }
+      let(:response_status) { 401 }
       it "creates a strava_request" do
         expect do
           StravaRequest.send(:record_request_for_user_activities, user: user, parameters: {per_page: "2"})
@@ -35,7 +43,7 @@ RSpec.describe StravaRequest, type: :model do
         expect(strava_request.user_id).to eq user.id
         expect(strava_request.kind).to eq "get_activities"
         expect(strava_request.success_response?).to be_falsey
-        expect(strava_request.error_response).to eq response[:json].as_json
+        expect(strava_request.error_response).to eq response_body.as_json
         expect(strava_request.parameters).to eq({"per_page" => "2"})
       end
     end

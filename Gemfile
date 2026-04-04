@@ -38,6 +38,8 @@ gem "faraday" # Used to make bare requests to strava
 gem "image_processing", "~> 1.2" # Use Active Storage variants
 
 # Functionality extensions
+gem "binxtils" # Shared utilities from Bike Index (InputNormalizer, TimeParser, TimeZoneParser)
+gem "functionable" # Pure functional modules
 gem "cgi" # Required for Ruby 4.0+ (removed from stdlib)
 gem "tzinfo-data", platforms: %i[windows jruby] # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 

@@ -50,9 +50,14 @@ RSpec.describe User, type: :model do
           token_type: "wut"
         }.as_json
       end
-      let(:integration_result) { {json: strava_response, status: status} }
       let(:status) { 200 }
-      before { allow(StravaIntegration).to receive(:refresh_access_token).with("zzz").and_return(integration_result) }
+      before do
+        VCR.turned_off do
+          WebMock.stub_request(:post, /strava.com\/oauth\/token/)
+            .to_return(status:, body: strava_response.to_json, headers: {"Content-Type" => "application/json"})
+        end
+      end
+      after { VCR.turned_off { WebMock.reset! } }
       it "updates strava token" do
         expect(user.active_strava_token).to eq "vvv"
         user.reload
