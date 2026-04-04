@@ -21,8 +21,8 @@ module SetPeriod
     @period ||= params[:period]
     if @period == "custom"
       if params[:start_time].present?
-        @start_time = TimeParser.parse(params[:start_time], @timezone)
-        @end_time = TimeParser.parse(params[:end_time], @timezone) || Time.current
+        @start_time = Binxtils::TimeParser.parse(params[:start_time], @timezone)
+        @end_time = Binxtils::TimeParser.parse(params[:end_time], @timezone) || Time.current
 
         @start_time, @end_time = @end_time, @start_time if @start_time > @end_time
       else
@@ -30,7 +30,7 @@ module SetPeriod
       end
     elsif params[:search_at].present?
       @period = "custom"
-      @search_at = TimeParser.parse(params[:search_at], @timezone)
+      @search_at = Binxtils::TimeParser.parse(params[:search_at], @timezone)
       offset = params[:period].present? ? params[:period].to_i : 10.minutes.to_i
       @start_time = @search_at - offset
       @end_time = @search_at + offset
@@ -86,18 +86,18 @@ module SetPeriod
 
     # Parse the timezone params if they are passed (tested in admin#activity_groups#index)
     if params[:timezone].present?
-      @timezone = TimeParser.parse_timezone(params[:timezone])
+      @timezone = Binxtils::TimeZoneParser.parse(params[:timezone])
       # If it's a valid timezone, save to session
       session[:timezone] = @timezone&.name
     end
 
     # Set the timezone on a per request basis if we have a timezone saved
     if session[:timezone].present?
-      @timezone ||= TimeParser.parse_timezone(session[:timezone])
+      @timezone ||= Binxtils::TimeZoneParser.parse(session[:timezone])
       Time.zone = @timezone
     end
 
-    @timezone ||= TimeParser::DEFAULT_TIME_ZONE
+    @timezone ||= Binxtils::TimeParser.default_time_zone
   end
 
   def earliest_period_date
