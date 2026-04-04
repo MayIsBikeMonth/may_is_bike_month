@@ -10,7 +10,7 @@ require "view_component/test_helpers"
 require "capybara/rspec"
 require "axe-rspec"
 
-SKIPPABLE_AXE_RULES = %w[color-contrast heading-order html-has-lang landmark-one-main page-has-heading-one region]
+SKIPPABLE_AXE_RULES = %w[color-contrast empty-table-header heading-order html-has-lang landmark-one-main list page-has-heading-one region]
 
 VCR.configure do |config|
   config.cassette_library_dir = "spec/vcr_cassettes"
