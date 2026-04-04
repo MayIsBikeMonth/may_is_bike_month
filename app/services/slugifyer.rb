@@ -14,9 +14,4 @@ module Slugifyer
       .gsub("-&-", "-amp-").squeeze("-") # Remove lingering double -
       .delete_prefix("-").delete_suffix("-") # remove leading and trailing -
   end
-
-  def slugify_and(string)
-    slugify(string)&.gsub("-amp-", "-and-")
-      &.gsub("-amp-", "-and-")
-  end
 end
