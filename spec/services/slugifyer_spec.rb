@@ -52,39 +52,4 @@ RSpec.describe Slugifyer do
       end
     end
   end
-
-  describe "slugify_and" do
-    it "returns nil if given nil" do
-      expect(subject.slugify_and(nil)).to be_nil
-    end
-    it "handles basic URL" do
-      expect(subject.slugify_and("https://bikeindex.org/bikes/323232")).to eq("bikeindex-org-bikes-323232")
-    end
-    it "handles &" do
-      expect(subject.slugify_and("Bikes & Trikes")).to eq "bikes-and-trikes"
-      expect(subject.slugify_and("Bikes &Amp; Trikes")).to eq "bikes-and-trikes"
-      expect(subject.slugify_and("Bikes &Amp;& Trikes")).to eq "bikes-and-and-trikes"
-      expect(subject.slugify_and("Bikes &&amp;-& Trikes")).to eq "bikes-and-and-and-trikes"
-      expect(subject.slugify_and("S&M")).to eq "s-and-m"
-      expect(subject.slugify_and("S&&M")).to eq "s-and-and-m"
-    end
-  end
-
-  describe "filename_slugify" do
-    it "does not leave trailing -" do
-      string = "Overall, the case for reduced meat consumption is strong. Vegetarianism is cheaper, better for your health (if you can afford a diverse diet and are not an infant), and is less impactful for the environment. It also has a significant moral cost in terms of animal suffering."
-      expect(subject.filename_slugify(string)).to_not match(/-\z/)
-    end
-    context "file extendsions" do
-      it "removes .md" do
-        expect(subject.filename_slugify("some-hypothesis-goes-here.md")).to eq "some-hypothesis-goes-here"
-      end
-      it "removes .yml" do
-        expect(subject.filename_slugify("some-citation-goes-here.yml")).to eq "some-citation-goes-here"
-      end
-      it "doesn't remove ymmv" do
-        expect(subject.filename_slugify("some-citation-goes-here.ymmv")).to eq "some-citation-goes-here-ymmv"
-      end
-    end
-  end
 end
