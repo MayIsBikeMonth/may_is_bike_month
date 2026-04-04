@@ -20,16 +20,52 @@ Ruby is formatted with the standard gem. Run `bin/lint` to automatically format 
 - make methods private if possible
 - Omit named arguments' values from hashes (ie prefer `{x:, y:}` instead of `{x: x, y: y}`)
 - Prefer less code, by character count (excluding whitespace and comments). Use `bin/char_count {FILE OR FOLDER}` to get the non-whitespace character count
+- prefer un-abbreviated variable names
 
 ## Testing
 
 This project uses Rspec for tests. All business logic should be tested.
 
 - Tests should either: help make the code correct now or prevent bugs in the future. Don't add tests that don't do one of those things.
-- Use `context` and `let` to make the differences between tests clear
 - Use request specs, not controller specs. Everything making the same request should be in a single test
 - Avoid testing private methods
 - Avoid mocking objects
+  - If making external requests, use VCR. Don't manually write VCR cassettes, record them by running the tests.
+- Use `context` and `let` to isolate what varies between examples.
+  - Each `it` block should live in a `context` that names the condition, with `let` overrides for only what differs in that case. Avoid repeating setup across sibling `it` blocks.
+
+**Good:**
+```ruby
+describe "display_name" do
+  let(:user) { User.new(email: "test@example.com", name:) }
+  let(:name) { nil }
+
+  it "returns email prefix when name is blank" do
+    expect(user.display_name).to eq "test"
+  end
+
+  context "when name is present" do
+    let(:name) { "Test User" }
+
+    it "returns name" do
+      expect(user.display_name).to eq "Test User"
+    end
+  end
+end
+```
+
+**Bad:**
+```ruby
+it "returns display_name" do
+  user = FactoryBot.create(:user, email: "test@example.com", name: "Test User")
+  expect(user.display_name).to eq "Test User"
+end
+it "returns email prefix when name is blank" do
+  user = FactoryBot.create(:user, email: "test@example.com")
+  allow(user).to receive(:name) { nil }
+  expect(user.display_name).to eq "test"
+end
+```
 
 ### Running Tests
 
@@ -54,6 +90,10 @@ This project also uses the ViewComponent gem to render components.
 - Prefer view components to partials
 - Generate a new view component with `rails generate component ComponentName argument1 argument2`
 - View components must initialize with keyword arguments
+- In view components, prefer instance variables to attr_accessor
+- In ViewComponent templates, use `helpers.` prefix for view helpers (e.g. `helpers.time_ago_in_words`).
+  - You don't need to prefix paths (e.g. do `new_bike_path` NOT `helpers.new_bike_path`)
+- Always use `UI::Time::Component` to display time
 
 # Initial setup
 

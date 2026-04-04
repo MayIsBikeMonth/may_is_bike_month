@@ -3,12 +3,11 @@
 module UI
   module Modal
     class Component < ApplicationComponent
-      renders_one :trigger
       renders_one :body
 
-      def initialize(title: nil, id: nil)
+      def initialize(id:, title: nil)
+        @id = id
         @title = title
-        @id = id || "modal-#{SecureRandom.hex(4)}"
       end
     end
   end

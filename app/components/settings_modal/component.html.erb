@@ -1,10 +1,4 @@
 <%= render(UI::Modal::Component.new(title: "Settings", id: "user-settings-modal")) do |modal| %>
-  <% if trigger? %>
-    <% modal.with_trigger do %>
-      <%= trigger %>
-    <% end %>
-  <% end %>
-
   <% modal.with_body do %>
     <div class="space-y-6">
       <%# Theme %>
