@@ -19,6 +19,10 @@ module StravaIntegration
     {json: JSON.parse(response.body), status: response.status}.with_indifferent_access
   end
 
+  #
+  # private below here
+  #
+
   def connection
     Faraday.new(url: STRAVA_BASE_URL) do |conn|
       conn.adapter Faraday.default_adapter
