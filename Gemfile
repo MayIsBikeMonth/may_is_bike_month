@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gem "rails", "~> 8.1.2"
-gem "pg", "~> 1.1" # Use postgresql as the database for Active Record
+gem "pg", "~> 1.6" # Use postgresql as the database for Active Record
 gem "redis" # Redis itself
 gem "sidekiq" # Background job processing (with redis)
 
