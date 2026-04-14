@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe SortableHelper, type: :helper do
+RSpec.describe Binxtils::SortableHelper, type: :helper do
   before { controller.params = ActionController::Parameters.new(passed_params) }
 
   describe "sortable_search_params" do
