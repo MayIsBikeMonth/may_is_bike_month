@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MIBM 2024 — Punchcard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e1116;
+    --surface: #161b22;
+    --line: #232a35;
+    --muted: #6b7888;
+    --fg: #e8edf3;
+    --dim: #9aa6b6;
+    --accent: #39d98a;
+    --accent-2: #65f0a9;
+    --hot: #ff6b6b;
+    --weekend: rgba(255,255,255,0.025);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .wrap {
+    max-width: 1340px;
+    margin: 0 auto;
+    padding: 32px 28px 80px;
+  }
+
+  /* Header */
+  header {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 36px;
+    align-items: end;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 500;
+    font-size: 34px;
+    letter-spacing: -0.5px;
+    margin: 0;
+  }
+  header h1 b {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  header .sub {
+    color: var(--dim);
+    margin-top: 6px;
+    font-size: 13px;
+    font-family: "IBM Plex Mono", monospace;
+  }
+  header .meta {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    text-align: right;
+  }
+  header .meta .num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 22px;
+    color: var(--fg);
+    font-weight: 500;
+  }
+  header .meta .label {
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 2px;
+  }
+
+  /* Day-axis ridge — a sparkline of total distance per day */
+  .ridge {
+    margin-bottom: 6px;
+    display: grid;
+    grid-template-columns: 220px 1fr 110px;
+    gap: 12px;
+    align-items: end;
+  }
+  .ridge .label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+  .ridge .bars {
+    display: grid;
+    grid-template-columns: repeat(31, 1fr);
+    gap: 2px;
+    height: 56px;
+    align-items: end;
+  }
+  .ridge .bars i {
+    display: block;
+    background: linear-gradient(180deg, var(--accent-2), var(--accent));
+    border-radius: 1px;
+    opacity: 0.85;
+  }
+  .ridge .legend {
+    color: var(--muted);
+    font-size: 10px;
+    text-align: right;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+  }
+
+  /* Day axis */
+  .axis {
+    display: grid;
+    grid-template-columns: 220px 1fr 110px;
+    gap: 12px;
+    align-items: center;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 6px 0;
+    margin-bottom: 4px;
+    color: var(--muted);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+  }
+  .axis .days {
+    display: grid;
+    grid-template-columns: repeat(31, 1fr);
+    gap: 2px;
+    text-align: center;
+  }
+  .axis .days span { padding: 0; }
+  .axis .days span.we { color: var(--accent); }
+
+  /* Rider rows */
+  .row {
+    display: grid;
+    grid-template-columns: 220px 1fr 110px;
+    gap: 12px;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .row:hover { background: rgba(57,217,138,0.03); }
+  .row .who {
+    display: flex; align-items: center; gap: 10px;
+    font-family: "IBM Plex Sans", sans-serif;
+  }
+  .row .who .rank {
+    font-family: "IBM Plex Mono", monospace;
+    color: var(--muted);
+    font-size: 11px;
+    width: 22px; text-align: right;
+  }
+  .row .who .avatar {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #1a7a52);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--bg);
+    font-weight: 700;
+    font-size: 11px;
+    font-family: "IBM Plex Mono", monospace;
+    flex-shrink: 0;
+  }
+  .row .who .name { color: var(--fg); font-weight: 500; }
+  .row .who .handle { color: var(--muted); font-size: 11px; font-family: "IBM Plex Mono", monospace; display: block; margin-top: 1px; }
+
+  .row .punchcard {
+    display: grid;
+    grid-template-columns: repeat(31, 1fr);
+    gap: 2px;
+    height: 28px;
+  }
+  .row .punchcard .cell {
+    background: var(--surface);
+    border-radius: 2px;
+    position: relative;
+  }
+  .row .punchcard .cell.we { background: var(--weekend); border: 1px dotted rgba(255,255,255,0.06); }
+  .row .punchcard .cell[data-l="1"] { background: rgba(57,217,138,0.18); }
+  .row .punchcard .cell[data-l="2"] { background: rgba(57,217,138,0.36); }
+  .row .punchcard .cell[data-l="3"] { background: rgba(57,217,138,0.6); }
+  .row .punchcard .cell[data-l="4"] {
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(57,217,138,0.55);
+  }
+  .row .punchcard .cell[data-l="5"] {
+    background: var(--accent-2);
+    box-shadow: 0 0 12px rgba(101,240,169,0.7);
+  }
+  .row .punchcard .cell[data-disq="1"]::after {
+    content: "";
+    position: absolute; left: 50%; top: 50%;
+    width: 6px; height: 6px;
+    background: var(--hot);
+    border-radius: 50%;
+    transform: translate(-50%,-50%);
+  }
+
+  .row .totals {
+    text-align: right;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--dim);
+  }
+  .row .totals .big {
+    color: var(--fg);
+    font-size: 18px;
+    font-weight: 500;
+  }
+  .row .totals .big b {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* Streak indicator overlay row */
+  .row .streak {
+    margin-top: 4px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, transparent);
+    grid-column: 2;
+  }
+
+  /* Footer panels */
+  .panels {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 18px;
+    margin-top: 30px;
+  }
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px 20px;
+  }
+  .panel h3 {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 500;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    margin: 0 0 14px;
+  }
+  .panel ul {
+    list-style: none; padding: 0; margin: 0;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--dim);
+  }
+  .panel ul li {
+    display: flex; justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .panel ul li b { color: var(--fg); font-weight: 500; }
+  .panel ul li:last-child { border-bottom: none; }
+
+  .legend-block {
+    display: flex; align-items: center; gap: 6px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .12em;
+  }
+  .legend-block .scale {
+    display: inline-grid;
+    grid-template-columns: repeat(6, 12px);
+    gap: 2px;
+  }
+  .legend-block .scale i { display: block; height: 12px; border-radius: 2px; }
+  .legend-block .scale i:nth-child(1) { background: var(--surface); }
+  .legend-block .scale i:nth-child(2) { background: rgba(57,217,138,0.18); }
+  .legend-block .scale i:nth-child(3) { background: rgba(57,217,138,0.36); }
+  .legend-block .scale i:nth-child(4) { background: rgba(57,217,138,0.6); }
+  .legend-block .scale i:nth-child(5) { background: var(--accent); }
+  .legend-block .scale i:nth-child(6) { background: var(--accent-2); }
+
+  .footer {
+    display: flex; justify-content: space-between;
+    margin-top: 26px;
+    color: var(--muted);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+
+  .pulse {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin-right: 6px;
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { transform: scale(1); opacity: 1; }
+    50%    { transform: scale(1.6); opacity: .55; }
+  }
+
+  /* Strip showing rider's longest streak as a thin connecting line above row */
+  .row .streak-bar {
+    grid-column: 2;
+    margin-top: -3px;
+    height: 2px;
+    display: grid;
+    grid-template-columns: repeat(31, 1fr);
+    gap: 2px;
+  }
+  .row .streak-bar i {
+    background: transparent;
+  }
+  .row .streak-bar i.on {
+    background: var(--accent);
+    opacity: .55;
+  }
+
+  .km-toggle {
+    color: var(--accent);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <h1>MIBM/<b>2024</b> · punchcard</h1>
+    <div class="sub">31 days · 12 riders · one column = one day · brightness = miles ridden</div>
+  </div>
+  <div class="meta">
+    <div>
+      <div class="num">12</div>
+      <div class="label">Riders</div>
+    </div>
+    <div>
+      <div class="num">253</div>
+      <div class="label">Ride Days</div>
+    </div>
+    <div>
+      <div class="num">3,326</div>
+      <div class="label">Total Miles</div>
+    </div>
+    <div>
+      <div class="num">28</div>
+      <div class="label">Top Streak</div>
+    </div>
+  </div>
+</header>
+
+<!-- Daily total ridge -->
+<div class="ridge">
+  <div class="label">↑ Daily total · all riders</div>
+  <div class="bars">
+    <i style="height:42%"></i><i style="height:50%"></i><i style="height:55%"></i>
+    <i style="height:30%"></i><i style="height:88%"></i><i style="height:48%"></i>
+    <i style="height:52%"></i><i style="height:38%"></i><i style="height:64%"></i>
+    <i style="height:54%"></i><i style="height:62%"></i><i style="height:96%"></i>
+    <i style="height:34%"></i><i style="height:50%"></i><i style="height:48%"></i>
+    <i style="height:52%"></i><i style="height:60%"></i><i style="height:28%"></i>
+    <i style="height:100%"></i><i style="height:46%"></i><i style="height:50%"></i>
+    <i style="height:58%"></i><i style="height:54%"></i><i style="height:32%"></i>
+    <i style="height:92%"></i><i style="height:50%"></i><i style="height:60%"></i>
+    <i style="height:54%"></i><i style="height:48%"></i><i style="height:56%"></i>
+    <i style="height:78%"></i>
+  </div>
+  <div class="legend">peaks · sat/sun</div>
+</div>
+
+<!-- Day axis -->
+<div class="axis">
+  <div>↓ rider</div>
+  <div class="days">
+    <span>1</span><span>2</span><span>3</span><span class="we">4</span><span class="we">5</span>
+    <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span class="we">11</span><span class="we">12</span>
+    <span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span class="we">18</span><span class="we">19</span>
+    <span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span class="we">25</span><span class="we">26</span>
+    <span>27</span><span>28</span><span>29</span><span>30</span><span>31</span>
+  </div>
+  <div style="text-align:right;">days · score →</div>
+</div>
+
+<!-- ======= ROWS ======= -->
+
+<!-- Sarah Johnson — perfect 28/31, 3 rest days -->
+<div class="row">
+  <div class="who">
+    <span class="rank">01</span>
+    <span class="avatar">SJ</span>
+    <div>
+      <div class="name">Sarah Johnson <span class="pulse"></span></div>
+      <span class="handle">@sarah-j-cycling</span>
+    </div>
+  </div>
+  <div class="punchcard">
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell we"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell we"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+  </div>
+  <div class="totals"><span class="big"><b>28</b><span style="opacity:.4">/31</span></span><br>412.5 mi · 18.4k ft</div>
+</div>
+
+<!-- Marcus Chen — 27 -->
+<div class="row">
+  <div class="who">
+    <span class="rank">02</span>
+    <span class="avatar" style="background:linear-gradient(135deg,#65f0a9,#0d6840);">MC</span>
+    <div>
+      <div class="name">Marcus Chen</div>
+      <span class="handle">@marcus_pedals</span>
+    </div>
+  </div>
+  <div class="punchcard">
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+  </div>
+  <div class="totals"><span class="big"><b>27</b><span style="opacity:.4">/31</span></span><br>389.2 mi · 22.1k ft</div>
+</div>
+
+<!-- Jessica Rodriguez — 26 -->
+<div class="row">
+  <div class="who">
+    <span class="rank">03</span>
+    <span class="avatar" style="background:linear-gradient(135deg,#39d98a,#114a31);">JR</span>
+    <div>
+      <div class="name">Jessica Rodriguez</div>
+      <span class="handle">@jess.rodz</span>
+    </div>
+  </div>
+  <div class="punchcard">
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="3"></span>
+  </div>
+  <div class="totals"><span class="big"><b>26</b><span style="opacity:.4">/31</span></span><br>376.8 mi · 14.2k ft</div>
+</div>
+
+<!-- David Kim — 25, climber, big mileage -->
+<div class="row">
+  <div class="who">
+    <span class="rank">04</span>
+    <span class="avatar" style="background:linear-gradient(135deg,#ffb84a,#7a4a00);">DK</span>
+    <div>
+      <div class="name">David Kim</div>
+      <span class="handle">@dkim_bikes</span>
+    </div>
+  </div>
+  <div class="punchcard">
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="3"></span>
+  </div>
+  <div class="totals"><span class="big"><b>25</b><span style="opacity:.4">/31</span></span><br><b style="color:var(--accent)">425.1 mi</b> · 19.6k ft</div>
+</div>
+
+<!-- Priya Patel — 24, weekend warrior -->
+<div class="row">
+  <div class="who">
+    <span class="rank">05</span>
+    <span class="avatar" style="background:linear-gradient(135deg,#39d98a,#1a7a52);">PP</span>
+    <div>
+      <div class="name">Priya Patel</div>
+      <span class="handle">@priya_velo</span>
+    </div>
+  </div>
+  <div class="punchcard">
+    <span class="cell" data-l="1"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="1"></span>
+  </div>
+  <div class="totals"><span class="big"><b>24</b><span style="opacity:.4">/31</span></span><br>298.4 mi · 11.3k ft</div>
+</div>
+
+<!-- Tom Whitfield — 23 -->
+<div class="row">
+  <div class="who">
+    <span class="rank">06</span>
+    <span class="avatar" style="background:linear-gradient(135deg,#65f0a9,#3a8a5a);">TW</span>
+    <div>
+      <div class="name">Tom Whitfield</div>
+      <span class="handle">@tomwhit</span>
+    </div>
+  </div>
+  <div class="punchcard">
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="3"></span>
+  </div>
+  <div class="totals"><span class="big"><b>23</b><span style="opacity:.4">/31</span></span><br>312.9 mi · 16.8k ft</div>
+</div>
+
+<!-- Aisha Williams — 22 -->
+<div class="row">
+  <div class="who">
+    <span class="rank">07</span>
+    <span class="avatar" style="background:linear-gradient(135deg,#39d98a,#0a543a);">AW</span>
+    <div>
+      <div class="name">Aisha Williams</div>
+      <span class="handle">@aisha_rides</span>
+    </div>
+  </div>
+  <div class="punchcard">
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+  </div>
+  <div class="totals"><span class="big"><b>22</b><span style="opacity:.4">/31</span></span><br>287.6 mi · 9.4k ft</div>
+</div>
+
+<!-- Ben O'Connor — 20 -->
+<div class="row">
+  <div class="who">
+    <span class="rank">08</span>
+    <span class="avatar" style="background:linear-gradient(135deg,#65f0a9,#205c45);">BO</span>
+    <div>
+      <div class="name">Ben O'Connor</div>
+      <span class="handle">@benoc</span>
+    </div>
+  </div>
+  <div class="punchcard">
+    <span class="cell" data="1" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="1"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+  </div>
+  <div class="totals"><span class="big"><b>20</b><span style="opacity:.4">/31</span></span><br>256.3 mi · 8.2k ft</div>
+</div>
+
+<!-- Lin Zhao — 19, climber -->
+<div class="row">
+  <div class="who">
+    <span class="rank">09</span>
+    <span class="avatar" style="background:linear-gradient(135deg,#39d98a,#0a3a26);">LZ</span>
+    <div>
+      <div class="name">Lin Zhao</div>
+      <span class="handle">@lin.zhao</span>
+    </div>
+  </div>
+  <div class="punchcard">
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell we" data-l="4"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell"></span>
+    <span class="cell we" data-l="5"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+  </div>
+  <div class="totals"><span class="big"><b>19</b><span style="opacity:.4">/31</span></span><br>224.7 mi · 13.5k ft</div>
+</div>
+
+<!-- Carlos Mendes — 18 -->
+<div class="row">
+  <div class="who">
+    <span class="rank">10</span>
+    <span class="avatar" style="background:linear-gradient(135deg,#65f0a9,#0a4530);">CM</span>
+    <div>
+      <div class="name">Carlos Mendes</div>
+      <span class="handle">@carlos_m</span>
+    </div>
+  </div>
+  <div class="punchcard">
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell" data-l="2"></span>
+  </div>
+  <div class="totals"><span class="big"><b>18</b><span style="opacity:.4">/31</span></span><br>198.5 mi · 7.8k ft</div>
+</div>
+
+<!-- Hannah Berg — 16 -->
+<div class="row">
+  <div class="who">
+    <span class="rank">11</span>
+    <span class="avatar" style="background:linear-gradient(135deg,#ffb84a,#5a3000);">HB</span>
+    <div>
+      <div class="name">Hannah Berg</div>
+      <span class="handle">@hberg</span>
+    </div>
+  </div>
+  <div class="punchcard">
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2" data-disq="1" title="manual entry, late submission"></span>
+  </div>
+  <div class="totals"><span class="big"><b>16</b><span style="opacity:.4">/31</span></span><br>178.2 mi · 6.2k ft</div>
+</div>
+
+<!-- Yuki Tanaka — 15 -->
+<div class="row">
+  <div class="who">
+    <span class="rank">12</span>
+    <span class="avatar" style="background:linear-gradient(135deg,#39d98a,#0e3525);">YT</span>
+    <div>
+      <div class="name">Yuki Tanaka</div>
+      <span class="handle">@yukit</span>
+    </div>
+  </div>
+  <div class="punchcard">
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell we" data-l="3"></span>
+    <span class="cell we" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+    <span class="cell"></span>
+    <span class="cell"></span>
+    <span class="cell" data-l="2"></span>
+  </div>
+  <div class="totals"><span class="big"><b>15</b><span style="opacity:.4">/31</span></span><br>165.8 mi · 5.9k ft</div>
+</div>
+
+<!-- Footer panels -->
+<div class="panels">
+  <div class="panel">
+    <h3>Field summary</h3>
+    <ul>
+      <li><span>Total ride-days logged</span><b>253</b></li>
+      <li><span>Median days / rider</span><b>22</b></li>
+      <li><span>Total distance</span><b>3,326.0 mi</b></li>
+      <li><span>Total elevation</span><b>153,510 ft</b></li>
+      <li><span>Manual entries flagged</span><b>3 · 1 late</b></li>
+      <li><span>Most-ridden day</span><b>Sun May 19 — 11/12 riders</b></li>
+      <li><span>Quietest day</span><b>Sat May 18 — 4/12 riders</b></li>
+    </ul>
+  </div>
+  <div class="panel">
+    <h3>Special jerseys</h3>
+    <ul>
+      <li><span>Yellow · most days</span><b>S. Johnson · 28</b></li>
+      <li><span>Green · most distance</span><b>D. Kim · 425.1 mi</b></li>
+      <li><span>Polka · most elevation</span><b>M. Chen · 22,140 ft</b></li>
+      <li><span>White · best newcomer</span><b>P. Patel · 24 days</b></li>
+      <li><span>Lanterne rouge</span><b>Y. Tanaka · 15 days</b></li>
+    </ul>
+  </div>
+  <div class="panel">
+    <h3>Rules</h3>
+    <ul>
+      <li><span>Win condition</span><b>most days</b></li>
+      <li><span>Tiebreaker</span><b>total distance</b></li>
+      <li><span>Min / day</span><b>2 mi · 3.2 km</b></li>
+      <li><span>Activities</span><b>Ride · EBikeRide</b></li>
+      <li><span>Period</span><b>May 1 → May 31, 2024</b></li>
+    </ul>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="legend-block">
+    less
+    <span class="scale"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+    more &nbsp; · &nbsp; <span style="color:var(--hot)">●</span> manual / late
+  </div>
+  <div>
+    updated 2024-05-31 23:58 PDT &nbsp; · &nbsp;
+    <a href="#">2023</a> · <a href="#">2022</a> · <a href="#">2021</a>
+    &nbsp; · &nbsp; <span class="km-toggle">[ switch to km ]</span>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

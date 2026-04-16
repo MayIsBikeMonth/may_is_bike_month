@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MIBM 2024 :: tty</title>
+<style>
+  :root {
+    --bg: #0a0e0a;
+    --fg: #7cf57c;
+    --dim: #3a8a3a;
+    --warn: #ffcc33;
+    --bad:  #ff5577;
+    --link: #66e2ff;
+    --grid: #143014;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "JetBrains Mono", "SF Mono", "Menlo", monospace;
+    font-size: 13px;
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.18) 3px
+    );
+    mix-blend-mode: multiply;
+    z-index: 50;
+  }
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 180px 30px rgba(0,0,0,0.85);
+    z-index: 49;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 22px 80px; }
+  pre.banner {
+    color: var(--fg);
+    font-size: 12px;
+    line-height: 1.05;
+    margin: 0 0 18px;
+    text-shadow: 0 0 6px rgba(124,245,124,0.35);
+    overflow-x: auto;
+  }
+  .prompt { color: var(--dim); }
+  .cmd { color: #e7ffe7; }
+  .meta { color: var(--dim); }
+  .row-cmd { margin: 18px 0 6px; }
+  .ok { color: var(--fg); }
+  .warn { color: var(--warn); }
+  .bad { color: var(--bad); }
+  a { color: var(--link); text-decoration: underline; text-decoration-style: dotted; }
+
+  table.tty {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 6px 0 22px;
+  }
+  table.tty th, table.tty td {
+    text-align: left;
+    padding: 2px 10px 2px 0;
+    white-space: nowrap;
+    vertical-align: top;
+  }
+  table.tty th {
+    color: var(--dim);
+    font-weight: normal;
+    border-bottom: 1px dashed var(--grid);
+  }
+  table.tty td.r { text-align: right; }
+  .bar {
+    display: inline-block;
+    height: 9px;
+    background: var(--fg);
+    box-shadow: 0 0 4px rgba(124,245,124,0.6);
+    vertical-align: middle;
+  }
+  .bar.dim { background: var(--dim); box-shadow: none; }
+  .pill {
+    display: inline-block;
+    padding: 0 6px;
+    border: 1px solid var(--dim);
+    color: var(--fg);
+  }
+  .cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--fg);
+    margin-left: 4px;
+    vertical-align: middle;
+    animation: blink 1.05s steps(2,end) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  details.activity {
+    margin: 4px 0 4px 24px;
+    color: var(--dim);
+  }
+  details.activity > summary {
+    cursor: pointer;
+    list-style: none;
+    color: var(--link);
+  }
+  details.activity > summary::before { content: "└─ "; color: var(--dim); }
+  details[open].activity > summary::before { content: "└┬ "; }
+  details.activity ul { margin: 4px 0 4px 22px; padding: 0; list-style: none; }
+  details.activity li::before { content: "·  "; color: var(--dim); }
+
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(31, 14px);
+    gap: 2px;
+    margin: 4px 0 14px 0;
+  }
+  .calendar i {
+    display: block; width: 14px; height: 14px;
+    background: var(--grid);
+  }
+  .calendar i[data-l="1"] { background: #1a4a1a; }
+  .calendar i[data-l="2"] { background: #2a7a2a; }
+  .calendar i[data-l="3"] { background: #46c046; }
+  .calendar i[data-l="4"] { background: #7cf57c; box-shadow: 0 0 6px rgba(124,245,124,0.7); }
+  .calendar i[data-l="0"] { background: var(--grid); }
+
+  .rule { color: var(--dim); margin: 0; user-select: none; }
+  .swatch { display: inline-block; width: 10px; height: 10px; vertical-align: middle; margin-right: 4px; }
+
+  .footer-cmd { margin-top: 28px; color: var(--dim); }
+  .blink-bg { animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .55; } }
+
+  .crown { color: var(--warn); }
+  .silver { color: #d6d6d6; }
+  .bronze { color: #d49a5b; }
+
+  ::selection { background: var(--fg); color: #0a0e0a; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<pre class="banner">
+ ███╗   ███╗ █████╗ ██╗   ██╗    ██╗███████╗    ██████╗ ██╗██╗  ██╗███████╗
+ ████╗ ████║██╔══██╗╚██╗ ██╔╝    ██║██╔════╝    ██╔══██╗██║██║ ██╔╝██╔════╝
+ ██╔████╔██║███████║ ╚████╔╝     ██║███████╗    ██████╔╝██║█████╔╝ █████╗
+ ██║╚██╔╝██║██╔══██║  ╚██╔╝ ██   ██║╚════██║    ██╔══██╗██║██╔═██╗ ██╔══╝
+ ██║ ╚═╝ ██║██║  ██║   ██║  ╚█████╔╝███████║    ██████╔╝██║██║  ██╗███████╗
+ ╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚════╝ ╚══════╝    ╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+                              · M O N T H   2 0 2 4 ·
+</pre>
+
+<div class="meta">
+  <span class="prompt">mibm@strava</span><span>:</span><span style="color:#88aaee">~/competitions/2024</span><span>$</span>
+  <span class="cmd">whoami &amp;&amp; uname -a</span><br>
+  seth · MIBM-Linux 6.5.0-bike #1 SMP PREEMPT Thu May 02 13:42:00 PDT 2024 x86_64 GNU/Bicycle<br><br>
+
+  <span class="prompt">mibm@strava</span>:<span style="color:#88aaee">~/competitions/2024</span>$
+  <span class="cmd">cat rules.txt</span>
+</div>
+<pre class="rule">
+  [1] winner == person who rides the most days in May
+  [2] ties broken by total_distance DESC
+  [3] min_distance_per_day = 2 mi (3.2 km)
+  [4] activity_types in {Ride, EBikeRide}
+</pre>
+
+<div class="row-cmd meta">
+  <span class="prompt">mibm@strava</span>:<span style="color:#88aaee">~/competitions/2024</span>$
+  <span class="cmd">./leaderboard --sort score --limit 12 --bars</span>
+</div>
+
+<table class="tty" id="board">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>handle</th>
+      <th>name</th>
+      <th class="r">score</th>
+      <th class="r">days</th>
+      <th class="r">dist&nbsp;mi</th>
+      <th class="r">elev&nbsp;ft</th>
+      <th>relative</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="crown">01</td>
+      <td><a>@sarah-j-cycling</a></td>
+      <td>Sarah Johnson</td>
+      <td class="r">28.412</td>
+      <td class="r">28</td>
+      <td class="r">412.5</td>
+      <td class="r">18,420</td>
+      <td><span class="bar" style="width:240px"></span></td>
+    </tr>
+    <tr>
+      <td class="silver">02</td>
+      <td><a>@marcus_pedals</a></td>
+      <td>Marcus Chen</td>
+      <td class="r">27.389</td>
+      <td class="r">27</td>
+      <td class="r">389.2</td>
+      <td class="r">22,140</td>
+      <td><span class="bar" style="width:226px"></span></td>
+    </tr>
+    <tr>
+      <td class="bronze">03</td>
+      <td><a>@jess.rodz</a></td>
+      <td>Jessica Rodriguez</td>
+      <td class="r">26.376</td>
+      <td class="r">26</td>
+      <td class="r">376.8</td>
+      <td class="r">14,200</td>
+      <td><span class="bar" style="width:218px"></span></td>
+    </tr>
+    <tr>
+      <td>04</td>
+      <td><a>@dkim_bikes</a></td>
+      <td>David Kim</td>
+      <td class="r">25.425</td>
+      <td class="r">25</td>
+      <td class="r">425.1</td>
+      <td class="r">19,650</td>
+      <td><span class="bar" style="width:209px"></span></td>
+    </tr>
+    <tr>
+      <td>05</td>
+      <td><a>@priya_velo</a></td>
+      <td>Priya Patel</td>
+      <td class="r">24.298</td>
+      <td class="r">24</td>
+      <td class="r">298.4</td>
+      <td class="r">11,300</td>
+      <td><span class="bar" style="width:200px"></span></td>
+    </tr>
+    <tr>
+      <td>06</td>
+      <td><a>@tomwhit</a></td>
+      <td>Tom Whitfield</td>
+      <td class="r">23.312</td>
+      <td class="r">23</td>
+      <td class="r">312.9</td>
+      <td class="r">16,800</td>
+      <td><span class="bar" style="width:191px"></span></td>
+    </tr>
+    <tr>
+      <td>07</td>
+      <td><a>@aisha_rides</a></td>
+      <td>Aisha Williams</td>
+      <td class="r">22.287</td>
+      <td class="r">22</td>
+      <td class="r">287.6</td>
+      <td class="r">9,400</td>
+      <td><span class="bar" style="width:182px"></span></td>
+    </tr>
+    <tr>
+      <td>08</td>
+      <td><a>@benoc</a></td>
+      <td>Ben O'Connor</td>
+      <td class="r">20.256</td>
+      <td class="r">20</td>
+      <td class="r">256.3</td>
+      <td class="r">8,200</td>
+      <td><span class="bar dim" style="width:166px"></span></td>
+    </tr>
+    <tr>
+      <td>09</td>
+      <td><a>@lin.zhao</a></td>
+      <td>Lin Zhao</td>
+      <td class="r">19.224</td>
+      <td class="r">19</td>
+      <td class="r">224.7</td>
+      <td class="r">13,500</td>
+      <td><span class="bar dim" style="width:158px"></span></td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td><a>@carlos_m</a></td>
+      <td>Carlos Mendes</td>
+      <td class="r">18.198</td>
+      <td class="r">18</td>
+      <td class="r">198.5</td>
+      <td class="r">7,800</td>
+      <td><span class="bar dim" style="width:150px"></span></td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td><a>@hberg</a></td>
+      <td>Hannah Berg</td>
+      <td class="r">16.178</td>
+      <td class="r">16</td>
+      <td class="r">178.2</td>
+      <td class="r">6,200</td>
+      <td><span class="bar dim" style="width:133px"></span></td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td><a>@yukit</a></td>
+      <td>Yuki Tanaka</td>
+      <td class="r">15.165</td>
+      <td class="r">15</td>
+      <td class="r">165.8</td>
+      <td class="r">5,900</td>
+      <td><span class="bar dim" style="width:125px"></span></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="row-cmd meta">
+  <span class="prompt">mibm@strava</span>:<span style="color:#88aaee">~/competitions/2024</span>$
+  <span class="cmd">./leaderboard --inspect sarah-j-cycling --calendar --activities</span>
+</div>
+
+<div style="margin-top:6px;">
+  <span class="meta">cal --user @sarah-j-cycling --month 2024-05 --legend</span><br>
+  <span class="meta" style="font-size:11px;">
+    <span class="swatch" style="background:#143014"></span>0
+    <span class="swatch" style="background:#1a4a1a"></span>1
+    <span class="swatch" style="background:#2a7a2a"></span>2
+    <span class="swatch" style="background:#46c046"></span>3
+    <span class="swatch" style="background:#7cf57c"></span>4+ rides
+  </span>
+  <div class="calendar" aria-label="May 2024 ride calendar for sarah-j-cycling">
+    <i data-l="2" title="May 1: 12.3mi"></i>
+    <i data-l="2" title="May 2: 11.5mi"></i>
+    <i data-l="3" title="May 3: 18.0mi"></i>
+    <i data-l="0" title="May 4: rest"></i>
+    <i data-l="4" title="May 5: 38.4mi (long)"></i>
+    <i data-l="2" title="May 6: 9.0mi"></i>
+    <i data-l="2" title="May 7: 10.4mi"></i>
+    <i data-l="1" title="May 8: 6.0mi"></i>
+    <i data-l="3" title="May 9: 22.5mi"></i>
+    <i data-l="2" title="May 10: 13.1mi"></i>
+    <i data-l="3" title="May 11: 19.7mi"></i>
+    <i data-l="4" title="May 12: 41.2mi (long)"></i>
+    <i data-l="1" title="May 13: 5.5mi"></i>
+    <i data-l="2" title="May 14: 12.8mi"></i>
+    <i data-l="2" title="May 15: 11.0mi"></i>
+    <i data-l="2" title="May 16: 14.4mi"></i>
+    <i data-l="3" title="May 17: 21.0mi"></i>
+    <i data-l="0" title="May 18: rest"></i>
+    <i data-l="4" title="May 19: 44.0mi (long)"></i>
+    <i data-l="2" title="May 20: 9.8mi"></i>
+    <i data-l="2" title="May 21: 12.1mi"></i>
+    <i data-l="3" title="May 22: 17.6mi"></i>
+    <i data-l="2" title="May 23: 13.3mi"></i>
+    <i data-l="0" title="May 24: rest"></i>
+    <i data-l="4" title="May 25: 39.5mi (long)"></i>
+    <i data-l="2" title="May 26: 11.0mi"></i>
+    <i data-l="3" title="May 27: 18.4mi"></i>
+    <i data-l="2" title="May 28: 13.8mi"></i>
+    <i data-l="2" title="May 29: 10.2mi"></i>
+    <i data-l="2" title="May 30: 14.1mi"></i>
+    <i data-l="3" title="May 31: 20.0mi"></i>
+  </div>
+</div>
+
+<details class="activity">
+  <summary>tail -n 6 ./activities/@sarah-j-cycling.log</summary>
+  <ul>
+    <li>2024-05-31 06:42  "Final-day FastDown" Ride 20.0mi  +850ft  <a>strava/11119921</a></li>
+    <li>2024-05-30 17:15  "Commute home"      Ride 14.1mi  +320ft  <a>strava/11118842</a></li>
+    <li>2024-05-29 07:55  "Pre-work loop"     EBikeRide 10.2mi +180ft <a>strava/11117750</a></li>
+    <li>2024-05-28 18:01  "Hill repeats"      Ride 13.8mi  +1,140ft <a>strava/11116309</a></li>
+    <li>2024-05-27 09:33  "Sunday spin"       Ride 18.4mi  +560ft  <a>strava/11115201</a></li>
+    <li>2024-05-25 08:14  "May Long #4"       Ride 39.5mi  +2,210ft <a>strava/11113884</a></li>
+  </ul>
+</details>
+
+<div class="row-cmd meta">
+  <span class="prompt">mibm@strava</span>:<span style="color:#88aaee">~/competitions/2024</span>$
+  <span class="cmd">grep -c "manual_entry=true" ./activities/*.log</span><br>
+  <span class="ok">./activities/@dkim_bikes.log:2</span><br>
+  <span class="warn">./activities/@hberg.log:1   # entered_after_competition_ended</span>
+</div>
+
+<div class="row-cmd meta">
+  <span class="prompt">mibm@strava</span>:<span style="color:#88aaee">~/competitions/2024</span>$
+  <span class="cmd">stat strava_requests | head -1</span><br>
+  most_recent_update <span class="ok blink-bg">2024-05-31 23:58:14 PDT</span>  · ttl 4m 12s
+</div>
+
+<div class="footer-cmd meta">
+  <span class="prompt">mibm@strava</span>:<span style="color:#88aaee">~/competitions/2024</span>$
+  <span class="cmd">history | grep "previous"</span><br>
+  → <a>./competitions/2023</a> · <a>./competitions/2022</a> · <a>./competitions/2021</a><br><br>
+  <span class="prompt">mibm@strava</span>:<span style="color:#88aaee">~/competitions/2024</span>$
+  <span class="cursor"></span>
+</div>
+
+</div>
+</body>
+</html>

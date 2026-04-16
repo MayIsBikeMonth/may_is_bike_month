@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MIBM 2024 — Stage Map</title>
+<style>
+  :root {
+    --road: #1f1f24;
+    --road-line: #f5d142;
+    --paper: #fbf6ec;
+    --ink: #181820;
+    --grass: #cfe6b8;
+    --mountain: #6c4b32;
+    --mountain-snow: #efe6da;
+    --hot: #e84a4a;
+    --jersey-yellow: #ffd23a;
+    --jersey-polka: #ffe6ea;
+    --jersey-green: #4ec27a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); font-family: "Inter", "Helvetica Neue", system-ui, sans-serif; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 28px 24px 80px; }
+  header { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 18px; }
+  h1 { font-family: "Anton", "Oswald", "Arial Narrow", sans-serif; font-size: 64px; line-height: 0.92; letter-spacing: -1.5px; margin: 0; text-transform: uppercase; }
+  h1 small { display: block; font-size: 16px; letter-spacing: 0.4em; color: #777; font-family: "Inter", sans-serif; font-weight: 600; margin-bottom: 8px; }
+  .legend { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; font-size: 12px; }
+  .swatch { display: inline-flex; align-items: center; gap: 6px; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); display: inline-block; }
+  .dot.y { background: var(--jersey-yellow); }
+  .dot.g { background: var(--jersey-green); }
+  .dot.p { background: white; background-image: radial-gradient(var(--hot) 30%, transparent 32%); background-size: 6px 6px; }
+  .dot.w { background: white; }
+
+  /* THE STAGE MAP */
+  .stage {
+    position: relative;
+    background: linear-gradient(to bottom, #d6ecff 0%, #d6ecff 35%, var(--grass) 35%, var(--grass) 100%);
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    padding: 30px 0 60px;
+    overflow: hidden;
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+  .clouds {
+    position: absolute; left: 0; right: 0; top: 12px; height: 60px;
+    pointer-events: none;
+  }
+  .clouds span {
+    position: absolute; background: white; border-radius: 50%; opacity: .9;
+  }
+
+  .mountains {
+    position: absolute; left: 0; right: 0; top: 70px; height: 110px;
+    pointer-events: none;
+  }
+  .peak {
+    position: absolute; bottom: 0;
+    width: 0; height: 0;
+    border-left: 80px solid transparent;
+    border-right: 80px solid transparent;
+    border-bottom: 110px solid var(--mountain);
+  }
+  .peak::after {
+    content: "";
+    position: absolute;
+    bottom: 60px;
+    left: -32px;
+    width: 64px; height: 50px;
+    background: var(--mountain-snow);
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+
+  .road {
+    position: relative;
+    height: 70px;
+    margin: 200px 60px 0;
+    background: var(--road);
+    border-radius: 10px;
+    box-shadow: 0 6px 0 #0c0c10;
+  }
+  .road::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(to right,
+      var(--road-line) 0 28px,
+      transparent 28px 56px);
+    background-position: 0 50%;
+    background-size: 100% 4px;
+    background-repeat: no-repeat;
+    top: 50%;
+    height: 4px;
+    transform: translateY(-50%);
+  }
+
+  /* km markers */
+  .markers {
+    position: absolute; left: 0; right: 0; top: -22px; height: 22px;
+  }
+  .markers .km {
+    position: absolute;
+    transform: translateX(-50%);
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+    background: var(--ink);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+  .markers .km::after {
+    content: "";
+    position: absolute; left: 50%; top: 100%;
+    width: 2px; height: 22px; background: var(--ink);
+    transform: translateX(-50%);
+  }
+  .markers .km.king { background: var(--hot); }
+
+  /* riders */
+  .rider {
+    position: absolute;
+    bottom: 8px;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+  .rider .bubble {
+    position: relative;
+    width: 64px; height: 56px;
+    margin: 0 auto;
+  }
+  .rider .jersey {
+    position: absolute; left: 50%; top: 0;
+    transform: translateX(-50%);
+    width: 38px; height: 38px;
+    border-radius: 50% 50% 40% 40%;
+    border: 2px solid var(--ink);
+    background: var(--jersey-yellow);
+    z-index: 2;
+  }
+  .rider .jersey.green  { background: var(--jersey-green); }
+  .rider .jersey.polka  {
+    background: white;
+    background-image: radial-gradient(var(--hot) 30%, transparent 32%);
+    background-size: 8px 8px;
+  }
+  .rider .jersey.white  { background: white; }
+  .rider .wheel {
+    position: absolute; bottom: -2px;
+    width: 16px; height: 16px;
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+    background: #555;
+  }
+  .rider .wheel.l { left: 6px; }
+  .rider .wheel.r { right: 6px; }
+  .rider .num {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    font-family: "Anton", sans-serif;
+    font-size: 14px; color: var(--ink);
+    z-index: 3;
+  }
+  .rider .name {
+    margin-top: 8px;
+    background: white;
+    border: 2px solid var(--ink);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 2px 2px 0 var(--ink);
+    display: inline-block;
+  }
+  .rider .stat {
+    margin-top: 4px;
+    font-size: 10px;
+    color: #444;
+    font-variant-numeric: tabular-nums;
+  }
+  .rider.lead { z-index: 5; }
+  .rider.lead .name { background: var(--jersey-yellow); }
+
+  /* finish line flag */
+  .finish {
+    position: absolute; right: -20px; top: -90px;
+    width: 24px; height: 130px;
+    background: var(--ink);
+  }
+  .finish::after {
+    content: "";
+    position: absolute; left: 24px; top: 0;
+    width: 60px; height: 60px;
+    background:
+      conic-gradient(from 0deg, white 0 25%, black 0 50%, white 0 75%, black 0 100%);
+    background-size: 16px 16px;
+    border: 2px solid var(--ink);
+  }
+  .start {
+    position: absolute; left: -20px; top: -90px;
+    width: 24px; height: 130px;
+    background: var(--ink);
+  }
+  .start::after {
+    content: "MAY 1";
+    position: absolute; left: -10px; top: -22px;
+    font-family: "Anton", sans-serif;
+    font-size: 14px; letter-spacing: 1px;
+  }
+
+  .route-meta {
+    display: flex; justify-content: space-between;
+    padding: 0 60px;
+    margin-top: 18px;
+    font-size: 12px; color: #555;
+    font-family: "Inter", sans-serif;
+  }
+
+  /* stage table below */
+  .stages {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  .stages .col {
+    border: 2px solid var(--ink);
+    padding: 12px 14px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .stages h3 { margin: 0 0 6px; font-family: "Anton", sans-serif; font-size: 18px; letter-spacing: 1px; }
+  .stages .col p { margin: 0 0 8px; font-size: 11px; color: #666; }
+  .stages ol { padding-left: 18px; margin: 0; font-size: 12px; }
+  .stages ol li { margin-bottom: 2px; }
+  .stages ol li b { font-weight: 700; }
+  .stages .col.king { background: linear-gradient(180deg, #fff 0%, #ffe6ea 100%); }
+  .stages .col.sprint { background: linear-gradient(180deg, #fff 0%, #e6f7ec 100%); }
+
+  .rules-banner {
+    margin-top: 28px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px 20px;
+    font-family: "Anton", sans-serif;
+    letter-spacing: 2px;
+    font-size: 14px;
+    border-radius: 10px;
+    display: flex; flex-wrap: wrap; gap: 24px;
+  }
+  .rules-banner span b { color: var(--jersey-yellow); }
+
+  footer { text-align: center; margin-top: 40px; font-size: 12px; color: #777; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>
+    <small>STAGE OVERVIEW · 31 DAYS · MAY 2024</small>
+    Tour de Bike Month
+  </h1>
+  <div class="legend">
+    <span class="swatch"><span class="dot y"></span> Maillot Jaune (overall)</span>
+    <span class="swatch"><span class="dot g"></span> Green (sprints / distance)</span>
+    <span class="swatch"><span class="dot p"></span> Polka (climbs / elevation)</span>
+    <span class="swatch"><span class="dot w"></span> Peloton</span>
+  </div>
+</header>
+
+<div class="stage">
+  <div class="clouds">
+    <span style="left:8%; top:6px; width:80px; height:24px;"></span>
+    <span style="left:9%; top:0;   width:50px; height:18px;"></span>
+    <span style="left:46%; top:10px; width:120px; height:30px;"></span>
+    <span style="left:50%; top:4px; width:70px; height:22px;"></span>
+    <span style="left:78%; top:8px; width:90px; height:26px;"></span>
+  </div>
+
+  <div class="mountains">
+    <div class="peak" style="left: 18%;"></div>
+    <div class="peak" style="left: 48%; transform: scale(1.25);"></div>
+    <div class="peak" style="left: 70%; transform: scale(.85);"></div>
+  </div>
+
+  <div class="road">
+    <div class="start"></div>
+    <div class="finish"></div>
+
+    <div class="markers">
+      <span class="km" style="left: 16%;">MAY 5</span>
+      <span class="km king" style="left: 32%;">★ KOM</span>
+      <span class="km" style="left: 48%;">MAY 15</span>
+      <span class="km" style="left: 64%;">SPRINT</span>
+      <span class="km" style="left: 80%;">MAY 25</span>
+    </div>
+
+    <!-- Riders positioned by % of stage progress -->
+    <div class="rider lead" style="left: 92.4%;">
+      <div class="bubble">
+        <div class="jersey"></div>
+        <div class="num">1</div>
+        <div class="wheel l"></div><div class="wheel r"></div>
+      </div>
+      <div class="name">Sarah Johnson</div>
+      <div class="stat">28d · 412.5 mi</div>
+    </div>
+
+    <div class="rider" style="left: 90.2%;">
+      <div class="bubble">
+        <div class="jersey green"></div>
+        <div class="num">2</div>
+        <div class="wheel l"></div><div class="wheel r"></div>
+      </div>
+      <div class="name">Marcus Chen</div>
+      <div class="stat">27d · 389.2 mi</div>
+    </div>
+
+    <div class="rider" style="left: 88.0%;">
+      <div class="bubble">
+        <div class="jersey white"></div>
+        <div class="num">3</div>
+        <div class="wheel l"></div><div class="wheel r"></div>
+      </div>
+      <div class="name">Jessica R.</div>
+      <div class="stat">26d · 376.8 mi</div>
+    </div>
+
+    <div class="rider" style="left: 85.8%;">
+      <div class="bubble">
+        <div class="jersey polka"></div>
+        <div class="num">4</div>
+        <div class="wheel l"></div><div class="wheel r"></div>
+      </div>
+      <div class="name">David Kim</div>
+      <div class="stat">25d · 425.1 mi · KOM 19,650 ft</div>
+    </div>
+
+    <div class="rider" style="left: 80.0%;">
+      <div class="bubble">
+        <div class="jersey white"></div>
+        <div class="num">5</div>
+        <div class="wheel l"></div><div class="wheel r"></div>
+      </div>
+      <div class="name">Priya Patel</div>
+      <div class="stat">24d</div>
+    </div>
+
+    <div class="rider" style="left: 76.0%;">
+      <div class="bubble">
+        <div class="jersey white"></div>
+        <div class="num">6</div>
+        <div class="wheel l"></div><div class="wheel r"></div>
+      </div>
+      <div class="name">Tom Whitfield</div>
+      <div class="stat">23d</div>
+    </div>
+
+    <div class="rider" style="left: 72.0%;">
+      <div class="bubble">
+        <div class="jersey white"></div>
+        <div class="num">7</div>
+        <div class="wheel l"></div><div class="wheel r"></div>
+      </div>
+      <div class="name">Aisha Williams</div>
+      <div class="stat">22d</div>
+    </div>
+
+    <div class="rider" style="left: 64.0%;">
+      <div class="bubble">
+        <div class="jersey white"></div>
+        <div class="num">8</div>
+        <div class="wheel l"></div><div class="wheel r"></div>
+      </div>
+      <div class="name">Ben O'Connor</div>
+      <div class="stat">20d</div>
+    </div>
+
+    <div class="rider" style="left: 60.0%;">
+      <div class="bubble">
+        <div class="jersey white"></div>
+        <div class="num">9</div>
+        <div class="wheel l"></div><div class="wheel r"></div>
+      </div>
+      <div class="name">Lin Zhao</div>
+      <div class="stat">19d · climbs +13.5k</div>
+    </div>
+
+    <div class="rider" style="left: 56.0%;">
+      <div class="bubble">
+        <div class="jersey white"></div>
+        <div class="num">10</div>
+        <div class="wheel l"></div><div class="wheel r"></div>
+      </div>
+      <div class="name">Carlos Mendes</div>
+      <div class="stat">18d</div>
+    </div>
+
+    <div class="rider" style="left: 48.0%;">
+      <div class="bubble">
+        <div class="jersey white"></div>
+        <div class="num">11</div>
+        <div class="wheel l"></div><div class="wheel r"></div>
+      </div>
+      <div class="name">Hannah Berg</div>
+      <div class="stat">16d</div>
+    </div>
+
+    <div class="rider" style="left: 44.0%;">
+      <div class="bubble">
+        <div class="jersey white"></div>
+        <div class="num">12</div>
+        <div class="wheel l"></div><div class="wheel r"></div>
+      </div>
+      <div class="name">Yuki Tanaka</div>
+      <div class="stat">15d</div>
+    </div>
+  </div>
+
+  <div class="route-meta">
+    <span>📍 KM 0 · Départ — Mayday Square</span>
+    <span>Total distance to win: <b>31 days</b></span>
+    <span>🏁 KM 31 · Arrivée — Champs‑de‑Vélo</span>
+  </div>
+</div>
+
+<div class="stages">
+  <div class="col">
+    <h3>Stage 1 · May 1–5</h3>
+    <p>Flat opening week. Commuters stack early days.</p>
+    <ol>
+      <li><b>Sarah J.</b> 5/5 · 71 mi</li>
+      <li>Marcus 5/5 · 68 mi</li>
+      <li>Jessica 4/5 · 62 mi</li>
+      <li>David K. 4/5 · 84 mi</li>
+    </ol>
+  </div>
+  <div class="col king">
+    <h3>Stage 2 · May 6–12 ★</h3>
+    <p>Mountain stage. KOM points awarded.</p>
+    <ol>
+      <li><b>David K.</b> +6,420 ft</li>
+      <li>Lin Zhao +5,890 ft</li>
+      <li>Marcus +5,310 ft</li>
+      <li>Sarah J. +4,720 ft</li>
+    </ol>
+  </div>
+  <div class="col sprint">
+    <h3>Stage 3 · May 13–19</h3>
+    <p>Rolling. Distance hunters separate.</p>
+    <ol>
+      <li><b>David K.</b> 124.4 mi</li>
+      <li>Sarah J. 117.8 mi</li>
+      <li>Marcus 112.0 mi</li>
+      <li>Jessica 106.5 mi</li>
+    </ol>
+  </div>
+  <div class="col">
+    <h3>Stage 4 · May 20–26</h3>
+    <p>Heatwave week. Attrition begins.</p>
+    <ol>
+      <li><b>Sarah J.</b> 7/7 days</li>
+      <li>Marcus 7/7</li>
+      <li>Jessica 6/7</li>
+      <li>Priya 7/7</li>
+    </ol>
+  </div>
+  <div class="col">
+    <h3>Stage 5 · May 27–31</h3>
+    <p>Final sprint. Yellow defends.</p>
+    <ol>
+      <li><b>Sarah J.</b> 5/5 · seals win</li>
+      <li>Marcus 5/5</li>
+      <li>Jessica 5/5</li>
+      <li>David K. 4/5</li>
+    </ol>
+  </div>
+</div>
+
+<div class="rules-banner">
+  <span><b>RULE 1 ·</b> RIDE THE MOST DAYS IN MAY</span>
+  <span><b>RULE 2 ·</b> TIES → TOTAL DISTANCE</span>
+  <span><b>RULE 3 ·</b> 2 MI MIN PER DAY</span>
+  <span><b>ELIGIBLE ·</b> RIDE · EBIKERIDE</span>
+</div>
+
+<footer>
+  Updated 2024-05-31 23:58 PDT · previous tours: 2023 · 2022 · 2021
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>:: MAY iS BiKE MONTH 2K24 :: WeLcOmE!! ::</title>
+<style>
+  :root {
+    --hot-pink: #ff3df0;
+    --cyber-cyan: #00f0ff;
+    --laser-lime: #b9ff3a;
+    --tangerine: #ff9c1a;
+    --plasma-purple: #8a2be2;
+    --bevel-light: #ffffff;
+    --bevel-dark: #404080;
+  }
+  * { box-sizing: border-box; }
+  html { background: #000022; }
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Comic Sans MS", "Trebuchet MS", "Chicago", cursive, sans-serif;
+    color: #00ff00;
+    background:
+      repeating-linear-gradient(45deg,
+        #1a0033 0 24px, #110022 24px 48px),
+      radial-gradient(circle at 20% 10%, var(--hot-pink) 0%, transparent 30%),
+      radial-gradient(circle at 80% 90%, var(--cyber-cyan) 0%, transparent 35%);
+    background-blend-mode: screen, screen, normal;
+    min-height: 100vh;
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="6" fill="yellow" stroke="black" stroke-width="2"/></svg>') 10 10, auto;
+  }
+
+  /* Stars */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(2px 2px at 12% 18%, white, transparent 60%),
+      radial-gradient(2px 2px at 28% 60%, white, transparent 60%),
+      radial-gradient(1.5px 1.5px at 65% 22%, white, transparent 60%),
+      radial-gradient(2px 2px at 88% 70%, white, transparent 60%),
+      radial-gradient(1.5px 1.5px at 50% 85%, white, transparent 60%),
+      radial-gradient(1.5px 1.5px at 92% 30%, white, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  @keyframes twinkle { 50% { opacity: 0.4; } }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 14px; position: relative; z-index: 2; }
+
+  /* Marquee */
+  .marquee {
+    background: #000;
+    color: var(--laser-lime);
+    border: 4px ridge var(--cyber-cyan);
+    padding: 6px 0;
+    font-family: "Courier New", monospace;
+    font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-bottom: 12px;
+  }
+  .marquee span {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll 28s linear infinite;
+  }
+  @keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* Title banner — chunky 3D WordArt */
+  .wordart {
+    text-align: center;
+    margin: 10px 0 18px;
+  }
+  .wordart h1 {
+    display: inline-block;
+    font-family: "Impact", "Arial Black", sans-serif;
+    font-size: 78px;
+    line-height: 0.95;
+    margin: 0;
+    background: linear-gradient(180deg, var(--tangerine) 0%, var(--hot-pink) 50%, var(--plasma-purple) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 3px black;
+    text-shadow:
+      4px 4px 0 #000,
+      6px 6px 0 var(--cyber-cyan),
+      9px 9px 12px rgba(0,0,0,0.8);
+    transform: skewY(-3deg);
+    letter-spacing: -1px;
+  }
+  .wordart .blink {
+    display: inline-block;
+    color: var(--laser-lime);
+    background: red;
+    font-family: "Comic Sans MS", cursive;
+    padding: 4px 10px;
+    border: 3px outset yellow;
+    margin-top: 8px;
+    animation: blink 0.7s steps(2) infinite;
+    transform: rotate(-2deg);
+    font-weight: bold;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Window panel — like Win98 */
+  .window {
+    background: #c0c0c0;
+    color: #000;
+    border-top: 3px solid var(--bevel-light);
+    border-left: 3px solid var(--bevel-light);
+    border-right: 3px solid var(--bevel-dark);
+    border-bottom: 3px solid var(--bevel-dark);
+    box-shadow: 6px 6px 0 #000;
+    margin-bottom: 18px;
+    font-family: "Tahoma", "MS Sans Serif", sans-serif;
+  }
+  .window .titlebar {
+    background: linear-gradient(90deg, var(--plasma-purple) 0%, var(--hot-pink) 100%);
+    color: white;
+    padding: 4px 8px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    text-shadow: 1px 1px 0 #000;
+  }
+  .window .titlebar .ctrls {
+    display: inline-flex; gap: 2px;
+  }
+  .window .titlebar .btn {
+    width: 18px; height: 16px;
+    background: #c0c0c0;
+    border-top: 2px solid var(--bevel-light);
+    border-left: 2px solid var(--bevel-light);
+    border-right: 2px solid var(--bevel-dark);
+    border-bottom: 2px solid var(--bevel-dark);
+    color: black;
+    font-size: 10px;
+    text-align: center;
+    font-weight: bold;
+    line-height: 14px;
+  }
+  .window .body {
+    padding: 12px 16px;
+  }
+
+  /* Champ podium */
+  .podium {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr;
+    align-items: end;
+    gap: 12px;
+    margin: 12px 0 6px;
+  }
+  .pod {
+    text-align: center;
+    color: white;
+    font-family: "Impact", sans-serif;
+    border-top: 4px solid var(--bevel-light);
+    border-left: 4px solid var(--bevel-light);
+    border-right: 4px solid var(--bevel-dark);
+    border-bottom: 4px solid var(--bevel-dark);
+    padding: 14px 8px 8px;
+    background: linear-gradient(180deg, #555 0%, #000 100%);
+  }
+  .pod .place {
+    font-size: 56px;
+    line-height: 1;
+    text-shadow: 3px 3px 0 #000, 5px 5px 0 var(--hot-pink);
+  }
+  .pod .name {
+    font-size: 18px;
+    margin-top: 4px;
+  }
+  .pod .meta {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: var(--laser-lime);
+    background: #000;
+    padding: 4px 6px;
+    margin-top: 6px;
+    border: 2px inset #fff;
+  }
+  .pod.first {
+    background: linear-gradient(180deg, var(--tangerine) 0%, #b04a00 100%);
+    transform: translateY(-12px);
+  }
+  .pod.first .place { color: #fff; text-shadow: 3px 3px 0 #000, 5px 5px 0 var(--cyber-cyan); }
+  .pod.second {
+    background: linear-gradient(180deg, #d8d8d8 0%, #555 100%);
+  }
+  .pod.third {
+    background: linear-gradient(180deg, #d49a5b 0%, #5a3000 100%);
+  }
+
+  /* Trophy avatar */
+  .avatar {
+    width: 96px; height: 96px;
+    margin: 0 auto 6px;
+    border: 4px ridge var(--cyber-cyan);
+    background: radial-gradient(circle at 30% 30%, white 0%, #ffd23a 30%, #ff3df0 80%);
+    border-radius: 50%;
+    box-shadow: 0 0 22px var(--hot-pink);
+    position: relative;
+  }
+  .avatar::after {
+    content: "★";
+    position: absolute; top: -6px; right: -8px;
+    font-size: 28px; color: yellow; text-shadow: 2px 2px 0 black;
+  }
+
+  /* Leaderboard list */
+  .ranks {
+    list-style: none; padding: 0; margin: 8px 0 0;
+    font-family: "Tahoma", sans-serif;
+  }
+  .ranks li {
+    display: grid;
+    grid-template-columns: 50px 1fr auto auto auto;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 8px;
+    border-top: 2px solid var(--bevel-light);
+    border-left: 2px solid var(--bevel-light);
+    border-right: 2px solid var(--bevel-dark);
+    border-bottom: 2px solid var(--bevel-dark);
+    background: linear-gradient(180deg, #ffffff 0%, #d0d0e0 100%);
+    margin-bottom: 6px;
+    font-weight: bold;
+  }
+  .ranks li .rank {
+    font-family: "Impact", sans-serif;
+    font-size: 22px;
+    color: var(--plasma-purple);
+    text-align: center;
+  }
+  .ranks li .progress {
+    height: 18px;
+    background: #000;
+    border-top: 2px solid var(--bevel-dark);
+    border-left: 2px solid var(--bevel-dark);
+    border-right: 2px solid var(--bevel-light);
+    border-bottom: 2px solid var(--bevel-light);
+    position: relative;
+    overflow: hidden;
+  }
+  .ranks li .progress > i {
+    display: block; height: 100%;
+    background: repeating-linear-gradient(90deg,
+      var(--laser-lime) 0 8px, var(--cyber-cyan) 8px 16px);
+  }
+  .ranks li .num {
+    font-family: "Courier New", monospace;
+    background: #000; color: var(--laser-lime);
+    padding: 2px 6px;
+    border: 2px inset #fff;
+    font-size: 12px;
+    min-width: 60px; text-align: right;
+  }
+
+  .badge {
+    display: inline-block;
+    background: linear-gradient(180deg, var(--hot-pink), var(--plasma-purple));
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border: 2px outset var(--hot-pink);
+    text-shadow: 1px 1px 0 #000;
+    text-transform: uppercase;
+  }
+  .badge.gold { background: linear-gradient(180deg, gold, #b8860b); border-color: gold; }
+  .badge.cyan { background: linear-gradient(180deg, var(--cyber-cyan), #006080); border-color: var(--cyber-cyan); }
+
+  .rules-window .body { background: white; }
+  .rules-window ol {
+    margin: 0; padding-left: 20px;
+    font-family: "Comic Sans MS", cursive;
+    font-size: 14px;
+  }
+  .rules-window ol li::marker { color: var(--hot-pink); font-weight: bold; }
+
+  .undercons {
+    text-align: center;
+    margin: 16px 0 0;
+    color: yellow;
+    font-family: "Comic Sans MS", cursive;
+    font-size: 14px;
+    text-shadow: 2px 2px 0 #000;
+  }
+  .visitor-counter {
+    display: inline-block;
+    background: #000;
+    color: var(--laser-lime);
+    font-family: "Courier New", monospace;
+    font-weight: bold;
+    padding: 4px 10px;
+    border: 3px ridge var(--cyber-cyan);
+    letter-spacing: 4px;
+    margin-top: 4px;
+  }
+
+  .webring {
+    display: flex; justify-content: center; gap: 14px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .webring a {
+    color: var(--cyber-cyan);
+    font-family: "Comic Sans MS", cursive;
+    font-weight: bold;
+    text-decoration: underline;
+    background: #000;
+    padding: 4px 10px;
+    border: 3px outset var(--hot-pink);
+  }
+
+  .gif-bike {
+    display: inline-block;
+    width: 80px; height: 64px;
+    margin: 0 12px;
+    vertical-align: middle;
+    animation: roll 1.6s linear infinite;
+  }
+  @keyframes roll { 0% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-3px); } 100% { transform: translateY(0) rotate(-1deg); } }
+
+  hr.fancy {
+    border: 0; height: 8px;
+    background: repeating-linear-gradient(90deg,
+      var(--hot-pink) 0 12px, var(--cyber-cyan) 12px 24px,
+      var(--laser-lime) 24px 36px, var(--tangerine) 36px 48px);
+    margin: 16px 0;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="marquee">
+    <span>
+      ★ ★ ★ WELCOME TO THE OFFICIAL MAY iS BiKE MONTH 2K24 HOMEPAGE!! ★ BEST VIEWED IN NETSCAPE 4.7 @ 1024×768 ★ NEW!! INTERACTIVE LEADERBOARD!! ★ SIGN MY GUESTBOOK ★ DOWNLOAD STATS.ZIP ★ POWERED BY STRAVA™ ★ TYPE /loop TO REFRESH ★ ★ ★
+    </span>
+  </div>
+
+  <div class="wordart">
+    <h1>MAY iS BiKE MONTH 2K24!!</h1>
+    <div><span class="blink">★ NeW! ★</span> <span class="blink" style="background:var(--cyber-cyan);color:#000;">!! HoT !!</span></div>
+  </div>
+
+  <!-- WINNERS PODIUM WINDOW -->
+  <div class="window">
+    <div class="titlebar">
+      <span>🏆 winners_2024.exe — May Champions</span>
+      <span class="ctrls">
+        <span class="btn">_</span><span class="btn">▢</span><span class="btn">×</span>
+      </span>
+    </div>
+    <div class="body" style="background:#222244;">
+      <div class="podium">
+        <div class="pod second">
+          <div class="avatar" style="background:radial-gradient(circle at 30% 30%, white, #cccccc, #555555);"></div>
+          <div class="place">2</div>
+          <div class="name">MARCUS<br>CHEN</div>
+          <div class="meta">27d · 389.2mi · 22,140ft</div>
+        </div>
+        <div class="pod first">
+          <div class="avatar"></div>
+          <div class="place">1</div>
+          <div class="name">SARAH<br>JOHNSON</div>
+          <div class="meta">★ 28d · 412.5mi · 18,420ft ★</div>
+        </div>
+        <div class="pod third">
+          <div class="avatar" style="background:radial-gradient(circle at 30% 30%, #ffe6b8, #d49a5b, #5a3000);"></div>
+          <div class="place">3</div>
+          <div class="name">JESSICA<br>RODRIGUEZ</div>
+          <div class="meta">26d · 376.8mi · 14,200ft</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD WINDOW -->
+  <div class="window">
+    <div class="titlebar">
+      <span>📊 LEADERBOARD.HTM — Live Standings <span style="color:yellow">(updated every 5min!!)</span></span>
+      <span class="ctrls"><span class="btn">_</span><span class="btn">▢</span><span class="btn">×</span></span>
+    </div>
+    <div class="body">
+      <ol class="ranks">
+        <li>
+          <span class="rank">#1</span>
+          <span>Sarah Johnson <span class="badge gold">CHAMP</span></span>
+          <div class="progress" style="width:200px"><i style="width:100%"></i></div>
+          <span class="num">28 / 31</span>
+          <span class="badge">412mi</span>
+        </li>
+        <li>
+          <span class="rank">#2</span>
+          <span>Marcus Chen <span class="badge cyan">STREAK 27</span></span>
+          <div class="progress" style="width:200px"><i style="width:96%"></i></div>
+          <span class="num">27 / 31</span>
+          <span class="badge">389mi</span>
+        </li>
+        <li>
+          <span class="rank">#3</span>
+          <span>Jessica Rodriguez</span>
+          <div class="progress" style="width:200px"><i style="width:92%"></i></div>
+          <span class="num">26 / 31</span>
+          <span class="badge">377mi</span>
+        </li>
+        <li>
+          <span class="rank">#4</span>
+          <span>David Kim <span class="badge gold">KOM 19,650ft</span></span>
+          <div class="progress" style="width:200px"><i style="width:88%"></i></div>
+          <span class="num">25 / 31</span>
+          <span class="badge">425mi</span>
+        </li>
+        <li>
+          <span class="rank">#5</span>
+          <span>Priya Patel</span>
+          <div class="progress" style="width:200px"><i style="width:84%"></i></div>
+          <span class="num">24 / 31</span>
+          <span class="badge">298mi</span>
+        </li>
+        <li>
+          <span class="rank">#6</span>
+          <span>Tom Whitfield</span>
+          <div class="progress" style="width:200px"><i style="width:80%"></i></div>
+          <span class="num">23 / 31</span>
+          <span class="badge">313mi</span>
+        </li>
+        <li>
+          <span class="rank">#7</span>
+          <span>Aisha Williams</span>
+          <div class="progress" style="width:200px"><i style="width:76%"></i></div>
+          <span class="num">22 / 31</span>
+          <span class="badge">288mi</span>
+        </li>
+        <li>
+          <span class="rank">#8</span>
+          <span>Ben O'Connor</span>
+          <div class="progress" style="width:200px"><i style="width:68%"></i></div>
+          <span class="num">20 / 31</span>
+          <span class="badge">256mi</span>
+        </li>
+        <li>
+          <span class="rank">#9</span>
+          <span>Lin Zhao</span>
+          <div class="progress" style="width:200px"><i style="width:64%"></i></div>
+          <span class="num">19 / 31</span>
+          <span class="badge">225mi</span>
+        </li>
+        <li>
+          <span class="rank">#10</span>
+          <span>Carlos Mendes</span>
+          <div class="progress" style="width:200px"><i style="width:60%"></i></div>
+          <span class="num">18 / 31</span>
+          <span class="badge">199mi</span>
+        </li>
+        <li>
+          <span class="rank">#11</span>
+          <span>Hannah Berg</span>
+          <div class="progress" style="width:200px"><i style="width:54%"></i></div>
+          <span class="num">16 / 31</span>
+          <span class="badge">178mi</span>
+        </li>
+        <li>
+          <span class="rank">#12</span>
+          <span>Yuki Tanaka</span>
+          <div class="progress" style="width:200px"><i style="width:50%"></i></div>
+          <span class="num">15 / 31</span>
+          <span class="badge">166mi</span>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- RULES WINDOW -->
+  <div class="window rules-window">
+    <div class="titlebar">
+      <span>📜 RULES.TXT — READ ME FIRST!!!</span>
+      <span class="ctrls"><span class="btn">_</span><span class="btn">▢</span><span class="btn">×</span></span>
+    </div>
+    <div class="body">
+      <ol>
+        <li>★ The winner is the person who rides the MOST DAYS in May!! ★</li>
+        <li>★ TIES are broken by total distance!! ★</li>
+        <li>★ You MUST ride at least <b>2 miles</b> in a day for it to count!!! ★</li>
+        <li>★ Activities that count: <b>Ride · EBikeRide</b> ★</li>
+      </ol>
+      <hr class="fancy">
+      <p style="text-align:center;font-family:'Comic Sans MS',cursive;font-size:13px;">
+        Got a question?? <a href="#" style="color:var(--hot-pink);">Email the WEBMASTER!!</a>
+        🚲💨
+      </p>
+    </div>
+  </div>
+
+  <!-- UNDER CONSTRUCTION FOOTER -->
+  <div class="undercons">
+    <div>
+      <span class="gif-bike">🚲</span>
+      ⚠️ THIS LEADERBOARD IS LIVE!! UPDATED 31 MAY 2024 @ 11:58 PM PDT ⚠️
+      <span class="gif-bike">🚲</span>
+    </div>
+    <div style="margin-top:12px;">YOU ARE VISITOR # &nbsp;
+      <span class="visitor-counter">0 0 0 4 2 0 6 9</span>
+    </div>
+    <div class="webring">
+      <a href="#">« 2023</a>
+      <a href="#">« 2022</a>
+      <a href="#">« 2021</a>
+      <a href="#">SIGN GUESTBOOK</a>
+      <a href="#">JOIN WEBRING</a>
+    </div>
+    <div style="margin-top:14px;font-size:11px;color:#aaa;">
+      © 2024 May Bike Month NetWorks · MS Sans Serif™ is a trademark of someone
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
