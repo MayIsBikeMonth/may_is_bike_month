@@ -1,0 +1,9 @@
+<div class="punchcard-axis">
+  <div></div>
+  <div class="punchcard-axis-days">
+    <% day_entries.each do |entry| %>
+      <span class="<%= "we" if entry[:weekend] %>"><%= entry[:day] %></span>
+    <% end %>
+  </div>
+  <div></div>
+</div>

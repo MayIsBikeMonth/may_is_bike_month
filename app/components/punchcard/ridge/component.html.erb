@@ -1,0 +1,9 @@
+<div class="punchcard-ridge">
+  <div class="punchcard-ridge-label">Daily total</div>
+  <div class="punchcard-ridge-bars">
+    <% bars.each do |bar| %>
+      <i style="height:<%= "%.1f" % bar[:height] %>%" title="<%= bar[:title] %>"></i>
+    <% end %>
+  </div>
+  <div></div>
+</div>

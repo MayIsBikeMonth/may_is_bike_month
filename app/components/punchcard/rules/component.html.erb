@@ -1,0 +1,9 @@
+<section class="punchcard-rules">
+  <h4>Rules</h4>
+  <ul>
+    <li>Winner is the person who rides the most days in <%= @competition.period_display %></li>
+    <li>Ties are broken by total distance</li>
+    <li>You have to ride at least <%= daily_distance_miles %> miles in a day for it to count</li>
+    <li>Activities that count: <%= activity_types_display %></li>
+  </ul>
+</section>

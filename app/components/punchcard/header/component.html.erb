@@ -1,0 +1,32 @@
+<header class="punchcard-header">
+  <div>
+    <h1 class="punchcard-title">
+      May is Bike Month <b><%= @competition.year %></b>
+    </h1>
+  </div>
+
+  <div class="punchcard-meta">
+    <div>
+      <div class="punchcard-num"><%= @rider_count %></div>
+      <div class="punchcard-label">Riders</div>
+    </div>
+    <div>
+      <div class="punchcard-num"><%= number_with_delimiter(@total_miles.to_i) %></div>
+      <div class="punchcard-label">Miles</div>
+    </div>
+    <div>
+      <div class="punchcard-num">
+        <% if feet_in_thousands %>
+          <%= number_with_delimiter(feet_in_thousands) %><span class="punchcard-dim">k</span>
+        <% else %>
+          <%= number_with_delimiter(feet_remainder) %>
+        <% end %>
+      </div>
+      <div class="punchcard-label">Feet</div>
+    </div>
+    <div>
+      <div class="punchcard-num"><%= @everyday_rider_count %></div>
+      <div class="punchcard-label">Everyday<br>Riders</div>
+    </div>
+  </div>
+</header>

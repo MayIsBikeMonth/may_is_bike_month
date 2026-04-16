@@ -1,0 +1,32 @@
+<div class="punchcard-row">
+  <div class="punchcard-who">
+    <span class="punchcard-rank"><%= format("%02d", @rank) %></span>
+    <a class="punchcard-strava" href="<%= strava_url %>" target="_blank" rel="noopener" title="View on Strava">
+      <svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+        <path fill="#fc5200" d="<%= STRAVA_SVG_PATH %>"/>
+      </svg>
+    </a>
+    <div class="punchcard-name-block">
+      <div class="punchcard-name"><%= @competition_user.display_name %></div>
+    </div>
+  </div>
+
+  <div class="punchcard-cells">
+    <% cells.each do |cell| %>
+      <% data = {} %>
+      <% data[:l] = cell[:level] if cell[:level] %>
+      <% data[:century] = true if cell[:century] %>
+      <%= tag.span(
+        class: ["punchcard-cell", ("we" if cell[:weekend])],
+        title: cell[:title],
+        data:
+      ) %>
+    <% end %>
+  </div>
+
+  <div class="punchcard-totals">
+    <span class="punchcard-totals-big"><b><%= days_count %></b><span class="punchcard-dim">/<%= total_days %></span></span><br>
+    <%= number_with_delimiter(total_miles.round(1)) %> mi<br>
+    <span class="punchcard-dim"><%= "%.1f" % (total_feet / 1000.0) %>k ft</span>
+  </div>
+</div>

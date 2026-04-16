@@ -1,0 +1,51 @@
+# frozen_string_literal: true
+
+module Punchcard::UserRow
+  class Component < ApplicationComponent
+    STRAVA_SVG_PATH = "M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"
+
+    def initialize(competition_user:, rank:, period_date_strings:, user_daily:)
+      @competition_user = competition_user
+      @rank = rank
+      @period_date_strings = period_date_strings
+      @user_daily = user_daily
+    end
+
+    private
+
+    def cells
+      @period_date_strings.map do |date_string|
+        distance_meters = @user_daily.dig(date_string, :distance_meters).to_f
+        date = Date.parse(date_string)
+        miles = distance_meters / PunchcardData::MILE_METERS
+        level = PunchcardData.level_for(distance_meters) if miles >= 2
+        {
+          level:,
+          weekend: date.saturday? || date.sunday?,
+          century: PunchcardData.century?(distance_meters),
+          title: (miles >= 2) ? "#{date_string}: #{miles.round(1)} mi" : "no rides"
+        }
+      end
+    end
+
+    def days_count
+      @competition_user.activity_dates.count
+    end
+
+    def total_days
+      @period_date_strings.count
+    end
+
+    def total_miles
+      @competition_user.distance_meters / PunchcardData::MILE_METERS
+    end
+
+    def total_feet
+      @competition_user.elevation_meters * 3.28084
+    end
+
+    def strava_url
+      @competition_user.user.strava_user_url
+    end
+  end
+end

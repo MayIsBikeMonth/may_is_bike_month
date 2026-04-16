@@ -1,0 +1,19 @@
+<div class="punchcard-footer">
+  <div class="punchcard-legend">
+    less
+    <span class="punchcard-scale"><i></i><i></i><i></i><i></i><i></i></span>
+    more
+  </div>
+  <div>
+    <% if @updated_at %>
+      updated <%= render(UI::Time::Component.new(time: @updated_at)) %>
+      <% if @previous_competitions.any? %>&nbsp;·&nbsp;<% end %>
+    <% end %>
+    <% if @previous_competitions.any? %>
+      previous:
+      <%= @previous_competitions.map { |c|
+        link_to(c.year, competition_path(c.slug), class: "punchcard-footer-link")
+      }.to_sentence.html_safe %>
+    <% end %>
+  </div>
+</div>

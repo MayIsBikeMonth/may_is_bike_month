@@ -32,7 +32,7 @@ RSpec.describe UI::Badge::Component, type: :component do
   describe "colors" do
     {
       success: "bg-emerald-500",
-      notice: "bg-blue-300",
+      notice: "bg-purple-200",
       purple: "bg-purple-300",
       warning: "bg-amber-300",
       cyan: "bg-cyan-400",

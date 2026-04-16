@@ -16,7 +16,7 @@ module UserDropdown
         helpers.image_tag(avatar_url, alt: @current_user.display_name, class: "w-7 h-7 rounded-full object-cover")
       else
         helpers.content_tag(:div, @current_user.display_name.first.upcase,
-          class: "w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-medium")
+          class: "w-7 h-7 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs font-medium")
       end
     end
   end

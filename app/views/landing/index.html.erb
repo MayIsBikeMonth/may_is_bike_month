@@ -1,18 +1,10 @@
-<%= render partial: "/competitions/show_competition" %>
+<%= render(Punchcard::Component.new(
+  competition: @competition,
+  competition_users: @competition_users,
+  updated_at: StravaRequest.most_recent_update,
+  previous_competitions: @previous_competitions
+)) %>
 
 <script>
   window.shouldUpdateStravaInBackground = true
 </script>
-
-<% if @previous_competitions.any? %>
-  <div class="wrapper-class pt-2!">
-    <p>
-      View results from:
-      <%# html_safe is safe here - link_to escapes its arguments; brakeman.ignore has the fingerprint %>
-
-      <%= @previous_competitions.map { |competition|
-        link_to(competition.year, competition_path(competition.slug), class: "twlink")
-      }.to_sentence.html_safe %>
-    </p>
-  </div>
-<% end %>
