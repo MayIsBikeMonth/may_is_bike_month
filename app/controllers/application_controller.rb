@@ -1,6 +1,8 @@
 class ApplicationController < ActionController::Base
   include Pagy::Method
-  include SetPeriod
+  include Binxtils::SetPeriod
+
+  self.default_earliest_time = Time.at(1714460400).freeze # 2024-4-30
 
   before_action :enable_rack_profiler
 

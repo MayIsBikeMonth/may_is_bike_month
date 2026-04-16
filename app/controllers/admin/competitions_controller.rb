@@ -1,7 +1,5 @@
 class Admin::CompetitionsController < Admin::BaseController
-  include SortableTable
-
-  before_action :set_period, only: [:index]
+  include Binxtils::SortableTable
 
   def index
     @competitions = searched_competitions

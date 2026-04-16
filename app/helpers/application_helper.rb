@@ -1,4 +1,6 @@
 module ApplicationHelper
+  include Binxtils::SortableHelper
+
   def page_title
     return @page_title if defined?(@page_title)
     prefix = (in_admin? ? "🧰" : "HeartHeartBeat")
@@ -18,15 +20,6 @@ module ApplicationHelper
   # Not the right place for this, but good enuf for now. Also in ApplicationComponent
   def meters_to_miles(number)
     number / 1609.344
-  end
-
-  def sortable_params
-    @sortable_params ||= sortable_search_params.as_json.map do |k, v|
-      # Skip default sort parameters, to reduce unnecessary params
-      next if v.blank? || k == "sort" && v == default_column ||
-        k == "sort_direction" && v == default_direction
-      [k, v]
-    end.compact.to_h.with_indifferent_access
   end
 
   def check_mark
