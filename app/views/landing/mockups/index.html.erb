@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MIBM punchcard mockups</title>
+<%= render "landing/mockups/head_includes" %>
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #0e1116; color: #e8edf3;
@@ -24,6 +25,7 @@
 </style>
 </head>
 <body>
+<%= render(UserDropdown::Component.new(current_user:)) %>
 <div class="wrap">
   <h1>MIBM punchcard variants</h1>
   <p class="lede">Three takes on the per-rider 31-day strip. Real data from the dev DB.</p>

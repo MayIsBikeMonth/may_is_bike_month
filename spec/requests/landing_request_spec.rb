@@ -31,16 +31,20 @@ RSpec.describe "/landing", type: :request do
   end
 
   describe "get mockups" do
-    it "renders the mockups index" do
+    it "renders the mockups index with sign in" do
       get "/mockups"
       expect(response.code).to eq "200"
       expect(response.body).to include("MIBM punchcard variants")
+      expect(response.body).to include("Sign in")
+      expect(response.body).to include("Settings")
     end
 
     context "with a valid mockup id" do
-      it "renders the mockup" do
+      it "renders the mockup with sign in" do
         get "/mockups/01-punchcard"
         expect(response.code).to eq "200"
+        expect(response.body).to include("Sign in")
+        expect(response.body).to include("Settings")
       end
     end
 
