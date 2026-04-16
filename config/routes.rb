@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", :as => :rails_health_check
 
   resources :competitions, only: %i[show]
+  resources :competitions_original, only: %i[show]
 
   resource :account, only: %i[edit update]
 

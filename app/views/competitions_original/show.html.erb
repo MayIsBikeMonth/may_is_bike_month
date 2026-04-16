@@ -1,0 +1,8 @@
+<%= render partial: "competitions_original/#{@year}" %>
+
+<div class="wrapper-class pb-6">
+  <p class="text-base">
+    View results from:
+    <%= link_to @other_year, competitions_original_path(@other_year), class: "twlink" %>
+  </p>
+</div>
