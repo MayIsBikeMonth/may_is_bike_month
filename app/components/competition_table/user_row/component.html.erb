@@ -1,7 +1,7 @@
 <tr
   class="
-    border-r-2 border-b-2 odd:bg-white dark:odd:bg-gray-800 even:bg-gray-100
-    dark:even:bg-gray-900
+    border-r-2 border-b-2 dark:border-gray-700 odd:bg-white
+    dark:odd:bg-gray-800 even:bg-gray-100 dark:even:bg-gray-900
   "
   data-controller="competition-table--user-row--component"
 >
@@ -9,7 +9,7 @@
     scope="row"
     class="
       px-2 py-1 font-medium whitespace-nowrap border-l-2 border-r-2
-      border-r-gray-400
+      border-r-gray-400 dark:border-l-gray-700
     "
   >
     <%= link_to @competition_user.display_name, @competition_user.user.strava_user_url, class: "twlink" %>
@@ -20,7 +20,7 @@
     scope="col"
     class="
       text-black dark:text-white font-bold border-b-2 border-r-2
-      border-r-gray-400 lg:hidden
+      border-r-gray-400 dark:border-b-gray-700 lg:hidden
     "
   >
     <%= render(CompetitionTable::TotalCell::Component.new(competition_user: @competition_user)) %>
@@ -34,10 +34,10 @@
 
     <td
       id="cu-<%= @competition_user.id %>_period-<%= inx %>"
-      class="border-r-2 align-top <%= border_class %>"
+      class="border-r-2 dark:border-gray-700 align-top <%= border_class %>"
     >
       <div class="grid grid-cols-3">
-        <div class="px-1 border-r py-1 elevation-cell text-right">
+        <div class="px-1 border-r dark:border-gray-700 py-1 elevation-cell text-right">
           <small class="<%= unit_class_metric %>">
             <%= number_display(score_period["elevation"]) %>
           </small>
@@ -47,7 +47,7 @@
           </small>
         </div>
 
-        <div class="px-1 border-r py-1 text-right">
+        <div class="px-1 border-r dark:border-gray-700 py-1 text-right">
           <span class="<%= unit_class_metric %>">
             <%= number_display(score_period["distance"] / 1000, round_to: 1) %>
           </span>
@@ -99,8 +99,8 @@
   <td
     scope="col"
     class="
-      text-black dark:text-white font-bold border-r-2 border-b-2 hidden
-      lg:table-cell
+      text-black dark:text-white font-bold border-r-2 border-b-2
+      dark:border-gray-700 hidden lg:table-cell
     "
   >
     <%= render(CompetitionTable::TotalCell::Component.new(competition_user: @competition_user)) %>
