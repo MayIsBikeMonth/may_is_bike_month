@@ -1,7 +1,7 @@
 <% if @competition_user.present? %>
   <%# Render the total for the competition user %>
   <div class="grid grid-cols-3">
-    <div class="px-1 border-r pt-2 elevation-cell text-right">
+    <div class="px-1 border-r dark:border-gray-700 pt-2 elevation-cell text-right">
       <small class="<%= unit_class_metric %>">
         <%= number_display(@competition_user.elevation_meters) %>
       </small>
@@ -11,7 +11,7 @@
       </small>
     </div>
 
-    <div class="px-1 border-r pt-2 text-right">
+    <div class="px-1 border-r dark:border-gray-700 pt-2 text-right">
       <span class="<%= unit_class_metric %>">
         <%= number_display(@competition_user.distance_meters / 1000, round_to: 1) %>
       </span>
@@ -29,12 +29,12 @@
   <%# Render the header total - and include a border at the top %>
   <span class="block text-md text-center py-2"> Total </span>
   <div class="grid grid-cols-3 min-w-[180px]">
-    <div class="px-1 pb-1 border-r elevation-cell text-center">
+    <div class="px-1 pb-1 border-r dark:border-gray-700 elevation-cell text-center">
       ⬆️
       <span class="font-normal"><span class="<%= unit_class_metric %>">m</span><span class="<%= unit_class_imperial %>">feet</span></span>
     </div>
 
-    <div class="px-1 pb-1 border-r text-center">
+    <div class="px-1 pb-1 border-r dark:border-gray-700 text-center">
       ➡️
       <span class="font-normal"><span class="<%= unit_class_metric %>">km</span><span class="<%= unit_class_imperial %>">miles</span></span>
     </div>

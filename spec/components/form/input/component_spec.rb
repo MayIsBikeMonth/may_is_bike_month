@@ -36,6 +36,7 @@ RSpec.describe Form::Input::Component, type: :component do
 
   context "number_field" do
     let(:kind) { :number_field }
+    let(:attribute) { :strava_id }
 
     it "renders a number input" do
       expect(component).to have_css("input[type='number']")
@@ -51,10 +52,10 @@ RSpec.describe Form::Input::Component, type: :component do
   end
 
   context "with html_options" do
-    let(:html_options) { {placeholder: "Enter display name"} }
+    let(:html_options) { {placeholder: "Enter name"} }
 
     it "passes options through" do
-      expect(component).to have_css("input[placeholder='Enter display name']")
+      expect(component).to have_css("input[placeholder='Enter name']")
     end
   end
 end
