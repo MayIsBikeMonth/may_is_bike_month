@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>May is Bike Month 2025 — Punchcard</title>
+<title>May is Bike Month 2025</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@300;500;700&display=swap" rel="stylesheet">
@@ -18,38 +18,38 @@
   html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg);
     font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: 13px; line-height: 1.45; }
   .wrap { max-width: 1340px; margin: 0 auto; padding: 32px 28px 80px; }
+
   header { display: grid; grid-template-columns: 1.4fr 1fr; gap: 36px; align-items: end;
     border-bottom: 1px solid var(--line); padding-bottom: 20px; margin-bottom: 28px; }
   header h1 { font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 34px; letter-spacing: -0.5px; margin: 0; }
   header h1 b { color: var(--accent); font-weight: 700; }
-  header .sub { color: var(--dim); margin-top: 6px; font-size: 13px; font-family: "IBM Plex Mono", monospace; }
-  header .meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; text-align: right; }
+  header .meta { display: grid; grid-template-columns: repeat(4, auto); gap: 24px; justify-content: end; text-align: right; }
   header .meta .num { font-family: "IBM Plex Mono", monospace; font-size: 22px; color: var(--fg); font-weight: 500; }
   header .meta .label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 2px; }
 
   .ridge { margin-bottom: 6px; display: grid; grid-template-columns: 220px 1fr 110px; gap: 12px; align-items: end; }
-  .ridge .label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
-  .ridge .bars { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; height: 56px; align-items: end; }
-  .ridge .bars i { display: block; background: linear-gradient(180deg, var(--accent-2), var(--accent)); border-radius: 1px; opacity: 0.85; }
-  .ridge .legend { color: var(--muted); font-size: 10px; text-align: right; text-transform: uppercase; letter-spacing: .1em; }
+  .ridge .bars { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; height: 56px; align-items: end;
+    grid-column: 2; }
+  .ridge .bars i { display: block; background: linear-gradient(180deg, var(--accent-2), var(--accent)); border-radius: 1px; opacity: 0.85;
+    cursor: default; }
+  .ridge .bars i:hover { opacity: 1; }
 
   .axis { display: grid; grid-template-columns: 220px 1fr 110px; gap: 12px; align-items: center;
     border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 6px 0; margin-bottom: 4px;
     color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: 11px; }
-  .axis .days { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; text-align: center; }
+  .axis .days { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; text-align: center;
+    grid-column: 2; }
   .axis .days span.we { color: var(--accent); }
 
   .row { display: grid; grid-template-columns: 220px 1fr 110px; gap: 12px; align-items: center;
     padding: 9px 0; border-bottom: 1px solid var(--line); }
-  .row:hover { background: rgba(57,217,138,0.03); }
-  .row .who { display: flex; align-items: center; gap: 10px; }
-  .row .who .rank { font-family: "IBM Plex Mono", monospace; color: var(--muted); font-size: 11px; width: 22px; text-align: right; }
-  .row .who .avatar { width: 26px; height: 26px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), #1a7a52); display: inline-flex;
-    align-items: center; justify-content: center; color: var(--bg); font-weight: 700;
-    font-size: 11px; font-family: "IBM Plex Mono", monospace; flex-shrink: 0; }
+  .row .who { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .row .who .rank { font-family: "IBM Plex Mono", monospace; color: var(--muted); font-size: 11px; width: 22px; text-align: right; flex-shrink: 0; }
+  .row .who .name-block { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-width: 0; }
   .row .who .name { color: var(--fg); font-weight: 500; }
-  .row .who .handle { color: var(--muted); font-size: 11px; font-family: "IBM Plex Mono", monospace; display: block; margin-top: 1px; }
+  .row .who .strava { display: inline-flex; align-items: center; }
+  .row .who .strava svg { width: 14px; height: 14px; display: block; opacity: .75; transition: opacity .15s; }
+  .row .who .strava:hover svg { opacity: 1; }
 
   .row .punchcard { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; height: 28px; }
   .row .punchcard .cell { background: var(--surface); border-radius: 2px; }
@@ -68,8 +68,7 @@
     font-family: "IBM Plex Mono", monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .12em; }
   .footer a { color: var(--accent); text-decoration: none; }
   .footer a:hover { text-decoration: underline; }
-  .legend-block { display: flex; align-items: center; gap: 6px; font-family: "IBM Plex Mono", monospace;
-    font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; }
+  .legend-block { display: flex; align-items: center; gap: 6px; }
   .legend-block .scale { display: inline-grid; grid-template-columns: repeat(6, 12px); gap: 2px; }
   .legend-block .scale i { display: block; height: 12px; border-radius: 2px; }
   .legend-block .scale i:nth-child(1) { background: var(--surface); }
@@ -78,10 +77,6 @@
   .legend-block .scale i:nth-child(4) { background: rgba(57,217,138,0.6); }
   .legend-block .scale i:nth-child(5) { background: var(--accent); }
   .legend-block .scale i:nth-child(6) { background: var(--accent-2); }
-  .pulse { display: inline-block; width: 8px; height: 8px; background: var(--accent);
-    border-radius: 50%; margin-right: 6px; box-shadow: 0 0 8px var(--accent);
-    animation: pulse 1.4s ease-in-out infinite; }
-  @keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: .55; } }
 </style>
 </head>
 <body>
@@ -89,100 +84,100 @@
 
 <header>
   <div>
-    <h1>MIBM/<b>2025</b> · punchcard</h1>
-    <div class="sub">31 days · 19 riders · one column = one day · brightness = miles ridden</div>
+    <h1>MIBM/<b>2025</b></h1>
   </div>
   <div class="meta">
     <div><div class="num">19</div><div class="label">Riders</div></div>
-    <div><div class="num">503</div><div class="label">Ride Days</div></div>
-    <div><div class="num">8,215</div><div class="label">Total Miles</div></div>
-    <div><div class="num">31</div><div class="label">Top Streak</div></div>
+    <div><div class="num">8,215</div><div class="label">Miles</div></div>
+    <div><div class="num">496<span style="opacity:.4">k</span></div><div class="label">Feet</div></div>
+    <div><div class="num">6</div><div class="label">Everyday<br>Riders</div></div>
   </div>
 </header>
 
 <div class="ridge">
-  <div class="label">↑ Daily total · all riders</div>
+  <div></div>
   <div class="bars">
-  <i style="height:22.8%"></i>
-      <i style="height:14.6%"></i>
-      <i style="height:44.3%"></i>
-      <i style="height:34.7%"></i>
-      <i style="height:19.3%"></i>
-      <i style="height:29.0%"></i>
-      <i style="height:25.4%"></i>
-      <i style="height:25.9%"></i>
-      <i style="height:38.0%"></i>
-      <i style="height:47.7%"></i>
-      <i style="height:28.5%"></i>
-      <i style="height:19.3%"></i>
-      <i style="height:26.1%"></i>
-      <i style="height:29.0%"></i>
-      <i style="height:33.3%"></i>
-      <i style="height:27.7%"></i>
-      <i style="height:40.9%"></i>
-      <i style="height:35.8%"></i>
-      <i style="height:21.5%"></i>
-      <i style="height:19.5%"></i>
-      <i style="height:28.0%"></i>
-      <i style="height:19.3%"></i>
-      <i style="height:39.0%"></i>
-      <i style="height:55.3%"></i>
-      <i style="height:53.4%"></i>
-      <i style="height:34.6%"></i>
-      <i style="height:18.1%"></i>
-      <i style="height:35.9%"></i>
-      <i style="height:27.4%"></i>
-      <i style="height:27.6%"></i>
-      <i style="height:100.0%"></i>
+  <i style="height:22.8%" title="194.4 mi&#10;11,242 ft"></i>
+      <i style="height:14.6%" title="125.1 mi&#10;7,304 ft"></i>
+      <i style="height:44.3%" title="378.5 mi&#10;38,591 ft"></i>
+      <i style="height:34.7%" title="296.3 mi&#10;19,284 ft"></i>
+      <i style="height:19.3%" title="164.9 mi&#10;10,548 ft"></i>
+      <i style="height:29.0%" title="247.9 mi&#10;14,072 ft"></i>
+      <i style="height:25.4%" title="217.1 mi&#10;10,937 ft"></i>
+      <i style="height:25.9%" title="221.5 mi&#10;12,644 ft"></i>
+      <i style="height:38.0%" title="324.7 mi&#10;17,588 ft"></i>
+      <i style="height:47.7%" title="407.6 mi&#10;27,736 ft"></i>
+      <i style="height:28.5%" title="243.2 mi&#10;13,684 ft"></i>
+      <i style="height:19.3%" title="164.8 mi&#10;9,174 ft"></i>
+      <i style="height:26.1%" title="222.6 mi&#10;11,916 ft"></i>
+      <i style="height:29.0%" title="247.4 mi&#10;20,660 ft"></i>
+      <i style="height:33.3%" title="284.7 mi&#10;12,338 ft"></i>
+      <i style="height:27.7%" title="236.3 mi&#10;13,663 ft"></i>
+      <i style="height:40.9%" title="349.4 mi&#10;29,317 ft"></i>
+      <i style="height:35.8%" title="306.1 mi&#10;19,300 ft"></i>
+      <i style="height:21.5%" title="183.4 mi&#10;8,612 ft"></i>
+      <i style="height:19.5%" title="166.3 mi&#10;6,816 ft"></i>
+      <i style="height:28.0%" title="238.9 mi&#10;17,317 ft"></i>
+      <i style="height:19.3%" title="164.6 mi&#10;7,415 ft"></i>
+      <i style="height:39.0%" title="333.2 mi&#10;21,412 ft"></i>
+      <i style="height:55.3%" title="472.2 mi&#10;22,751 ft"></i>
+      <i style="height:53.4%" title="456.3 mi&#10;36,201 ft"></i>
+      <i style="height:34.6%" title="295.4 mi&#10;15,765 ft"></i>
+      <i style="height:18.1%" title="154.8 mi&#10;7,105 ft"></i>
+      <i style="height:35.9%" title="306.4 mi&#10;21,652 ft"></i>
+      <i style="height:27.4%" title="234.2 mi&#10;14,227 ft"></i>
+      <i style="height:27.6%" title="235.7 mi&#10;11,708 ft"></i>
+      <i style="height:100.0%" title="854.2 mi&#10;55,066 ft"></i>
   </div>
-  <div class="legend">peaks · sat/sun</div>
+  <div></div>
 </div>
 
 <div class="axis">
-  <div>↓ rider</div>
+  <div></div>
   <div class="days">
-  <span class="">1</span>
-      <span class="">2</span>
+  <span>1</span>
+      <span>2</span>
       <span class="we">3</span>
       <span class="we">4</span>
-      <span class="">5</span>
-      <span class="">6</span>
-      <span class="">7</span>
-      <span class="">8</span>
-      <span class="">9</span>
+      <span>5</span>
+      <span>6</span>
+      <span>7</span>
+      <span>8</span>
+      <span>9</span>
       <span class="we">10</span>
       <span class="we">11</span>
-      <span class="">12</span>
-      <span class="">13</span>
-      <span class="">14</span>
-      <span class="">15</span>
-      <span class="">16</span>
+      <span>12</span>
+      <span>13</span>
+      <span>14</span>
+      <span>15</span>
+      <span>16</span>
       <span class="we">17</span>
       <span class="we">18</span>
-      <span class="">19</span>
-      <span class="">20</span>
-      <span class="">21</span>
-      <span class="">22</span>
-      <span class="">23</span>
+      <span>19</span>
+      <span>20</span>
+      <span>21</span>
+      <span>22</span>
+      <span>23</span>
       <span class="we">24</span>
       <span class="we">25</span>
-      <span class="">26</span>
-      <span class="">27</span>
-      <span class="">28</span>
-      <span class="">29</span>
-      <span class="">30</span>
+      <span>26</span>
+      <span>27</span>
+      <span>28</span>
+      <span>29</span>
+      <span>30</span>
       <span class="we">31</span>
   </div>
-  <div style="text-align:right;">days · score →</div>
+  <div></div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">01</span>
-    <span class="avatar">SD</span>
-    <div>
+    <div class="name-block">
       <div class="name">Sam Daly</div>
-      <span class="handle">@daly_sam</span>
+      <a class="strava" href="https://www.strava.com/athletes/daly_sam" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -220,17 +215,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>31</b><span style="opacity:.4">/31</span></span><br>
-    1,128.7 mi · 0.0k ft
+    1,128.7 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">02</span>
-    <span class="avatar">ER</span>
-    <div>
+    <div class="name-block">
       <div class="name">Ekaterina Rakhmatulina</div>
-      <span class="handle">@erakhmatulina</span>
+      <a class="strava" href="https://www.strava.com/athletes/erakhmatulina" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -268,17 +264,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>31</b><span style="opacity:.4">/31</span></span><br>
-    1,057.6 mi · 100.5k ft
+    1,057.6 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">03</span>
-    <span class="avatar">OS</span>
-    <div>
+    <div class="name-block">
       <div class="name">Old Scott</div>
-      <span class="handle">@sschoenwaelder</span>
+      <a class="strava" href="https://www.strava.com/athletes/sschoenwaelder" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -316,17 +313,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>31</b><span style="opacity:.4">/31</span></span><br>
-    629.3 mi · 47.3k ft
+    629.3 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">04</span>
-    <span class="avatar">GH</span>
-    <div>
+    <div class="name-block">
       <div class="name">Gar Higgins</div>
-      <span class="handle">@gar</span>
+      <a class="strava" href="https://www.strava.com/athletes/gar" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -364,17 +362,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>31</b><span style="opacity:.4">/31</span></span><br>
-    387.0 mi · 29.3k ft
+    387.0 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">05</span>
-    <span class="avatar">GA</span>
-    <div>
+    <div class="name-block">
       <div class="name">Gabriella</div>
-      <span class="handle">@136522774</span>
+      <a class="strava" href="https://www.strava.com/athletes/136522774" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -412,17 +411,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>31</b><span style="opacity:.4">/31</span></span><br>
-    230.8 mi · 14.8k ft
+    230.8 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">06</span>
-    <span class="avatar">KL</span>
-    <div>
+    <div class="name-block">
       <div class="name">Kristen Lovin</div>
-      <span class="handle"></span>
+      <a class="strava" href="https://www.strava.com/athletes/7770715" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -460,17 +460,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>31</b><span style="opacity:.4">/31</span></span><br>
-    171.4 mi · 5.3k ft
+    171.4 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">07</span>
-    <span class="avatar">SH</span>
-    <div>
+    <div class="name-block">
       <div class="name">seth herr</div>
-      <span class="handle">@sethherr</span>
+      <a class="strava" href="https://www.strava.com/athletes/sethherr" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -508,17 +509,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>30</b><span style="opacity:.4">/31</span></span><br>
-    533.8 mi · 38.1k ft
+    533.8 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">08</span>
-    <span class="avatar">EL</span>
-    <div>
+    <div class="name-block">
       <div class="name">Elizabeth</div>
-      <span class="handle"></span>
+      <a class="strava" href="https://www.strava.com/athletes/11988110" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -556,17 +558,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>28</b><span style="opacity:.4">/31</span></span><br>
-    642.1 mi · 41.5k ft
+    642.1 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">09</span>
-    <span class="avatar">JA</span>
-    <div>
+    <div class="name-block">
       <div class="name">jackson_lester</div>
-      <span class="handle">@jackson_lester</span>
+      <a class="strava" href="https://www.strava.com/athletes/jackson_lester" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -604,17 +607,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>28</b><span style="opacity:.4">/31</span></span><br>
-    562.6 mi · 59.9k ft
+    562.6 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">10</span>
-    <span class="avatar">EM</span>
-    <div>
+    <div class="name-block">
       <div class="name">Emily</div>
-      <span class="handle">@46514887</span>
+      <a class="strava" href="https://www.strava.com/athletes/46514887" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -652,17 +656,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>28</b><span style="opacity:.4">/31</span></span><br>
-    321.4 mi · 20.9k ft
+    321.4 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">11</span>
-    <span class="avatar">CM</span>
-    <div>
+    <div class="name-block">
       <div class="name">Chris Mikschl</div>
-      <span class="handle">@cmikschl</span>
+      <a class="strava" href="https://www.strava.com/athletes/cmikschl" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -700,17 +705,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>28</b><span style="opacity:.4">/31</span></span><br>
-    299.8 mi · 16.8k ft
+    299.8 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">12</span>
-    <span class="avatar">AL</span>
-    <div>
+    <div class="name-block">
       <div class="name">Ali</div>
-      <span class="handle">@higgins_alexandra</span>
+      <a class="strava" href="https://www.strava.com/athletes/higgins_alexandra" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -748,17 +754,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>28</b><span style="opacity:.4">/31</span></span><br>
-    182.7 mi · 8.4k ft
+    182.7 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">13</span>
-    <span class="avatar">WW</span>
-    <div>
+    <div class="name-block">
       <div class="name">Warren Wells</div>
-      <span class="handle"></span>
+      <a class="strava" href="https://www.strava.com/athletes/20255994" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -796,17 +803,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>27</b><span style="opacity:.4">/31</span></span><br>
-    452.6 mi · 14.8k ft
+    452.6 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">14</span>
-    <span class="avatar">BS</span>
-    <div>
+    <div class="name-block">
       <div class="name">bscrugham</div>
-      <span class="handle">@bscrugham</span>
+      <a class="strava" href="https://www.strava.com/athletes/bscrugham" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -844,17 +852,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>22</b><span style="opacity:.4">/31</span></span><br>
-    233.0 mi · 2.6k ft
+    233.0 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">15</span>
-    <span class="avatar">CO</span>
-    <div>
+    <div class="name-block">
       <div class="name">Colin</div>
-      <span class="handle"></span>
+      <a class="strava" href="https://www.strava.com/athletes/17429756" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -892,17 +901,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>21</b><span style="opacity:.4">/31</span></span><br>
-    585.1 mi · 56.2k ft
+    585.1 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">16</span>
-    <span class="avatar">YY</span>
-    <div>
+    <div class="name-block">
       <div class="name">Yvonne Yip</div>
-      <span class="handle">@morethanreal</span>
+      <a class="strava" href="https://www.strava.com/athletes/morethanreal" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -940,17 +950,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>21</b><span style="opacity:.4">/31</span></span><br>
-    333.7 mi · 18.8k ft
+    333.7 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">17</span>
-    <span class="avatar">ZB</span>
-    <div>
+    <div class="name-block">
       <div class="name">zbrowne</div>
-      <span class="handle">@zbrowne</span>
+      <a class="strava" href="https://www.strava.com/athletes/zbrowne" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -988,17 +999,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>21</b><span style="opacity:.4">/31</span></span><br>
-    203.9 mi · 12.7k ft
+    203.9 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">18</span>
-    <span class="avatar">RA</span>
-    <div>
+    <div class="name-block">
       <div class="name">ravi_garcia</div>
-      <span class="handle">@ravi_garcia</span>
+      <a class="strava" href="https://www.strava.com/athletes/ravi_garcia" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -1036,17 +1048,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>21</b><span style="opacity:.4">/31</span></span><br>
-    202.8 mi · 7.5k ft
+    202.8 mi
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">19</span>
-    <span class="avatar">LI</span>
-    <div>
+    <div class="name-block">
       <div class="name">lily</div>
-      <span class="handle">@26072252</span>
+      <a class="strava" href="https://www.strava.com/athletes/26072252" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+  <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+</svg></a>
     </div>
   </div>
   <div class="punchcard">
@@ -1084,7 +1097,7 @@
   </div>
   <div class="totals">
     <span class="big"><b>14</b><span style="opacity:.4">/31</span></span><br>
-    56.6 mi · 1.3k ft
+    56.6 mi
   </div>
 </div>
 
@@ -1096,8 +1109,7 @@
     more
   </div>
   <div>
-    updated 2026-04-16 13:10 PDT &nbsp; · &nbsp;
-    previous: <a href="#">2024</a>
+    updated 2026-04-16 14:05 PDT &nbsp; · &nbsp; previous: <a href="#">2024</a>
   </div>
 </div>
 
