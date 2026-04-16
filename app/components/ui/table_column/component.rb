@@ -2,8 +2,6 @@
 
 module UI
   module TableColumn
-    # ViewComponent representing a single table column. The table renders this
-    # component once per cell via `render(col.for_record(record))`.
     class Component < ApplicationComponent
       ARROW_UP = "\u2191"
       ARROW_DOWN = "\u2193"
@@ -47,29 +45,23 @@ module UI
         end
       end
 
-      def th_classes(index, total:, bordered:)
+      def th_classes(bordered:)
         classes = ["px-1 py-2"]
         if bordered
-          classes << "border-b border-r border-t border-gray-200 dark:border-gray-600"
-          classes << "border-l" if index == 0
+          classes << "border-b border-l border-t border-gray-200 dark:border-gray-600"
         end
-        classes << "rounded-tl-sm" if index == 0
-        classes << "rounded-tr-sm" if index == total - 1
         classes << @classes if @classes
         classes << @header_classes if @header_classes
         classes.join(" ")
       end
 
-      def td_classes(index, total:, bordered:, last_row:)
+      def td_classes(bordered:)
         classes = ["px-1 py-1"]
-        if bordered
-          classes << "border-b border-r border-gray-200 dark:border-gray-700"
-          classes << "border-l" if index == 0
+        classes << if bordered
+          "border-b border-l border-gray-200 dark:border-gray-700"
         else
-          classes << "border-b border-gray-100 dark:border-gray-700"
+          "border-b border-gray-100 dark:border-gray-700"
         end
-        classes << "rounded-bl-sm" if last_row && index == 0
-        classes << "rounded-br-sm" if last_row && index == total - 1
         classes << @classes if @classes
         classes.join(" ")
       end

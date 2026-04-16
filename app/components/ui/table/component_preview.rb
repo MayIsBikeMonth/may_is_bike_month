@@ -18,15 +18,15 @@ module UI
         end
       end
 
-      def with_sortable_columns
+      def sortable_with_cache
         colors = enthusiasm_colors
-        render(UI::Table::Component.new(records: sample_records, sort: "name", sort_direction: "desc", render_sortable: true)) do |table|
+        render(UI::Table::Component.new(records: sample_records, cache_key: "preview-cryptids", sort: "name", sort_direction: "desc", render_sortable: true)) do |table|
           table.column(sortable: "name") { |r| r.name }
           table.column(label: "Region", header_classes: "font-normal") { |r| r.region }
           table.column(label: "Credibility", header_classes: "font-normal") { |r| render(UI::Badge::Component.new(text: r.credibility, color: (r.credibility == "Confirmed") ? :success : :gray, size: :sm)) }
           table.column(label: "Enthusiasm", header_classes: "font-normal") { |r| render(UI::Badge::Component.new(text: r.enthusiasm, color: colors[r.enthusiasm], size: :sm)) }
           table.column(sortable: "sightings") { |r| number_with_delimiter(r.sightings) }
-          table.column(label: "First Seen", header_classes: "font-normal") { |r| render(UI::Time::Component.new(time: r.first_seen)) }
+          table.column(label: "Rendered at", header_classes: "font-normal") { |_r| tag.small(l(::Time.current, format: :localize_time), class: "localizeTime preciseTime") }
         end
       end
 
