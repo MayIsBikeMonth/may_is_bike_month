@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>May is Bike Month 2025 — Sparkbar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --paper: #fbf8f1;
+    --ink: #1a1a1a;
+    --muted: #7a7368;
+    --line: rgba(0,0,0,0.08);
+    --bar: #1a1a1a;
+    --warm: #d97a3a;
+    --hot:  #c0392b;
+    --weekend: rgba(0,0,0,0.04);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font-family: "Space Grotesk", system-ui, sans-serif; font-size: 13px; line-height: 1.4; }
+  .wrap { max-width: 1340px; margin: 0 auto; padding: 32px 28px 80px; }
+
+  header { display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: end;
+    border-bottom: 2px solid var(--ink); padding-bottom: 18px; margin-bottom: 22px; }
+  header h1 { font-family: "Space Mono", monospace; font-weight: 700; font-size: 38px;
+    letter-spacing: -1px; margin: 0; }
+  header .sub { color: var(--muted); margin-top: 6px; font-size: 13px; }
+  header .meta { display: flex; gap: 22px; font-family: "Space Mono", monospace; }
+  header .meta div { text-align: right; }
+  header .meta .num { font-size: 22px; font-weight: 700; }
+  header .meta .label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+
+  .axis { display: grid; grid-template-columns: 220px 1fr 150px; gap: 16px; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid var(--line); color: var(--muted);
+    font-family: "Space Mono", monospace; font-size: 11px; margin-bottom: 4px; }
+  .axis .days { display: grid; grid-template-columns: repeat(31, 1fr); text-align: center; }
+  .axis .days span.we { color: var(--ink); font-weight: 700; }
+
+  .row { display: grid; grid-template-columns: 220px 1fr 150px; gap: 16px; align-items: end;
+    padding: 14px 0 10px; border-bottom: 1px solid var(--line); }
+  .row .who { padding-bottom: 4px; }
+  .row .who .rank { font-family: "Space Mono", monospace; color: var(--muted); font-size: 11px; margin-right: 6px; }
+  .row .who .name { font-weight: 700; font-size: 15px; display: inline; }
+  .row .who .handle { display: block; color: var(--muted); font-family: "Space Mono", monospace; font-size: 11px; margin-top: 2px; }
+
+  .row .bars { display: grid; grid-template-columns: repeat(31, 1fr);
+    height: 64px; align-items: end; }
+  .row .bars .col { display: flex; align-items: flex-end; justify-content: center;
+    height: 100%; padding: 0 1px; position: relative; }
+  .row .bars .col.we { background: var(--weekend); }
+  .row .bars .col i { display: block; width: 100%; max-width: 14px; min-height: 0;
+    background: var(--bar); transition: background .15s; }
+  .row .bars .col i.warm { background: var(--warm); }
+  .row .bars .col i.hot { background: var(--hot); }
+  .row .bars .col:hover i { background: var(--hot); }
+
+  .row .totals { text-align: right; font-family: "Space Mono", monospace; padding-bottom: 4px; }
+  .row .totals .big { font-size: 22px; font-weight: 700; }
+  .row .totals .big small { font-size: 12px; font-weight: 400; color: var(--muted); margin-left: 2px; }
+  .row .totals .dist { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .row .totals .peak { display: block; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-top: 2px; }
+
+  .footer { display: flex; justify-content: space-between; margin-top: 30px; color: var(--muted);
+    font-family: "Space Mono", monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .12em; }
+  .footer a { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; }
+  .legend { display: flex; align-items: center; gap: 14px; }
+  .legend span { display: inline-flex; align-items: center; gap: 4px; }
+  .legend i { display: inline-block; width: 12px; height: 12px; background: var(--bar); }
+  .legend i.warm { background: var(--warm); }
+  .legend i.hot { background: var(--hot); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <h1>May is Bike Month 2025</h1>
+    <div class="sub">Each rider's row plots distance per day. Tall bar = long ride. Cream = weekend.</div>
+  </div>
+  <div class="meta">
+    <div><div class="num">19</div><div class="label">Riders</div></div>
+    <div><div class="num">503</div><div class="label">Ride Days</div></div>
+    <div><div class="num">8,215</div><div class="label">Miles</div></div>
+    <div><div class="num">220</div><div class="label">Top Day (mi)</div></div>
+  </div>
+</header>
+
+<div class="axis">
+  <div>rider · rank May 1 → May 31</div>
+  <div class="days">
+  <span class="">1</span>
+      <span class="">2</span>
+      <span class="we">3</span>
+      <span class="we">4</span>
+      <span class="">5</span>
+      <span class="">6</span>
+      <span class="">7</span>
+      <span class="">8</span>
+      <span class="">9</span>
+      <span class="we">10</span>
+      <span class="we">11</span>
+      <span class="">12</span>
+      <span class="">13</span>
+      <span class="">14</span>
+      <span class="">15</span>
+      <span class="">16</span>
+      <span class="we">17</span>
+      <span class="we">18</span>
+      <span class="">19</span>
+      <span class="">20</span>
+      <span class="">21</span>
+      <span class="">22</span>
+      <span class="">23</span>
+      <span class="we">24</span>
+      <span class="we">25</span>
+      <span class="">26</span>
+      <span class="">27</span>
+      <span class="">28</span>
+      <span class="">29</span>
+      <span class="">30</span>
+      <span class="we">31</span>
+  </div>
+  <div style="text-align:right;">days · distance · peak</div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">01</span>
+    <div>
+      <div class="name">Sam Daly</div>
+      <span class="handle">@daly_sam</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 20.0 mi""><i class="bar warm" style="height:30.2%"></i></div>
+      <div class="col title="2025-05-02: 12.0 mi""><i class="bar" style="height:23.4%"></i></div>
+      <div class="col we title="2025-05-03: 14.0 mi""><i class="bar" style="height:25.2%"></i></div>
+      <div class="col we title="2025-05-04: 52.0 mi""><i class="bar hot" style="height:48.6%"></i></div>
+      <div class="col title="2025-05-05: 26.0 mi""><i class="bar warm" style="height:34.4%"></i></div>
+      <div class="col title="2025-05-06: 23.0 mi""><i class="bar warm" style="height:32.3%"></i></div>
+      <div class="col title="2025-05-07: 39.7 mi""><i class="bar hot" style="height:42.5%"></i></div>
+      <div class="col title="2025-05-08: 15.0 mi""><i class="bar warm" style="height:26.1%"></i></div>
+      <div class="col title="2025-05-09: 22.0 mi""><i class="bar warm" style="height:31.6%"></i></div>
+      <div class="col we title="2025-05-10: 74.0 mi""><i class="bar hot" style="height:58.0%"></i></div>
+      <div class="col we title="2025-05-11: 39.8 mi""><i class="bar hot" style="height:42.5%"></i></div>
+      <div class="col title="2025-05-12: 23.0 mi""><i class="bar warm" style="height:32.3%"></i></div>
+      <div class="col title="2025-05-13: 15.0 mi""><i class="bar warm" style="height:26.1%"></i></div>
+      <div class="col title="2025-05-14: 8.0 mi""><i class="bar" style="height:19.1%"></i></div>
+      <div class="col title="2025-05-15: 10.0 mi""><i class="bar" style="height:21.3%"></i></div>
+      <div class="col title="2025-05-16: 34.0 mi""><i class="bar hot" style="height:39.3%"></i></div>
+      <div class="col we title="2025-05-17: 30.0 mi""><i class="bar hot" style="height:36.9%"></i></div>
+      <div class="col we title="2025-05-18: 4.0 mi""><i class="bar" style="height:13.5%"></i></div>
+      <div class="col title="2025-05-19: 6.0 mi""><i class="bar" style="height:16.5%"></i></div>
+      <div class="col title="2025-05-20: 16.0 mi""><i class="bar warm" style="height:27.0%"></i></div>
+      <div class="col title="2025-05-21: 42.0 mi""><i class="bar hot" style="height:43.7%"></i></div>
+      <div class="col title="2025-05-22: 27.2 mi""><i class="bar warm" style="height:35.2%"></i></div>
+      <div class="col title="2025-05-23: 24.0 mi""><i class="bar warm" style="height:33.0%"></i></div>
+      <div class="col we title="2025-05-24: 115.0 mi""><i class="bar hot" style="height:72.3%"></i></div>
+      <div class="col we title="2025-05-25: 68.0 mi""><i class="bar hot" style="height:55.6%"></i></div>
+      <div class="col title="2025-05-26: 94.2 mi""><i class="bar hot" style="height:65.4%"></i></div>
+      <div class="col title="2025-05-27: 36.0 mi""><i class="bar hot" style="height:40.5%"></i></div>
+      <div class="col title="2025-05-28: 33.0 mi""><i class="bar hot" style="height:38.7%"></i></div>
+      <div class="col title="2025-05-29: 22.0 mi""><i class="bar warm" style="height:31.6%"></i></div>
+      <div class="col title="2025-05-30: 40.1 mi""><i class="bar hot" style="height:42.7%"></i></div>
+      <div class="col we title="2025-05-31: 143.7 mi""><i class="bar hot" style="height:80.8%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">31<small>d</small></span>
+    <span class="dist">1,128.7 mi</span>
+    <span class="peak">peak 144mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">02</span>
+    <div>
+      <div class="name">Ekaterina Rakhmatulina</div>
+      <span class="handle">@erakhmatulina</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 8.9 mi""><i class="bar" style="height:20.2%"></i></div>
+      <div class="col title="2025-05-02: 13.0 mi""><i class="bar" style="height:24.3%"></i></div>
+      <div class="col we title="2025-05-03: 80.7 mi""><i class="bar hot" style="height:60.6%"></i></div>
+      <div class="col we title="2025-05-04: 7.9 mi""><i class="bar" style="height:19.0%"></i></div>
+      <div class="col title="2025-05-05: 14.9 mi""><i class="bar" style="height:26.0%"></i></div>
+      <div class="col title="2025-05-06: 11.7 mi""><i class="bar" style="height:23.1%"></i></div>
+      <div class="col title="2025-05-07: 14.9 mi""><i class="bar" style="height:26.1%"></i></div>
+      <div class="col title="2025-05-08: 16.7 mi""><i class="bar warm" style="height:27.5%"></i></div>
+      <div class="col title="2025-05-09: 12.7 mi""><i class="bar" style="height:24.1%"></i></div>
+      <div class="col we title="2025-05-10: 66.5 mi""><i class="bar hot" style="height:55.0%"></i></div>
+      <div class="col we title="2025-05-11: 17.9 mi""><i class="bar warm" style="height:28.5%"></i></div>
+      <div class="col title="2025-05-12: 17.2 mi""><i class="bar warm" style="height:28.0%"></i></div>
+      <div class="col title="2025-05-13: 51.2 mi""><i class="bar hot" style="height:48.2%"></i></div>
+      <div class="col title="2025-05-14: 30.3 mi""><i class="bar hot" style="height:37.1%"></i></div>
+      <div class="col title="2025-05-15: 20.6 mi""><i class="bar warm" style="height:30.6%"></i></div>
+      <div class="col title="2025-05-16: 19.7 mi""><i class="bar warm" style="height:29.9%"></i></div>
+      <div class="col we title="2025-05-17: 67.3 mi""><i class="bar hot" style="height:55.3%"></i></div>
+      <div class="col we title="2025-05-18: 23.7 mi""><i class="bar warm" style="height:32.8%"></i></div>
+      <div class="col title="2025-05-19: 50.6 mi""><i class="bar hot" style="height:48.0%"></i></div>
+      <div class="col title="2025-05-20: 14.5 mi""><i class="bar" style="height:25.7%"></i></div>
+      <div class="col title="2025-05-21: 25.5 mi""><i class="bar warm" style="height:34.0%"></i></div>
+      <div class="col title="2025-05-22: 14.2 mi""><i class="bar" style="height:25.4%"></i></div>
+      <div class="col title="2025-05-23: 219.9 mi""><i class="bar hot" style="height:100.0%"></i></div>
+      <div class="col we title="2025-05-24: 7.2 mi""><i class="bar" style="height:18.1%"></i></div>
+      <div class="col we title="2025-05-25: 18.3 mi""><i class="bar warm" style="height:28.8%"></i></div>
+      <div class="col title="2025-05-26: 24.2 mi""><i class="bar warm" style="height:33.2%"></i></div>
+      <div class="col title="2025-05-27: 11.9 mi""><i class="bar" style="height:23.2%"></i></div>
+      <div class="col title="2025-05-28: 18.6 mi""><i class="bar warm" style="height:29.1%"></i></div>
+      <div class="col title="2025-05-29: 38.1 mi""><i class="bar hot" style="height:41.6%"></i></div>
+      <div class="col title="2025-05-30: 38.5 mi""><i class="bar hot" style="height:41.9%"></i></div>
+      <div class="col we title="2025-05-31: 80.0 mi""><i class="bar hot" style="height:60.3%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">31<small>d</small></span>
+    <span class="dist">1,057.6 mi</span>
+    <span class="peak">peak 220mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">03</span>
+    <div>
+      <div class="name">Old Scott</div>
+      <span class="handle">@sschoenwaelder</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 27.6 mi""><i class="bar warm" style="height:35.4%"></i></div>
+      <div class="col title="2025-05-02: 6.5 mi""><i class="bar" style="height:17.2%"></i></div>
+      <div class="col we title="2025-05-03: 62.0 mi""><i class="bar hot" style="height:53.1%"></i></div>
+      <div class="col we title="2025-05-04: 4.8 mi""><i class="bar" style="height:14.7%"></i></div>
+      <div class="col title="2025-05-05: 5.2 mi""><i class="bar" style="height:15.4%"></i></div>
+      <div class="col title="2025-05-06: 20.5 mi""><i class="bar warm" style="height:30.5%"></i></div>
+      <div class="col title="2025-05-07: 29.0 mi""><i class="bar warm" style="height:36.3%"></i></div>
+      <div class="col title="2025-05-08: 6.5 mi""><i class="bar" style="height:17.2%"></i></div>
+      <div class="col title="2025-05-09: 13.7 mi""><i class="bar" style="height:25.0%"></i></div>
+      <div class="col we title="2025-05-10: 42.1 mi""><i class="bar hot" style="height:43.7%"></i></div>
+      <div class="col we title="2025-05-11: 10.2 mi""><i class="bar" style="height:21.6%"></i></div>
+      <div class="col title="2025-05-12: 2.1 mi""><i class="bar" style="height:9.9%"></i></div>
+      <div class="col title="2025-05-13: 26.8 mi""><i class="bar warm" style="height:34.9%"></i></div>
+      <div class="col title="2025-05-14: 20.0 mi""><i class="bar warm" style="height:30.1%"></i></div>
+      <div class="col title="2025-05-15: 18.2 mi""><i class="bar warm" style="height:28.7%"></i></div>
+      <div class="col title="2025-05-16: 3.4 mi""><i class="bar" style="height:12.4%"></i></div>
+      <div class="col we title="2025-05-17: 44.9 mi""><i class="bar hot" style="height:45.2%"></i></div>
+      <div class="col we title="2025-05-18: 14.3 mi""><i class="bar" style="height:25.5%"></i></div>
+      <div class="col title="2025-05-19: 14.9 mi""><i class="bar" style="height:26.0%"></i></div>
+      <div class="col title="2025-05-20: 6.0 mi""><i class="bar" style="height:16.5%"></i></div>
+      <div class="col title="2025-05-21: 9.6 mi""><i class="bar" style="height:20.9%"></i></div>
+      <div class="col title="2025-05-22: 6.2 mi""><i class="bar" style="height:16.8%"></i></div>
+      <div class="col title="2025-05-23: 6.4 mi""><i class="bar" style="height:17.0%"></i></div>
+      <div class="col we title="2025-05-24: 7.7 mi""><i class="bar" style="height:18.7%"></i></div>
+      <div class="col we title="2025-05-25: 36.4 mi""><i class="bar hot" style="height:40.7%"></i></div>
+      <div class="col title="2025-05-26: 2.4 mi""><i class="bar" style="height:10.5%"></i></div>
+      <div class="col title="2025-05-27: 5.6 mi""><i class="bar" style="height:16.0%"></i></div>
+      <div class="col title="2025-05-28: 50.5 mi""><i class="bar hot" style="height:47.9%"></i></div>
+      <div class="col title="2025-05-29: 4.8 mi""><i class="bar" style="height:14.8%"></i></div>
+      <div class="col title="2025-05-30: 7.4 mi""><i class="bar" style="height:18.3%"></i></div>
+      <div class="col we title="2025-05-31: 114.4 mi""><i class="bar hot" style="height:72.1%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">31<small>d</small></span>
+    <span class="dist">629.3 mi</span>
+    <span class="peak">peak 114mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">04</span>
+    <div>
+      <div class="name">Gar Higgins</div>
+      <span class="handle">@gar</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 13.4 mi""><i class="bar" style="height:24.7%"></i></div>
+      <div class="col title="2025-05-02: 9.0 mi""><i class="bar" style="height:20.2%"></i></div>
+      <div class="col we title="2025-05-03: 5.3 mi""><i class="bar" style="height:15.5%"></i></div>
+      <div class="col we title="2025-05-04: 15.6 mi""><i class="bar warm" style="height:26.7%"></i></div>
+      <div class="col title="2025-05-05: 4.7 mi""><i class="bar" style="height:14.7%"></i></div>
+      <div class="col title="2025-05-06: 33.5 mi""><i class="bar hot" style="height:39.0%"></i></div>
+      <div class="col title="2025-05-07: 5.4 mi""><i class="bar" style="height:15.7%"></i></div>
+      <div class="col title="2025-05-08: 14.5 mi""><i class="bar" style="height:25.7%"></i></div>
+      <div class="col title="2025-05-09: 47.1 mi""><i class="bar hot" style="height:46.3%"></i></div>
+      <div class="col we title="2025-05-10: 6.8 mi""><i class="bar" style="height:17.5%"></i></div>
+      <div class="col we title="2025-05-11: 6.6 mi""><i class="bar" style="height:17.3%"></i></div>
+      <div class="col title="2025-05-12: 22.6 mi""><i class="bar warm" style="height:32.1%"></i></div>
+      <div class="col title="2025-05-13: 3.0 mi""><i class="bar" style="height:11.6%"></i></div>
+      <div class="col title="2025-05-14: 3.7 mi""><i class="bar" style="height:12.9%"></i></div>
+      <div class="col title="2025-05-15: 5.4 mi""><i class="bar" style="height:15.7%"></i></div>
+      <div class="col title="2025-05-16: 3.9 mi""><i class="bar" style="height:13.2%"></i></div>
+      <div class="col we title="2025-05-17: 3.4 mi""><i class="bar" style="height:12.5%"></i></div>
+      <div class="col we title="2025-05-18: 3.4 mi""><i class="bar" style="height:12.5%"></i></div>
+      <div class="col title="2025-05-19: 6.4 mi""><i class="bar" style="height:17.0%"></i></div>
+      <div class="col title="2025-05-20: 3.4 mi""><i class="bar" style="height:12.4%"></i></div>
+      <div class="col title="2025-05-21: 9.7 mi""><i class="bar" style="height:21.0%"></i></div>
+      <div class="col title="2025-05-22: 10.2 mi""><i class="bar" style="height:21.5%"></i></div>
+      <div class="col title="2025-05-23: 3.5 mi""><i class="bar" style="height:12.7%"></i></div>
+      <div class="col we title="2025-05-24: 3.4 mi""><i class="bar" style="height:12.4%"></i></div>
+      <div class="col we title="2025-05-25: 20.9 mi""><i class="bar warm" style="height:30.8%"></i></div>
+      <div class="col title="2025-05-26: 18.1 mi""><i class="bar warm" style="height:28.7%"></i></div>
+      <div class="col title="2025-05-27: 3.4 mi""><i class="bar" style="height:12.4%"></i></div>
+      <div class="col title="2025-05-28: 16.3 mi""><i class="bar warm" style="height:27.2%"></i></div>
+      <div class="col title="2025-05-29: 29.7 mi""><i class="bar warm" style="height:36.7%"></i></div>
+      <div class="col title="2025-05-30: 33.4 mi""><i class="bar hot" style="height:39.0%"></i></div>
+      <div class="col we title="2025-05-31: 37.1 mi""><i class="bar hot" style="height:41.1%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">31<small>d</small></span>
+    <span class="dist">387.0 mi</span>
+    <span class="peak">peak 47mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">05</span>
+    <div>
+      <div class="name">Gabriella</div>
+      <span class="handle">@136522774</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 7.8 mi""><i class="bar" style="height:18.8%"></i></div>
+      <div class="col title="2025-05-02: 15.3 mi""><i class="bar warm" style="height:26.4%"></i></div>
+      <div class="col we title="2025-05-03: 11.5 mi""><i class="bar" style="height:22.8%"></i></div>
+      <div class="col we title="2025-05-04: 6.0 mi""><i class="bar" style="height:16.5%"></i></div>
+      <div class="col title="2025-05-05: 11.5 mi""><i class="bar" style="height:22.9%"></i></div>
+      <div class="col title="2025-05-06: 10.0 mi""><i class="bar" style="height:21.3%"></i></div>
+      <div class="col title="2025-05-07: 16.1 mi""><i class="bar warm" style="height:27.1%"></i></div>
+      <div class="col title="2025-05-08: 10.0 mi""><i class="bar" style="height:21.3%"></i></div>
+      <div class="col title="2025-05-09: 27.2 mi""><i class="bar warm" style="height:35.2%"></i></div>
+      <div class="col we title="2025-05-10: 9.1 mi""><i class="bar" style="height:20.3%"></i></div>
+      <div class="col we title="2025-05-11: 15.8 mi""><i class="bar warm" style="height:26.8%"></i></div>
+      <div class="col title="2025-05-12: 17.5 mi""><i class="bar warm" style="height:28.2%"></i></div>
+      <div class="col title="2025-05-13: 5.8 mi""><i class="bar" style="height:16.3%"></i></div>
+      <div class="col title="2025-05-14: 17.7 mi""><i class="bar warm" style="height:28.4%"></i></div>
+      <div class="col title="2025-05-15: 8.0 mi""><i class="bar" style="height:19.1%"></i></div>
+      <div class="col title="2025-05-16: 14.9 mi""><i class="bar" style="height:26.0%"></i></div>
+      <div class="col we title="2025-05-17: 19.6 mi""><i class="bar warm" style="height:29.9%"></i></div>
+      <div class="col we title="2025-05-18: 11.3 mi""><i class="bar" style="height:22.6%"></i></div>
+      <div class="col title="2025-05-19: 20.5 mi""><i class="bar warm" style="height:30.5%"></i></div>
+      <div class="col title="2025-05-20: 2.3 mi""><i class="bar" style="height:10.3%"></i></div>
+      <div class="col title="2025-05-21: 6.9 mi""><i class="bar" style="height:17.7%"></i></div>
+      <div class="col title="2025-05-22: 13.4 mi""><i class="bar" style="height:24.7%"></i></div>
+      <div class="col title="2025-05-23: 11.5 mi""><i class="bar" style="height:22.9%"></i></div>
+      <div class="col we title="2025-05-24: 3.2 mi""><i class="bar" style="height:12.1%"></i></div>
+      <div class="col we title="2025-05-25: 6.7 mi""><i class="bar" style="height:17.4%"></i></div>
+      <div class="col title="2025-05-26: 4.2 mi""><i class="bar" style="height:13.8%"></i></div>
+      <div class="col title="2025-05-27: 10.9 mi""><i class="bar" style="height:22.3%"></i></div>
+      <div class="col title="2025-05-28: 7.1 mi""><i class="bar" style="height:18.0%"></i></div>
+      <div class="col title="2025-05-29: 7.5 mi""><i class="bar" style="height:18.5%"></i></div>
+      <div class="col title="2025-05-30: 11.3 mi""><i class="bar" style="height:22.7%"></i></div>
+      <div class="col we title="2025-05-31: 14.4 mi""><i class="bar" style="height:25.6%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">31<small>d</small></span>
+    <span class="dist">230.8 mi</span>
+    <span class="peak">peak 27mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">06</span>
+    <div>
+      <div class="name">Kristen Lovin</div>
+      <span class="handle"></span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 3.6 mi""><i class="bar" style="height:12.7%"></i></div>
+      <div class="col title="2025-05-02: 3.5 mi""><i class="bar" style="height:12.7%"></i></div>
+      <div class="col we title="2025-05-03: 4.8 mi""><i class="bar" style="height:14.8%"></i></div>
+      <div class="col we title="2025-05-04: 2.5 mi""><i class="bar" style="height:10.8%"></i></div>
+      <div class="col title="2025-05-05: 3.5 mi""><i class="bar" style="height:12.7%"></i></div>
+      <div class="col title="2025-05-06: 6.8 mi""><i class="bar" style="height:17.6%"></i></div>
+      <div class="col title="2025-05-07: 7.3 mi""><i class="bar" style="height:18.2%"></i></div>
+      <div class="col title="2025-05-08: 9.1 mi""><i class="bar" style="height:20.3%"></i></div>
+      <div class="col title="2025-05-09: 8.7 mi""><i class="bar" style="height:19.9%"></i></div>
+      <div class="col we title="2025-05-10: 2.3 mi""><i class="bar" style="height:10.3%"></i></div>
+      <div class="col we title="2025-05-11: 3.5 mi""><i class="bar" style="height:12.6%"></i></div>
+      <div class="col title="2025-05-12: 7.0 mi""><i class="bar" style="height:17.8%"></i></div>
+      <div class="col title="2025-05-13: 7.2 mi""><i class="bar" style="height:18.1%"></i></div>
+      <div class="col title="2025-05-14: 8.9 mi""><i class="bar" style="height:20.1%"></i></div>
+      <div class="col title="2025-05-15: 7.5 mi""><i class="bar" style="height:18.5%"></i></div>
+      <div class="col title="2025-05-16: 7.4 mi""><i class="bar" style="height:18.4%"></i></div>
+      <div class="col we title="2025-05-17: 12.3 mi""><i class="bar" style="height:23.7%"></i></div>
+      <div class="col we title="2025-05-18: 4.6 mi""><i class="bar" style="height:14.4%"></i></div>
+      <div class="col title="2025-05-19: 8.6 mi""><i class="bar" style="height:19.8%"></i></div>
+      <div class="col title="2025-05-20: 7.5 mi""><i class="bar" style="height:18.4%"></i></div>
+      <div class="col title="2025-05-21: 7.2 mi""><i class="bar" style="height:18.1%"></i></div>
+      <div class="col title="2025-05-22: 5.5 mi""><i class="bar" style="height:15.8%"></i></div>
+      <div class="col title="2025-05-23: 2.6 mi""><i class="bar" style="height:11.0%"></i></div>
+      <div class="col we title="2025-05-24: 3.4 mi""><i class="bar" style="height:12.4%"></i></div>
+      <div class="col we title="2025-05-25: 3.0 mi""><i class="bar" style="height:11.7%"></i></div>
+      <div class="col title="2025-05-26: 4.7 mi""><i class="bar" style="height:14.7%"></i></div>
+      <div class="col title="2025-05-27: 7.3 mi""><i class="bar" style="height:18.2%"></i></div>
+      <div class="col title="2025-05-28: 7.5 mi""><i class="bar" style="height:18.4%"></i></div>
+      <div class="col title="2025-05-29: 8.7 mi""><i class="bar" style="height:19.9%"></i></div>
+      <div class="col title="2025-05-30: 3.1 mi""><i class="bar" style="height:11.9%"></i></div>
+      <div class="col we title="2025-05-31: 2.4 mi""><i class="bar" style="height:10.5%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">31<small>d</small></span>
+    <span class="dist">171.4 mi</span>
+    <span class="peak">peak 12mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">07</span>
+    <div>
+      <div class="name">seth herr</div>
+      <span class="handle">@sethherr</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 8.1 mi""><i class="bar" style="height:19.2%"></i></div>
+      <div class="col title="2025-05-02: 3.3 mi""><i class="bar" style="height:12.2%"></i></div>
+      <div class="col we title="2025-05-03: 16.0 mi""><i class="bar warm" style="height:26.9%"></i></div>
+      <div class="col we title="2025-05-04: 3.0 mi""><i class="bar" style="height:11.7%"></i></div>
+      <div class="col title="2025-05-05: 17.1 mi""><i class="bar warm" style="height:27.9%"></i></div>
+      <div class="col title="2025-05-06: 36.8 mi""><i class="bar hot" style="height:40.9%"></i></div>
+      <div class="col title="2025-05-07: 2.5 mi""><i class="bar" style="height:10.7%"></i></div>
+      <div class="col title="2025-05-08: 25.6 mi""><i class="bar warm" style="height:34.1%"></i></div>
+      <div class="col title="2025-05-09: 5.2 mi""><i class="bar" style="height:15.3%"></i></div>
+      <div class="col we title="2025-05-10: 12.6 mi""><i class="bar" style="height:23.9%"></i></div>
+      <div class="col we title="2025-05-11: 14.5 mi""><i class="bar" style="height:25.6%"></i></div>
+      <div class="col title="2025-05-12: 8.7 mi""><i class="bar" style="height:19.9%"></i></div>
+      <div class="col title="2025-05-13: 8.7 mi""><i class="bar" style="height:19.9%"></i></div>
+      <div class="col title="2025-05-14: 27.8 mi""><i class="bar warm" style="height:35.5%"></i></div>
+      <div class="col title="2025-05-15: 7.3 mi""><i class="bar" style="height:18.2%"></i></div>
+      <div class="col title="2025-05-16: 52.3 mi""><i class="bar hot" style="height:48.8%"></i></div>
+      <div class="col we title="2025-05-17: 5.6 mi""><i class="bar" style="height:16.0%"></i></div>
+      <div class="col we title="2025-05-18: 18.8 mi""><i class="bar warm" style="height:29.2%"></i></div>
+      <div class="col title="2025-05-19: 2.5 mi""><i class="bar" style="height:10.6%"></i></div>
+      <div class="col title="2025-05-20: 3.4 mi""><i class="bar" style="height:12.4%"></i></div>
+      <div class="col title="2025-05-21: 10.2 mi""><i class="bar" style="height:21.6%"></i></div>
+      <div class="col title="2025-05-22: 9.3 mi""><i class="bar" style="height:20.5%"></i></div>
+      <div class="col title="2025-05-23: 2.0 mi""><i class="bar" style="height:9.6%"></i></div>
+      <div class="col we title="2025-05-24: 14.9 mi""><i class="bar" style="height:26.0%"></i></div>
+      <div class="col we title="2025-05-25: 28.4 mi""><i class="bar warm" style="height:36.0%"></i></div>
+      <div class="col title="2025-05-26: 28.6 mi""><i class="bar warm" style="height:36.0%"></i></div>
+      <div class="col title="2025-05-27: 24.0 mi""><i class="bar warm" style="height:33.0%"></i></div>
+      <div class="col title="2025-05-28: 17.7 mi""><i class="bar warm" style="height:28.4%"></i></div>
+      <div class="col title="2025-05-29: 23.8 mi""><i class="bar warm" style="height:32.9%"></i></div>
+      <div class="col title="2025-05-30: 12.6 mi""><i class="bar" style="height:24.0%"></i></div>
+      <div class="col we title="2025-05-31: 104.4 mi""><i class="bar hot" style="height:68.9%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">30<small>d</small></span>
+    <span class="dist">533.8 mi</span>
+    <span class="peak">peak 104mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">08</span>
+    <div>
+      <div class="name">Elizabeth</div>
+      <span class="handle"></span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 18.5 mi""><i class="bar warm" style="height:29.0%"></i></div>
+      <div class="col title="2025-05-02: 1.8 mi""><i class="bar" style="height:9.1%"></i></div>
+      <div class="col we title="2025-05-03: 7.6 mi""><i class="bar" style="height:18.6%"></i></div>
+      <div class="col we title="2025-05-04: 34.5 mi""><i class="bar hot" style="height:39.6%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-06: 9.7 mi""><i class="bar" style="height:21.0%"></i></div>
+      <div class="col title="2025-05-07: 30.6 mi""><i class="bar hot" style="height:37.3%"></i></div>
+      <div class="col title="2025-05-08: 3.0 mi""><i class="bar" style="height:11.8%"></i></div>
+      <div class="col title="2025-05-09: 12.9 mi""><i class="bar" style="height:24.3%"></i></div>
+      <div class="col we title="2025-05-10: 13.6 mi""><i class="bar" style="height:24.9%"></i></div>
+      <div class="col we title="2025-05-11: 25.6 mi""><i class="bar warm" style="height:34.1%"></i></div>
+      <div class="col title="2025-05-12: 18.4 mi""><i class="bar warm" style="height:28.9%"></i></div>
+      <div class="col title="2025-05-13: 10.9 mi""><i class="bar" style="height:22.3%"></i></div>
+      <div class="col title="2025-05-14: 5.3 mi""><i class="bar" style="height:15.5%"></i></div>
+      <div class="col title="2025-05-15: 5.6 mi""><i class="bar" style="height:16.0%"></i></div>
+      <div class="col title="2025-05-16: 7.6 mi""><i class="bar" style="height:18.6%"></i></div>
+      <div class="col we title="2025-05-17: 38.3 mi""><i class="bar hot" style="height:41.7%"></i></div>
+      <div class="col we title="2025-05-18: 48.6 mi""><i class="bar hot" style="height:47.0%"></i></div>
+      <div class="col title="2025-05-19: 7.2 mi""><i class="bar" style="height:18.2%"></i></div>
+      <div class="col title="2025-05-20: 7.3 mi""><i class="bar" style="height:18.2%"></i></div>
+      <div class="col title="2025-05-21: 2.9 mi""><i class="bar" style="height:11.5%"></i></div>
+      <div class="col title="2025-05-22: 16.1 mi""><i class="bar warm" style="height:27.0%"></i></div>
+      <div class="col title="2025-05-23: 6.0 mi""><i class="bar" style="height:16.5%"></i></div>
+      <div class="col we title="2025-05-24: 141.1 mi""><i class="bar hot" style="height:80.1%"></i></div>
+      <div class="col we title="2025-05-25: 120.2 mi""><i class="bar hot" style="height:73.9%"></i></div>
+      <div class="col title="2025-05-26: 20.5 mi""><i class="bar warm" style="height:30.5%"></i></div>
+      <div class="col title="2025-05-27: 3.0 mi""><i class="bar" style="height:11.7%"></i></div>
+      <div class="col title="2025-05-28: 4.6 mi""><i class="bar" style="height:14.4%"></i></div>
+      <div class="col title="2025-05-29: 5.8 mi""><i class="bar" style="height:16.3%"></i></div>
+      <div class="col title="2025-05-30: 22.9 mi""><i class="bar warm" style="height:32.3%"></i></div>
+      <div class="col we title="2025-05-31: 17.7 mi""><i class="bar warm" style="height:28.4%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">28<small>d</small></span>
+    <span class="dist">642.1 mi</span>
+    <span class="peak">peak 141mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">09</span>
+    <div>
+      <div class="name">jackson_lester</div>
+      <span class="handle">@jackson_lester</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 2.3 mi""><i class="bar" style="height:10.1%"></i></div>
+      <div class="col title="2025-05-02: 19.9 mi""><i class="bar warm" style="height:30.1%"></i></div>
+      <div class="col we title="2025-05-03: 18.7 mi""><i class="bar warm" style="height:29.2%"></i></div>
+      <div class="col we title="2025-05-04: 3.4 mi""><i class="bar" style="height:12.4%"></i></div>
+      <div class="col title="2025-05-05: 8.1 mi""><i class="bar" style="height:19.1%"></i></div>
+      <div class="col title="2025-05-06: 2.2 mi""><i class="bar" style="height:9.9%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-08: 13.9 mi""><i class="bar" style="height:25.1%"></i></div>
+      <div class="col title="2025-05-09: 50.3 mi""><i class="bar hot" style="height:47.8%"></i></div>
+      <div class="col we title="2025-05-10: 47.9 mi""><i class="bar hot" style="height:46.7%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-12: 14.0 mi""><i class="bar" style="height:25.2%"></i></div>
+      <div class="col title="2025-05-13: 2.2 mi""><i class="bar" style="height:9.9%"></i></div>
+      <div class="col title="2025-05-14: 22.7 mi""><i class="bar warm" style="height:32.1%"></i></div>
+      <div class="col title="2025-05-15: 18.8 mi""><i class="bar warm" style="height:29.3%"></i></div>
+      <div class="col title="2025-05-16: 20.3 mi""><i class="bar warm" style="height:30.3%"></i></div>
+      <div class="col we title="2025-05-17: 12.5 mi""><i class="bar" style="height:23.8%"></i></div>
+      <div class="col we title="2025-05-18: 10.9 mi""><i class="bar" style="height:22.2%"></i></div>
+      <div class="col title="2025-05-19: 15.3 mi""><i class="bar warm" style="height:26.4%"></i></div>
+      <div class="col title="2025-05-20: 17.6 mi""><i class="bar warm" style="height:28.3%"></i></div>
+      <div class="col title="2025-05-21: 27.0 mi""><i class="bar warm" style="height:35.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-23: 6.9 mi""><i class="bar" style="height:17.8%"></i></div>
+      <div class="col we title="2025-05-24: 8.6 mi""><i class="bar" style="height:19.8%"></i></div>
+      <div class="col we title="2025-05-25: 31.8 mi""><i class="bar hot" style="height:38.0%"></i></div>
+      <div class="col title="2025-05-26: 28.0 mi""><i class="bar warm" style="height:35.7%"></i></div>
+      <div class="col title="2025-05-27: 13.5 mi""><i class="bar" style="height:24.8%"></i></div>
+      <div class="col title="2025-05-28: 18.0 mi""><i class="bar warm" style="height:28.6%"></i></div>
+      <div class="col title="2025-05-29: 26.5 mi""><i class="bar warm" style="height:34.7%"></i></div>
+      <div class="col title="2025-05-30: 21.1 mi""><i class="bar warm" style="height:31.0%"></i></div>
+      <div class="col we title="2025-05-31: 80.3 mi""><i class="bar hot" style="height:60.4%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">28<small>d</small></span>
+    <span class="dist">562.6 mi</span>
+    <span class="peak">peak 80mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">10</span>
+    <div>
+      <div class="name">Emily</div>
+      <span class="handle">@46514887</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 4.5 mi""><i class="bar" style="height:14.3%"></i></div>
+      <div class="col title="2025-05-02: 11.1 mi""><i class="bar" style="height:22.5%"></i></div>
+      <div class="col we title="2025-05-03: 6.9 mi""><i class="bar" style="height:17.8%"></i></div>
+      <div class="col we title="2025-05-04: 19.4 mi""><i class="bar warm" style="height:29.7%"></i></div>
+      <div class="col title="2025-05-05: 3.6 mi""><i class="bar" style="height:12.7%"></i></div>
+      <div class="col title="2025-05-06: 15.5 mi""><i class="bar warm" style="height:26.5%"></i></div>
+      <div class="col title="2025-05-07: 5.8 mi""><i class="bar" style="height:16.3%"></i></div>
+      <div class="col title="2025-05-08: 4.4 mi""><i class="bar" style="height:14.2%"></i></div>
+      <div class="col title="2025-05-09: 13.6 mi""><i class="bar" style="height:24.8%"></i></div>
+      <div class="col we title="2025-05-10: 6.6 mi""><i class="bar" style="height:17.3%"></i></div>
+      <div class="col we title="2025-05-11: 15.8 mi""><i class="bar warm" style="height:26.8%"></i></div>
+      <div class="col title="2025-05-12: 2.1 mi""><i class="bar" style="height:9.8%"></i></div>
+      <div class="col title="2025-05-13: 4.5 mi""><i class="bar" style="height:14.4%"></i></div>
+      <div class="col title="2025-05-14: 5.9 mi""><i class="bar" style="height:16.4%"></i></div>
+      <div class="col title="2025-05-15: 3.6 mi""><i class="bar" style="height:12.7%"></i></div>
+      <div class="col title="2025-05-16: 5.9 mi""><i class="bar" style="height:16.3%"></i></div>
+      <div class="col we title="2025-05-17: 20.7 mi""><i class="bar warm" style="height:30.7%"></i></div>
+      <div class="col we title="2025-05-18: 17.1 mi""><i class="bar warm" style="height:27.9%"></i></div>
+      <div class="col title="2025-05-19: 3.6 mi""><i class="bar" style="height:12.7%"></i></div>
+      <div class="col title="2025-05-20: 11.8 mi""><i class="bar" style="height:23.2%"></i></div>
+      <div class="col title="2025-05-21: 5.5 mi""><i class="bar" style="height:15.8%"></i></div>
+      <div class="col title="2025-05-22: 3.6 mi""><i class="bar" style="height:12.8%"></i></div>
+      <div class="col title="2025-05-23: 6.1 mi""><i class="bar" style="height:16.6%"></i></div>
+      <div class="col we title="2025-05-24: 7.1 mi""><i class="bar" style="height:18.0%"></i></div>
+      <div class="col we title="2025-05-25: 24.9 mi""><i class="bar warm" style="height:33.6%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-27: 3.5 mi""><i class="bar" style="height:12.6%"></i></div>
+      <div class="col title="2025-05-28: 18.6 mi""><i class="bar warm" style="height:29.1%"></i></div>
+      <div class="col title="2025-05-29: 3.5 mi""><i class="bar" style="height:12.7%"></i></div>
+      <div class="col title="2025-05-30: 1.6 mi""><i class="bar" style="height:8.4%"></i></div>
+      <div class="col we title="2025-05-31: 102.2 mi""><i class="bar hot" style="height:68.2%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">28<small>d</small></span>
+    <span class="dist">321.4 mi</span>
+    <span class="peak">peak 102mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">11</span>
+    <div>
+      <div class="name">Chris Mikschl</div>
+      <span class="handle">@cmikschl</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 4.1 mi""><i class="bar" style="height:13.6%"></i></div>
+      <div class="col title="2025-05-02: 1.4 mi""><i class="bar" style="height:8.0%"></i></div>
+      <div class="col we title="2025-05-03: 102.1 mi""><i class="bar hot" style="height:68.1%"></i></div>
+      <div class="col we title="2025-05-04: 1.6 mi""><i class="bar" style="height:8.5%"></i></div>
+      <div class="col title="2025-05-05: 15.2 mi""><i class="bar warm" style="height:26.3%"></i></div>
+      <div class="col title="2025-05-06: 2.6 mi""><i class="bar" style="height:10.8%"></i></div>
+      <div class="col title="2025-05-07: 4.0 mi""><i class="bar" style="height:13.4%"></i></div>
+      <div class="col title="2025-05-08: 11.2 mi""><i class="bar" style="height:22.6%"></i></div>
+      <div class="col title="2025-05-09: 2.4 mi""><i class="bar" style="height:10.5%"></i></div>
+      <div class="col we title="2025-05-10: 2.4 mi""><i class="bar" style="height:10.4%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-12: 2.4 mi""><i class="bar" style="height:10.4%"></i></div>
+      <div class="col title="2025-05-13: 5.4 mi""><i class="bar" style="height:15.7%"></i></div>
+      <div class="col title="2025-05-14: 5.7 mi""><i class="bar" style="height:16.1%"></i></div>
+      <div class="col title="2025-05-15: 5.2 mi""><i class="bar" style="height:15.3%"></i></div>
+      <div class="col title="2025-05-16: 5.2 mi""><i class="bar" style="height:15.4%"></i></div>
+      <div class="col we title="2025-05-17: 2.1 mi""><i class="bar" style="height:9.9%"></i></div>
+      <div class="col we title="2025-05-18: 3.5 mi""><i class="bar" style="height:12.6%"></i></div>
+      <div class="col title="2025-05-19: 2.6 mi""><i class="bar" style="height:11.0%"></i></div>
+      <div class="col title="2025-05-20: 3.9 mi""><i class="bar" style="height:13.4%"></i></div>
+      <div class="col title="2025-05-21: 2.5 mi""><i class="bar" style="height:10.7%"></i></div>
+      <div class="col title="2025-05-22: 5.8 mi""><i class="bar" style="height:16.3%"></i></div>
+      <div class="col title="2025-05-23: 2.3 mi""><i class="bar" style="height:10.1%"></i></div>
+      <div class="col we title="2025-05-24: 83.4 mi""><i class="bar hot" style="height:61.6%"></i></div>
+      <div class="col we title="2025-05-25: 3.9 mi""><i class="bar" style="height:13.3%"></i></div>
+      <div class="col title="2025-05-26: 2.5 mi""><i class="bar" style="height:10.7%"></i></div>
+      <div class="col title="2025-05-27: 2.5 mi""><i class="bar" style="height:10.6%"></i></div>
+      <div class="col title="2025-05-28: 3.7 mi""><i class="bar" style="height:12.9%"></i></div>
+      <div class="col title="2025-05-29: 2.4 mi""><i class="bar" style="height:10.4%"></i></div>
+      <div class="col title="2025-05-30: 2.7 mi""><i class="bar" style="height:11.1%"></i></div>
+      <div class="col we title="2025-05-31: 5.3 mi""><i class="bar" style="height:15.5%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">28<small>d</small></span>
+    <span class="dist">299.8 mi</span>
+    <span class="peak">peak 102mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">12</span>
+    <div>
+      <div class="name">Ali</div>
+      <span class="handle">@higgins_alexandra</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 8.7 mi""><i class="bar" style="height:19.9%"></i></div>
+      <div class="col title="2025-05-02: 3.3 mi""><i class="bar" style="height:12.2%"></i></div>
+      <div class="col we title="2025-05-03: 6.9 mi""><i class="bar" style="height:17.7%"></i></div>
+      <div class="col we title="2025-05-04: 2.1 mi""><i class="bar" style="height:9.8%"></i></div>
+      <div class="col title="2025-05-05: 18.3 mi""><i class="bar warm" style="height:28.8%"></i></div>
+      <div class="col title="2025-05-06: 4.1 mi""><i class="bar" style="height:13.6%"></i></div>
+      <div class="col title="2025-05-07: 3.0 mi""><i class="bar" style="height:11.7%"></i></div>
+      <div class="col title="2025-05-08: 17.2 mi""><i class="bar warm" style="height:28.0%"></i></div>
+      <div class="col title="2025-05-09: 6.9 mi""><i class="bar" style="height:17.7%"></i></div>
+      <div class="col we title="2025-05-10: 3.3 mi""><i class="bar" style="height:12.3%"></i></div>
+      <div class="col we title="2025-05-11: 11.8 mi""><i class="bar" style="height:23.2%"></i></div>
+      <div class="col title="2025-05-12: 4.5 mi""><i class="bar" style="height:14.3%"></i></div>
+      <div class="col title="2025-05-13: 6.5 mi""><i class="bar" style="height:17.2%"></i></div>
+      <div class="col title="2025-05-14: 5.1 mi""><i class="bar" style="height:15.3%"></i></div>
+      <div class="col title="2025-05-15: 7.9 mi""><i class="bar" style="height:19.0%"></i></div>
+      <div class="col title="2025-05-16: 3.3 mi""><i class="bar" style="height:12.2%"></i></div>
+      <div class="col we title="2025-05-17: 2.5 mi""><i class="bar" style="height:10.7%"></i></div>
+      <div class="col we title="2025-05-18: 13.5 mi""><i class="bar" style="height:24.7%"></i></div>
+      <div class="col title="2025-05-19: 3.2 mi""><i class="bar" style="height:12.1%"></i></div>
+      <div class="col title="2025-05-20: 2.9 mi""><i class="bar" style="height:11.5%"></i></div>
+      <div class="col title="2025-05-21: 5.3 mi""><i class="bar" style="height:15.5%"></i></div>
+      <div class="col title="2025-05-22: 4.5 mi""><i class="bar" style="height:14.2%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we title="2025-05-24: 6.2 mi""><i class="bar" style="height:16.7%"></i></div>
+      <div class="col we title="2025-05-25: 8.0 mi""><i class="bar" style="height:19.1%"></i></div>
+      <div class="col title="2025-05-26: 8.0 mi""><i class="bar" style="height:19.1%"></i></div>
+      <div class="col title="2025-05-27: 9.7 mi""><i class="bar" style="height:21.0%"></i></div>
+      <div class="col title="2025-05-28: 8.7 mi""><i class="bar" style="height:19.9%"></i></div>
+      <div class="col title="2025-05-29: 7.1 mi""><i class="bar" style="height:18.0%"></i></div>
+      <div class="col title="2025-05-30: 10.9 mi""><i class="bar" style="height:22.2%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">28<small>d</small></span>
+    <span class="dist">182.7 mi</span>
+    <span class="peak">peak 18mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">13</span>
+    <div>
+      <div class="name">Warren Wells</div>
+      <span class="handle"></span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 56.2 mi""><i class="bar hot" style="height:50.5%"></i></div>
+      <div class="col title="2025-05-02: 5.8 mi""><i class="bar" style="height:16.3%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we title="2025-05-04: 3.5 mi""><i class="bar" style="height:12.6%"></i></div>
+      <div class="col title="2025-05-05: 12.4 mi""><i class="bar" style="height:23.7%"></i></div>
+      <div class="col title="2025-05-06: 18.7 mi""><i class="bar warm" style="height:29.1%"></i></div>
+      <div class="col title="2025-05-07: 7.4 mi""><i class="bar" style="height:18.4%"></i></div>
+      <div class="col title="2025-05-08: 5.9 mi""><i class="bar" style="height:16.4%"></i></div>
+      <div class="col title="2025-05-09: 44.4 mi""><i class="bar hot" style="height:44.9%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-12: 2.1 mi""><i class="bar" style="height:9.8%"></i></div>
+      <div class="col title="2025-05-13: 14.5 mi""><i class="bar" style="height:25.7%"></i></div>
+      <div class="col title="2025-05-14: 41.4 mi""><i class="bar hot" style="height:43.4%"></i></div>
+      <div class="col title="2025-05-15: 63.3 mi""><i class="bar hot" style="height:53.6%"></i></div>
+      <div class="col title="2025-05-16: 13.8 mi""><i class="bar" style="height:25.1%"></i></div>
+      <div class="col we title="2025-05-17: 6.0 mi""><i class="bar" style="height:16.6%"></i></div>
+      <div class="col we title="2025-05-18: 9.4 mi""><i class="bar" style="height:20.7%"></i></div>
+      <div class="col title="2025-05-19: 2.2 mi""><i class="bar" style="height:9.9%"></i></div>
+      <div class="col title="2025-05-20: 5.6 mi""><i class="bar" style="height:16.0%"></i></div>
+      <div class="col title="2025-05-21: 10.3 mi""><i class="bar" style="height:21.6%"></i></div>
+      <div class="col title="2025-05-22: 10.0 mi""><i class="bar" style="height:21.3%"></i></div>
+      <div class="col title="2025-05-23: 5.4 mi""><i class="bar" style="height:15.6%"></i></div>
+      <div class="col we title="2025-05-24: 2.6 mi""><i class="bar" style="height:10.8%"></i></div>
+      <div class="col we title="2025-05-25: 2.6 mi""><i class="bar" style="height:10.9%"></i></div>
+      <div class="col title="2025-05-26: 45.8 mi""><i class="bar hot" style="height:45.6%"></i></div>
+      <div class="col title="2025-05-27: 2.2 mi""><i class="bar" style="height:10.1%"></i></div>
+      <div class="col title="2025-05-28: 42.8 mi""><i class="bar hot" style="height:44.1%"></i></div>
+      <div class="col title="2025-05-29: 9.6 mi""><i class="bar" style="height:20.8%"></i></div>
+      <div class="col title="2025-05-30: 6.1 mi""><i class="bar" style="height:16.7%"></i></div>
+      <div class="col we title="2025-05-31: 6.3 mi""><i class="bar" style="height:16.9%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">27<small>d</small></span>
+    <span class="dist">452.6 mi</span>
+    <span class="peak">peak 63mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">14</span>
+    <div>
+      <div class="name">bscrugham</div>
+      <span class="handle">@bscrugham</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we title="2025-05-03: 9.2 mi""><i class="bar" style="height:20.4%"></i></div>
+      <div class="col we title="2025-05-04: 2.7 mi""><i class="bar" style="height:11.0%"></i></div>
+      <div class="col title="2025-05-05: 3.6 mi""><i class="bar" style="height:12.8%"></i></div>
+      <div class="col title="2025-05-06: 8.8 mi""><i class="bar" style="height:20.0%"></i></div>
+      <div class="col title="2025-05-07: 11.0 mi""><i class="bar" style="height:22.4%"></i></div>
+      <div class="col title="2025-05-08: 39.5 mi""><i class="bar hot" style="height:42.4%"></i></div>
+      <div class="col title="2025-05-09: 6.0 mi""><i class="bar" style="height:16.5%"></i></div>
+      <div class="col we title="2025-05-10: 23.4 mi""><i class="bar warm" style="height:32.6%"></i></div>
+      <div class="col we title="2025-05-11: 17.4 mi""><i class="bar warm" style="height:28.1%"></i></div>
+      <div class="col title="2025-05-12: 3.4 mi""><i class="bar" style="height:12.4%"></i></div>
+      <div class="col title="2025-05-13: 7.8 mi""><i class="bar" style="height:18.9%"></i></div>
+      <div class="col title="2025-05-14: 13.7 mi""><i class="bar" style="height:25.0%"></i></div>
+      <div class="col title="2025-05-15: 8.8 mi""><i class="bar" style="height:20.0%"></i></div>
+      <div class="col title="2025-05-16: 4.5 mi""><i class="bar" style="height:14.3%"></i></div>
+      <div class="col we title="2025-05-17: 11.6 mi""><i class="bar" style="height:22.9%"></i></div>
+      <div class="col we title="2025-05-18: 10.2 mi""><i class="bar" style="height:21.6%"></i></div>
+      <div class="col title="2025-05-19: 8.9 mi""><i class="bar" style="height:20.1%"></i></div>
+      <div class="col title="2025-05-20: 5.8 mi""><i class="bar" style="height:16.2%"></i></div>
+      <div class="col title="2025-05-21: 11.4 mi""><i class="bar" style="height:22.7%"></i></div>
+      <div class="col title="2025-05-22: 6.4 mi""><i class="bar" style="height:17.1%"></i></div>
+      <div class="col title="2025-05-23: 11.3 mi""><i class="bar" style="height:22.6%"></i></div>
+      <div class="col we title="2025-05-24: 20.0 mi""><i class="bar warm" style="height:30.2%"></i></div>
+      <div class="col we title="2025-05-25: 2.7 mi""><i class="bar" style="height:11.1%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-27: 5.1 mi""><i class="bar" style="height:15.3%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">22<small>d</small></span>
+    <span class="dist">233.0 mi</span>
+    <span class="peak">peak 39mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">15</span>
+    <div>
+      <div class="name">Colin</div>
+      <span class="handle"></span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we title="2025-05-03: 9.6 mi""><i class="bar" style="height:20.9%"></i></div>
+      <div class="col we title="2025-05-04: 87.1 mi""><i class="bar hot" style="height:62.9%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-06: 8.3 mi""><i class="bar" style="height:19.5%"></i></div>
+      <div class="col title="2025-05-07: 19.4 mi""><i class="bar warm" style="height:29.7%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-09: 20.4 mi""><i class="bar warm" style="height:30.4%"></i></div>
+      <div class="col we title="2025-05-10: 60.1 mi""><i class="bar hot" style="height:52.3%"></i></div>
+      <div class="col we title="2025-05-11: 5.4 mi""><i class="bar" style="height:15.7%"></i></div>
+      <div class="col title="2025-05-12: 2.2 mi""><i class="bar" style="height:9.9%"></i></div>
+      <div class="col title="2025-05-13: 10.8 mi""><i class="bar" style="height:22.1%"></i></div>
+      <div class="col title="2025-05-14: 5.2 mi""><i class="bar" style="height:15.4%"></i></div>
+      <div class="col title="2025-05-15: 25.4 mi""><i class="bar warm" style="height:34.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we title="2025-05-17: 47.3 mi""><i class="bar hot" style="height:46.4%"></i></div>
+      <div class="col we title="2025-05-18: 82.8 mi""><i class="bar hot" style="height:61.3%"></i></div>
+      <div class="col title="2025-05-19: 4.8 mi""><i class="bar" style="height:14.7%"></i></div>
+      <div class="col title="2025-05-20: 3.2 mi""><i class="bar" style="height:12.1%"></i></div>
+      <div class="col title="2025-05-21: 30.1 mi""><i class="bar hot" style="height:37.0%"></i></div>
+      <div class="col title="2025-05-22: 1.3 mi""><i class="bar" style="height:7.7%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we title="2025-05-24: 8.8 mi""><i class="bar" style="height:19.9%"></i></div>
+      <div class="col we title="2025-05-25: 40.0 mi""><i class="bar hot" style="height:42.6%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-27: 2.2 mi""><i class="bar" style="height:9.9%"></i></div>
+      <div class="col title="2025-05-28: 24.2 mi""><i class="bar warm" style="height:33.2%"></i></div>
+      <div class="col title="2025-05-29: 19.9 mi""><i class="bar warm" style="height:30.1%"></i></div>
+      <div class="col title="2025-05-30: 7.0 mi""><i class="bar" style="height:17.8%"></i></div>
+      <div class="col we title="2025-05-31: 71.0 mi""><i class="bar hot" style="height:56.8%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">21<small>d</small></span>
+    <span class="dist">585.1 mi</span>
+    <span class="peak">peak 87mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">16</span>
+    <div>
+      <div class="name">Yvonne Yip</div>
+      <span class="handle">@morethanreal</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 6.5 mi""><i class="bar" style="height:17.2%"></i></div>
+      <div class="col title="2025-05-02: 16.6 mi""><i class="bar warm" style="height:27.4%"></i></div>
+      <div class="col we title="2025-05-03: 11.8 mi""><i class="bar" style="height:23.1%"></i></div>
+      <div class="col we title="2025-05-04: 27.3 mi""><i class="bar warm" style="height:35.3%"></i></div>
+      <div class="col title="2025-05-05: 9.3 mi""><i class="bar" style="height:20.6%"></i></div>
+      <div class="col title="2025-05-06: 18.1 mi""><i class="bar warm" style="height:28.7%"></i></div>
+      <div class="col title="2025-05-07: 3.5 mi""><i class="bar" style="height:12.7%"></i></div>
+      <div class="col title="2025-05-08: 7.7 mi""><i class="bar" style="height:18.7%"></i></div>
+      <div class="col title="2025-05-09: 7.5 mi""><i class="bar" style="height:18.4%"></i></div>
+      <div class="col we title="2025-05-10: 1.5 mi""><i class="bar" style="height:8.3%"></i></div>
+      <div class="col we title="2025-05-11: 29.0 mi""><i class="bar warm" style="height:36.3%"></i></div>
+      <div class="col title="2025-05-12: 9.2 mi""><i class="bar" style="height:20.4%"></i></div>
+      <div class="col title="2025-05-13: 14.0 mi""><i class="bar" style="height:25.2%"></i></div>
+      <div class="col title="2025-05-14: 10.1 mi""><i class="bar" style="height:21.4%"></i></div>
+      <div class="col title="2025-05-15: 16.9 mi""><i class="bar warm" style="height:27.7%"></i></div>
+      <div class="col title="2025-05-16: 13.1 mi""><i class="bar" style="height:24.4%"></i></div>
+      <div class="col we title="2025-05-17: 0.6 mi""><i class="bar" style="height:5.3%"></i></div>
+      <div class="col we title="2025-05-18: 7.7 mi""><i class="bar" style="height:18.8%"></i></div>
+      <div class="col title="2025-05-19: 1.9 mi""><i class="bar" style="height:9.3%"></i></div>
+      <div class="col title="2025-05-20: 33.0 mi""><i class="bar hot" style="height:38.8%"></i></div>
+      <div class="col title="2025-05-21: 16.9 mi""><i class="bar warm" style="height:27.8%"></i></div>
+      <div class="col title="2025-05-22: 16.1 mi""><i class="bar warm" style="height:27.0%"></i></div>
+      <div class="col title="2025-05-23: 10.2 mi""><i class="bar" style="height:21.5%"></i></div>
+      <div class="col we title="2025-05-24: 30.3 mi""><i class="bar hot" style="height:37.1%"></i></div>
+      <div class="col we title="2025-05-25: 29.8 mi""><i class="bar warm" style="height:36.8%"></i></div>
+      <div class="col title="2025-05-26: 5.9 mi""><i class="bar" style="height:16.4%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-28: 24.6 mi""><i class="bar warm" style="height:33.4%"></i></div>
+      <div class="col title="2025-05-29: 13.2 mi""><i class="bar" style="height:24.5%"></i></div>
+      <div class="col title="2025-05-30: 6.6 mi""><i class="bar" style="height:17.4%"></i></div>
+      <div class="col we title="2025-05-31: 39.3 mi""><i class="bar hot" style="height:42.2%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">21<small>d</small></span>
+    <span class="dist">333.7 mi</span>
+    <span class="peak">peak 39mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">17</span>
+    <div>
+      <div class="name">zbrowne</div>
+      <span class="handle">@zbrowne</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col title="2025-05-01: 4.2 mi""><i class="bar" style="height:13.8%"></i></div>
+      <div class="col title="2025-05-02: 2.5 mi""><i class="bar" style="height:10.7%"></i></div>
+      <div class="col we title="2025-05-03: 11.4 mi""><i class="bar" style="height:22.8%"></i></div>
+      <div class="col we title="2025-05-04: 20.5 mi""><i class="bar warm" style="height:30.5%"></i></div>
+      <div class="col title="2025-05-05: 11.4 mi""><i class="bar" style="height:22.8%"></i></div>
+      <div class="col title="2025-05-06: 10.0 mi""><i class="bar" style="height:21.3%"></i></div>
+      <div class="col title="2025-05-07: 4.0 mi""><i class="bar" style="height:13.5%"></i></div>
+      <div class="col title="2025-05-08: 11.1 mi""><i class="bar" style="height:22.5%"></i></div>
+      <div class="col title="2025-05-09: 14.4 mi""><i class="bar" style="height:25.6%"></i></div>
+      <div class="col we title="2025-05-10: 13.2 mi""><i class="bar" style="height:24.5%"></i></div>
+      <div class="col we title="2025-05-11: 24.2 mi""><i class="bar warm" style="height:33.2%"></i></div>
+      <div class="col title="2025-05-12: 3.9 mi""><i class="bar" style="height:13.3%"></i></div>
+      <div class="col title="2025-05-13: 11.8 mi""><i class="bar" style="height:23.2%"></i></div>
+      <div class="col title="2025-05-14: 6.6 mi""><i class="bar" style="height:17.4%"></i></div>
+      <div class="col title="2025-05-15: 11.5 mi""><i class="bar" style="height:22.9%"></i></div>
+      <div class="col title="2025-05-16: 14.3 mi""><i class="bar" style="height:25.5%"></i></div>
+      <div class="col we title="2025-05-17: 24.5 mi""><i class="bar warm" style="height:33.4%"></i></div>
+      <div class="col we title="2025-05-18: 7.5 mi""><i class="bar" style="height:18.5%"></i></div>
+      <div class="col title="2025-05-19: 4.3 mi""><i class="bar" style="height:13.9%"></i></div>
+      <div class="col title="2025-05-20: 8.4 mi""><i class="bar" style="height:19.5%"></i></div>
+      <div class="col title="2025-05-21: 4.6 mi""><i class="bar" style="height:14.5%"></i></div>
+      <div class="col title="2025-05-22: 4.3 mi""><i class="bar" style="height:14.0%"></i></div>
+      <div class="col title="2025-05-23: 7.6 mi""><i class="bar" style="height:18.6%"></i></div>
+      <div class="col we title="2025-05-24: 9.4 mi""><i class="bar" style="height:20.7%"></i></div>
+      <div class="col we title="2025-05-25: 2.2 mi""><i class="bar" style="height:10.0%"></i></div>
+      <div class="col title="2025-05-26: 2.1 mi""><i class="bar" style="height:9.7%"></i></div>
+      <div class="col title="2025-05-27: 5.5 mi""><i class="bar" style="height:15.8%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-29: 6.0 mi""><i class="bar" style="height:16.5%"></i></div>
+      <div class="col title="2025-05-30: 10.1 mi""><i class="bar" style="height:21.5%"></i></div>
+      <div class="col we title="2025-05-31: 31.2 mi""><i class="bar hot" style="height:37.7%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">21<small>d</small></span>
+    <span class="dist">203.9 mi</span>
+    <span class="peak">peak 31mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">18</span>
+    <div>
+      <div class="name">ravi_garcia</div>
+      <span class="handle">@ravi_garcia</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-06: 7.7 mi""><i class="bar" style="height:18.7%"></i></div>
+      <div class="col title="2025-05-07: 13.2 mi""><i class="bar" style="height:24.5%"></i></div>
+      <div class="col title="2025-05-08: 10.3 mi""><i class="bar" style="height:21.7%"></i></div>
+      <div class="col title="2025-05-09: 9.4 mi""><i class="bar" style="height:20.7%"></i></div>
+      <div class="col we title="2025-05-10: 8.9 mi""><i class="bar" style="height:20.1%"></i></div>
+      <div class="col we title="2025-05-11: 3.7 mi""><i class="bar" style="height:12.9%"></i></div>
+      <div class="col title="2025-05-12: 2.4 mi""><i class="bar" style="height:10.4%"></i></div>
+      <div class="col title="2025-05-13: 13.6 mi""><i class="bar" style="height:24.8%"></i></div>
+      <div class="col title="2025-05-14: 7.2 mi""><i class="bar" style="height:18.1%"></i></div>
+      <div class="col title="2025-05-15: 38.2 mi""><i class="bar hot" style="height:41.7%"></i></div>
+      <div class="col title="2025-05-16: 10.4 mi""><i class="bar" style="height:21.7%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we title="2025-05-18: 12.6 mi""><i class="bar" style="height:24.0%"></i></div>
+      <div class="col title="2025-05-19: 13.5 mi""><i class="bar" style="height:24.7%"></i></div>
+      <div class="col title="2025-05-20: 10.3 mi""><i class="bar" style="height:21.7%"></i></div>
+      <div class="col title="2025-05-21: 11.4 mi""><i class="bar" style="height:22.8%"></i></div>
+      <div class="col title="2025-05-22: 10.5 mi""><i class="bar" style="height:21.8%"></i></div>
+      <div class="col title="2025-05-23: 7.5 mi""><i class="bar" style="height:18.4%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we title="2025-05-25: 8.5 mi""><i class="bar" style="height:19.7%"></i></div>
+      <div class="col title="2025-05-26: 6.1 mi""><i class="bar" style="height:16.6%"></i></div>
+      <div class="col title="2025-05-27: 3.3 mi""><i class="bar" style="height:12.3%"></i></div>
+      <div class="col title="2025-05-28: 10.4 mi""><i class="bar" style="height:21.8%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">21<small>d</small></span>
+    <span class="dist">202.8 mi</span>
+    <span class="peak">peak 38mi</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="who">
+    <span class="rank">19</span>
+    <div>
+      <div class="name">lily</div>
+      <span class="handle">@26072252</span>
+    </div>
+  </div>
+  <div class="bars">
+<div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we title="2025-05-04: 2.5 mi""><i class="bar" style="height:10.6%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we title="2025-05-10: 13.3 mi""><i class="bar" style="height:24.6%"></i></div>
+      <div class="col we title="2025-05-11: 2.1 mi""><i class="bar" style="height:9.8%"></i></div>
+      <div class="col title="2025-05-12: 2.2 mi""><i class="bar" style="height:9.9%"></i></div>
+      <div class="col title="2025-05-13: 2.8 mi""><i class="bar" style="height:11.2%"></i></div>
+      <div class="col title="2025-05-14: 2.1 mi""><i class="bar" style="height:9.8%"></i></div>
+      <div class="col title="2025-05-15: 2.5 mi""><i class="bar" style="height:10.6%"></i></div>
+      <div class="col title="2025-05-16: 2.4 mi""><i class="bar" style="height:10.4%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we title="2025-05-18: 2.2 mi""><i class="bar" style="height:10.0%"></i></div>
+      <div class="col title="2025-05-19: 6.4 mi""><i class="bar" style="height:17.0%"></i></div>
+      <div class="col title="2025-05-20: 3.2 mi""><i class="bar" style="height:12.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-27: 5.2 mi""><i class="bar" style="height:15.4%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col title="2025-05-29: 5.5 mi""><i class="bar" style="height:15.9%"></i></div>
+      <div class="col"><i class="bar" style="height:0.0%"></i></div>
+      <div class="col we title="2025-05-31: 4.4 mi""><i class="bar" style="height:14.1%"></i></div>
+  </div>
+  <div class="totals">
+    <span class="big">14<small>d</small></span>
+    <span class="dist">56.6 mi</span>
+    <span class="peak">peak 13mi</span>
+  </div>
+</div>
+
+
+<div class="footer">
+  <div class="legend">
+    <span><i></i> &lt;15 mi</span>
+    <span><i class="warm"></i> 15–30 mi</span>
+    <span><i class="hot"></i> 30+ mi</span>
+  </div>
+  <div>
+    updated 2026-04-16 13:10 PDT &nbsp; · &nbsp; previous: <a href="#">2024</a>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
