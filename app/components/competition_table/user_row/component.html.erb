@@ -1,5 +1,8 @@
 <tr
-  class="border-r-2 border-b-2 odd:bg-white even:bg-gray-100"
+  class="
+    border-r-2 border-b-2 odd:bg-white dark:odd:bg-gray-800 even:bg-gray-100
+    dark:even:bg-gray-900
+  "
   data-controller="competition-table--user-row--component"
 >
   <th
@@ -15,7 +18,10 @@
 
   <td
     scope="col"
-    class="text-black font-bold border-b-2 border-r-2 border-r-gray-400 lg:hidden"
+    class="
+      text-black dark:text-white font-bold border-b-2 border-r-2
+      border-r-gray-400 lg:hidden
+    "
   >
     <%= render(CompetitionTable::TotalCell::Component.new(competition_user: @competition_user)) %>
   </td>
@@ -92,7 +98,10 @@
 
   <td
     scope="col"
-    class="text-black font-bold border-r-2 border-b-2 hidden lg:table-cell"
+    class="
+      text-black dark:text-white font-bold border-r-2 border-b-2 hidden
+      lg:table-cell
+    "
   >
     <%= render(CompetitionTable::TotalCell::Component.new(competition_user: @competition_user)) %>
   </td>
