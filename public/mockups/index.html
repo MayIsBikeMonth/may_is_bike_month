@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MIBM punchcard mockups</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #0e1116; color: #e8edf3;
+    font-family: -apple-system, "Inter", system-ui, sans-serif; line-height: 1.5; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.4px; margin: 0 0 6px; }
+  .lede { color: #9aa6b6; font-size: 14px; margin-bottom: 28px; }
+  .grid { display: grid; gap: 12px; }
+  a.card { display: block; background: #161b22; border: 1px solid #232a35;
+    border-radius: 10px; padding: 18px 18px 16px; color: inherit; text-decoration: none;
+    transition: border-color .15s, transform .15s; }
+  a.card:hover { border-color: #39d98a; transform: translateY(-1px); }
+  .num { font-family: "JetBrains Mono", "SF Mono", monospace; color: #6b7888;
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .title { font-size: 18px; font-weight: 600; margin: 4px 0 4px; }
+  .desc { color: #9aa6b6; font-size: 13px; }
+  footer { margin-top: 30px; color: #6b7888; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>MIBM punchcard variants</h1>
+  <p class="lede">Three takes on the per-rider 31-day strip. Real data from the dev DB.</p>
+  <div class="grid">
+    <a class="card" href="/mockups/01-punchcard.html">
+      <div class="num">A</div>
+      <div class="title">Punchcard · monochrome</div>
+      <div class="desc">Dark, restrained, GitHub-grid feel. Brightness encodes daily mileage.</div>
+    </a>
+    <a class="card" href="/mockups/02-sparkbar.html">
+      <div class="num">B</div>
+      <div class="title">Sparkbar · paper</div>
+      <div class="desc">Cream paper, vertical bars. Height encodes mileage; warm tones for long days.</div>
+    </a>
+    <a class="card" href="/mockups/03-streaks.html">
+      <div class="num">C</div>
+      <div class="title">Streak rope · pearls on a string</div>
+      <div class="desc">Each day is a bead. Consecutive ridden days are linked, making streaks visible at a glance.</div>
+    </a>
+  </div>
+</div>
+</body>
+</html>
