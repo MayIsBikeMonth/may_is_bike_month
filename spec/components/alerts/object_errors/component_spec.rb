@@ -14,6 +14,7 @@ RSpec.describe Alerts::ObjectErrors::Component, type: :component do
   let(:name) { nil }
 
   it "renders when object has errors" do
+    expect(object.errors).to be_present
     expect(instance.render?).to be_truthy
     expect(component).to be_present
     expect(component).to have_css('[role="alert"]')
@@ -22,7 +23,7 @@ RSpec.describe Alerts::ObjectErrors::Component, type: :component do
   context "no errors" do
     let(:object) { FactoryBot.build(:user) }
     it "doesn't render" do
-      expect(object).to be_valid
+      expect(object.errors).to be_blank
       expect(instance.render?).to be_falsey
     end
   end

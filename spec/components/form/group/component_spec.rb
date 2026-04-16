@@ -18,10 +18,10 @@ RSpec.describe Form::Group::Component, type: :component do
   end
 
   context "with custom label" do
-    let(:label_text) { "Display Name" }
+    let(:label_text) { "Nickname" }
 
     it "uses custom label text" do
-      expect(component).to have_css("label", text: "Display Name")
+      expect(component).to have_css("label", text: "Nickname")
     end
   end
 
