@@ -9,33 +9,65 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0e1116; --surface: #161b22; --line: #232a35;
-    --muted: #6b7888; --fg: #e8edf3; --dim: #9aa6b6;
-    --accent: #39d98a; --accent-2: #65f0a9;
-    --weekend: rgba(255,255,255,0.025);
+    --purple-0: #ede8f0;
+    --purple-1: #dbd0e1;
+    --purple-2: #b6a1c4;
+    --purple-3: #9272a6;
+    --purple-4: #6d4389;
+    --purple-5: #49146b;
+    --purple-6: #3a1056;
+    --purple-7: #2c0c40;
+    --purple-8: #1d082b;
+    --purple-9: #0f0415;
+
+    --bg:      var(--purple-0);
+    --surface: #ffffff;
+    --line:    var(--purple-1);
+    --muted:   var(--purple-3);
+    --dim:     var(--purple-4);
+    --fg:      var(--purple-9);
+    --accent:  var(--purple-5);
+    --accent-2: var(--purple-6);
+    --weekend: rgba(73,20,107,0.045);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg);
     font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: 13px; line-height: 1.45; }
   .wrap { max-width: 1340px; margin: 0 auto; padding: 32px 28px 80px; }
 
-  header { display: grid; grid-template-columns: 1.4fr 1fr; gap: 36px; align-items: end;
-    border-bottom: 1px solid var(--line); padding-bottom: 20px; margin-bottom: 28px; }
+  header { display: grid; grid-template-columns: 1.4fr 1fr; gap: 36px; align-items: baseline;
+    padding-bottom: 20px; margin-bottom: 28px; }
   header h1 { font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 34px; letter-spacing: -0.5px; margin: 0; }
   header h1 b { color: var(--accent); font-weight: 700; }
   header .meta { display: grid; grid-template-columns: repeat(4, auto); gap: 24px; justify-content: end; text-align: right; }
   header .meta .num { font-family: "IBM Plex Mono", monospace; font-size: 22px; color: var(--fg); font-weight: 500; }
   header .meta .label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 2px; }
+  @media (max-width: 1024px) {
+    header { grid-template-columns: 1fr; gap: 18px; }
+    header .meta { justify-content: start; text-align: left; }
+  }
 
-  .ridge { margin-bottom: 6px; display: grid; grid-template-columns: 220px 1fr 110px; gap: 12px; align-items: end; }
-  .ridge .bars { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; height: 56px; align-items: end;
-    grid-column: 2; }
-  .ridge .bars i { display: block; background: linear-gradient(180deg, var(--accent-2), var(--accent)); border-radius: 1px; opacity: 0.85;
+  .rules { margin-bottom: 56px; }
+  .rules h4 { font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: .14em; color: var(--muted);
+    margin: 0 0 6px; text-align: left; }
+  .rules ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap;
+    justify-content: center; gap: 6px 22px; font-size: 13px; color: var(--dim); }
+
+  .ridge { margin-bottom: 6px; display: grid; grid-template-columns: 220px 1fr 110px;
+    grid-template-rows: 56px 0; column-gap: 12px; row-gap: 0; align-items: end; }
+  .ridge .ridge-label { grid-row: 2; grid-column: 1; align-self: start;
+    font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .12em; text-align: right; padding-right: 4px;
+    line-height: 1; }
+  .ridge .bars { grid-row: 1; grid-column: 2;
+    display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; height: 56px; align-items: end; }
+  .ridge .bars i { display: block; background: linear-gradient(180deg, var(--purple-3), var(--purple-5)); border-radius: 1px; opacity: 0.9;
     cursor: default; }
   .ridge .bars i:hover { opacity: 1; }
 
   .axis { display: grid; grid-template-columns: 220px 1fr 110px; gap: 12px; align-items: center;
-    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 6px 0; margin-bottom: 4px;
+    border-bottom: 1px solid var(--line); padding: 6px 0; margin-bottom: 4px;
     color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: 11px; }
   .axis .days { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; text-align: center;
     grid-column: 2; }
@@ -43,22 +75,30 @@
 
   .row { display: grid; grid-template-columns: 220px 1fr 110px; gap: 12px; align-items: center;
     padding: 9px 0; border-bottom: 1px solid var(--line); }
-  .row .who { display: flex; align-items: center; gap: 10px; min-width: 0; }
-  .row .who .rank { font-family: "IBM Plex Mono", monospace; color: var(--muted); font-size: 11px; width: 22px; text-align: right; flex-shrink: 0; }
-  .row .who .name-block { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-width: 0; }
-  .row .who .name { color: var(--fg); font-weight: 500; }
-  .row .who .strava { display: inline-flex; align-items: center; }
+  .row .who { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .row .who .strava { display: inline-flex; align-items: center; flex-shrink: 0; }
   .row .who .strava svg { width: 14px; height: 14px; display: block; opacity: .75; transition: opacity .15s; }
   .row .who .strava:hover svg { opacity: 1; }
+  .row .who .rank { font-family: "IBM Plex Mono", monospace; color: var(--muted); font-size: 11px; width: 22px; text-align: right; flex-shrink: 0; }
+  .row .who .name-block { display: flex; align-items: center; min-width: 0; }
+  .row .who .name { color: var(--fg); font-weight: 500; }
 
   .row .punchcard { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; height: 28px; }
-  .row .punchcard .cell { background: var(--surface); border-radius: 2px; }
-  .row .punchcard .cell.we { background: var(--weekend); border: 1px dotted rgba(255,255,255,0.06); }
-  .row .punchcard .cell[data-l="1"] { background: rgba(57,217,138,0.18); }
-  .row .punchcard .cell[data-l="2"] { background: rgba(57,217,138,0.36); }
-  .row .punchcard .cell[data-l="3"] { background: rgba(57,217,138,0.6); }
-  .row .punchcard .cell[data-l="4"] { background: var(--accent); box-shadow: 0 0 8px rgba(57,217,138,0.55); }
-  .row .punchcard .cell[data-l="5"] { background: var(--accent-2); box-shadow: 0 0 12px rgba(101,240,169,0.7); }
+  .row .punchcard .cell { background: var(--purple-1); border-radius: 2px; position: relative; }
+  .row .punchcard .cell.we { background: var(--weekend); }
+  .row .punchcard .cell:not([data-l])::before,
+  .row .punchcard .cell:not([data-l])::after {
+    content: ""; position: absolute; left: 50%; top: 50%;
+    width: 55%; height: 1.5px; background: #f9a8d4;
+    border-radius: 1px;
+  }
+  .row .punchcard .cell:not([data-l])::before { transform: translate(-50%, -50%) rotate(45deg); }
+  .row .punchcard .cell:not([data-l])::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+  .row .punchcard .cell[data-l="1"] { background: var(--purple-2); }
+  .row .punchcard .cell[data-l="2"] { background: var(--purple-3); }
+  .row .punchcard .cell[data-l="3"] { background: var(--purple-4); }
+  .row .punchcard .cell[data-l="4"] { background: var(--purple-5); }
+  .row .punchcard .cell[data-l="5"] { background: var(--purple-6); }
 
   .row .totals { text-align: right; font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--dim); }
   .row .totals .big { color: var(--fg); font-size: 18px; font-weight: 500; }
@@ -71,12 +111,12 @@
   .legend-block { display: flex; align-items: center; gap: 6px; }
   .legend-block .scale { display: inline-grid; grid-template-columns: repeat(6, 12px); gap: 2px; }
   .legend-block .scale i { display: block; height: 12px; border-radius: 2px; }
-  .legend-block .scale i:nth-child(1) { background: var(--surface); }
-  .legend-block .scale i:nth-child(2) { background: rgba(57,217,138,0.18); }
-  .legend-block .scale i:nth-child(3) { background: rgba(57,217,138,0.36); }
-  .legend-block .scale i:nth-child(4) { background: rgba(57,217,138,0.6); }
-  .legend-block .scale i:nth-child(5) { background: var(--accent); }
-  .legend-block .scale i:nth-child(6) { background: var(--accent-2); }
+  .legend-block .scale i:nth-child(1) { background: var(--purple-1); }
+  .legend-block .scale i:nth-child(2) { background: var(--purple-2); }
+  .legend-block .scale i:nth-child(3) { background: var(--purple-3); }
+  .legend-block .scale i:nth-child(4) { background: var(--purple-4); }
+  .legend-block .scale i:nth-child(5) { background: var(--purple-5); }
+  .legend-block .scale i:nth-child(6) { background: var(--purple-6); }
 </style>
 </head>
 <body>
@@ -84,7 +124,7 @@
 
 <header>
   <div>
-    <h1>MIBM/<b>2025</b></h1>
+    <h1>May is Bike Month <b>2025</b></h1>
   </div>
   <div class="meta">
     <div><div class="num">19</div><div class="label">Riders</div></div>
@@ -94,8 +134,18 @@
   </div>
 </header>
 
+<section class="rules">
+  <h4>Rules</h4>
+  <ul>
+    <li>Winner is the person who rides the most days in May</li>
+    <li>Ties are broken by total distance</li>
+    <li>You have to ride at least 2 miles in a day for it to count</li>
+    <li>Activities that count: Ride, EBikeRide</li>
+  </ul>
+</section>
+
 <div class="ridge">
-  <div></div>
+  <div class="ridge-label">Daily total</div>
   <div class="bars">
   <i style="height:22.8%" title="194.4 mi&#10;11,242 ft"></i>
       <i style="height:14.6%" title="125.1 mi&#10;7,304 ft"></i>
@@ -173,11 +223,11 @@
 <div class="row">
   <div class="who">
     <span class="rank">01</span>
-    <div class="name-block">
-      <div class="name">Sam Daly</div>
-      <a class="strava" href="https://www.strava.com/athletes/daly_sam" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/daly_sam" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">Sam Daly</div>
     </div>
   </div>
   <div class="punchcard">
@@ -215,18 +265,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>31</b><span style="opacity:.4">/31</span></span><br>
-    1,128.7 mi
+    1,128.7 mi<br><span style="opacity:.4">0.0k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">02</span>
-    <div class="name-block">
-      <div class="name">Ekaterina Rakhmatulina</div>
-      <a class="strava" href="https://www.strava.com/athletes/erakhmatulina" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/erakhmatulina" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">Ekaterina Rakhmatulina</div>
     </div>
   </div>
   <div class="punchcard">
@@ -264,18 +314,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>31</b><span style="opacity:.4">/31</span></span><br>
-    1,057.6 mi
+    1,057.6 mi<br><span style="opacity:.4">100.5k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">03</span>
-    <div class="name-block">
-      <div class="name">Old Scott</div>
-      <a class="strava" href="https://www.strava.com/athletes/sschoenwaelder" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/sschoenwaelder" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">Old Scott</div>
     </div>
   </div>
   <div class="punchcard">
@@ -313,18 +363,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>31</b><span style="opacity:.4">/31</span></span><br>
-    629.3 mi
+    629.3 mi<br><span style="opacity:.4">47.3k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">04</span>
-    <div class="name-block">
-      <div class="name">Gar Higgins</div>
-      <a class="strava" href="https://www.strava.com/athletes/gar" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/gar" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">Gar Higgins</div>
     </div>
   </div>
   <div class="punchcard">
@@ -362,18 +412,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>31</b><span style="opacity:.4">/31</span></span><br>
-    387.0 mi
+    387.0 mi<br><span style="opacity:.4">29.3k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">05</span>
-    <div class="name-block">
-      <div class="name">Gabriella</div>
-      <a class="strava" href="https://www.strava.com/athletes/136522774" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/136522774" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">Gabriella</div>
     </div>
   </div>
   <div class="punchcard">
@@ -411,18 +461,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>31</b><span style="opacity:.4">/31</span></span><br>
-    230.8 mi
+    230.8 mi<br><span style="opacity:.4">14.8k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">06</span>
-    <div class="name-block">
-      <div class="name">Kristen Lovin</div>
-      <a class="strava" href="https://www.strava.com/athletes/7770715" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/7770715" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">Kristen Lovin</div>
     </div>
   </div>
   <div class="punchcard">
@@ -460,18 +510,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>31</b><span style="opacity:.4">/31</span></span><br>
-    171.4 mi
+    171.4 mi<br><span style="opacity:.4">5.3k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">07</span>
-    <div class="name-block">
-      <div class="name">seth herr</div>
-      <a class="strava" href="https://www.strava.com/athletes/sethherr" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/sethherr" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">seth herr</div>
     </div>
   </div>
   <div class="punchcard">
@@ -509,18 +559,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>30</b><span style="opacity:.4">/31</span></span><br>
-    533.8 mi
+    533.8 mi<br><span style="opacity:.4">38.1k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">08</span>
-    <div class="name-block">
-      <div class="name">Elizabeth</div>
-      <a class="strava" href="https://www.strava.com/athletes/11988110" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/11988110" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">Elizabeth</div>
     </div>
   </div>
   <div class="punchcard">
@@ -528,7 +578,7 @@
       <span class="cell" data-l="1" title="2025-05-02: 1.8 mi"></span>
       <span class="cell we" data-l="2" title="2025-05-03: 7.6 mi"></span>
       <span class="cell we" data-l="4" title="2025-05-04: 34.5 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell" data-l="2" title="2025-05-06: 9.7 mi"></span>
       <span class="cell" data-l="4" title="2025-05-07: 30.6 mi"></span>
       <span class="cell" data-l="1" title="2025-05-08: 3.0 mi"></span>
@@ -558,18 +608,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>28</b><span style="opacity:.4">/31</span></span><br>
-    642.1 mi
+    642.1 mi<br><span style="opacity:.4">41.5k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">09</span>
-    <div class="name-block">
-      <div class="name">jackson_lester</div>
-      <a class="strava" href="https://www.strava.com/athletes/jackson_lester" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/jackson_lester" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">jackson_lester</div>
     </div>
   </div>
   <div class="punchcard">
@@ -579,11 +629,11 @@
       <span class="cell we" data-l="1" title="2025-05-04: 3.4 mi"></span>
       <span class="cell" data-l="2" title="2025-05-05: 8.1 mi"></span>
       <span class="cell" data-l="1" title="2025-05-06: 2.2 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell" data-l="3" title="2025-05-08: 13.9 mi"></span>
       <span class="cell" data-l="5" title="2025-05-09: 50.3 mi"></span>
       <span class="cell we" data-l="5" title="2025-05-10: 47.9 mi"></span>
-      <span class="cell we"></span>
+      <span class="cell we" title="no rides"></span>
       <span class="cell" data-l="3" title="2025-05-12: 14.0 mi"></span>
       <span class="cell" data-l="1" title="2025-05-13: 2.2 mi"></span>
       <span class="cell" data-l="4" title="2025-05-14: 22.7 mi"></span>
@@ -594,7 +644,7 @@
       <span class="cell" data-l="3" title="2025-05-19: 15.3 mi"></span>
       <span class="cell" data-l="3" title="2025-05-20: 17.6 mi"></span>
       <span class="cell" data-l="4" title="2025-05-21: 27.0 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell" data-l="2" title="2025-05-23: 6.9 mi"></span>
       <span class="cell we" data-l="2" title="2025-05-24: 8.6 mi"></span>
       <span class="cell we" data-l="4" title="2025-05-25: 31.8 mi"></span>
@@ -607,18 +657,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>28</b><span style="opacity:.4">/31</span></span><br>
-    562.6 mi
+    562.6 mi<br><span style="opacity:.4">59.9k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">10</span>
-    <div class="name-block">
-      <div class="name">Emily</div>
-      <a class="strava" href="https://www.strava.com/athletes/46514887" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/46514887" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">Emily</div>
     </div>
   </div>
   <div class="punchcard">
@@ -647,7 +697,7 @@
       <span class="cell" data-l="2" title="2025-05-23: 6.1 mi"></span>
       <span class="cell we" data-l="2" title="2025-05-24: 7.1 mi"></span>
       <span class="cell we" data-l="4" title="2025-05-25: 24.9 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell" data-l="1" title="2025-05-27: 3.5 mi"></span>
       <span class="cell" data-l="3" title="2025-05-28: 18.6 mi"></span>
       <span class="cell" data-l="1" title="2025-05-29: 3.5 mi"></span>
@@ -656,18 +706,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>28</b><span style="opacity:.4">/31</span></span><br>
-    321.4 mi
+    321.4 mi<br><span style="opacity:.4">20.9k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">11</span>
-    <div class="name-block">
-      <div class="name">Chris Mikschl</div>
-      <a class="strava" href="https://www.strava.com/athletes/cmikschl" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/cmikschl" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">Chris Mikschl</div>
     </div>
   </div>
   <div class="punchcard">
@@ -681,7 +731,7 @@
       <span class="cell" data-l="3" title="2025-05-08: 11.2 mi"></span>
       <span class="cell" data-l="1" title="2025-05-09: 2.4 mi"></span>
       <span class="cell we" data-l="1" title="2025-05-10: 2.4 mi"></span>
-      <span class="cell we"></span>
+      <span class="cell we" title="no rides"></span>
       <span class="cell" data-l="1" title="2025-05-12: 2.4 mi"></span>
       <span class="cell" data-l="2" title="2025-05-13: 5.4 mi"></span>
       <span class="cell" data-l="2" title="2025-05-14: 5.7 mi"></span>
@@ -705,18 +755,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>28</b><span style="opacity:.4">/31</span></span><br>
-    299.8 mi
+    299.8 mi<br><span style="opacity:.4">16.8k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">12</span>
-    <div class="name-block">
-      <div class="name">Ali</div>
-      <a class="strava" href="https://www.strava.com/athletes/higgins_alexandra" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/higgins_alexandra" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">Ali</div>
     </div>
   </div>
   <div class="punchcard">
@@ -742,7 +792,7 @@
       <span class="cell" data-l="1" title="2025-05-20: 2.9 mi"></span>
       <span class="cell" data-l="2" title="2025-05-21: 5.3 mi"></span>
       <span class="cell" data-l="1" title="2025-05-22: 4.5 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell we" data-l="2" title="2025-05-24: 6.2 mi"></span>
       <span class="cell we" data-l="2" title="2025-05-25: 8.0 mi"></span>
       <span class="cell" data-l="2" title="2025-05-26: 8.0 mi"></span>
@@ -750,36 +800,36 @@
       <span class="cell" data-l="2" title="2025-05-28: 8.7 mi"></span>
       <span class="cell" data-l="2" title="2025-05-29: 7.1 mi"></span>
       <span class="cell" data-l="3" title="2025-05-30: 10.9 mi"></span>
-      <span class="cell we"></span>
+      <span class="cell we" title="no rides"></span>
   </div>
   <div class="totals">
     <span class="big"><b>28</b><span style="opacity:.4">/31</span></span><br>
-    182.7 mi
+    182.7 mi<br><span style="opacity:.4">8.4k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">13</span>
-    <div class="name-block">
-      <div class="name">Warren Wells</div>
-      <a class="strava" href="https://www.strava.com/athletes/20255994" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/20255994" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">Warren Wells</div>
     </div>
   </div>
   <div class="punchcard">
 <span class="cell" data-l="5" title="2025-05-01: 56.2 mi"></span>
       <span class="cell" data-l="2" title="2025-05-02: 5.8 mi"></span>
-      <span class="cell we"></span>
+      <span class="cell we" title="no rides"></span>
       <span class="cell we" data-l="1" title="2025-05-04: 3.5 mi"></span>
       <span class="cell" data-l="3" title="2025-05-05: 12.4 mi"></span>
       <span class="cell" data-l="3" title="2025-05-06: 18.7 mi"></span>
       <span class="cell" data-l="2" title="2025-05-07: 7.4 mi"></span>
       <span class="cell" data-l="2" title="2025-05-08: 5.9 mi"></span>
       <span class="cell" data-l="5" title="2025-05-09: 44.4 mi"></span>
-      <span class="cell we"></span>
-      <span class="cell we"></span>
+      <span class="cell we" title="no rides"></span>
+      <span class="cell we" title="no rides"></span>
       <span class="cell" data-l="1" title="2025-05-12: 2.1 mi"></span>
       <span class="cell" data-l="3" title="2025-05-13: 14.5 mi"></span>
       <span class="cell" data-l="5" title="2025-05-14: 41.4 mi"></span>
@@ -803,23 +853,23 @@
   </div>
   <div class="totals">
     <span class="big"><b>27</b><span style="opacity:.4">/31</span></span><br>
-    452.6 mi
+    452.6 mi<br><span style="opacity:.4">14.8k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">14</span>
-    <div class="name-block">
-      <div class="name">bscrugham</div>
-      <a class="strava" href="https://www.strava.com/athletes/bscrugham" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/bscrugham" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">bscrugham</div>
     </div>
   </div>
   <div class="punchcard">
-<span class="cell"></span>
-      <span class="cell"></span>
+<span class="cell" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell we" data-l="2" title="2025-05-03: 9.2 mi"></span>
       <span class="cell we" data-l="1" title="2025-05-04: 2.7 mi"></span>
       <span class="cell" data-l="1" title="2025-05-05: 3.6 mi"></span>
@@ -843,38 +893,38 @@
       <span class="cell" data-l="3" title="2025-05-23: 11.3 mi"></span>
       <span class="cell we" data-l="4" title="2025-05-24: 20.0 mi"></span>
       <span class="cell we" data-l="1" title="2025-05-25: 2.7 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell" data-l="2" title="2025-05-27: 5.1 mi"></span>
-      <span class="cell"></span>
-      <span class="cell"></span>
-      <span class="cell"></span>
-      <span class="cell we"></span>
+      <span class="cell" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
+      <span class="cell we" title="no rides"></span>
   </div>
   <div class="totals">
     <span class="big"><b>22</b><span style="opacity:.4">/31</span></span><br>
-    233.0 mi
+    233.0 mi<br><span style="opacity:.4">2.6k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">15</span>
-    <div class="name-block">
-      <div class="name">Colin</div>
-      <a class="strava" href="https://www.strava.com/athletes/17429756" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/17429756" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">Colin</div>
     </div>
   </div>
   <div class="punchcard">
-<span class="cell"></span>
-      <span class="cell"></span>
+<span class="cell" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell we" data-l="2" title="2025-05-03: 9.6 mi"></span>
       <span class="cell we" data-l="5" title="2025-05-04: 87.1 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell" data-l="2" title="2025-05-06: 8.3 mi"></span>
       <span class="cell" data-l="3" title="2025-05-07: 19.4 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell" data-l="4" title="2025-05-09: 20.4 mi"></span>
       <span class="cell we" data-l="5" title="2025-05-10: 60.1 mi"></span>
       <span class="cell we" data-l="2" title="2025-05-11: 5.4 mi"></span>
@@ -882,17 +932,17 @@
       <span class="cell" data-l="3" title="2025-05-13: 10.8 mi"></span>
       <span class="cell" data-l="2" title="2025-05-14: 5.2 mi"></span>
       <span class="cell" data-l="4" title="2025-05-15: 25.4 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell we" data-l="5" title="2025-05-17: 47.3 mi"></span>
       <span class="cell we" data-l="5" title="2025-05-18: 82.8 mi"></span>
       <span class="cell" data-l="1" title="2025-05-19: 4.8 mi"></span>
       <span class="cell" data-l="1" title="2025-05-20: 3.2 mi"></span>
       <span class="cell" data-l="4" title="2025-05-21: 30.1 mi"></span>
       <span class="cell" data-l="1" title="2025-05-22: 1.3 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell we" data-l="2" title="2025-05-24: 8.8 mi"></span>
       <span class="cell we" data-l="5" title="2025-05-25: 40.0 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell" data-l="1" title="2025-05-27: 2.2 mi"></span>
       <span class="cell" data-l="4" title="2025-05-28: 24.2 mi"></span>
       <span class="cell" data-l="3" title="2025-05-29: 19.9 mi"></span>
@@ -901,18 +951,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>21</b><span style="opacity:.4">/31</span></span><br>
-    585.1 mi
+    585.1 mi<br><span style="opacity:.4">56.2k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">16</span>
-    <div class="name-block">
-      <div class="name">Yvonne Yip</div>
-      <a class="strava" href="https://www.strava.com/athletes/morethanreal" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/morethanreal" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">Yvonne Yip</div>
     </div>
   </div>
   <div class="punchcard">
@@ -942,7 +992,7 @@
       <span class="cell we" data-l="4" title="2025-05-24: 30.3 mi"></span>
       <span class="cell we" data-l="4" title="2025-05-25: 29.8 mi"></span>
       <span class="cell" data-l="2" title="2025-05-26: 5.9 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell" data-l="4" title="2025-05-28: 24.6 mi"></span>
       <span class="cell" data-l="3" title="2025-05-29: 13.2 mi"></span>
       <span class="cell" data-l="2" title="2025-05-30: 6.6 mi"></span>
@@ -950,18 +1000,18 @@
   </div>
   <div class="totals">
     <span class="big"><b>21</b><span style="opacity:.4">/31</span></span><br>
-    333.7 mi
+    333.7 mi<br><span style="opacity:.4">18.8k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">17</span>
-    <div class="name-block">
-      <div class="name">zbrowne</div>
-      <a class="strava" href="https://www.strava.com/athletes/zbrowne" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/zbrowne" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">zbrowne</div>
     </div>
   </div>
   <div class="punchcard">
@@ -992,33 +1042,33 @@
       <span class="cell we" data-l="1" title="2025-05-25: 2.2 mi"></span>
       <span class="cell" data-l="1" title="2025-05-26: 2.1 mi"></span>
       <span class="cell" data-l="2" title="2025-05-27: 5.5 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell" data-l="2" title="2025-05-29: 6.0 mi"></span>
       <span class="cell" data-l="3" title="2025-05-30: 10.1 mi"></span>
       <span class="cell we" data-l="4" title="2025-05-31: 31.2 mi"></span>
   </div>
   <div class="totals">
     <span class="big"><b>21</b><span style="opacity:.4">/31</span></span><br>
-    203.9 mi
+    203.9 mi<br><span style="opacity:.4">12.7k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">18</span>
-    <div class="name-block">
-      <div class="name">ravi_garcia</div>
-      <a class="strava" href="https://www.strava.com/athletes/ravi_garcia" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/ravi_garcia" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">ravi_garcia</div>
     </div>
   </div>
   <div class="punchcard">
-<span class="cell"></span>
-      <span class="cell"></span>
-      <span class="cell we"></span>
-      <span class="cell we"></span>
-      <span class="cell"></span>
+<span class="cell" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
+      <span class="cell we" title="no rides"></span>
+      <span class="cell we" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell" data-l="2" title="2025-05-06: 7.7 mi"></span>
       <span class="cell" data-l="3" title="2025-05-07: 13.2 mi"></span>
       <span class="cell" data-l="3" title="2025-05-08: 10.3 mi"></span>
@@ -1030,48 +1080,48 @@
       <span class="cell" data-l="2" title="2025-05-14: 7.2 mi"></span>
       <span class="cell" data-l="4" title="2025-05-15: 38.2 mi"></span>
       <span class="cell" data-l="3" title="2025-05-16: 10.4 mi"></span>
-      <span class="cell we"></span>
+      <span class="cell we" title="no rides"></span>
       <span class="cell we" data-l="3" title="2025-05-18: 12.6 mi"></span>
       <span class="cell" data-l="3" title="2025-05-19: 13.5 mi"></span>
       <span class="cell" data-l="3" title="2025-05-20: 10.3 mi"></span>
       <span class="cell" data-l="3" title="2025-05-21: 11.4 mi"></span>
       <span class="cell" data-l="3" title="2025-05-22: 10.5 mi"></span>
       <span class="cell" data-l="2" title="2025-05-23: 7.5 mi"></span>
-      <span class="cell we"></span>
+      <span class="cell we" title="no rides"></span>
       <span class="cell we" data-l="2" title="2025-05-25: 8.5 mi"></span>
       <span class="cell" data-l="2" title="2025-05-26: 6.1 mi"></span>
       <span class="cell" data-l="1" title="2025-05-27: 3.3 mi"></span>
       <span class="cell" data-l="3" title="2025-05-28: 10.4 mi"></span>
-      <span class="cell"></span>
-      <span class="cell"></span>
-      <span class="cell we"></span>
+      <span class="cell" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
+      <span class="cell we" title="no rides"></span>
   </div>
   <div class="totals">
     <span class="big"><b>21</b><span style="opacity:.4">/31</span></span><br>
-    202.8 mi
+    202.8 mi<br><span style="opacity:.4">7.5k ft</span>
   </div>
 </div>
 
 <div class="row">
   <div class="who">
     <span class="rank">19</span>
-    <div class="name-block">
-      <div class="name">lily</div>
-      <a class="strava" href="https://www.strava.com/athletes/26072252" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+    <a class="strava" href="https://www.strava.com/athletes/26072252" target="_blank" rel="noopener" title="View on Strava"><svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
   <path fill="#fc5200" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
 </svg></a>
+    <div class="name-block">
+      <div class="name">lily</div>
     </div>
   </div>
   <div class="punchcard">
-<span class="cell"></span>
-      <span class="cell"></span>
-      <span class="cell we"></span>
+<span class="cell" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
+      <span class="cell we" title="no rides"></span>
       <span class="cell we" data-l="1" title="2025-05-04: 2.5 mi"></span>
-      <span class="cell"></span>
-      <span class="cell"></span>
-      <span class="cell"></span>
-      <span class="cell"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell we" data-l="3" title="2025-05-10: 13.3 mi"></span>
       <span class="cell we" data-l="1" title="2025-05-11: 2.1 mi"></span>
       <span class="cell" data-l="1" title="2025-05-12: 2.2 mi"></span>
@@ -1079,25 +1129,25 @@
       <span class="cell" data-l="1" title="2025-05-14: 2.1 mi"></span>
       <span class="cell" data-l="1" title="2025-05-15: 2.5 mi"></span>
       <span class="cell" data-l="1" title="2025-05-16: 2.4 mi"></span>
-      <span class="cell we"></span>
+      <span class="cell we" title="no rides"></span>
       <span class="cell we" data-l="1" title="2025-05-18: 2.2 mi"></span>
       <span class="cell" data-l="2" title="2025-05-19: 6.4 mi"></span>
       <span class="cell" data-l="1" title="2025-05-20: 3.2 mi"></span>
-      <span class="cell"></span>
-      <span class="cell"></span>
-      <span class="cell"></span>
-      <span class="cell we"></span>
-      <span class="cell we"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
+      <span class="cell we" title="no rides"></span>
+      <span class="cell we" title="no rides"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell" data-l="2" title="2025-05-27: 5.2 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell" data-l="2" title="2025-05-29: 5.5 mi"></span>
-      <span class="cell"></span>
+      <span class="cell" title="no rides"></span>
       <span class="cell we" data-l="1" title="2025-05-31: 4.4 mi"></span>
   </div>
   <div class="totals">
     <span class="big"><b>14</b><span style="opacity:.4">/31</span></span><br>
-    56.6 mi
+    56.6 mi<br><span style="opacity:.4">1.3k ft</span>
   </div>
 </div>
 

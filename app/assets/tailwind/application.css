@@ -2,6 +2,19 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --color-purple-0: #ede8f0;
+  --color-purple-1: #dbd0e1;
+  --color-purple-2: #b6a1c4;
+  --color-purple-3: #9272a6;
+  --color-purple-4: #6d4389;
+  --color-purple-5: #49146b;
+  --color-purple-6: #3a1056;
+  --color-purple-7: #2c0c40;
+  --color-purple-8: #1d082b;
+  --color-purple-9: #0f0415;
+}
+
 @layer base {
   body {
     @apply text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-900 antialiased;
