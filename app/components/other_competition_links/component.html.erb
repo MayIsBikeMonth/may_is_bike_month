@@ -1,0 +1,14 @@
+<div class="wrapper-class pt-2!">
+  <p class="text-base">
+    View results from:
+    <%= safe_join(ordered_competitions.map { |competition|
+      if current_competition?(competition)
+        tag.span(competition.year, class: "twlink cursor-not-allowed opacity-50", title: CURRENT_TITLE)
+      elsif @original_view
+        link_to(competition.year, competitions_original_path(competition.year), class: "twlink")
+      else
+        link_to(competition.year, competition_path(competition.slug), class: "twlink")
+      end
+    }, ", ") %>
+  </p>
+</div>
