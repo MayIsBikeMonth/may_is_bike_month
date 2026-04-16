@@ -10,16 +10,16 @@
 <%= render "landing/mockups/head_includes" %>
 <style>
   :root {
-    --purple-0: #ede8f0;
-    --purple-1: #dbd0e1;
-    --purple-2: #b6a1c4;
-    --purple-3: #9272a6;
-    --purple-4: #6d4389;
-    --purple-5: #49146b;
-    --purple-6: #3a1056;
-    --purple-7: #2c0c40;
-    --purple-8: #1d082b;
-    --purple-9: #0f0415;
+    --purple-0: #f3edf8;
+    --purple-1: #e8dbf1;
+    --purple-2: #d0b7e3;
+    --purple-3: #b994d4;
+    --purple-4: #a170c6;
+    --purple-5: #8a4cb8;
+    --purple-6: #6e3d93;
+    --purple-7: #532e6e;
+    --purple-8: #371e4a;
+    --purple-9: #1c0f25;
 
     --bg:      var(--purple-0);
     --surface: #ffffff;
@@ -48,13 +48,13 @@
     --accent:  var(--purple-2);
     --accent-2: var(--purple-1);
     --cell-bg: var(--purple-7);
-    --cell-1:  var(--purple-5);
-    --cell-2:  var(--purple-4);
-    --cell-3:  var(--purple-3);
-    --cell-4:  var(--purple-2);
-    --cell-5:  var(--purple-1);
-    --bars-from: var(--purple-3);
-    --bars-to:   var(--purple-1);
+    --cell-1:  var(--purple-9);
+    --cell-2:  var(--purple-8);
+    --cell-3:  var(--purple-7);
+    --cell-4:  var(--purple-6);
+    --cell-5:  var(--purple-5);
+    --bars-from: var(--purple-7);
+    --bars-to:   var(--purple-5);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg);
@@ -65,6 +65,7 @@
     padding-bottom: 20px; margin-bottom: 28px; }
   header h1 { font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 34px; letter-spacing: -0.5px; margin: 0; }
   header h1 b { color: var(--accent); font-weight: 700; }
+  html.dark header h1 b { color: var(--muted); }
   header .meta { display: grid; grid-template-columns: repeat(4, auto); gap: 24px; justify-content: end; text-align: right; }
   header .meta .num { font-family: "IBM Plex Mono", monospace; font-size: 22px; color: var(--fg); font-weight: 500; }
   header .meta .label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 2px; }
@@ -78,7 +79,11 @@
     text-transform: uppercase; letter-spacing: .14em; color: var(--muted);
     margin: 0 0 6px; text-align: left; }
   .rules ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap;
-    justify-content: center; gap: 6px 22px; font-size: 13px; color: var(--dim); }
+    justify-content: flex-start; gap: 6px 22px; font-size: 13px; color: var(--dim); }
+  @media (min-width: 640px) {
+    .rules { display: grid; grid-template-columns: auto 1fr; column-gap: 24px; align-items: center; }
+    .rules h4 { margin: 0; }
+  }
 
   .ridge { margin-bottom: 6px; display: grid; grid-template-columns: 220px 1fr 110px;
     grid-template-rows: 56px 0; column-gap: 12px; row-gap: 0; align-items: end; }
@@ -124,24 +129,33 @@
   .row .punchcard .cell[data-l="3"] { background: var(--cell-3); }
   .row .punchcard .cell[data-l="4"] { background: var(--cell-4); }
   .row .punchcard .cell[data-l="5"] { background: var(--cell-5); }
+  .row .punchcard .cell[data-century]::after {
+    content: "💯"; position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%); font-size: 14px; line-height: 1;
+    pointer-events: none;
+  }
+
+  .row .punchcard .cell[data-l="3"] { box-shadow: 0 0 6px rgba(83,46,110,0.45); }
+  .row .punchcard .cell[data-l="4"] { box-shadow: 0 0 10px rgba(110,61,147,0.6); }
+  .row .punchcard .cell[data-l="5"] { box-shadow: 0 0 14px rgba(138,76,184,0.75); }
 
   .row .totals { text-align: right; font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--dim); }
   .row .totals .big { color: var(--fg); font-size: 18px; font-weight: 500; }
   .row .totals .big b { color: var(--accent); font-weight: 700; }
+  html.dark .row .totals .big b { color: var(--muted); }
 
   .footer { display: flex; justify-content: space-between; margin-top: 26px; color: var(--muted);
     font-family: "IBM Plex Mono", monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .12em; }
   .footer a { color: var(--accent); text-decoration: none; }
   .footer a:hover { text-decoration: underline; }
   .legend-block { display: flex; align-items: center; gap: 6px; }
-  .legend-block .scale { display: inline-grid; grid-template-columns: repeat(6, 12px); gap: 2px; }
+  .legend-block .scale { display: inline-grid; grid-template-columns: repeat(5, 12px); gap: 2px; }
   .legend-block .scale i { display: block; height: 12px; border-radius: 2px; }
-  .legend-block .scale i:nth-child(1) { background: var(--cell-bg); }
-  .legend-block .scale i:nth-child(2) { background: var(--cell-1); }
-  .legend-block .scale i:nth-child(3) { background: var(--cell-2); }
-  .legend-block .scale i:nth-child(4) { background: var(--cell-3); }
-  .legend-block .scale i:nth-child(5) { background: var(--cell-4); }
-  .legend-block .scale i:nth-child(6) { background: var(--cell-5); }
+  .legend-block .scale i:nth-child(1) { background: var(--cell-1); }
+  .legend-block .scale i:nth-child(2) { background: var(--cell-2); }
+  .legend-block .scale i:nth-child(3) { background: var(--cell-3); }
+  .legend-block .scale i:nth-child(4) { background: var(--cell-4); }
+  .legend-block .scale i:nth-child(5) { background: var(--cell-5); }
 </style>
 </head>
 <body>
