@@ -1,4 +1,6 @@
 class LandingController < ApplicationController
+  MOCKUPS = %w[01-punchcard 02-sparkbar 03-streaks].freeze
+
   def index
     @competition = Competition.current || Competition.find_or_create_by(start_date: Date.parse("2024-5-1"))
     @competition_users = @competition.competition_users_included
@@ -14,5 +16,11 @@ class LandingController < ApplicationController
     else
       render json: {message: "No current competition!"}
     end
+  end
+
+  def mockups
+    mockup = params[:id]
+    raise ActionController::RoutingError, "Not Found" if mockup.present? && MOCKUPS.exclude?(mockup)
+    render template: "landing/mockups/#{mockup || "index"}", layout: false
   end
 end
