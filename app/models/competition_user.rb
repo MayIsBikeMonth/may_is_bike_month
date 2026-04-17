@@ -3,6 +3,7 @@
 # Table name: competition_users
 #
 #  id                      :bigint           not null, primary key
+#  current_timezone        :string           default("America/Los_Angeles"), not null
 #  display_name            :text
 #  included_activity_types :jsonb
 #  included_in_competition :boolean          default(FALSE), not null
@@ -100,6 +101,7 @@ class CompetitionUser < ApplicationRecord
       included_activity_types.map(&:strip).reject(&:blank?)
     end.sort
     self.score = score_from_score_data
+    self.current_timezone = competition_activities.reorder(start_at: :desc).first&.timezone || current_timezone
   end
 
   def update_score_data!

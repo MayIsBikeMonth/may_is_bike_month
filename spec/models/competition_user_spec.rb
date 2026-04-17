@@ -83,6 +83,30 @@ RSpec.describe CompetitionUser, type: :model do
     end
   end
 
+  describe "current_timezone" do
+    let(:competition_user) { FactoryBot.create(:competition_user) }
+
+    it "defaults to Pacific time when no activities" do
+      expect(competition_user.current_timezone).to eq "America/Los_Angeles"
+    end
+
+    context "with activities" do
+      let!(:older_activity) do
+        FactoryBot.create(:competition_activity, competition_user:,
+          start_at: Time.parse("2024-05-01T12:00:00Z"), timezone: "America/Denver")
+      end
+      let!(:newer_activity) do
+        FactoryBot.create(:competition_activity, competition_user:,
+          start_at: Time.parse("2024-05-03T12:00:00Z"), timezone: "America/New_York")
+      end
+
+      it "uses the timezone from the most recent activity" do
+        competition_user.save!
+        expect(competition_user.reload.current_timezone).to eq "America/New_York"
+      end
+    end
+  end
+
   describe "scoring" do
     let(:competition) { FactoryBot.create(:competition, start_date: Time.parse("2024-05-01")) }
     let(:competition_user1) { FactoryBot.create(:competition_user, competition:) }
