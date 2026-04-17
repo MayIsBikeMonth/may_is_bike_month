@@ -162,5 +162,6 @@ jobs:
           HONEYBADGER_API_KEY: ${{ secrets.HONEYBADGER_API_KEY }}
           STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
           STRAVA_SECRET: ${{ secrets.STRAVA_SECRET }}
+          STRAVA_WEBHOOK_VERIFY_TOKEN: ${{ secrets.STRAVA_WEBHOOK_VERIFY_TOKEN }}
           DEVISE_SECRET_KEY: ${{ secrets.DEVISE_SECRET_KEY }}
           DEVISE_PEPPER: ${{ secrets.DEVISE_PEPPER }}
