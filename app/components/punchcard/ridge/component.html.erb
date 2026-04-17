@@ -1,10 +1,19 @@
-<div class="mb-1.5 grid grid-cols-[220px_1fr_110px] grid-rows-[56px_0] gap-x-3 items-end">
-  <div class="row-start-2 col-start-1 self-start font-mono text-[11px] text-purple-300 dark:text-purple-400 uppercase tracking-[0.12em] text-right pr-1 leading-none">
+<div class="mb-1 grid grid-cols-[220px_1fr_110px] gap-x-3 items-end border-b border-purple-100 dark:border-purple-700 pb-1.5">
+  <div class="font-mono text-[11px] text-purple-300 dark:text-purple-400 uppercase tracking-[0.12em] text-right pr-1 leading-none pb-2">
     Daily total
   </div>
-  <div class="row-start-1 col-start-2 grid grid-cols-[repeat(31,1fr)] gap-0.5 h-14 items-end">
+  <div class="grid grid-cols-[repeat(31,1fr)] gap-0.5 items-end">
     <% bars.each do |bar| %>
-      <i class="block bg-gradient-to-b from-purple-300 to-purple-500 dark:from-purple-700 dark:to-purple-500 rounded-[1px] opacity-90 hover:opacity-100 cursor-default" style="height:<%= "%.1f" % bar[:height] %>%" title="<%= bar[:title] %>"></i>
+      <button type="button"
+        class="flex flex-col items-stretch p-0 border-0 bg-transparent cursor-pointer outline-none rounded-[1px] transition-shadow hover:ring-1 hover:ring-purple-300 dark:hover:ring-purple-600 focus-visible:ring-[2px] focus-visible:ring-purple-400 dark:focus-visible:ring-purple-500 aria-pressed:ring-2 aria-pressed:ring-purple-700 dark:aria-pressed:ring-purple-100"
+        title="<%= bar[:title] %>"
+        aria-pressed="false"
+        data-action="click->punch#toggleDay"
+        data-punch-target="ridgeBar"
+        data-date="<%= bar[:date_string] %>">
+        <span class="block w-full bg-gradient-to-b from-purple-300 to-purple-500 dark:from-purple-700 dark:to-purple-500 rounded-[1px] opacity-90" style="height:<%= "%.1f" % bar[:height_px] %>px" aria-hidden="true"></span>
+        <span class="block text-center text-purple-300 dark:text-purple-400 font-mono text-[11px] pt-1"><%= bar[:day] %></span>
+      </button>
     <% end %>
   </div>
   <div></div>

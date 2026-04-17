@@ -43,5 +43,20 @@ module Punchcard::UserRow
     def strava_url
       @competition_user.user.strava_user_url
     end
+
+    def user_slug
+      user = @competition_user.user
+      user.strava_username.presence || Slugifyer.slugify(user.display_name).presence || user.id.to_s
+    end
+
+    def activities_by_date
+      @activities_by_date ||= @competition_user.competition_activities_included
+        .sort_by { |a| a.start_at || Time.at(0) }
+        .each_with_object({}) do |activity, hash|
+          activity.activity_dates_strings.each do |date_string|
+            (hash[date_string] ||= []) << activity
+          end
+        end
+    end
   end
 end

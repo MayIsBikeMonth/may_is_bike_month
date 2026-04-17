@@ -12,17 +12,20 @@ RSpec.describe Punchcard::Ridge::Component, type: :component do
   end
   let(:rendered) { render_inline(described_class.new(daily_totals:)) }
 
-  it "scales heights proportionally to the max distance" do
-    bars = rendered.css("i")
+  it "scales bar heights in pixels up to the max" do
+    bars = rendered.css("button span[style]")
     expect(bars.count).to eq 3
-    expect(bars[0].attr("style")).to include "height:100.0%"
-    expect(bars[1].attr("style")).to include "height:50.0%"
-    expect(bars[2].attr("style")).to include "height:0.0%"
+    expect(bars[0].attr("style")).to include "height:56.0px"
+    expect(bars[1].attr("style")).to include "height:28.0px"
+    expect(bars[2].attr("style")).to include "height:0.0px"
   end
 
-  it "renders a title with the day of week, miles and feet" do
-    title = rendered.css("i").first.attr("title")
-    expect(title).to include "Thursday" # 2025-05-01 is a Thursday
+  it "renders each button with day number and a title containing the day of week, miles and feet" do
+    buttons = rendered.css("button")
+    expect(buttons.count).to eq 3
+    expect(buttons[0].text).to include "1"
+    title = buttons[0].attr("title")
+    expect(title).to include "Thursday"
     expect(title).to include "mi"
     expect(title).to include "ft"
   end
@@ -32,7 +35,7 @@ RSpec.describe Punchcard::Ridge::Component, type: :component do
 
     it "does not divide by zero" do
       expect { rendered }.not_to raise_error
-      expect(rendered.css("i").first.attr("style")).to include "height:0.0%"
+      expect(rendered.css("button span[style]").first.attr("style")).to include "height:0.0px"
     end
   end
 end

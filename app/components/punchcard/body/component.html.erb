@@ -10,8 +10,6 @@
 
 <%= render(Punchcard::Ridge::Component.new(daily_totals:)) %>
 
-<%= render(Punchcard::Axis::Component.new(period_dates:)) %>
-
 <% @competition_users.each_with_index do |competition_user, index| %>
   <%= render(Punchcard::UserRow::Component.new(
     competition_user:,

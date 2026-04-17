@@ -8,6 +8,8 @@ module Punchcard::Ridge
 
     private
 
+    MAX_BAR_PX = 56
+
     def bars
       max_distance = @daily_totals.map { |d| d[:distance_meters] }.max.to_f
       max_distance = 1 if max_distance.zero?
@@ -15,10 +17,12 @@ module Punchcard::Ridge
       @daily_totals.map do |day|
         miles = meters_to_miles(day[:distance_meters])
         feet = meters_to_feet(day[:elevation_meters])
-        height = (day[:distance_meters] / max_distance) * 100
+        height_px = (day[:distance_meters] / max_distance) * MAX_BAR_PX
         day_of_week = Date.parse(day[:date_string]).strftime("%A")
         {
-          height:,
+          height_px:,
+          date_string: day[:date_string],
+          day: Date.parse(day[:date_string]).day,
           title: "#{day_of_week}\n#{miles.round(1)} mi\n#{number_with_delimiter(feet.to_i)} ft"
         }
       end
