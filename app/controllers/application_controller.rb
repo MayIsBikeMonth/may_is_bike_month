@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include Pagy::Method
   include Binxtils::SetPeriod
+  include Binxtils::ControllerNamespace
 
   self.default_earliest_time = Time.at(1714460400).freeze # 2024-4-30
 
@@ -12,7 +13,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  helper_method :display_dev_info?, :user_root_url, :controller_namespace
+  helper_method :display_dev_info?, :user_root_url
 
   def append_info_to_payload(payload)
     super
@@ -81,10 +82,6 @@ class ApplicationController < ActionController::Base
       flash[:error] = "Not authorized"
       redirect_to user_root_url, status: :see_other
     end
-  end
-
-  def controller_namespace
-    @controller_namespace ||= (self.class.module_parent.name != "Object") ? self.class.module_parent.name.downcase : nil
   end
 
   def store_return_to

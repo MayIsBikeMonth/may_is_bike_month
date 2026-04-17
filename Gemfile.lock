@@ -97,7 +97,7 @@ GEM
     bcrypt_pbkdf (1.1.2)
     bigdecimal (4.1.1)
     bindex (0.8.1)
-    binxtils (0.3.0)
+    binxtils (0.3.2)
       activerecord
       activesupport
       functionable
@@ -176,7 +176,7 @@ GEM
     flamegraph (0.9.5)
     foreman (0.88.1)
     formatador (1.1.0)
-    functionable (1.1.0)
+    functionable (1.2.0)
     globalid (1.3.0)
       activesupport (>= 6.1)
     groupdate (6.8.0)
