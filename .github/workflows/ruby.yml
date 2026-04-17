@@ -95,6 +95,10 @@ jobs:
       - name: Install packages
         run: |
           yarn install --pure-lockfile
+      - name: Test bin/setup
+        run: bin/setup
+      - name: Reset database after bin/setup seed
+        run: bin/rails db:schema:load
       - name: build assets
         run: bin/rails assets:precompile
       # Run tests
