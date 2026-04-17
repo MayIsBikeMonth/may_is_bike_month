@@ -75,6 +75,7 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
     let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2026-04-01")) }
     let(:period_date_strings) { (competition.start_date..competition.end_date).map(&:to_s) }
     let(:user_daily) { {} }
+    around { |ex| travel_to(Time.parse("2026-04-16T18:00:00Z")) { ex.run } }
 
     it "renders empty spans for today and future, punchcard-cells for past days" do
       cells = rendered.css("div.h-7 > span")
