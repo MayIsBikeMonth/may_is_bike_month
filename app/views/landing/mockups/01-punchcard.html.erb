@@ -85,7 +85,7 @@
     .rules h4 { margin: 0; }
   }
 
-  .ridge { margin-bottom: 6px; display: grid; grid-template-columns: 220px 1fr 110px;
+  .ridge { margin-bottom: 24px; display: grid; grid-template-columns: 220px 1fr 110px;
     grid-template-rows: 56px 0; column-gap: 12px; row-gap: 0; align-items: end; }
   .ridge .ridge-label { grid-row: 2; grid-column: 1; align-self: start;
     font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--muted);
@@ -143,6 +143,41 @@
   .row .totals .big { color: var(--fg); font-size: 18px; font-weight: 500; }
   .row .totals .big b { color: var(--accent); font-weight: 700; }
   html.dark .row .totals .big b { color: var(--muted); }
+
+  .cal-day-labels { display: none; }
+
+  @media (max-width: 1023px) {
+    .axis { display: none; }
+    .cal-day-labels {
+      display: grid; grid-template-columns: repeat(7, 24px); gap: 2px;
+      margin: 0 0 10px auto; padding-bottom: 6px; border-bottom: 1px solid var(--line);
+      max-width: max-content;
+    }
+    .cal-day-labels span {
+      writing-mode: vertical-rl; transform: rotate(180deg);
+      color: var(--muted); font-family: "IBM Plex Mono", monospace;
+      font-size: 10px; text-transform: uppercase; letter-spacing: .1em;
+      text-align: end; height: 30px;
+    }
+    .row { grid-template-columns: 1fr auto; grid-template-rows: auto auto;
+      gap: 6px 18px; align-items: start; padding: 14px 0; }
+    .row .who { grid-column: 1; grid-row: 1; }
+    .row .totals { grid-column: 1; grid-row: 2; text-align: left; }
+    .row .punchcard {
+      grid-column: 2; grid-row: 1 / span 2; justify-self: end;
+      grid-template-columns: repeat(7, 24px); height: auto; gap: 2px;
+      max-width: max-content;
+    }
+    .row .punchcard .cell { aspect-ratio: 1; border-radius: 3px; }
+    .row .punchcard .cell:first-child { grid-column-start: var(--start-col, 4); }
+    .row .punchcard .cell[data-century]::after { font-size: 14px; }
+  }
+
+  @media (max-width: 639px) {
+    .ridge { grid-template-columns: 1fr; grid-template-rows: 56px auto; column-gap: 0; }
+    .ridge .bars { grid-column: 1; grid-row: 1; }
+    .ridge .ridge-label { grid-column: 1; grid-row: 2; text-align: left; padding: 6px 0 0; }
+  }
 
   .footer { display: flex; justify-content: space-between; margin-top: 26px; color: var(--muted);
     font-family: "IBM Plex Mono", monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .12em; }
