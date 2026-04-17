@@ -505,6 +505,8 @@ GEM
       logger (>= 1.7.0)
       rack (>= 3.2.0)
       redis-client (>= 0.26.0)
+    sidekiq-failures (1.1.0)
+      sidekiq (>= 4.0.0)
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
@@ -645,6 +647,7 @@ DEPENDENCIES
   rspec-retry
   selenium-webdriver
   sidekiq
+  sidekiq-failures
   stackprof
   standard (>= 1.41)
   stimulus-rails
