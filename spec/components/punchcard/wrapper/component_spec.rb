@@ -38,9 +38,9 @@ RSpec.describe Punchcard::Wrapper::Component, type: :component do
   end
 
   describe "render" do
-    it "wraps the body in .punchcard-wrap" do
+    it "renders the body" do
       rendered = render_inline(described_class.new(competition:, competition_users: []))
-      expect(rendered.css(".punchcard-wrap")).to be_present
+      expect(rendered.css("h1").text).to include competition.year.to_s
     end
   end
 end

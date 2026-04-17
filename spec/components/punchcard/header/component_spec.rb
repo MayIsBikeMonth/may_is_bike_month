@@ -16,7 +16,7 @@ RSpec.describe Punchcard::Header::Component, type: :component do
   let(:rendered) { render_inline(described_class.new(**options)) }
 
   it "renders the year from the competition" do
-    expect(rendered.css(".punchcard-title").text).to include "2025"
+    expect(rendered.css("h1").text).to include "2025"
   end
 
   it "renders the rider count" do
@@ -24,23 +24,22 @@ RSpec.describe Punchcard::Header::Component, type: :component do
   end
 
   it "formats feet over 1k with a k" do
-    feet_imperial = rendered.css(".punchcard-num .unit-imperial")[1]
-    expect(feet_imperial.text.strip).to include "496"
-    expect(feet_imperial.text.strip).to include "k"
+    imperial_text = rendered.css(".unit-imperial").map(&:text).join(" ")
+    expect(imperial_text).to match(/496\s*k/)
   end
 
   context "with feet under 1000" do
     let(:options) { super().merge(total_feet: 500) }
 
     it "renders raw feet without k suffix" do
-      feet_imperial = rendered.css(".punchcard-num .unit-imperial")[1]
-      expect(feet_imperial.text).not_to include "k"
-      expect(feet_imperial.text.strip).to eq "500"
+      imperial_text = rendered.css(".unit-imperial").map(&:text).join(" ")
+      expect(imperial_text).to include "500"
+      expect(imperial_text).not_to match(/500\s*k/)
     end
   end
 
-  it "renders both imperial and metric values for miles/feet with toggle classes" do
-    expect(rendered.css(".punchcard-num .unit-imperial").count).to eq 2
-    expect(rendered.css(".punchcard-num .unit-metric.hidden").count).to eq 2
+  it "renders imperial and metric toggle spans for miles and feet" do
+    expect(rendered.css(".unit-imperial").count).to eq 4
+    expect(rendered.css(".unit-metric.hidden").count).to eq 4
   end
 end

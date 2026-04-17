@@ -7,7 +7,7 @@ RSpec.describe Punchcard::Axis::Component, type: :component do
   let(:rendered) { render_inline(described_class.new(period_dates:)) }
 
   it "renders all 31 days" do
-    spans = rendered.css(".punchcard-axis-days span")
+    spans = rendered.css("span")
     expect(spans.count).to eq 31
     expect(spans.first.text).to eq "1"
     expect(spans.last.text).to eq "31"

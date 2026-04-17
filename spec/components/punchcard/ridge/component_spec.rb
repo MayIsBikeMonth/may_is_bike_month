@@ -13,7 +13,7 @@ RSpec.describe Punchcard::Ridge::Component, type: :component do
   let(:rendered) { render_inline(described_class.new(daily_totals:)) }
 
   it "scales heights proportionally to the max distance" do
-    bars = rendered.css(".punchcard-ridge-bars i")
+    bars = rendered.css("i")
     expect(bars.count).to eq 3
     expect(bars[0].attr("style")).to include "height:100.0%"
     expect(bars[1].attr("style")).to include "height:50.0%"
@@ -21,7 +21,7 @@ RSpec.describe Punchcard::Ridge::Component, type: :component do
   end
 
   it "renders a title with miles and feet" do
-    title = rendered.css(".punchcard-ridge-bars i").first.attr("title")
+    title = rendered.css("i").first.attr("title")
     expect(title).to include "mi"
     expect(title).to include "ft"
   end
@@ -31,7 +31,7 @@ RSpec.describe Punchcard::Ridge::Component, type: :component do
 
     it "does not divide by zero" do
       expect { rendered }.not_to raise_error
-      expect(rendered.css(".punchcard-ridge-bars i").first.attr("style")).to include "height:0.0%"
+      expect(rendered.css("i").first.attr("style")).to include "height:0.0%"
     end
   end
 end
