@@ -16,7 +16,7 @@
 #  index_strava_requests_on_user_id  (user_id)
 #
 class StravaRequest < ApplicationRecord
-  KIND_ENUM = {get_activities: 0, get_athlete: 1}.freeze
+  KIND_ENUM = {get_activities: 0, get_athlete: 1, incoming_webhook: 2}.freeze
   SUCCESS_CODES = [200, 201].freeze
   # As of 2025-5-5, we get 3000 per day
   MAXIMUM_REQUESTS_PER_DAY = (ENV["STRAVA_MAX_REQUESTS_PER_HOUR"] || 3_000)&.to_i
