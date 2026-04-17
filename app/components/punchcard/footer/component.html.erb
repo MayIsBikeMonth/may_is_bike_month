@@ -1,17 +1,19 @@
-<div class="flex justify-between mt-7 text-purple-300 dark:text-purple-400 font-mono text-[13px] uppercase tracking-[0.12em]">
+<div
+  class="
+    flex justify-between mt-7 text-purple-300 dark:text-purple-400 font-mono
+    text-[13px] uppercase tracking-[0.12em]
+  "
+>
   <div class="flex items-center gap-2">
     less
-    <span class="inline-grid grid-cols-5 gap-1">
-      <% swatches.each do |swatch| %>
-        <i class="unit-imperial block h-5 w-5 rounded cursor-help <%= swatch[:color_class] %>" title="<%= swatch[:title_imperial] %>"></i>
-        <i class="unit-metric hidden h-5 w-5 rounded cursor-help <%= swatch[:color_class] %>" title="<%= swatch[:title_metric] %>"></i>
-      <% end %>
-    </span>
+    <span class="inline-grid grid-cols-5 gap-1"><% swatches.each do |swatch| %>      <i        class="unit-imperial block h-5 w-5 rounded cursor-help <%= swatch[:color_class] %>"        title="<%= swatch[:title_imperial] %>"      ></i>      <i        class="unit-metric hidden h-5 w-5 rounded cursor-help <%= swatch[:color_class] %>"        title="<%= swatch[:title_metric] %>"      ></i><% end %></span>
     more
   </div>
+
   <div>
     <% if @updated_at %>
-      updated <%= render(UI::Time::Component.new(time: @updated_at)) %>
+      updated
+      <%= render(UI::Time::Component.new(time: @updated_at)) %>
     <% end %>
   </div>
 </div>

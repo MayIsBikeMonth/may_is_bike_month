@@ -9,8 +9,28 @@
 <%= render(Punchcard::Rules::Component.new(competition: @competition)) %>
 
 <div class="flex items-center gap-4 mb-4 text-[12px]">
-  <button type="button" class="text-purple-300 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-200 hover:underline cursor-pointer" data-action="click->punch#showAll">Show all activities</button>
-  <button type="button" class="hidden text-purple-300 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-200 hover:underline cursor-pointer" data-action="click->punch#hideAll" data-punch-target="hideAllBtn">Hide all activities</button>
+  <button
+    type="button"
+    class="
+      text-purple-300 dark:text-purple-400 hover:text-purple-500
+      dark:hover:text-purple-200 hover:underline cursor-pointer
+    "
+    data-action="click->punch#showAll"
+  >
+    Show all activities
+  </button>
+
+  <button
+    type="button"
+    class="
+      hidden text-purple-300 dark:text-purple-400 hover:text-purple-500
+      dark:hover:text-purple-200 hover:underline cursor-pointer
+    "
+    data-action="click->punch#hideAll"
+    data-punch-target="hideAllBtn"
+  >
+    Hide all activities
+  </button>
 </div>
 
 <main class="overflow-x-auto -mx-7">

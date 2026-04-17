@@ -1,17 +1,38 @@
 <section class="mb-8 sm:grid sm:grid-cols-[auto_1fr] sm:gap-x-6 sm:items-center">
-  <h4 class="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-purple-300 dark:text-purple-400 mb-1.5 sm:m-0 text-left">
+  <h4
+    class="
+      font-mono text-[11px] font-medium uppercase tracking-[0.14em]
+      text-purple-300 dark:text-purple-400 mb-1.5 sm:m-0 text-left
+    "
+  >
     Rules
   </h4>
-  <ul class="flex flex-wrap list-none gap-y-1.5 gap-x-[22px] text-[13px] text-purple-400 dark:text-purple-300 m-0 p-0">
-    <li>Winner is the person who rides the most days in <%= @competition.period_display %></li>
+
+  <ul
+    class="
+      flex flex-wrap list-none gap-y-1.5 gap-x-[22px] text-[13px]
+      text-purple-400 dark:text-purple-300 m-0 p-0
+    "
+  >
+    <li>
+      Winner is the person who rides the most days in
+      <%= @competition.period_display %>
+    </li>
+
     <li>Ties are broken by total distance</li>
+
     <li>
       You have to ride at least
       <span class="unit-imperial"><%= daily_distance_miles %> miles</span>
-      <span class="unit-metric hidden"><%= daily_distance_km %> km</span>
-      in a day for it to count
+      <span class="unit-metric hidden"><%= daily_distance_km %> km</span> in a
+      day for it to count
     </li>
+
     <li>Activities that count: <%= activity_types_display %></li>
-    <li>First place gets to chose what's for dinner, second and last place have to cook</li>
+
+    <li>
+      First place gets to chose what's for dinner, second and last place have to
+      cook
+    </li>
   </ul>
 </section>

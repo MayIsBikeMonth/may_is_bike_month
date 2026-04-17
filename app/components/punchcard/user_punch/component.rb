@@ -40,8 +40,8 @@ module Punchcard::UserPunch
       "punchcard-cell cursor-pointer outline-none transition-shadow " \
         "hover:ring-1 hover:ring-purple-300 dark:hover:ring-purple-600 " \
         "focus-visible:ring-[2px] focus-visible:ring-purple-400 dark:focus-visible:ring-purple-500 " \
-        "aria-pressed:shadow-[0_3px_0_0_var(--color-purple-700)] " \
-        "dark:aria-pressed:shadow-[0_3px_0_0_var(--color-purple-100)]"
+        "aria-pressed:shadow-[0_3px_0_0_var(--color-purple-900)] " \
+        "dark:aria-pressed:shadow-[0_3px_0_0_var(--color-purple-0)]"
     end
 
     def miles

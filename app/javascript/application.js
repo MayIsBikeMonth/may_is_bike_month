@@ -164,20 +164,6 @@ const toggleActivities = () => {
   showActivityVisibility()
 }
 
-// Make a request to internal endpoint that updates Strava
-window.updateStravaInBackground = async function () {
-  const response = await fetch('/update_strava')
-  const updateResponse = await response.json()
-  console.log(updateResponse)
-  setInterval(function () {
-    window.updateStravaInBackground()
-    // Manual page reload
-    window.location.reload()
-  }, 600000) // ~ 10 minutes
-
-  // TODO: update the page based on updates, actioncable
-}
-
 // document.addEventListener('turbo:load', () => {
 //   scrollToStoredLocation()
 
@@ -208,10 +194,6 @@ window.updateStravaInBackground = async function () {
 // })
 
 document.addEventListener('turbo:load', () => {
-  if (window.shouldUpdateStravaInBackground) {
-    window.updateStravaInBackground()
-  }
-
   // Apply unit preference globally — no-op if there are no .unit-metric/.unit-imperial elements
   document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
   window.showPreferredUnit()

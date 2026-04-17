@@ -30,32 +30,6 @@ RSpec.describe "/landing", type: :request do
     end
   end
 
-  describe "get mockups" do
-    it "renders the mockups index with sign in" do
-      get "/mockups"
-      expect(response.code).to eq "200"
-      expect(response.body).to include("MIBM punchcard variants")
-      expect(response.body).to include("Sign in")
-      expect(response.body).to include("Settings")
-    end
-
-    context "with a valid mockup id" do
-      it "renders the mockup with sign in" do
-        get "/mockups/01-punchcard"
-        expect(response.code).to eq "200"
-        expect(response.body).to include("Sign in")
-        expect(response.body).to include("Settings")
-      end
-    end
-
-    context "with an unknown mockup id" do
-      it "returns 404" do
-        get "/mockups/nope"
-        expect(response.code).to eq "404"
-      end
-    end
-  end
-
   describe "get update_strava" do
     let(:competition) { FactoryBot.create(:competition, start_date: Time.current.beginning_of_month.to_date) }
     let!(:competition_user) { FactoryBot.create(:competition_user, competition:) }
