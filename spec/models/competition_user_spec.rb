@@ -104,6 +104,29 @@ RSpec.describe CompetitionUser, type: :model do
         expect(competition_user.current_timezone).to eq "America/New_York"
       end
     end
+
+    context "with preloaded competition_activities_included" do
+      let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-05-01")) }
+      let(:competition_user) { FactoryBot.create(:competition_user, competition:) }
+      let!(:older_activity) do
+        FactoryBot.create(:competition_activity, competition:, competition_user:,
+          start_at: Time.parse("2024-05-02T12:00:00Z"), timezone: "America/Denver")
+      end
+      let!(:newer_activity) do
+        FactoryBot.create(:competition_activity, competition:, competition_user:,
+          start_at: Time.parse("2024-05-10T12:00:00Z"), timezone: "America/New_York")
+      end
+
+      it "reads timezone from the preloaded association without extra queries" do
+        preloaded = CompetitionUser.includes(:competition_activities_included).find(competition_user.id)
+        queries = []
+        callback = ->(_, _, _, _, payload) { queries << payload[:sql] unless payload[:name] == "SCHEMA" }
+        ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+          expect(preloaded.current_timezone).to eq "America/New_York"
+        end
+        expect(queries).to be_empty
+      end
+    end
   end
 
   describe "current_date" do

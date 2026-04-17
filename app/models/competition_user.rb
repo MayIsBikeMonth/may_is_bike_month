@@ -103,11 +103,19 @@ class CompetitionUser < ApplicationRecord
   end
 
   def current_timezone
-    competition_activities.start_ordered.last&.timezone || Rails.configuration.time_zone
+    latest_activity&.timezone || Rails.configuration.time_zone
   end
 
   def current_date
     Time.current.in_time_zone(current_timezone).to_date
+  end
+
+  def latest_activity
+    if association(:competition_activities_included).loaded?
+      competition_activities_included.max_by { |a| a.start_at || Time.at(0) }
+    else
+      competition_activities.start_ordered.last
+    end
   end
 
   def everyday_rider?
