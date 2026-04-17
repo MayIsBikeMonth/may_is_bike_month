@@ -133,51 +133,6 @@ window.showPreferredUnit = () => {
   document.querySelectorAll(`.unit-${hiddenUnit}`).forEach(el => el.classList.add('hidden'))
 }
 
-const currentActivityVisibility = () => {
-  let activityVisibility = localStorage.getItem('activityVisibility')
-  if (activityVisibility === null || activityVisibility !== 'show-all') {
-    activityVisibility = 'hidden'
-  } else {
-    activityVisibility = 'show-all'
-  }
-  localStorage.setItem('activityVisibility', activityVisibility)
-  return activityVisibility
-}
-
-const showActivityVisibility = () => {
-  if (currentActivityVisibility() === 'hidden') {
-    document.querySelectorAll('.activityList').forEach(el => el.classList.add('hidden'))
-    document.querySelectorAll('.toggleActivities-shown').forEach(el => el.classList.add('hidden'))
-    document.querySelectorAll('.toggleActivities-hidden').forEach(el => el.classList.remove('hidden'))
-  } else {
-    document.querySelectorAll('.activityList, .toggleActivities-shown').forEach(el => el.classList.remove('hidden'))
-    document.querySelectorAll('.toggleActivities-hidden').forEach(el => el.classList.add('hidden'))
-    document.querySelectorAll('.toggleActivities-shown').forEach(el => el.classList.remove('hidden'))
-  }
-}
-
-const toggleActivities = () => {
-  document.querySelectorAll('.activityList').forEach(el => el.classList.toggle('hidden'))
-  const newVisibility = currentActivityVisibility() === 'hidden' ? 'show-all' : 'hidden'
-  localStorage.setItem('activityVisibility', newVisibility)
-  // console.log(newVisibility, currentActivityVisibility())
-  showActivityVisibility()
-}
-
-// Make a request to internal endpoint that updates Strava
-window.updateStravaInBackground = async function () {
-  const response = await fetch('/update_strava')
-  const updateResponse = await response.json()
-  console.log(updateResponse)
-  setInterval(function () {
-    window.updateStravaInBackground()
-    // Manual page reload
-    window.location.reload()
-  }, 600000) // ~ 10 minutes
-
-  // TODO: update the page based on updates, actioncable
-}
-
 // document.addEventListener('turbo:load', () => {
 //   scrollToStoredLocation()
 
@@ -208,22 +163,7 @@ window.updateStravaInBackground = async function () {
 // })
 
 document.addEventListener('turbo:load', () => {
-  if (window.shouldUpdateStravaInBackground) {
-    window.updateStravaInBackground()
-  }
-
-  // This is set on the window on the view pages (but not the lookbook pages)
-  if (window.enableToggles) {
-    // Add the click selector to the toggle button
-    document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
-    window.showPreferredUnit()
-
-    // Toggle activities
-    showActivityVisibility()
-    document.querySelector('#toggleIndividualActivities')?.addEventListener('click', toggleActivities)
-
-    // Add the click selector to the toggle button
-    document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
-    window.showPreferredUnit()
-  }
+  // Apply unit preference globally — no-op if there are no .unit-metric/.unit-imperial elements
+  document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
+  window.showPreferredUnit()
 })

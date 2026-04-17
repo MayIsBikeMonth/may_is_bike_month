@@ -38,6 +38,7 @@ class CompetitionUser < ApplicationRecord
   scope :excluded_from_competition, -> { where(included_in_competition: false) }
   scope :included_in_current_competition, -> { included_in_competition.current_competition }
   scope :score_ordered, -> { reorder(score: :desc) }
+  scope :start_ordered_desc, -> { joins(:competition).reorder(Competition.arel_table[:start_date].desc) }
 
   class << self
     def score_for(dates:, distance:, **)
@@ -102,6 +103,26 @@ class CompetitionUser < ApplicationRecord
     self.score = score_from_score_data
   end
 
+  def current_timezone
+    latest_activity&.timezone || Rails.configuration.time_zone
+  end
+
+  def current_date
+    Time.current.in_time_zone(current_timezone).to_date
+  end
+
+  def latest_activity
+    if association(:competition_activities_included).loaded?
+      competition_activities_included.max_by { |a| a.start_at || Time.at(0) }
+    else
+      competition_activities.start_ordered.last
+    end
+  end
+
+  def everyday_rider?
+    dates_before_current_date.all? { |date| activity_dates.include?(date.to_s) }
+  end
+
   def update_score_data!
     update(score_data: calculated_score_data)
     reload
@@ -114,6 +135,11 @@ class CompetitionUser < ApplicationRecord
   end
 
   private
+
+  def dates_before_current_date
+    return [] unless competition&.start_date
+    Array(competition.start_date..[current_date - 1, competition.end_date].min)
+  end
 
   def score_from_score_data
     return 0 if score_data&.dig("dates").blank?

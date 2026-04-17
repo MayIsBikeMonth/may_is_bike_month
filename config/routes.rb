@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   end
 
   resources :competitions, only: %i[show]
+  resources :competitions_original, only: %i[show]
 
   resource :account, only: %i[edit update]
 

@@ -83,6 +83,132 @@ RSpec.describe CompetitionUser, type: :model do
     end
   end
 
+  describe "start_ordered_desc" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:c_2024) { FactoryBot.create(:competition, start_date: Date.new(2024, 5, 1)) }
+    let(:c_2025) { FactoryBot.create(:competition, start_date: Date.new(2025, 5, 1)) }
+    let(:c_2026) { FactoryBot.create(:competition, start_date: Date.new(2026, 4, 1)) }
+    let!(:cu_2024) { FactoryBot.create(:competition_user, user:, competition: c_2024) }
+    let!(:cu_2026) { FactoryBot.create(:competition_user, user:, competition: c_2026) }
+    let!(:cu_2025) { FactoryBot.create(:competition_user, user:, competition: c_2025) }
+
+    it "orders by joined competition.start_date descending" do
+      expect(user.competition_users.start_ordered_desc.map(&:id)).to eq [cu_2026.id, cu_2025.id, cu_2024.id]
+    end
+  end
+
+  describe "current_timezone" do
+    let(:competition_user) { FactoryBot.create(:competition_user) }
+
+    it "defaults to Pacific time when no activities" do
+      expect(competition_user.current_timezone).to eq "America/Los_Angeles"
+    end
+
+    context "with activities" do
+      let!(:older_activity) do
+        FactoryBot.create(:competition_activity, competition_user:,
+          start_at: Time.parse("2024-05-01T12:00:00Z"), timezone: "America/Denver")
+      end
+      let!(:newer_activity) do
+        FactoryBot.create(:competition_activity, competition_user:,
+          start_at: Time.parse("2024-05-03T12:00:00Z"), timezone: "America/New_York")
+      end
+
+      it "uses the timezone from the most recent activity" do
+        expect(competition_user.current_timezone).to eq "America/New_York"
+      end
+    end
+
+    context "with preloaded competition_activities_included" do
+      let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-05-01")) }
+      let(:competition_user) { FactoryBot.create(:competition_user, competition:) }
+      let!(:older_activity) do
+        FactoryBot.create(:competition_activity, competition:, competition_user:,
+          start_at: Time.parse("2024-05-02T12:00:00Z"), timezone: "America/Denver")
+      end
+      let!(:newer_activity) do
+        FactoryBot.create(:competition_activity, competition:, competition_user:,
+          start_at: Time.parse("2024-05-10T12:00:00Z"), timezone: "America/New_York")
+      end
+
+      it "reads timezone from the preloaded association without extra queries" do
+        preloaded = CompetitionUser.includes(:competition_activities_included).find(competition_user.id)
+        queries = []
+        callback = ->(_, _, _, _, payload) { queries << payload[:sql] unless payload[:name] == "SCHEMA" }
+        ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+          expect(preloaded.current_timezone).to eq "America/New_York"
+        end
+        expect(queries).to be_empty
+      end
+    end
+  end
+
+  describe "current_date" do
+    let(:competition_user) { FactoryBot.create(:competition_user) }
+
+    around { |ex| travel_to(Time.parse("2024-05-04T05:00:00Z")) { ex.run } }
+
+    it "returns today in the default Pacific timezone" do
+      # 05:00 UTC is still 2024-05-03 in Pacific
+      expect(competition_user.current_date).to eq Date.parse("2024-05-03")
+    end
+
+    context "with a most recent activity in a different timezone" do
+      let!(:activity) do
+        FactoryBot.create(:competition_activity, competition_user:,
+          start_at: Time.parse("2024-05-03T12:00:00Z"), timezone: "Australia/Sydney")
+      end
+
+      it "returns today in the activity's timezone" do
+        # 05:00 UTC on 5/4 is 15:00 on 5/4 in Sydney
+        expect(competition_user.current_date).to eq Date.parse("2024-05-04")
+      end
+    end
+  end
+
+  describe "everyday_rider?" do
+    let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-05-01")) }
+    let(:competition_user) { FactoryBot.create(:competition_user, competition:, score_data: {dates:}) }
+    let(:dates) { ["2024-05-01", "2024-05-02", "2024-05-03"] }
+    let(:now) { Time.parse("2024-05-04T17:00:00Z") }
+
+    around { |ex| travel_to(now) { ex.run } }
+
+    it "is true when every day before current_date has an activity date" do
+      # 17:00 UTC on 5/4 is 10:00 PDT on 5/4; days before are 5/1, 5/2, 5/3
+      expect(competition_user.current_date).to eq Date.parse("2024-05-04")
+      expect(competition_user.everyday_rider?).to be true
+    end
+
+    context "when a day before current_date is missing" do
+      let(:dates) { ["2024-05-01", "2024-05-03"] }
+
+      it "is false" do
+        expect(competition_user.everyday_rider?).to be false
+      end
+    end
+
+    context "when current_date is the first day of the competition" do
+      let(:dates) { [] }
+      let(:now) { Time.parse("2024-05-01T17:00:00Z") }
+
+      it "is true vacuously" do
+        expect(competition_user.current_date).to eq Date.parse("2024-05-01")
+        expect(competition_user.everyday_rider?).to be true
+      end
+    end
+
+    context "when current_date is after competition end" do
+      let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-05-01"), end_date: Date.parse("2024-05-31")) }
+      let(:dates) { Competition.dates_strings(Date.parse("2024-05-01"), Date.parse("2024-05-31")) }
+      let(:now) { Time.parse("2024-06-15T17:00:00Z") }
+
+      it "only requires coverage through competition end" do
+        expect(competition_user.everyday_rider?).to be true
+      end
+    end
+  end
+
   describe "scoring" do
     let(:competition) { FactoryBot.create(:competition, start_date: Time.parse("2024-05-01")) }
     let(:competition_user1) { FactoryBot.create(:competition_user, competition:) }

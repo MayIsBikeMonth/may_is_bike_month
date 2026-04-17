@@ -29,6 +29,7 @@ class Competition < ApplicationRecord
   validates :end_date, comparison: {greater_than: :start_date}
 
   before_validation :set_calculated_attributes
+  scope :start_ordered_desc, -> { reorder(start_date: :desc) }
 
   def self.current(re_memoize: false)
     @current = nil if re_memoize # Primarily for testing

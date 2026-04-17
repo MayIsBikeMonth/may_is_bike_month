@@ -41,6 +41,7 @@ RSpec.configure do |config|
   config.include Devise::Test::IntegrationHelpers, type: :request
   config.include RequestSpecHelpers, type: :request
   config.include FactoryBot::Syntax::Methods
+  config.include ActiveSupport::Testing::TimeHelpers
 
   # View component test helpers
   config.include ViewComponent::TestHelpers, type: :component

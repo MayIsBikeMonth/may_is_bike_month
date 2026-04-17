@@ -1,10 +1,29 @@
 @import "tailwindcss";
+@import "./tables.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --color-purple-0: #f3edf8;
+  --color-purple-100: #e8dbf1;
+  --color-purple-200: #d0b7e3;
+  --color-purple-300: #b994d4;
+  --color-purple-400: #a170c6;
+  --color-purple-500: #8a4cb8;
+  --color-purple-600: #6e3d93;
+  --color-purple-700: #532e6e;
+  --color-purple-800: #371e4a;
+  --color-purple-900: #1c0f25;
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
 @layer base {
+  * {
+    box-sizing: border-box;
+  }
   body {
-    @apply text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-900 antialiased;
+    @apply bg-purple-0 dark:bg-purple-900 text-purple-900 dark:text-purple-0 font-sans antialiased text-[13px] leading-[1.45];
   }
   h1 {
     @apply text-2xl;
@@ -18,7 +37,6 @@
   h4 {
     @apply font-bold;
   }
-  /* All buttons get pointer cursor */
   button, [role="button"], .btn {
     cursor: pointer;
   }
@@ -26,12 +44,12 @@
 
 @layer components {
   .twlink {
-    @apply cursor-pointer underline decoration-1 hover:decoration-2 active:decoration-2 text-blue-600 dark:text-blue-400;
+    @apply cursor-pointer underline decoration-1 hover:decoration-2 active:decoration-2 text-purple-500 dark:text-purple-200;
   }
 
   .dropdown-menu a,
   .dropdown-menu button {
-    @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white w-full text-left;
+    @apply block px-4 py-2 text-sm text-gray-700 hover:bg-purple-100 dark:text-gray-100 dark:hover:bg-purple-700 dark:hover:text-white w-full text-left;
   }
 }
 .twlink.active {
@@ -56,8 +74,42 @@
 }
 
 .btn {
-  @apply cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300
+  @apply cursor-pointer text-white bg-purple-500 hover:bg-purple-600 focus:ring-4 focus:ring-purple-200
     font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none;
 }
 
-@import "./tables.css";
+@layer components {
+  .punchcard-cell {
+    @apply relative rounded-[2px];
+  }
+  .punchcard-cell[data-l="1"] { @apply bg-purple-200 dark:bg-purple-900; }
+  .punchcard-cell[data-l="2"] { @apply bg-purple-300 dark:bg-purple-800; }
+  .punchcard-cell[data-l="3"] { @apply bg-purple-400 dark:bg-purple-700 shadow-[0_0_6px_rgba(83,46,110,0.45)]; }
+  .punchcard-cell[data-l="4"] { @apply bg-purple-500 dark:bg-purple-600 shadow-[0_0_10px_rgba(110,61,147,0.6)]; }
+  .punchcard-cell[data-l="5"] { @apply bg-purple-600 dark:bg-purple-500 shadow-[0_0_14px_rgba(138,76,184,0.75)]; }
+
+  .punchcard-cell:not([data-l])::before,
+  .punchcard-cell:not([data-l])::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 55%;
+    height: 1.5px;
+    background: #f9a8d4;
+    border-radius: 1px;
+  }
+  .punchcard-cell:not([data-l])::before { transform: translate(-50%, -50%) rotate(45deg); }
+  .punchcard-cell:not([data-l])::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+  .punchcard-cell[data-century]::after {
+    content: "💯";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    line-height: 1;
+    pointer-events: none;
+  }
+}

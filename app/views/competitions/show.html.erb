@@ -1,1 +1,5 @@
-<%= render partial: "/competitions/show_competition" %>
+<%= render(Punchcard::Wrapper::Component.new(
+  competition: @competition,
+  competition_users: @competition_users,
+  competitions: @competitions
+)) %>

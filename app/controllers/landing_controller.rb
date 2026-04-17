@@ -2,9 +2,9 @@ class LandingController < ApplicationController
   def index
     @competition = Competition.current || Competition.find_or_create_by(start_date: Date.parse("2024-5-1"))
     @competition_users = @competition.competition_users_included
-      .includes(:user, :competition_activities).score_ordered
+      .includes(:user, :competition_activities_included).score_ordered
     @page_title = "May is Bike Month"
-    @previous_competitions = Competition.where.not(id: @competition.id).order(start_date: :desc)
+    @competitions = Competition.start_ordered_desc
     @skip_wrapper_class = true
   end
 

@@ -50,11 +50,10 @@ module UI
         @columns.filter_map(&:sortable)
       end
 
-      def last_row?(row_index) = row_index == @records.length - 1
-
       def table_classes
         [
-          "min-w-full text-left border-separate border-spacing-0",
+          "ui-table min-w-full text-left border-separate border-spacing-0",
+          ("ui-table-bordered" if @bordered),
           @classes
         ].compact.join(" ")
       end

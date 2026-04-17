@@ -28,33 +28,25 @@
 <p>
   <span class="text-sm opacity-65">Tomorrow:</span>
 
-  <span class="localizeTime">
-    <%= render(UI::Time::Component.new(time: Time.current + 1.day)) %>
-  </span>
+  <%= render(UI::Time::Component.new(time: Time.current + 1.day)) %>
 </p>
 
 <p>
   <span class="text-sm opacity-65">One week ago:</span>
 
-  <span class="localizeTime">
-    <%= render(UI::Time::Component.new(time: Time.current - 7.days)) %>
-  </span>
+  <%= render(UI::Time::Component.new(time: Time.current - 7.days)) %>
 </p>
 
 <p>
   <span class="text-sm opacity-65">One year ago:</span>
 
-  <span class="localizeTime">
-    <%= render(UI::Time::Component.new(time: Time.current - 1.year)) %>
-  </span>
+  <%= render(UI::Time::Component.new(time: Time.current - 1.year)) %>
 </p>
 
 <p>
   <span class="text-sm opacity-65">Yesterday (precise time):</span>
 
-  <span class="localizeTime preciseTime">
-    <%= l (Time.current - 1.day), format: :localize_time %>
-  </span>
+  <%= render(UI::Time::Component.new(time: Time.current - 1.day, format: :localize_time_precise)) %>
 </p>
 
 <p>

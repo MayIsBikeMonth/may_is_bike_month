@@ -69,12 +69,12 @@ end
 
 ### Running Tests
 
-Run tests with turbo_tests:
+Run tests with rspec:
 
 ```bash
-bundle exec turbo_tests
+bundle exec rspec
 # Or, to run just specific tests
-bundle exec turbo_tests {FILE OR FOLDER}
+bundle exec rspec {FILE OR FOLDER}
 ```
 
 ## Frontend Development

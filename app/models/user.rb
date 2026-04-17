@@ -82,7 +82,7 @@ class User < ApplicationRecord
   end
 
   def current_competition_user
-    competition_users.current_competition.last
+    competition_users.current_competition.start_ordered_desc.first
   end
 
   def strava_auth_needs_refresh?
@@ -112,6 +112,10 @@ class User < ApplicationRecord
 
   def strava_user_url
     "https://www.strava.com/athletes/#{strava_id}"
+  end
+
+  def slug
+    strava_username.presence || Slugifyer.slugify(display_name).presence || id.to_s
   end
 
   private
