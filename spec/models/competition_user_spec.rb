@@ -101,8 +101,7 @@ RSpec.describe CompetitionUser, type: :model do
       end
 
       it "uses the timezone from the most recent activity" do
-        competition_user.save!
-        expect(competition_user.reload.current_timezone).to eq "America/New_York"
+        expect(competition_user.current_timezone).to eq "America/New_York"
       end
     end
   end
