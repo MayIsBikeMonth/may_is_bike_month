@@ -48,7 +48,7 @@ module UI
       def th_classes(bordered:)
         classes = ["px-1 py-2"]
         if bordered
-          classes << "border-b border-l border-t border-gray-200 dark:border-gray-600"
+          classes << "border-b border-l border-t border-purple-200 dark:border-purple-700"
         end
         classes << @classes if @classes
         classes << @header_classes if @header_classes
@@ -58,9 +58,9 @@ module UI
       def td_classes(bordered:)
         classes = ["px-1 py-1"]
         classes << if bordered
-          "border-b border-l border-gray-200 dark:border-gray-700"
+          "border-b border-l border-purple-200 dark:border-purple-700"
         else
-          "border-b border-gray-100 dark:border-gray-700"
+          "border-b border-purple-100 dark:border-purple-800"
         end
         classes << @classes if @classes
         classes.join(" ")

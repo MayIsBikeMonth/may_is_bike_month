@@ -2,11 +2,11 @@
 
 module Punchcard
   class Component < ApplicationComponent
-    def initialize(competition:, competition_users:, updated_at: nil, previous_competitions: [])
+    def initialize(competition:, competition_users:, updated_at: nil, competitions: [])
       @competition = competition
       @competition_users = competition_users
       @updated_at = updated_at
-      @previous_competitions = previous_competitions
+      @competitions = competitions
     end
 
     private

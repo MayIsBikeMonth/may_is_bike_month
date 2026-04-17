@@ -2,9 +2,10 @@
 
 module Punchcard::Footer
   class Component < ApplicationComponent
-    def initialize(updated_at:, previous_competitions: [])
+    def initialize(updated_at:, competitions: [], current_year: nil)
       @updated_at = updated_at
-      @previous_competitions = previous_competitions
+      @competitions = competitions
+      @current_year = current_year
     end
   end
 end

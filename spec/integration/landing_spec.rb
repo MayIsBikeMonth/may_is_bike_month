@@ -12,6 +12,12 @@ RSpec.describe "Landing page", :js, type: :system do
 
   context "when changing theme from settings" do
     it "toggles dark mode" do
+      visit "about:blank"
+      page.driver.browser.execute_cdp(
+        "Emulation.setEmulatedMedia",
+        features: [{name: "prefers-color-scheme", value: "light"}]
+      )
+
       visit root_path
 
       expect(page).to have_no_css("html.dark")
