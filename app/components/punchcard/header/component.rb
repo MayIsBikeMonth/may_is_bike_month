@@ -22,7 +22,7 @@ module Punchcard::Header
 
     def thousands_display(value)
       rounded = value.to_i.round(-3) / 1_000
-      safe_join([number_with_delimiter(rounded), tag.span("k", class: "punchcard-dim")])
+      safe_join([number_with_delimiter(rounded), tag.span("k", class: "opacity-40")])
     end
   end
 end

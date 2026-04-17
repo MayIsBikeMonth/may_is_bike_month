@@ -1,8 +1,10 @@
-<div class="punchcard-ridge">
-  <div class="punchcard-ridge-label">Daily total</div>
-  <div class="punchcard-ridge-bars">
+<div class="mb-1.5 grid grid-cols-[220px_1fr_110px] grid-rows-[56px_0] gap-x-3 items-end">
+  <div class="row-start-2 col-start-1 self-start font-mono text-[11px] text-purple-300 dark:text-purple-400 uppercase tracking-[0.12em] text-right pr-1 leading-none">
+    Daily total
+  </div>
+  <div class="punchcard-ridge-bars row-start-1 col-start-2 grid grid-cols-[repeat(31,1fr)] gap-0.5 h-14 items-end">
     <% bars.each do |bar| %>
-      <i style="height:<%= "%.1f" % bar[:height] %>%" title="<%= bar[:title] %>"></i>
+      <i class="block bg-gradient-to-b from-purple-300 to-purple-500 dark:from-purple-700 dark:to-purple-500 rounded-[1px] opacity-90 hover:opacity-100 cursor-default" style="height:<%= "%.1f" % bar[:height] %>%" title="<%= bar[:title] %>"></i>
     <% end %>
   </div>
   <div></div>

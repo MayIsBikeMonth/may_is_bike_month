@@ -1,35 +1,33 @@
-<div class="punchcard-row">
-  <div class="punchcard-who">
-    <span class="punchcard-rank"><%= format("%02d", @rank) %></span>
-    <a class="punchcard-strava" href="<%= strava_url %>" target="_blank" rel="noopener" title="View on Strava">
-      <svg viewBox="0 0 24 24" aria-label="Strava" focusable="false">
+<div class="grid grid-cols-[220px_1fr_110px] gap-3 items-center py-[9px] border-b border-purple-100 dark:border-purple-700">
+  <div class="flex items-center gap-2 min-w-0">
+    <span class="punchcard-rank font-mono text-purple-300 dark:text-purple-400 text-[11px] w-[22px] text-right shrink-0"><%= format("%02d", @rank) %></span>
+    <a class="punchcard-strava inline-flex items-center shrink-0 opacity-75 hover:opacity-100 transition-opacity" href="<%= strava_url %>" target="_blank" rel="noopener" title="View on Strava">
+      <svg class="w-3.5 h-3.5 block" viewBox="0 0 24 24" aria-label="Strava" focusable="false">
         <path fill="#fc5200" d="<%= STRAVA_SVG_PATH %>"/>
       </svg>
     </a>
-    <div class="punchcard-name-block">
-      <div class="punchcard-name"><%= @competition_user.display_name %></div>
+    <div class="flex items-center min-w-0">
+      <div class="punchcard-name text-purple-900 dark:text-purple-0 font-medium"><%= @competition_user.display_name %></div>
     </div>
   </div>
 
-  <div class="punchcard-cells">
+  <div class="grid grid-cols-[repeat(31,1fr)] gap-0.5 h-7">
     <% cells.each do |cell| %>
       <% data = {} %>
       <% data[:l] = cell[:level] if cell[:level] %>
       <% data[:century] = true if cell[:century] %>
-      <%= tag.span(
-        class: ["punchcard-cell", ("we" if cell[:weekend])],
-        title: cell[:title],
-        data:
-      ) %>
+      <%= tag.span(class: "punchcard-cell", title: cell[:title], data:) %>
     <% end %>
   </div>
 
-  <div class="punchcard-totals">
-    <span class="punchcard-totals-big"><b><%= days_count %></b><span class="punchcard-dim">/<%= total_days %></span></span><br>
+  <div class="punchcard-totals text-right font-mono text-[12px] text-purple-400 dark:text-purple-300">
+    <span class="text-purple-900 dark:text-purple-0 text-[18px] font-medium">
+      <b class="text-purple-500 dark:text-purple-400 font-bold"><%= days_count %></b><span class="opacity-40">/<%= total_days %></span>
+    </span><br>
     <span class="unit-imperial"><%= number_with_delimiter(total_miles.round(1)) %> mi</span>
     <span class="unit-metric hidden"><%= number_with_delimiter(total_km.round(1)) %> km</span>
     <br>
-    <span class="punchcard-dim">
+    <span class="opacity-40">
       <span class="unit-imperial"><%= "%.1f" % (total_feet / 1000.0) %>k ft</span>
       <span class="unit-metric hidden"><%= "%.1f" % (total_meters / 1000.0) %>k m</span>
     </span>
