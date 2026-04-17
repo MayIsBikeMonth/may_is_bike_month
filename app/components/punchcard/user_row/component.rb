@@ -47,7 +47,7 @@ module Punchcard::UserRow
     end
 
     def start_col
-      (@competition.start_date.wday - 1) % 7 + 1
+      @start_col ||= (@competition.start_date.wday - 1) % 7 + 1
     end
 
     def activities_by_date
