@@ -2,15 +2,17 @@
 
 module Punchcard::UserPunch
   class Component < ApplicationComponent
-    def initialize(date_string:, distance_meters:, competition:, punch_id: nil, user_slug: nil)
+    def initialize(date_string:, distance_meters:, competition:, punch_id: nil, user_slug: nil, upcoming: false)
       @date_string = date_string
       @distance_meters = distance_meters
       @competition = competition
       @punch_id = punch_id || date_string
       @user_slug = user_slug
+      @upcoming = upcoming
     end
 
     def call
+      return tag.span if @upcoming
       return tag.span(class: "punchcard-cell", title:) unless level
 
       data = {

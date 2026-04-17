@@ -50,7 +50,8 @@
           distance_meters: distance_meters_on(date_string),
           competition: @competition,
           punch_id: "#{user_slug}-#{date_string}",
-          user_slug:
+          user_slug:,
+          upcoming: upcoming?(date_string)
         )) %>
       <% end %>
     </div>

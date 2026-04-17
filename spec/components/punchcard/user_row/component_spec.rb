@@ -70,4 +70,23 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
   it "shows total days / period days" do
     expect(rendered.text).to include "/31"
   end
+
+  context "with dates at or after the competition_user's current_date" do
+    let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2026-04-01")) }
+    let(:period_date_strings) { (competition.start_date..competition.end_date).map(&:to_s) }
+    let(:user_daily) { {} }
+
+    before do
+      allow(competition_user).to receive(:current_date).and_return(Date.parse("2026-04-16"))
+    end
+
+    it "renders empty spans for today and future, punchcard-cells only for past days" do
+      cells = rendered.css(".grid-cols-\\[repeat\\(31\\,1fr\\)\\] > span")
+      expect(cells.count).to eq 30
+      punch_cells = rendered.css(".punchcard-cell")
+      expect(punch_cells.count).to eq 15
+      empty_spans = cells.reject { |c| c["class"]&.include?("punchcard-cell") }
+      expect(empty_spans.count).to eq 15
+    end
+  end
 end

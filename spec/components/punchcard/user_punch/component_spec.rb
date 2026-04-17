@@ -44,4 +44,22 @@ RSpec.describe Punchcard::UserPunch::Component, type: :component do
       expect(cell.attr("data-century")).not_to be_nil
     end
   end
+
+  context "when upcoming" do
+    let(:component) do
+      described_class.new(
+        date_string: "2025-05-15",
+        distance_meters: 0,
+        competition:,
+        upcoming: true
+      )
+    end
+
+    it "renders an empty span with no punchcard-cell class" do
+      expect(rendered.css(".punchcard-cell")).to be_empty
+      expect(rendered.css("span").count).to eq 1
+      expect(rendered.css("span").first.text).to eq ""
+      expect(rendered.css("span").first.attributes).to be_empty
+    end
+  end
 end

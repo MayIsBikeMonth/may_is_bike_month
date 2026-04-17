@@ -6,7 +6,7 @@ RSpec.describe OtherCompetitionLinks::Component, type: :component do
   let!(:competition_2024) { FactoryBot.create(:competition, start_date: Date.new(2024, 5, 1)) }
   let!(:competition_2025) { FactoryBot.create(:competition, start_date: Date.new(2025, 5, 1)) }
   let!(:competition_2026) { FactoryBot.create(:competition, start_date: Date.new(2026, 5, 1)) }
-  let(:competitions) { Competition.reverse_chronological }
+  let(:competitions) { Competition.start_ordered_desc }
   let(:current_year) { 2026 }
   let(:original_view) { false }
   let(:component) do

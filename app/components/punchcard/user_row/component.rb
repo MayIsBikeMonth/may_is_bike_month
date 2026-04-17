@@ -16,6 +16,14 @@ module Punchcard::UserRow
       @user_daily.dig(date_string, :distance_meters).to_f
     end
 
+    def upcoming?(date_string)
+      date_string >= current_date_string
+    end
+
+    def current_date_string
+      @current_date_string ||= @competition_user.current_date.to_s
+    end
+
     def days_count
       @competition_user.activity_dates.count
     end
