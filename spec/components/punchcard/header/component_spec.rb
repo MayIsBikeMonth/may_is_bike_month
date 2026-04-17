@@ -24,18 +24,23 @@ RSpec.describe Punchcard::Header::Component, type: :component do
   end
 
   it "formats feet over 1k with a k" do
-    meta_text = rendered.css(".punchcard-meta").text
-    expect(meta_text).to include "496"
-    expect(meta_text).to include "k"
+    feet_imperial = rendered.css(".punchcard-num .unit-imperial")[1]
+    expect(feet_imperial.text.strip).to include "496"
+    expect(feet_imperial.text.strip).to include "k"
   end
 
   context "with feet under 1000" do
     let(:options) { super().merge(total_feet: 500) }
 
     it "renders raw feet without k suffix" do
-      feet_node = rendered.css(".punchcard-num")[2]
-      expect(feet_node.text).not_to include "k"
-      expect(feet_node.text.strip).to eq "500"
+      feet_imperial = rendered.css(".punchcard-num .unit-imperial")[1]
+      expect(feet_imperial.text).not_to include "k"
+      expect(feet_imperial.text.strip).to eq "500"
     end
+  end
+
+  it "renders both imperial and metric values for miles/feet with toggle classes" do
+    expect(rendered.css(".punchcard-num .unit-imperial").count).to eq 2
+    expect(rendered.css(".punchcard-num .unit-metric.hidden").count).to eq 2
   end
 end

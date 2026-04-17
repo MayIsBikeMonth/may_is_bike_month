@@ -3,24 +3,33 @@
 require "rails_helper"
 
 RSpec.describe Punchcard::Wrapper::Component, type: :component do
+  let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2025-05-01")) }
+
   describe ".level_for" do
+    # daily_distance_requirement is 3219m (~2.0002 mi) → ceils to 3 mi for level 1
     {
       0 => nil,
-      (1.9 * described_class::MILE_METERS) => nil,
-      (2 * described_class::MILE_METERS) => 1,
-      (4.9 * described_class::MILE_METERS) => 1,
-      (5 * described_class::MILE_METERS) => 2,
-      (9.9 * described_class::MILE_METERS) => 2,
-      (10 * described_class::MILE_METERS) => 3,
-      (19.9 * described_class::MILE_METERS) => 3,
-      (20 * described_class::MILE_METERS) => 4,
-      (39.9 * described_class::MILE_METERS) => 4,
-      (40 * described_class::MILE_METERS) => 5,
+      (2.9 * described_class::MILE_METERS) => nil,
+      (3 * described_class::MILE_METERS) => 1,
+      (8.9 * described_class::MILE_METERS) => 1,
+      (9 * described_class::MILE_METERS) => 2,
+      (19.9 * described_class::MILE_METERS) => 2,
+      (20 * described_class::MILE_METERS) => 3,
+      (39.9 * described_class::MILE_METERS) => 3,
+      (40 * described_class::MILE_METERS) => 4,
+      (63.9 * described_class::MILE_METERS) => 4,
+      (64 * described_class::MILE_METERS) => 5,
       (200 * described_class::MILE_METERS) => 5
     }.each do |meters, level|
       it "returns #{level.inspect} for #{(meters / described_class::MILE_METERS).round(1)} miles" do
-        expect(described_class.level_for(meters)).to eq level
+        expect(described_class.level_for(meters, competition:)).to eq level
       end
+    end
+  end
+
+  describe ".level_thresholds" do
+    it "derives level 1 by ceiling the competition daily distance requirement in miles" do
+      expect(described_class.level_thresholds(competition)).to eq(1 => 3, 2 => 9, 3 => 20, 4 => 40, 5 => 64)
     end
   end
 
@@ -35,7 +44,6 @@ RSpec.describe Punchcard::Wrapper::Component, type: :component do
   end
 
   describe ".daily_metrics" do
-    let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2025-05-01")) }
     let(:competition_user) { FactoryBot.create(:competition_user, competition:) }
 
     context "with no activities" do
@@ -62,8 +70,6 @@ RSpec.describe Punchcard::Wrapper::Component, type: :component do
   end
 
   describe "render" do
-    let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2025-05-01")) }
-
     it "wraps the body in .punchcard-wrap" do
       rendered = render_inline(described_class.new(competition:, competition_users: []))
       expect(rendered.css(".punchcard-wrap")).to be_present

@@ -1,5 +1,5 @@
 <%= render(Punchcard::Wrapper::Component.new(
   competition: @competition,
   competition_users: @competition_users,
-  competitions: Competition.order(:start_date)
+  competitions: @competitions
 )) %>

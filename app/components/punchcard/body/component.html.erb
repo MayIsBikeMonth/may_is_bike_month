@@ -15,6 +15,7 @@
 <% @competition_users.each_with_index do |competition_user, index| %>
   <%= render(Punchcard::UserRow::Component.new(
     competition_user:,
+    competition: @competition,
     rank: index + 1,
     period_date_strings:,
     user_daily: user_daily(competition_user)

@@ -3,7 +3,12 @@
   <ul>
     <li>Winner is the person who rides the most days in <%= @competition.period_display %></li>
     <li>Ties are broken by total distance</li>
-    <li>You have to ride at least <%= daily_distance_miles %> miles in a day for it to count</li>
+    <li>
+      You have to ride at least
+      <span class="unit-imperial"><%= daily_distance_miles %> miles</span>
+      <span class="unit-metric hidden"><%= daily_distance_km %> km</span>
+      in a day for it to count
+    </li>
     <li>Activities that count: <%= activity_types_display %></li>
   </ul>
 </section>

@@ -13,8 +13,8 @@ module Punchcard::Ridge
       max_distance = 1 if max_distance.zero?
 
       @daily_totals.map do |day|
-        miles = day[:distance_meters] / Punchcard::Wrapper::Component::MILE_METERS
-        feet = day[:elevation_meters] * 3.28084
+        miles = meters_to_miles(day[:distance_meters])
+        feet = meters_to_feet(day[:elevation_meters])
         height = (day[:distance_meters] / max_distance) * 100
         {
           height:,

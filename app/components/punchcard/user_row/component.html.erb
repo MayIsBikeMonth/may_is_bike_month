@@ -26,7 +26,12 @@
 
   <div class="punchcard-totals">
     <span class="punchcard-totals-big"><b><%= days_count %></b><span class="punchcard-dim">/<%= total_days %></span></span><br>
-    <%= number_with_delimiter(total_miles.round(1)) %> mi<br>
-    <span class="punchcard-dim"><%= "%.1f" % (total_feet / 1000.0) %>k ft</span>
+    <span class="unit-imperial"><%= number_with_delimiter(total_miles.round(1)) %> mi</span>
+    <span class="unit-metric hidden"><%= number_with_delimiter(total_km.round(1)) %> km</span>
+    <br>
+    <span class="punchcard-dim">
+      <span class="unit-imperial"><%= "%.1f" % (total_feet / 1000.0) %>k ft</span>
+      <span class="unit-metric hidden"><%= "%.1f" % (total_meters / 1000.0) %>k m</span>
+    </span>
   </div>
 </div>

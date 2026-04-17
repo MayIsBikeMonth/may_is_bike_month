@@ -18,14 +18,15 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
   end
   let(:user_daily) do
     {
-      "2025-05-01" => {distance_meters: 32_186.88, elevation_meters: 300}, # 20 miles => l=4
-      "2025-05-02" => {distance_meters: 1_609.344, elevation_meters: 50}, # 1 mi => no rides (below 2mi)
+      "2025-05-01" => {distance_meters: 32_186.88, elevation_meters: 300}, # 20 mi => l=3
+      "2025-05-02" => {distance_meters: 3_218, elevation_meters: 50}, # ~2 mi => below daily req
       "2025-05-04" => {distance_meters: 160_934.4, elevation_meters: 900} # 100 mi => century, l=5
     }
   end
   let(:component) do
     described_class.new(
       competition_user:,
+      competition:,
       rank: 1,
       period_date_strings:,
       user_daily:
@@ -51,10 +52,10 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
 
   it "assigns data-l based on distance" do
     cells = rendered.css(".punchcard-cell")
-    expect(cells[0].attr("data-l")).to eq "4"
+    expect(cells[0].attr("data-l")).to eq "3"
   end
 
-  it "omits data-l for days below the 2 mile threshold" do
+  it "omits data-l for days below the daily requirement" do
     cells = rendered.css(".punchcard-cell")
     expect(cells[1].attr("data-l")).to be_nil
     expect(cells[1].attr("title")).to eq "no rides"

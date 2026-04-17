@@ -12,12 +12,17 @@ module Punchcard::Header
 
     private
 
-    def feet_in_thousands
-      (@total_feet.to_i.round(-3) / 1_000) if @total_feet >= 1_000
+    def total_km
+      @total_miles * 1.609344
     end
 
-    def feet_remainder
-      feet_in_thousands ? nil : @total_feet.to_i
+    def total_meters
+      @total_feet / 3.28084
+    end
+
+    def thousands_display(value)
+      rounded = value.to_i.round(-3) / 1_000
+      safe_join([number_with_delimiter(rounded), tag.span("k", class: "punchcard-dim")])
     end
   end
 end

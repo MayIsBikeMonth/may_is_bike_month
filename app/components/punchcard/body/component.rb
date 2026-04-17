@@ -38,11 +38,11 @@ module Punchcard::Body
     end
 
     def total_miles
-      @total_miles ||= @competition_users.sum { |cu| cu.distance_meters } / 1609.344
+      @total_miles ||= meters_to_miles(@competition_users.sum { |cu| cu.distance_meters })
     end
 
     def total_feet
-      @total_feet ||= @competition_users.sum { |cu| cu.elevation_meters } * 3.28084
+      @total_feet ||= meters_to_feet(@competition_users.sum { |cu| cu.elevation_meters })
     end
 
     def everyday_rider_count

@@ -212,18 +212,12 @@ document.addEventListener('turbo:load', () => {
     window.updateStravaInBackground()
   }
 
-  // This is set on the window on the view pages (but not the lookbook pages)
-  if (window.enableToggles) {
-    // Add the click selector to the toggle button
-    document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
-    window.showPreferredUnit()
+  // Apply unit preference globally — no-op if there are no .unit-metric/.unit-imperial elements
+  document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
+  window.showPreferredUnit()
 
-    // Toggle activities
+  if (window.enableToggles) {
     showActivityVisibility()
     document.querySelector('#toggleIndividualActivities')?.addEventListener('click', toggleActivities)
-
-    // Add the click selector to the toggle button
-    document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
-    window.showPreferredUnit()
   }
 })

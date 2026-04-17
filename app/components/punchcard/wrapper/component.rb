@@ -3,7 +3,7 @@
 module Punchcard::Wrapper
   class Component < ApplicationComponent
     MILE_METERS = 1609.344
-    LEVEL_THRESHOLDS_MILES = {1 => 2, 2 => 5, 3 => 10, 4 => 20, 5 => 40}.freeze
+    LEVEL_THRESHOLDS_MILES = {2 => 9, 3 => 20, 4 => 40, 5 => 64}.freeze
     CENTURY_MILES = 100
 
     def self.daily_metrics(competition_user)
@@ -18,9 +18,14 @@ module Punchcard::Wrapper
       end
     end
 
-    def self.level_for(distance_meters)
+    def self.level_for(distance_meters, competition:)
       miles = distance_meters / MILE_METERS
-      LEVEL_THRESHOLDS_MILES.keys.rfind { |level| miles >= LEVEL_THRESHOLDS_MILES[level] }
+      thresholds = level_thresholds(competition)
+      thresholds.keys.rfind { |level| miles >= thresholds[level] }
+    end
+
+    def self.level_thresholds(competition)
+      {1 => (competition.daily_distance_requirement / MILE_METERS).ceil}.merge(LEVEL_THRESHOLDS_MILES)
     end
 
     def self.century?(distance_meters)

@@ -11,6 +11,6 @@
   </div>
 </div>
 
-<% if @competitions.any? %>
+<% if @competitions.many? %>
   <%= render(OtherCompetitionLinks::Component.new(competitions: @competitions, current_year: @current_year)) %>
 <% end %>

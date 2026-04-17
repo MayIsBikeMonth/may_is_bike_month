@@ -11,18 +11,29 @@
       <div class="punchcard-label">Riders</div>
     </div>
     <div>
-      <div class="punchcard-num"><%= number_with_delimiter(@total_miles.to_i) %></div>
-      <div class="punchcard-label">Miles</div>
+      <div class="punchcard-num">
+        <span class="unit-imperial"><%= number_with_delimiter(@total_miles.to_i) %></span>
+        <span class="unit-metric hidden"><%= number_with_delimiter(total_km.to_i) %></span>
+      </div>
+      <div class="punchcard-label">
+        <span class="unit-imperial">Miles</span>
+        <span class="unit-metric hidden">km</span>
+      </div>
     </div>
     <div>
       <div class="punchcard-num">
-        <% if feet_in_thousands %>
-          <%= number_with_delimiter(feet_in_thousands) %><span class="punchcard-dim">k</span>
+        <% if @total_feet >= 1_000 %>
+          <span class="unit-imperial"><%= thousands_display(@total_feet) %></span>
+          <span class="unit-metric hidden"><%= thousands_display(total_meters) %></span>
         <% else %>
-          <%= number_with_delimiter(feet_remainder) %>
+          <span class="unit-imperial"><%= number_with_delimiter(@total_feet.to_i) %></span>
+          <span class="unit-metric hidden"><%= number_with_delimiter(total_meters.to_i) %></span>
         <% end %>
       </div>
-      <div class="punchcard-label">Feet</div>
+      <div class="punchcard-label">
+        <span class="unit-imperial">Feet</span>
+        <span class="unit-metric hidden">Meters</span>
+      </div>
     </div>
     <div>
       <div class="punchcard-num"><%= @everyday_rider_count %></div>

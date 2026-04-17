@@ -4,8 +4,9 @@ module Punchcard::UserRow
   class Component < ApplicationComponent
     STRAVA_SVG_PATH = "M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"
 
-    def initialize(competition_user:, rank:, period_date_strings:, user_daily:)
+    def initialize(competition_user:, competition:, rank:, period_date_strings:, user_daily:)
       @competition_user = competition_user
+      @competition = competition
       @rank = rank
       @period_date_strings = period_date_strings
       @user_daily = user_daily
@@ -17,13 +18,12 @@ module Punchcard::UserRow
       @period_date_strings.map do |date_string|
         distance_meters = @user_daily.dig(date_string, :distance_meters).to_f
         date = Date.parse(date_string)
-        miles = distance_meters / Punchcard::Wrapper::Component::MILE_METERS
-        level = Punchcard::Wrapper::Component.level_for(distance_meters) if miles >= 2
+        level = Punchcard::Wrapper::Component.level_for(distance_meters, competition: @competition)
         {
           level:,
           weekend: date.saturday? || date.sunday?,
           century: Punchcard::Wrapper::Component.century?(distance_meters),
-          title: (miles >= 2) ? "#{date_string}: #{miles.round(1)} mi" : "no rides"
+          title: level ? "#{date_string}: #{meters_to_miles(distance_meters).round(1)} mi" : "no rides"
         }
       end
     end
@@ -37,11 +37,19 @@ module Punchcard::UserRow
     end
 
     def total_miles
-      @competition_user.distance_meters / Punchcard::Wrapper::Component::MILE_METERS
+      meters_to_miles(@competition_user.distance_meters)
+    end
+
+    def total_km
+      @competition_user.distance_meters / 1000.0
     end
 
     def total_feet
-      @competition_user.elevation_meters * 3.28084
+      meters_to_feet(@competition_user.elevation_meters)
+    end
+
+    def total_meters
+      @competition_user.elevation_meters
     end
 
     def strava_url

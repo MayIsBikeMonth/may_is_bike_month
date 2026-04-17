@@ -9,7 +9,11 @@ module Punchcard::Rules
     private
 
     def daily_distance_miles
-      (@competition.daily_distance_requirement / Punchcard::Wrapper::Component::MILE_METERS).round
+      meters_to_miles(@competition.daily_distance_requirement).round
+    end
+
+    def daily_distance_km
+      (@competition.daily_distance_requirement / 1000.0).round
     end
 
     def activity_types_display
