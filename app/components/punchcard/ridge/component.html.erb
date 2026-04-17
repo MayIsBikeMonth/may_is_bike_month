@@ -1,56 +1,78 @@
 <div
   class="
-    pt-1 pb-8 grid grid-cols-[220px_1fr_110px] gap-x-3 items-end border-b
-    border-purple-100 dark:border-purple-700 pb-1.5
-    max-sm:grid-cols-1 max-sm:gap-x-0
+    pt-1 pb-8 grid grid-cols-[220px_1fr_110px] gap-x-3 items-end
+    lg:border-b lg:border-purple-100 lg:dark:border-purple-700 pb-1.5
+    max-lg:grid-cols-1 max-lg:gap-x-0
   "
 >
   <div
     class="
       font-mono text-[11px] text-purple-300 dark:text-purple-400 uppercase
       tracking-[0.12em] text-right pr-1 leading-none pb-2
-      max-sm:order-2 max-sm:text-left max-sm:pr-0 max-sm:pt-1.5 max-sm:pb-0
+      max-lg:order-2 max-lg:text-left max-lg:pr-0 max-lg:pt-1.5 max-lg:pb-0
     "
   >
     Daily total
   </div>
 
-  <div class="grid grid-cols-[repeat(31,1fr)] gap-0.5 items-end max-sm:order-1">
+  <div class="grid grid-cols-[repeat(31,1fr)] gap-0.5 items-end max-lg:order-1">
     <% bars.each do |bar| %>
-      <button
-        type="button"
-        class="
-          flex flex-col items-stretch p-0 border-0 bg-transparent
-          cursor-pointer outline-none rounded-[1px] transition-shadow
-          hover:ring-1 hover:ring-purple-300 dark:hover:ring-purple-600
-          focus-visible:ring-[2px] focus-visible:ring-purple-400
-          dark:focus-visible:ring-purple-500 aria-pressed:ring-2
-          aria-pressed:ring-purple-700 dark:aria-pressed:ring-purple-100
-        "
-        title="<%= bar[:title] %>"
-        aria-pressed="false"
-        data-action="click->punch#toggleDay"
-        data-punch-target="ridgeBar"
-        data-date="<%= bar[:date_string] %>"
-      >
+      <% if bar[:upcoming] %>
         <span
-          class="
-            block w-full bg-gradient-to-b from-purple-300 to-purple-500
-            dark:from-purple-700 dark:to-purple-500 rounded-[1px] opacity-90
-          "
-          style="height:<%= "%.1f" % bar[:height_px] %>px"
-          aria-hidden="true"
-        ></span>
-
-        <span
-          class="
-            block text-center text-purple-300 dark:text-purple-400 font-mono
-            text-[11px] pt-1
-          "
+          class="flex flex-col items-stretch rounded-[1px]"
+          title="<%= bar[:title] %>"
         >
-          <%= bar[:day] %>
+          <span
+            class="block w-full rounded-[1px]"
+            style="height:<%= "%.1f" % bar[:height_px] %>px"
+            aria-hidden="true"
+          ></span>
+
+          <span
+            class="
+              block text-center text-purple-300 dark:text-purple-400 font-mono
+              text-[11px] pt-1
+            "
+          >
+            <%= bar[:day] %>
+          </span>
         </span>
-      </button>
+      <% else %>
+        <button
+          type="button"
+          class="
+            flex flex-col items-stretch p-0 border-0 bg-transparent
+            cursor-pointer outline-none rounded-[1px] transition-shadow
+            hover:ring-1 hover:ring-purple-300 dark:hover:ring-purple-600
+            focus-visible:ring-[2px] focus-visible:ring-purple-400
+            dark:focus-visible:ring-purple-500 aria-pressed:ring-2
+            aria-pressed:ring-purple-700 dark:aria-pressed:ring-purple-100
+          "
+          title="<%= bar[:title] %>"
+          aria-pressed="false"
+          data-action="click->punch#toggleDay"
+          data-punch-target="ridgeBar"
+          data-date="<%= bar[:date_string] %>"
+        >
+          <span
+            class="
+              block w-full bg-gradient-to-b from-purple-300 to-purple-500
+              dark:from-purple-700 dark:to-purple-500 rounded-[1px] opacity-90
+            "
+            style="height:<%= "%.1f" % bar[:height_px] %>px"
+            aria-hidden="true"
+          ></span>
+
+          <span
+            class="
+              block text-center text-purple-300 dark:text-purple-400 font-mono
+              text-[11px] pt-1
+            "
+          >
+            <%= bar[:day] %>
+          </span>
+        </button>
+      <% end %>
     <% end %>
   </div>
 
