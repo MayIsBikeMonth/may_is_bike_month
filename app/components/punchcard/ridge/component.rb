@@ -9,7 +9,6 @@ module Punchcard::Ridge
 
     private
 
-
     def bars
       max_distance = @daily_totals.map { |d| d[:distance_meters] }.max.to_f
       max_distance = 1 if max_distance.zero?
