@@ -50,7 +50,8 @@
           distance_meters: distance_meters_on(date_string),
           competition: @competition,
           punch_id: "#{user_slug}-#{date_string}",
-          user_slug:
+          user_slug:,
+          upcoming: upcoming?(date_string)
         )) %>
       <% end %>
     </div>
@@ -59,7 +60,7 @@
       <span class="text-purple-900 dark:text-purple-0 text-[18px] font-medium">
         <b class="text-purple-500 dark:text-purple-400 font-bold">
           <%= days_count %>
-        </b><span class="opacity-40">/<%= total_days %></span>
+        </b><span class="opacity-40">/<%= days_so_far %></span>
       </span><br>
 
       <span class="unit-imperial">

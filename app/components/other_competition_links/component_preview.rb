@@ -20,7 +20,7 @@ module OtherCompetitionLinks
     private
 
     def sample_competitions
-      %w[2024 2025 2026].map { |y| Competition.new(start_date: Date.new(y.to_i, 5, 1), display_name: "MIBM #{y}") }
+      %w[2026 2025 2024].map { |y| Competition.new(start_date: Date.new(y.to_i, 5, 1), display_name: "MIBM #{y}") }
     end
   end
 end

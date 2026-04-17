@@ -83,6 +83,20 @@ RSpec.describe CompetitionUser, type: :model do
     end
   end
 
+  describe "start_ordered_desc" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:c_2024) { FactoryBot.create(:competition, start_date: Date.new(2024, 5, 1)) }
+    let(:c_2025) { FactoryBot.create(:competition, start_date: Date.new(2025, 5, 1)) }
+    let(:c_2026) { FactoryBot.create(:competition, start_date: Date.new(2026, 4, 1)) }
+    let!(:cu_2024) { FactoryBot.create(:competition_user, user:, competition: c_2024) }
+    let!(:cu_2026) { FactoryBot.create(:competition_user, user:, competition: c_2026) }
+    let!(:cu_2025) { FactoryBot.create(:competition_user, user:, competition: c_2025) }
+
+    it "orders by joined competition.start_date descending" do
+      expect(user.competition_users.start_ordered_desc.map(&:id)).to eq [cu_2026.id, cu_2025.id, cu_2024.id]
+    end
+  end
+
   describe "current_timezone" do
     let(:competition_user) { FactoryBot.create(:competition_user) }
 
@@ -102,6 +116,29 @@ RSpec.describe CompetitionUser, type: :model do
 
       it "uses the timezone from the most recent activity" do
         expect(competition_user.current_timezone).to eq "America/New_York"
+      end
+    end
+
+    context "with preloaded competition_activities_included" do
+      let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-05-01")) }
+      let(:competition_user) { FactoryBot.create(:competition_user, competition:) }
+      let!(:older_activity) do
+        FactoryBot.create(:competition_activity, competition:, competition_user:,
+          start_at: Time.parse("2024-05-02T12:00:00Z"), timezone: "America/Denver")
+      end
+      let!(:newer_activity) do
+        FactoryBot.create(:competition_activity, competition:, competition_user:,
+          start_at: Time.parse("2024-05-10T12:00:00Z"), timezone: "America/New_York")
+      end
+
+      it "reads timezone from the preloaded association without extra queries" do
+        preloaded = CompetitionUser.includes(:competition_activities_included).find(competition_user.id)
+        queries = []
+        callback = ->(_, _, _, _, payload) { queries << payload[:sql] unless payload[:name] == "SCHEMA" }
+        ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+          expect(preloaded.current_timezone).to eq "America/New_York"
+        end
+        expect(queries).to be_empty
       end
     end
   end

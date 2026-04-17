@@ -12,6 +12,25 @@ module Punchcard::Header
 
     private
 
+    def title_html
+      year = @competition.year.to_s
+      name = @competition.display_name.to_s
+      highlighted = tag.b(year, class: "text-purple-500 dark:text-purple-400 font-bold")
+      before, matched, after = name.rpartition(year)
+      return safe_join([name, " ", highlighted]) if matched.empty?
+      safe_join([before, highlighted, after])
+    end
+
+    def days_left
+      @days_left ||= (Date.current..@competition.end_date).count
+    end
+
+    def competition_over? = days_left.zero?
+
+    def metric_grid_class
+      competition_over? ? "grid-cols-[repeat(4,auto)]" : "grid-cols-[repeat(5,auto)]"
+    end
+
     def total_miles = meters_to_miles(@distance_meters)
     def total_km = @distance_meters / 1000.0
     def total_feet = meters_to_feet(@elevation_meters)

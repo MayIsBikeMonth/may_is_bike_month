@@ -4,7 +4,7 @@ class LandingController < ApplicationController
     @competition_users = @competition.competition_users_included
       .includes(:user, :competition_activities_included).score_ordered
     @page_title = "May is Bike Month"
-    @competitions = Competition.order(:start_date)
+    @competitions = Competition.start_ordered_desc
     @skip_wrapper_class = true
   end
 

@@ -67,7 +67,23 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
     expect(cells[3].attr("data-l")).to eq "5"
   end
 
-  it "shows total days / period days" do
+  it "shows days_count / days_so_far (competition ended, full 31)" do
     expect(rendered.text).to include "/31"
+  end
+
+  context "with a competition covering today (2026-04-16)" do
+    let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2026-04-01")) }
+    let(:period_date_strings) { (competition.start_date..competition.end_date).map(&:to_s) }
+    let(:user_daily) { {} }
+
+    it "renders empty spans for today and future, punchcard-cells for past days" do
+      cells = rendered.css("div.h-7 > span")
+      expect(cells.count).to eq 30
+      expect(rendered.css("div.h-7 .punchcard-cell").count).to eq 15
+    end
+
+    it "uses days_so_far (days through current_date, inclusive) as the denominator" do
+      expect(rendered.text).to include "/16"
+    end
   end
 end
