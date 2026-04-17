@@ -35,61 +35,21 @@
 
     <div class="grid grid-cols-[repeat(31,1fr)] gap-0.5 items-end">
       <% bars.each do |bar| %>
-        <% if bar[:upcoming] %>
+        <%= bar_tag(bar) do %>
           <span
-            class="flex flex-col items-stretch rounded-[1px]"
-            title="<%= bar[:title] %>"
-          >
-            <span
-              class="block w-full rounded-[1px]"
-              style="height:<%= "%.1f" % bar[:height_px] %>px"
-              aria-hidden="true"
-            ></span>
+            class="<%= bar[:upcoming] ? BAR_EMPTY_CLASS : BAR_GRADIENT_CLASS %>"
+            style="height:<%= "%.1f" % bar[:height_px] %>px"
+            aria-hidden="true"
+          ></span>
 
-            <span
-              class="
-                block text-center text-purple-300 dark:text-purple-400
-                font-mono text-[11px] pt-1
-              "
-            >
-              <%= bar[:day] %>
-            </span>
-          </span>
-        <% else %>
-          <button
-            type="button"
+          <span
             class="
-              flex flex-col items-stretch p-0 border-0 bg-transparent
-              cursor-pointer outline-none rounded-[1px] transition-shadow
-              hover:ring-1 hover:ring-purple-300 dark:hover:ring-purple-600
-              focus-visible:ring-[2px] focus-visible:ring-purple-400
-              dark:focus-visible:ring-purple-500 aria-pressed:ring-2
-              aria-pressed:ring-purple-700 dark:aria-pressed:ring-purple-100
+              block text-center text-purple-300 dark:text-purple-400 font-mono
+              text-[11px] pt-1
             "
-            title="<%= bar[:title] %>"
-            aria-pressed="false"
-            data-action="click->punch#toggleDay"
-            data-punch-target="ridgeBar"
-            data-date="<%= bar[:date_string] %>"
           >
-            <span
-              class="
-                block w-full bg-gradient-to-b from-purple-300 to-purple-500
-                dark:from-purple-700 dark:to-purple-500 rounded-[1px] opacity-90
-              "
-              style="height:<%= "%.1f" % bar[:height_px] %>px"
-              aria-hidden="true"
-            ></span>
-
-            <span
-              class="
-                block text-center text-purple-300 dark:text-purple-400
-                font-mono text-[11px] pt-1
-              "
-            >
-              <%= bar[:day] %>
-            </span>
-          </button>
+            <%= bar[:day] %>
+          </span>
         <% end %>
       <% end %>
     </div>

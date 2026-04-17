@@ -3,11 +3,42 @@
 module Punchcard::Ridge
   class Component < ApplicationComponent
     MAX_BAR_PX = 56
+
+    BUTTON_CLASS = "flex flex-col items-stretch p-0 border-0 bg-transparent " \
+      "cursor-pointer outline-none rounded-[1px] transition-shadow " \
+      "hover:ring-1 hover:ring-purple-300 dark:hover:ring-purple-600 " \
+      "focus-visible:ring-[2px] focus-visible:ring-purple-400 " \
+      "dark:focus-visible:ring-purple-500 aria-pressed:ring-2 " \
+      "aria-pressed:ring-purple-700 dark:aria-pressed:ring-purple-100"
+
+    SPAN_CLASS = "flex flex-col items-stretch rounded-[1px]"
+
+    BAR_GRADIENT_CLASS = "block w-full bg-gradient-to-b from-purple-300 " \
+      "to-purple-500 dark:from-purple-700 dark:to-purple-500 rounded-[1px] " \
+      "opacity-90"
+
+    BAR_EMPTY_CLASS = "block w-full rounded-[1px]"
+
     def initialize(daily_totals:)
       @daily_totals = daily_totals
     end
 
     private
+
+    def bar_tag(bar, &)
+      if bar[:upcoming]
+        tag.span(class: SPAN_CLASS, title: bar[:title], &)
+      else
+        tag.button(
+          type: "button",
+          class: BUTTON_CLASS,
+          title: bar[:title],
+          "aria-pressed": "false",
+          data: {action: "click->punch#toggleDay", "punch-target": "ridgeBar", date: bar[:date_string]},
+          &
+        )
+      end
+    end
 
     def bars
       @bars ||= build_bars
@@ -24,7 +55,7 @@ module Punchcard::Ridge
         height_px = (day[:distance_meters] / max_distance) * MAX_BAR_PX
         date = Date.parse(day[:date_string])
         day_of_week = date.strftime("%A")
-        upcoming = date >= today
+        upcoming = date > today
         {
           height_px:,
           date_string: day[:date_string],

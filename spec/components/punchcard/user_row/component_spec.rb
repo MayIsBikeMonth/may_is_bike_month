@@ -50,6 +50,12 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
     expect(rendered.css(".punchcard-cell").count).to eq 31
   end
 
+  it "sets --start-col on the punchcard grid for small-screen weekday alignment" do
+    # May 1, 2025 is a Thursday (wday=4), Mon-indexed column 4
+    style = rendered.css(".punchcard-week").attr("style").value
+    expect(style).to include "--start-col: 4"
+  end
+
   it "assigns data-l based on distance" do
     cells = rendered.css(".punchcard-cell")
     expect(cells[0].attr("data-l")).to eq "3"
