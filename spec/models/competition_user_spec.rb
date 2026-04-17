@@ -129,6 +129,49 @@ RSpec.describe CompetitionUser, type: :model do
     end
   end
 
+  describe "everyday_rider?" do
+    let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-05-01")) }
+    let(:competition_user) { FactoryBot.create(:competition_user, competition:, score_data: {dates:}) }
+    let(:dates) { ["2024-05-01", "2024-05-02", "2024-05-03"] }
+    let(:now) { Time.parse("2024-05-04T17:00:00Z") }
+
+    around { |ex| travel_to(now) { ex.run } }
+
+    it "is true when every day before current_date has an activity date" do
+      # 17:00 UTC on 5/4 is 10:00 PDT on 5/4; days before are 5/1, 5/2, 5/3
+      expect(competition_user.current_date).to eq Date.parse("2024-05-04")
+      expect(competition_user.everyday_rider?).to be true
+    end
+
+    context "when a day before current_date is missing" do
+      let(:dates) { ["2024-05-01", "2024-05-03"] }
+
+      it "is false" do
+        expect(competition_user.everyday_rider?).to be false
+      end
+    end
+
+    context "when current_date is the first day of the competition" do
+      let(:dates) { [] }
+      let(:now) { Time.parse("2024-05-01T17:00:00Z") }
+
+      it "is true vacuously" do
+        expect(competition_user.current_date).to eq Date.parse("2024-05-01")
+        expect(competition_user.everyday_rider?).to be true
+      end
+    end
+
+    context "when current_date is after competition end" do
+      let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-05-01"), end_date: Date.parse("2024-05-31")) }
+      let(:dates) { Competition.dates_strings(Date.parse("2024-05-01"), Date.parse("2024-05-31")) }
+      let(:now) { Time.parse("2024-06-15T17:00:00Z") }
+
+      it "only requires coverage through competition end" do
+        expect(competition_user.everyday_rider?).to be true
+      end
+    end
+  end
+
   describe "scoring" do
     let(:competition) { FactoryBot.create(:competition, start_date: Time.parse("2024-05-01")) }
     let(:competition_user1) { FactoryBot.create(:competition_user, competition:) }

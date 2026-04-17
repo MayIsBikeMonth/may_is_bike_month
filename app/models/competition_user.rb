@@ -110,6 +110,10 @@ class CompetitionUser < ApplicationRecord
     Time.current.in_time_zone(current_timezone).to_date
   end
 
+  def everyday_rider?
+    dates_before_current_date.all? { |date| activity_dates.include?(date.to_s) }
+  end
+
   def update_score_data!
     update(score_data: calculated_score_data)
     reload
@@ -122,6 +126,13 @@ class CompetitionUser < ApplicationRecord
   end
 
   private
+
+  def dates_before_current_date
+    return [] unless competition&.start_date
+    end_date = [current_date - 1, competition.end_date].min
+    return [] if end_date < competition.start_date
+    Array(competition.start_date..end_date)
+  end
 
   def score_from_score_data
     return 0 if score_data&.dig("dates").blank?
