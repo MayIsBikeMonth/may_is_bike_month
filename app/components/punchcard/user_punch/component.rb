@@ -4,11 +4,12 @@ module Punchcard::UserPunch
   class Component < ApplicationComponent
     CENTURY_MILES = 100
 
-    def initialize(date_string:, distance_meters:, competition:, punch_id: nil)
+    def initialize(date_string:, distance_meters:, competition:, punch_id: nil, user_slug: nil)
       @date_string = date_string
       @distance_meters = distance_meters
       @competition = competition
       @punch_id = punch_id || date_string
+      @user_slug = user_slug
     end
 
     def call
@@ -21,6 +22,7 @@ module Punchcard::UserPunch
         date: @date_string,
         l: level
       }
+      data["user-slug"] = @user_slug if @user_slug
       data[:century] = true if century?
       tag.button(
         "",
@@ -38,7 +40,8 @@ module Punchcard::UserPunch
       "punchcard-cell cursor-pointer outline-none transition-shadow " \
         "hover:ring-1 hover:ring-purple-300 dark:hover:ring-purple-600 " \
         "focus-visible:ring-[2px] focus-visible:ring-purple-400 dark:focus-visible:ring-purple-500 " \
-        "aria-pressed:ring-2 aria-pressed:ring-purple-700 dark:aria-pressed:ring-purple-100"
+        "aria-pressed:shadow-[0_3px_0_0_var(--color-purple-700)] " \
+        "dark:aria-pressed:shadow-[0_3px_0_0_var(--color-purple-100)]"
     end
 
     def miles

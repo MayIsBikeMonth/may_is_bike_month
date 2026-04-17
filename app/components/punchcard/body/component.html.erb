@@ -8,17 +8,26 @@
 
 <%= render(Punchcard::Rules::Component.new(competition: @competition)) %>
 
-<%= render(Punchcard::Ridge::Component.new(daily_totals:)) %>
+<div class="flex items-center gap-4 mb-4 text-[12px]">
+  <button type="button" class="text-purple-300 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-200 hover:underline cursor-pointer" data-action="click->punch#showAll">Show all activities</button>
+  <button type="button" class="hidden text-purple-300 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-200 hover:underline cursor-pointer" data-action="click->punch#hideAll" data-punch-target="hideAllBtn">Hide all activities</button>
+</div>
 
-<% @competition_users.each_with_index do |competition_user, index| %>
-  <%= render(Punchcard::UserRow::Component.new(
-    competition_user:,
-    competition: @competition,
-    rank: index + 1,
-    period_date_strings:,
-    user_daily: user_daily(competition_user)
-  )) %>
-<% end %>
+<main class="overflow-x-auto -mx-7">
+  <div class="min-w-[1340px] px-7">
+    <%= render(Punchcard::Ridge::Component.new(daily_totals:)) %>
+
+    <% @competition_users.each_with_index do |competition_user, index| %>
+      <%= render(Punchcard::UserRow::Component.new(
+        competition_user:,
+        competition: @competition,
+        rank: index + 1,
+        period_date_strings:,
+        user_daily: user_daily(competition_user)
+      )) %>
+    <% end %>
+  </div>
+</main>
 
 <%= render(Punchcard::Footer::Component.new(
   updated_at: @updated_at,

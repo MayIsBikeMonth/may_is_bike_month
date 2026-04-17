@@ -1,0 +1,10 @@
+<style>
+  [data-punch-activities-for] { display: block !important; padding-left: 0; }
+</style>
+
+<%= render(Punchcard::UserActivitiesForDate::Component.new(
+  date_string: "2025-05-15",
+  activities: activities,
+  punch_id: "sample-2025-05-15",
+  competition_year: 2025
+)) %>

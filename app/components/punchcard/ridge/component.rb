@@ -2,13 +2,13 @@
 
 module Punchcard::Ridge
   class Component < ApplicationComponent
+    MAX_BAR_PX = 56
     def initialize(daily_totals:)
       @daily_totals = daily_totals
     end
 
     private
 
-    MAX_BAR_PX = 56
 
     def bars
       max_distance = @daily_totals.map { |d| d[:distance_meters] }.max.to_f

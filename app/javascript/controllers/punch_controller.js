@@ -6,7 +6,7 @@ import { Controller } from '@hotwired/stimulus'
 // Elements with `data-punch-activities-for="<id>"` are revealed when the
 // matching punch is active.
 export default class extends Controller {
-  static targets = ['punch', 'ridgeBar']
+  static targets = ['punch', 'ridgeBar', 'userButton', 'hideAllBtn']
 
   connect () {
     const ids = new URLSearchParams(window.location.search).get('punches')?.split(',') || []
@@ -15,8 +15,7 @@ export default class extends Controller {
         el.setAttribute('aria-pressed', 'true')
       }
     })
-    this.syncRidgeBars()
-    this.syncActivities()
+    this.sync()
   }
 
   toggle (event) {
@@ -35,10 +34,35 @@ export default class extends Controller {
     this.afterToggle()
   }
 
+  toggleUser (event) {
+    const slug = event.currentTarget.dataset.userSlug
+    const userPunches = this.punchTargets.filter(el => el.dataset.userSlug === slug)
+    if (userPunches.length === 0) return
+    const allActive = userPunches.every(el => el.getAttribute('aria-pressed') === 'true')
+    userPunches.forEach(el => el.setAttribute('aria-pressed', allActive ? 'false' : 'true'))
+    this.afterToggle()
+  }
+
+  showAll () {
+    this.punchTargets.forEach(el => el.setAttribute('aria-pressed', 'true'))
+    this.afterToggle()
+  }
+
+  hideAll () {
+    this.punchTargets.forEach(el => el.setAttribute('aria-pressed', 'false'))
+    this.afterToggle()
+  }
+
   afterToggle () {
-    this.syncRidgeBars()
-    this.syncActivities()
+    this.sync()
     this.updateUrl()
+  }
+
+  sync () {
+    this.syncRidgeBars()
+    this.syncUserButtons()
+    this.syncActivities()
+    this.syncHideAllButton()
   }
 
   syncRidgeBars () {
@@ -46,6 +70,14 @@ export default class extends Controller {
       const dayPunches = this.punchTargets.filter(el => el.dataset.date === bar.dataset.date)
       const allActive = dayPunches.length > 0 && dayPunches.every(el => el.getAttribute('aria-pressed') === 'true')
       bar.setAttribute('aria-pressed', allActive ? 'true' : 'false')
+    })
+  }
+
+  syncUserButtons () {
+    this.userButtonTargets.forEach(btn => {
+      const userPunches = this.punchTargets.filter(el => el.dataset.userSlug === btn.dataset.userSlug)
+      const allActive = userPunches.length > 0 && userPunches.every(el => el.getAttribute('aria-pressed') === 'true')
+      btn.setAttribute('aria-pressed', allActive ? 'true' : 'false')
     })
   }
 
@@ -58,6 +90,11 @@ export default class extends Controller {
     this.element.querySelectorAll('[data-punch-activities-for]').forEach(el => {
       el.classList.toggle('hidden', !activeIds.has(el.dataset.punchActivitiesFor))
     })
+  }
+
+  syncHideAllButton () {
+    const anyActive = this.punchTargets.some(el => el.getAttribute('aria-pressed') === 'true')
+    this.hideAllBtnTargets.forEach(btn => btn.classList.toggle('hidden', !anyActive))
   }
 
   updateUrl () {

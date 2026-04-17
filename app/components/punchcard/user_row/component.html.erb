@@ -6,7 +6,14 @@
         <%= helpers.image_tag("strava_logo.svg", alt: "Strava", class: "w-3.5 h-3.5 block") %>
       </a>
       <div class="flex items-center min-w-0">
-        <div class="text-purple-900 dark:text-purple-0 font-medium"><%= @competition_user.display_name %></div>
+        <button type="button"
+          class="text-purple-900 dark:text-purple-0 font-medium text-left cursor-pointer outline-none underline decoration-1 decoration-transparent hover:decoration-current aria-pressed:decoration-current aria-pressed:decoration-2 focus-visible:decoration-current"
+          aria-pressed="false"
+          data-action="click->punch#toggleUser"
+          data-punch-target="userButton"
+          data-user-slug="<%= user_slug %>">
+          <%= @competition_user.display_name %>
+        </button>
       </div>
     </div>
 
@@ -16,7 +23,8 @@
           date_string:,
           distance_meters: distance_meters_on(date_string),
           competition: @competition,
-          punch_id: "#{user_slug}-#{date_string}"
+          punch_id: "#{user_slug}-#{date_string}",
+          user_slug:
         )) %>
       <% end %>
     </div>
@@ -36,17 +44,11 @@
   </div>
 
   <% activities_by_date.each do |date_string, activities| %>
-    <ul class="hidden pl-[232px] pt-2 space-y-1 text-[12px]" data-punch-activities-for="<%= user_slug %>-<%= date_string %>">
-      <% activities.each do |activity| %>
-        <li>
-          <span class="opacity-50 font-mono text-[11px] mr-1"><%= date_string.delete_prefix("#{@competition.year}-") %></span>
-          <%= link_to activity.display_name, activity.strava_url, target: "_blank", rel: "noopener", class: "twlink" %>
-          <span class="opacity-50 text-[11px] ml-1">
-            <span class="unit-imperial"><%= meters_to_miles(activity.distance_meters).round(1) %> mi</span>
-            <span class="unit-metric hidden"><%= (activity.distance_meters / 1000.0).round(1) %> km</span>
-          </span>
-        </li>
-      <% end %>
-    </ul>
+    <%= render(Punchcard::UserActivitiesForDate::Component.new(
+      date_string:,
+      activities:,
+      punch_id: "#{user_slug}-#{date_string}",
+      competition_year: @competition.year
+    )) %>
   <% end %>
 </div>
