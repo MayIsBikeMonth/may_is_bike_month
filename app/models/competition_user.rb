@@ -103,7 +103,7 @@ class CompetitionUser < ApplicationRecord
   end
 
   def current_timezone
-    competition_activities.start_ordered.last&.timezone || "America/Los_Angeles"
+    competition_activities.start_ordered.last&.timezone || Rails.configuration.time_zone
   end
 
   def current_date
@@ -129,9 +129,7 @@ class CompetitionUser < ApplicationRecord
 
   def dates_before_current_date
     return [] unless competition&.start_date
-    end_date = [current_date - 1, competition.end_date].min
-    return [] if end_date < competition.start_date
-    Array(competition.start_date..end_date)
+    Array(competition.start_date..[current_date - 1, competition.end_date].min)
   end
 
   def score_from_score_data
