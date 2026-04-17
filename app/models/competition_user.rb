@@ -106,6 +106,10 @@ class CompetitionUser < ApplicationRecord
     competition_activities.start_ordered.last&.timezone || "America/Los_Angeles"
   end
 
+  def current_date
+    Time.current.in_time_zone(current_timezone).to_date
+  end
+
   def update_score_data!
     update(score_data: calculated_score_data)
     reload

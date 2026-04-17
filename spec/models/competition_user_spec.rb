@@ -106,6 +106,29 @@ RSpec.describe CompetitionUser, type: :model do
     end
   end
 
+  describe "current_date" do
+    let(:competition_user) { FactoryBot.create(:competition_user) }
+
+    around { |ex| travel_to(Time.parse("2024-05-04T05:00:00Z")) { ex.run } }
+
+    it "returns today in the default Pacific timezone" do
+      # 05:00 UTC is still 2024-05-03 in Pacific
+      expect(competition_user.current_date).to eq Date.parse("2024-05-03")
+    end
+
+    context "with a most recent activity in a different timezone" do
+      let!(:activity) do
+        FactoryBot.create(:competition_activity, competition_user:,
+          start_at: Time.parse("2024-05-03T12:00:00Z"), timezone: "Australia/Sydney")
+      end
+
+      it "returns today in the activity's timezone" do
+        # 05:00 UTC on 5/4 is 15:00 on 5/4 in Sydney
+        expect(competition_user.current_date).to eq Date.parse("2024-05-04")
+      end
+    end
+  end
+
   describe "scoring" do
     let(:competition) { FactoryBot.create(:competition, start_date: Time.parse("2024-05-01")) }
     let(:competition_user1) { FactoryBot.create(:competition_user, competition:) }
