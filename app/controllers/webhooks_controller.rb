@@ -2,10 +2,10 @@ class WebhooksController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def strava
-    if request.get?
-      strava_verify_subscription
-    else
+    if request.post?
       strava_receive_event
+    else
+      strava_verify_subscription
     end
   end
 
