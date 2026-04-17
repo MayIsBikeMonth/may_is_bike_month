@@ -14,44 +14,46 @@
     Daily total
   </div>
 
-  <div class="max-lg:order-1">
-    <div class="grid grid-cols-[repeat(31,1fr)] gap-0.5 mb-1 items-end">
-      <% bars.each do |bar| %>
-        <% if bar[:weekend_label] %>
-          <span
-            class="
-              justify-self-center [writing-mode:vertical-rl] rotate-180
-              font-mono text-[10px] uppercase tracking-[0.1em]
-              text-purple-300 dark:text-purple-400
-            "
-          >
-            <%= bar[:weekend_label] %>
-          </span>
-        <% else %>
-          <span></span>
+  <div class="max-lg:order-1 max-sm:overflow-x-auto">
+    <div class="max-sm:min-w-[480px]">
+      <div class="grid grid-cols-[repeat(31,1fr)] gap-0.5 mb-1 items-end">
+        <% bars.each do |bar| %>
+          <% if bar[:weekend_label] %>
+            <span
+              class="
+                justify-self-center [writing-mode:vertical-rl] rotate-180
+                font-mono text-[10px] uppercase tracking-[0.1em]
+                text-purple-300 dark:text-purple-400
+              "
+            >
+              <%= bar[:weekend_label] %>
+            </span>
+          <% else %>
+            <span></span>
+          <% end %>
         <% end %>
-      <% end %>
-    </div>
+      </div>
 
-    <div class="grid grid-cols-[repeat(31,1fr)] gap-0.5 items-end">
-      <% bars.each do |bar| %>
-        <%= bar_tag(bar) do %>
-          <span
-            class="<%= bar[:upcoming] ? BAR_EMPTY_CLASS : BAR_GRADIENT_CLASS %>"
-            style="height:<%= "%.1f" % bar[:height_px] %>px"
-            aria-hidden="true"
-          ></span>
+      <div class="grid grid-cols-[repeat(31,1fr)] gap-0.5 items-end">
+        <% bars.each do |bar| %>
+          <%= bar_tag(bar) do %>
+            <span
+              class="<%= bar[:upcoming] ? BAR_EMPTY_CLASS : BAR_GRADIENT_CLASS %>"
+              style="height:<%= "%.1f" % bar[:height_px] %>px"
+              aria-hidden="true"
+            ></span>
 
-          <span
-            class="
-              block text-center text-purple-300 dark:text-purple-400 font-mono
-              text-[11px] pt-1
-            "
-          >
-            <%= bar[:day] %>
-          </span>
+            <span
+              class="
+                block text-center text-purple-300 dark:text-purple-400 font-mono
+                text-[11px] pt-1
+              "
+            >
+              <%= bar[:day] %>
+            </span>
+          <% end %>
         <% end %>
-      <% end %>
+      </div>
     </div>
   </div>
 
