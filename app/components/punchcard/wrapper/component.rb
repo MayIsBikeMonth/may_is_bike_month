@@ -16,18 +16,8 @@ module Punchcard::Wrapper
       end
     end
 
-    def self.level_for(distance_meters, competition:)
-      miles = meters_to_miles(distance_meters)
-      thresholds = level_thresholds(competition)
-      thresholds.keys.rfind { |level| miles >= thresholds[level] }
-    end
-
     def self.level_thresholds(competition)
       {1 => meters_to_miles(competition.daily_distance_requirement).ceil}.merge(LEVEL_THRESHOLDS_MILES)
-    end
-
-    def self.century?(distance_meters)
-      meters_to_miles(distance_meters) >= 100
     end
 
     def initialize(competition:, competition_users:, updated_at: nil, competitions: [])

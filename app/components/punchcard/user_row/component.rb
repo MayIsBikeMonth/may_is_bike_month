@@ -2,8 +2,6 @@
 
 module Punchcard::UserRow
   class Component < ApplicationComponent
-    STRAVA_SVG_PATH = "M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"
-
     def initialize(competition_user:, competition:, rank:, period_date_strings:, user_daily:)
       @competition_user = competition_user
       @competition = competition
@@ -14,16 +12,8 @@ module Punchcard::UserRow
 
     private
 
-    def cells
-      @period_date_strings.map do |date_string|
-        distance_meters = @user_daily.dig(date_string, :distance_meters).to_f
-        level = Punchcard::Wrapper::Component.level_for(distance_meters, competition: @competition)
-        {
-          level:,
-          century: Punchcard::Wrapper::Component.century?(distance_meters),
-          title: level ? "#{date_string}: #{meters_to_miles(distance_meters).round(1)} mi" : "no rides"
-        }
-      end
+    def distance_meters_on(date_string)
+      @user_daily.dig(date_string, :distance_meters).to_f
     end
 
     def days_count

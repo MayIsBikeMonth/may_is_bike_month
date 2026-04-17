@@ -4,43 +4,10 @@ require "rails_helper"
 
 RSpec.describe Punchcard::Wrapper::Component, type: :component do
   let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2025-05-01")) }
-  let(:mile_m) { 1609.344 }
-
-  describe ".level_for" do
-    # daily_distance_requirement is 3219m (~2.0002 mi) → ceils to 3 mi for level 1
-    {
-      0 => nil,
-      2.9 => nil,
-      3 => 1,
-      8.9 => 1,
-      9 => 2,
-      19.9 => 2,
-      20 => 3,
-      39.9 => 3,
-      40 => 4,
-      62.13 => 4,
-      62.14 => 5,
-      200 => 5
-    }.each do |miles, level|
-      it "returns #{level.inspect} for #{miles} miles" do
-        expect(described_class.level_for(miles * mile_m, competition:)).to eq level
-      end
-    end
-  end
 
   describe ".level_thresholds" do
     it "derives level 1 by ceiling the competition daily distance requirement in miles" do
       expect(described_class.level_thresholds(competition)).to eq(1 => 3, 2 => 9, 3 => 20, 4 => 40, 5 => 62.14)
-    end
-  end
-
-  describe ".century?" do
-    it "is false below 100 miles" do
-      expect(described_class.century?(99 * mile_m)).to be false
-    end
-
-    it "is true at 100 miles" do
-      expect(described_class.century?(100 * mile_m)).to be true
     end
   end
 

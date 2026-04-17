@@ -2,9 +2,7 @@
   <div class="flex items-center gap-2 min-w-0">
     <span class="punchcard-rank font-mono text-purple-300 dark:text-purple-400 text-[11px] w-[22px] text-right shrink-0"><%= format("%02d", @rank) %></span>
     <a class="punchcard-strava inline-flex items-center shrink-0 opacity-75 hover:opacity-100 transition-opacity" href="<%= strava_url %>" target="_blank" rel="noopener" title="View on Strava">
-      <svg class="w-3.5 h-3.5 block" viewBox="0 0 24 24" aria-label="Strava" focusable="false">
-        <path fill="#fc5200" d="<%= STRAVA_SVG_PATH %>"/>
-      </svg>
+      <%= helpers.image_tag("strava_logo.svg", alt: "Strava", class: "w-3.5 h-3.5 block") %>
     </a>
     <div class="flex items-center min-w-0">
       <div class="punchcard-name text-purple-900 dark:text-purple-0 font-medium"><%= @competition_user.display_name %></div>
@@ -12,11 +10,12 @@
   </div>
 
   <div class="grid grid-cols-[repeat(31,1fr)] gap-0.5 h-7">
-    <% cells.each do |cell| %>
-      <% data = {} %>
-      <% data[:l] = cell[:level] if cell[:level] %>
-      <% data[:century] = true if cell[:century] %>
-      <%= tag.span(class: "punchcard-cell", title: cell[:title], data:) %>
+    <% @period_date_strings.each do |date_string| %>
+      <%= render(Punchcard::UserPunch::Component.new(
+        date_string:,
+        distance_meters: distance_meters_on(date_string),
+        competition: @competition
+      )) %>
     <% end %>
   </div>
 
