@@ -15,8 +15,22 @@ RSpec.describe Punchcard::Header::Component, type: :component do
   end
   let(:rendered) { render_inline(described_class.new(**options)) }
 
-  it "renders the year from the competition" do
-    expect(rendered.css("h1").text).to include "2025"
+  it "renders the display_name with the year highlighted" do
+    h1 = rendered.css("h1")
+    expect(h1.text.squish).to eq "MIBM 2025"
+    expect(h1.css("b.text-purple-500").text).to eq "2025"
+  end
+
+  context "with a custom display_name containing the year" do
+    let(:competition) do
+      FactoryBot.create(:competition, start_date: Date.parse("2026-04-01"), display_name: "MIBM April 2026")
+    end
+
+    it "highlights the year within the display_name" do
+      h1 = rendered.css("h1")
+      expect(h1.text.squish).to eq "MIBM April 2026"
+      expect(h1.css("b.text-purple-500").text).to eq "2026"
+    end
   end
 
   it "renders the rider count" do

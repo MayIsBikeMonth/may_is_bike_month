@@ -1,7 +1,7 @@
 <div class="pt-16">
   <p class="text-base">
     View results from:
-    <%= safe_join(ordered_competitions.map { |competition|
+    <%= safe_join(@competitions.map { |competition|
       if current_competition?(competition)
         tag.span(competition.year, class: "opacity-50", title: CURRENT_TITLE)
       elsif @original_view

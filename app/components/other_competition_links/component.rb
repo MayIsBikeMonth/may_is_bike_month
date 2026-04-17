@@ -12,10 +12,6 @@ module OtherCompetitionLinks
 
     private
 
-    def ordered_competitions
-      @competitions.sort_by(&:start_date)
-    end
-
     def current_competition?(competition)
       competition.year == @current_year
     end

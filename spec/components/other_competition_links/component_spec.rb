@@ -3,19 +3,19 @@
 require "rails_helper"
 
 RSpec.describe OtherCompetitionLinks::Component, type: :component do
-  let(:competition_2024) { FactoryBot.create(:competition, start_date: Date.new(2024, 5, 1)) }
-  let(:competition_2025) { FactoryBot.create(:competition, start_date: Date.new(2025, 5, 1)) }
-  let(:competition_2026) { FactoryBot.create(:competition, start_date: Date.new(2026, 5, 1)) }
-  let(:competitions) { [competition_2026, competition_2024, competition_2025] }
+  let!(:competition_2024) { FactoryBot.create(:competition, start_date: Date.new(2024, 5, 1)) }
+  let!(:competition_2025) { FactoryBot.create(:competition, start_date: Date.new(2025, 5, 1)) }
+  let!(:competition_2026) { FactoryBot.create(:competition, start_date: Date.new(2026, 5, 1)) }
+  let(:competitions) { Competition.reverse_chronological }
   let(:current_year) { 2026 }
   let(:original_view) { false }
   let(:component) do
     render_inline(described_class.new(competitions:, current_year:, original_view:))
   end
 
-  it "renders competitions in chronological order" do
+  it "renders competitions in the given order" do
     years = component.css("a, span").map(&:text).map(&:strip).reject(&:empty?)
-    expect(years).to eq %w[2024 2025 2026]
+    expect(years).to eq %w[2026 2025 2024]
   end
 
   it "links non-current years to competition_path and disables current year" do
@@ -38,7 +38,7 @@ RSpec.describe OtherCompetitionLinks::Component, type: :component do
 
   context "with unsaved competitions (stubs for original_view)" do
     let(:competitions) do
-      %w[2024 2025].map { |y| Competition.new(start_date: Date.new(y.to_i, 5, 1)) }
+      %w[2025 2024].map { |y| Competition.new(start_date: Date.new(y.to_i, 5, 1)) }
     end
     let(:current_year) { 2024 }
     let(:original_view) { true }
