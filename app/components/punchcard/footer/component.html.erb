@@ -1,12 +1,11 @@
-<div class="flex justify-between mt-7 text-purple-300 dark:text-purple-400 font-mono text-[11px] uppercase tracking-[0.12em]">
-  <div class="flex items-center gap-1.5">
+<div class="flex justify-between mt-7 text-purple-300 dark:text-purple-400 font-mono text-[13px] uppercase tracking-[0.12em]">
+  <div class="flex items-center gap-2">
     less
-    <span class="inline-grid grid-cols-[repeat(5,12px)] gap-0.5">
-      <i class="block h-3 rounded-[2px] bg-purple-200 dark:bg-purple-900"></i>
-      <i class="block h-3 rounded-[2px] bg-purple-300 dark:bg-purple-800"></i>
-      <i class="block h-3 rounded-[2px] bg-purple-400 dark:bg-purple-700"></i>
-      <i class="block h-3 rounded-[2px] bg-purple-500 dark:bg-purple-600"></i>
-      <i class="block h-3 rounded-[2px] bg-purple-600 dark:bg-purple-500"></i>
+    <span class="inline-grid grid-cols-5 gap-1">
+      <% swatches.each do |swatch| %>
+        <i class="unit-imperial block h-5 w-5 rounded cursor-help <%= swatch[:color_class] %>" title="<%= swatch[:title_imperial] %>"></i>
+        <i class="unit-metric hidden h-5 w-5 rounded cursor-help <%= swatch[:color_class] %>" title="<%= swatch[:title_metric] %>"></i>
+      <% end %>
     </span>
     more
   </div>
@@ -18,5 +17,5 @@
 </div>
 
 <% if @competitions.many? %>
-  <%= render(OtherCompetitionLinks::Component.new(competitions: @competitions, current_year: @current_year)) %>
+  <%= render(OtherCompetitionLinks::Component.new(competitions: @competitions, current_year: @competition.year)) %>
 <% end %>

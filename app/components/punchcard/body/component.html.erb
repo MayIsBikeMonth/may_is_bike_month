@@ -24,6 +24,6 @@
 
 <%= render(Punchcard::Footer::Component.new(
   updated_at: @updated_at,
-  competitions: @competitions,
-  current_year: @competition.year
+  competition: @competition,
+  competitions: @competitions
 )) %>

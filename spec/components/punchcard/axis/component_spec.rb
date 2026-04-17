@@ -12,14 +12,4 @@ RSpec.describe Punchcard::Axis::Component, type: :component do
     expect(spans.first.text).to eq "1"
     expect(spans.last.text).to eq "31"
   end
-
-  it "marks weekend days" do
-    spans = rendered.css(".punchcard-axis-days span")
-    # May 3 2025 is a Saturday (index 2)
-    expect(spans[2].attr("class")).to include "we"
-    # May 4 2025 is a Sunday
-    expect(spans[3].attr("class")).to include "we"
-    # May 5 2025 is a Monday
-    expect(spans[4].attr("class") || "").not_to include "we"
-  end
 end

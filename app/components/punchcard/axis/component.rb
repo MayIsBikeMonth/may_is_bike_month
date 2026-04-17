@@ -5,11 +5,5 @@ module Punchcard::Axis
     def initialize(period_dates:)
       @period_dates = period_dates
     end
-
-    private
-
-    def day_entries
-      @period_dates.map { |date| {day: date.day, weekend: date.saturday? || date.sunday?} }
-    end
   end
 end

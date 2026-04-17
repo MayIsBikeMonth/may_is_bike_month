@@ -17,11 +17,9 @@ module Punchcard::UserRow
     def cells
       @period_date_strings.map do |date_string|
         distance_meters = @user_daily.dig(date_string, :distance_meters).to_f
-        date = Date.parse(date_string)
         level = Punchcard::Wrapper::Component.level_for(distance_meters, competition: @competition)
         {
           level:,
-          weekend: date.saturday? || date.sunday?,
           century: Punchcard::Wrapper::Component.century?(distance_meters),
           title: level ? "#{date_string}: #{meters_to_miles(distance_meters).round(1)} mi" : "no rides"
         }
