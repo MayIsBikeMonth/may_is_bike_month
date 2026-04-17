@@ -1,5 +1,5 @@
 <% meta_num_class = "font-mono text-[22px] font-medium" %>
-<% meta_label_class = "text-purple-300 dark:text-purple-400 text-[10px] uppercase tracking-[0.12em] mt-0.5" %>
+<% meta_label_class = "text-purple-300 dark:text-purple-400 text-[10px] uppercase tracking-[0.12em] mt-0.5 whitespace-nowrap" %>
 
 <header class="grid grid-cols-[1.4fr_1fr] gap-9 items-baseline pb-5 mb-7 max-lg:grid-cols-1 max-lg:gap-[18px]">
   <div>
@@ -19,8 +19,8 @@
         <span class="unit-metric hidden"><%= number_with_delimiter(total_km.to_i) %></span>
       </div>
       <div class="<%= meta_label_class %>">
-        <span class="unit-imperial">Miles</span>
-        <span class="unit-metric hidden">km</span>
+        <span class="unit-imperial">mi ridden</span>
+        <span class="unit-metric hidden">km ridden</span>
       </div>
     </div>
     <div>
@@ -34,8 +34,8 @@
         <% end %>
       </div>
       <div class="<%= meta_label_class %>">
-        <span class="unit-imperial">Feet</span>
-        <span class="unit-metric hidden">Meters</span>
+        <span class="unit-imperial">ft climbed</span>
+        <span class="unit-metric hidden">m climbed</span>
       </div>
     </div>
     <div>

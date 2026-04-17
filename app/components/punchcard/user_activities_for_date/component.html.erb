@@ -1,4 +1,4 @@
-<div class="hidden pl-[232px] pt-2 text-[12px] whitespace-nowrap" data-punch-activities-for="<%= @punch_id %>">
-  <span class="opacity-50 font-mono text-[11px] mr-1"><%= short_date %></span>
-  <%= activities_html %>
+<div class="hidden! inline-flex items-baseline gap-x-1" data-punch-activities-for="<%= @punch_id %>">
+  <span class="opacity-50 font-mono text-[11px] shrink-0"><%= short_date %></span>
+  <span><%= activities_html %></span>
 </div>

@@ -88,7 +88,7 @@ export default class extends Controller {
         .map(el => el.dataset.punchId)
     )
     this.element.querySelectorAll('[data-punch-activities-for]').forEach(el => {
-      el.classList.toggle('hidden', !activeIds.has(el.dataset.punchActivitiesFor))
+      el.classList.toggle('hidden!', !activeIds.has(el.dataset.punchActivitiesFor))
     })
   }
 

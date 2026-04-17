@@ -43,12 +43,14 @@
     </div>
   </div>
 
-  <% activities_by_date.each do |date_string, activities| %>
-    <%= render(Punchcard::UserActivitiesForDate::Component.new(
-      date_string:,
-      activities:,
-      punch_id: "#{user_slug}-#{date_string}",
-      competition_year: @competition.year
-    )) %>
-  <% end %>
+  <div class="flex flex-wrap gap-x-3 gap-t-2 pb-2 px-2 text-[12px]">
+    <% activities_by_date.each do |date_string, activities| %>
+      <%= render(Punchcard::UserActivitiesForDate::Component.new(
+        date_string:,
+        activities:,
+        punch_id: "#{user_slug}-#{date_string}",
+        competition_year: @competition.year
+      )) %>
+    <% end %>
+  </div>
 </div>

@@ -29,11 +29,11 @@ RSpec.describe Punchcard::UserActivitiesForDate::Component, type: :component do
   end
   let(:rendered) { render_inline(component) }
 
-  it "renders a container keyed by punch_id, hidden by default, single line" do
+  it "renders a container keyed by punch_id, hidden by default, inline-flex" do
     container = rendered.css("[data-punch-activities-for]").first
     expect(container.attr("data-punch-activities-for")).to eq "sam-2025-05-03"
     expect(container.attr("class")).to include "hidden"
-    expect(container.attr("class")).to include "whitespace-nowrap"
+    expect(container.attr("class")).to include "inline-flex"
   end
 
   it "shows the short date exactly once" do
