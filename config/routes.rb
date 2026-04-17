@@ -8,7 +8,6 @@ Rails.application.routes.draw do
 
   root "landing#index"
   get "/update_strava", to: "landing#update_strava"
-  get "/mockups(/:id)", to: "landing#mockups", as: :mockups
 
   get "up" => "rails/health#show", :as => :rails_health_check
 
