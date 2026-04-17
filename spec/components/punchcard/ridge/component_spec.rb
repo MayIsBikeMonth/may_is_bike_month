@@ -38,4 +38,24 @@ RSpec.describe Punchcard::Ridge::Component, type: :component do
       expect(rendered.css("button span[style]").first.attr("style")).to include "height:0.0px"
     end
   end
+
+  context "with past, today, and future days" do
+    let(:daily_totals) do
+      [
+        {date_string: "2026-05-01", distance_meters: 20_000, elevation_meters: 100},
+        {date_string: "2026-05-02", distance_meters: 30_000, elevation_meters: 200},
+        {date_string: "2026-05-03", distance_meters: 0, elevation_meters: 0}
+      ]
+    end
+
+    around { |ex| travel_to(Date.parse("2026-05-02")) { ex.run } }
+
+    it "renders past and today as buttons, future as inert spans" do
+      outer_spans = rendered.css("div > span.flex.flex-col")
+      expect(rendered.css("button").count).to eq 2
+      expect(outer_spans.count).to eq 1
+      expect(outer_spans.first.attr("data-action")).to be_nil
+      expect(outer_spans.first.attr("title")).to eq "Sunday"
+    end
+  end
 end

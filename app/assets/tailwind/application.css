@@ -116,4 +116,14 @@
     line-height: 1;
     pointer-events: none;
   }
+
+  @media (max-width: 1023px) {
+    .punchcard-week > * {
+      aspect-ratio: 1;
+      border-radius: 3px;
+    }
+    .punchcard-week > :first-child {
+      grid-column-start: var(--start-col, 4);
+    }
+  }
 }
