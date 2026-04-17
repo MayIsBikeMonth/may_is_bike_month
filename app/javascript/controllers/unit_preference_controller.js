@@ -23,10 +23,8 @@ export default class extends Controller {
     const current = window.currentUnitPreference()
     this.optionTargets.forEach(el => {
       const isActive = el.dataset.unit === current
-      el.classList.toggle('ring-2', isActive)
-      el.classList.toggle('ring-purple-400', isActive)
-      el.classList.toggle('opacity-60', !isActive)
-      el.classList.toggle('opacity-100', isActive)
+      el.classList.toggle('option-active', isActive)
+      el.classList.toggle('option-inactive', !isActive)
     })
   }
 

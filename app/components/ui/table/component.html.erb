@@ -13,12 +13,7 @@
     <tbody>
       <% @records.each do |record| %>
         <% cache_if(@cache_key, [@cache_key, record]) do %>
-          <tr
-            class="
-              odd:bg-white even:bg-purple-0 dark:odd:bg-purple-900
-              dark:even:bg-purple-800
-            "
-          >
+          <tr>
             <% @columns.each do |col| %>
               <td class="<%= col.td_classes(bordered: @bordered) %>">
                 <%= col.render_cell(record) { |r| capture { instance_exec(r, &col.cell_block) } } %>
