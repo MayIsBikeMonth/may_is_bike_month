@@ -17,7 +17,7 @@ RSpec.describe UI::Button::Component, type: :component do
     let(:options) { {color: :primary} }
     it "renders with primary style" do
       html = component.to_html
-      expect(html).to include("bg-blue-600")
+      expect(html).to include("bg-purple-500")
       expect(html).to include("text-white")
     end
   end

@@ -29,7 +29,7 @@ module UI::LoadingSpinner
     private
 
     def spinner_svg
-      classes = "animate-spin text-slate-400 dark:text-blue-800 #{SIZES[@size]}"
+      classes = "animate-spin text-slate-400 dark:text-purple-700 #{SIZES[@size]}"
       classes = "inline #{classes}" if inline?
       classes = "mx-auto mt-4 #{classes}" unless inline?
 

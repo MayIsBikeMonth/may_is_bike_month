@@ -17,7 +17,7 @@ RSpec.describe UI::ButtonLink::Component, type: :component do
     let(:options) { {text: "Go", href: "/test", color: :primary} }
     it "renders with primary style" do
       html = component.to_html
-      expect(html).to include("bg-blue-600")
+      expect(html).to include("bg-purple-500")
       expect(html).to include("text-white")
     end
   end

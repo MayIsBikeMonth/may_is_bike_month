@@ -6,12 +6,18 @@ RSpec.describe "Landing page", :js, type: :system do
   it "visits root and is accessible" do
     visit root_path
 
-    expect(page).to have_text("MIBM")
+    expect(page).to have_text("May is Bike Month")
     expect(page).to be_axe_clean.skipping(SKIPPABLE_AXE_RULES)
   end
 
   context "when changing theme from settings" do
     it "toggles dark mode" do
+      visit "about:blank"
+      page.driver.browser.execute_cdp(
+        "Emulation.setEmulatedMedia",
+        features: [{name: "prefers-color-scheme", value: "light"}]
+      )
+
       visit root_path
 
       expect(page).to have_no_css("html.dark")

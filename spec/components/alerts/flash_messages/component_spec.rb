@@ -18,7 +18,7 @@ RSpec.describe Alerts::FlashMessages::Component, type: :component do
 
     it "renders a notice alert" do
       expect(component).to have_content("Saved successfully")
-      expect(component).to have_css('[role="alert"].text-blue-800')
+      expect(component).to have_css('[role="alert"].text-purple-700')
       expect(component).to have_selector("button")
     end
   end

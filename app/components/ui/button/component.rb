@@ -12,17 +12,17 @@ module UI
       }.freeze
 
       COLORS = {
-        primary: "text-white bg-blue-600 border border-blue-600 hover:bg-blue-700 active:bg-blue-800 focus:ring-blue-500/40 dark:bg-blue-500 dark:border-blue-500 dark:hover:bg-blue-600 dark:active:bg-blue-700",
-        secondary: "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 hover:border-gray-400 active:bg-gray-100 focus:ring-blue-500/40 dark:text-gray-200 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-500 dark:active:bg-gray-600",
+        primary: "text-white bg-purple-500 border border-purple-500 hover:bg-purple-600 active:bg-purple-700 focus:ring-purple-400/40 dark:bg-purple-400 dark:border-purple-400 dark:hover:bg-purple-500 dark:active:bg-purple-600",
+        secondary: "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 hover:border-gray-400 active:bg-gray-100 focus:ring-purple-400/40 dark:text-gray-200 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-500 dark:active:bg-gray-600",
         error: "text-white bg-red-600 border border-red-600 hover:bg-red-700 active:bg-red-800 focus:ring-red-500/40 dark:bg-red-500 dark:border-red-500 dark:hover:bg-red-600 dark:active:bg-red-700",
-        link: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline active:text-blue-800 active:dark:text-blue-300 active:font-bold p-0 focus:ring-1"
+        link: "text-purple-500 hover:text-purple-700 dark:text-purple-300 dark:hover:text-purple-200 underline active:text-purple-700 active:dark:text-purple-200 active:font-bold p-0 focus:ring-1"
       }.freeze
 
       ACTIVE_COLORS = {
-        primary: "ring-2 ring-blue-500/40 bg-blue-700 dark:bg-blue-600",
-        secondary: "ring-2 ring-blue-500/40 bg-gray-100 border-gray-400 dark:bg-gray-700 dark:border-gray-500",
+        primary: "ring-2 ring-purple-400/40 bg-purple-600 dark:bg-purple-500",
+        secondary: "ring-2 ring-purple-400/40 bg-gray-100 border-gray-400 dark:bg-gray-700 dark:border-gray-500",
         error: "ring-2 ring-red-500/40 bg-red-700 dark:bg-red-600",
-        link: "text-blue-800 dark:text-blue-300 font-bold"
+        link: "text-purple-700 dark:text-purple-200 font-bold"
       }.freeze
 
       KINDS = %i[button submit]

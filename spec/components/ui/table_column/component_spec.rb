@@ -40,7 +40,7 @@ RSpec.describe UI::TableColumn::Component do
     end
 
     it "includes unbordered classes when not bordered" do
-      expect(col.td_classes(bordered: false)).to include("border-b border-gray-100")
+      expect(col.td_classes(bordered: false)).to include("border-b border-purple-100")
     end
   end
 

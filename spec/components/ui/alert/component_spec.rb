@@ -8,7 +8,7 @@ RSpec.describe UI::Alert::Component, type: :component do
 
   it "renders" do
     expect(component).to be_present
-    expect(component).to have_css('[role="alert"].text-blue-800')
+    expect(component).to have_css('[role="alert"].text-purple-700')
     # It doesn't have dismissable button
     expect(component).to_not have_selector("button")
   end

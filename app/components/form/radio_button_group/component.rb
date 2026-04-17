@@ -41,8 +41,8 @@ module Form
           "dark:has-[:checked]:bg-gray-300 dark:has-[:checked]:text-gray-900 dark:has-[:checked]:border-gray-300",
           "hover:bg-gray-100 has-[:checked]:hover:bg-gray-700",
           "dark:hover:bg-gray-700 dark:has-[:checked]:hover:bg-gray-300",
-          "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-blue-500 has-[:focus-visible]:ring-offset-1",
-          "dark:has-[:focus-visible]:ring-blue-400 dark:has-[:focus-visible]:ring-offset-gray-900",
+          "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-purple-400 has-[:focus-visible]:ring-offset-1",
+          "dark:has-[:focus-visible]:ring-purple-300 dark:has-[:focus-visible]:ring-offset-gray-900",
           round, border_l
         ].join(" ")) do
           radio_button_tag(@name, value, checked,
