@@ -95,6 +95,8 @@ jobs:
       - name: Install packages
         run: |
           yarn install --pure-lockfile
+      - name: Test bin/setup
+        run: bin/setup
       - name: build assets
         run: bin/rails assets:precompile
       # Run tests
