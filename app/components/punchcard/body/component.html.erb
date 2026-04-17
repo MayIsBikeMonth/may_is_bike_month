@@ -8,34 +8,58 @@
 
 <%= render(Punchcard::Rules::Component.new(competition: @competition)) %>
 
-<div class="flex items-center gap-4 mb-4 text-[12px]">
-  <button
-    type="button"
-    class="
-      text-purple-300 dark:text-purple-400 hover:text-purple-500
-      dark:hover:text-purple-200 hover:underline cursor-pointer
-    "
-    data-action="click->punch#showAll"
-  >
-    Show all activities
-  </button>
-
-  <button
-    type="button"
-    class="
-      hidden text-purple-300 dark:text-purple-400 hover:text-purple-500
-      dark:hover:text-purple-200 hover:underline cursor-pointer
-    "
-    data-action="click->punch#hideAll"
-    data-punch-target="hideAllBtn"
-  >
-    Hide all activities
-  </button>
-</div>
-
-<main class="overflow-x-auto -mx-7">
-  <div class="min-w-[1340px] px-7">
+<main class="lg:overflow-x-auto lg:-mx-7">
+  <div class="lg:min-w-[1340px] lg:px-7">
     <%= render(Punchcard::Ridge::Component.new(daily_totals:)) %>
+
+    <div
+      class="
+        flex items-center gap-4 mb-4 text-[12px]
+        lg:border-b lg:border-purple-100 lg:dark:border-purple-700 lg:pb-2
+      "
+    >
+      <button
+        type="button"
+        class="
+          text-purple-300 dark:text-purple-400 hover:text-purple-500
+          dark:hover:text-purple-200 hover:underline cursor-pointer
+        "
+        data-action="click->punch#showAll"
+      >
+        Show all activities
+      </button>
+
+      <button
+        type="button"
+        class="
+          hidden text-purple-300 dark:text-purple-400 hover:text-purple-500
+          dark:hover:text-purple-200 hover:underline cursor-pointer
+        "
+        data-action="click->punch#hideAll"
+        data-punch-target="hideAllBtn"
+      >
+        Hide all activities
+      </button>
+    </div>
+
+    <div
+      class="
+        hidden max-lg:grid grid-cols-[repeat(7,24px)] gap-0.5 ml-auto mb-2.5
+        pb-1.5 max-w-max border-b border-purple-100 dark:border-purple-700
+      "
+    >
+      <% %w[Mon Tue Wed Thu Fri Sat Sun].each do |day| %>
+        <span
+          class="
+            [writing-mode:vertical-rl] rotate-180 font-mono text-[10px]
+            uppercase tracking-[0.1em] text-end h-[30px]
+            text-purple-300 dark:text-purple-400
+          "
+        >
+          <%= day %>
+        </span>
+      <% end %>
+    </div>
 
     <% @competition_users.each_with_index do |competition_user, index| %>
       <%= render(Punchcard::UserRow::Component.new(

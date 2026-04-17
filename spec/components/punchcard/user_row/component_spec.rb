@@ -50,6 +50,12 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
     expect(rendered.css(".punchcard-cell").count).to eq 31
   end
 
+  it "sets --start-col on the punchcard grid for small-screen weekday alignment" do
+    # May 1, 2025 is a Thursday (wday=4), Mon-indexed column 4
+    style = rendered.css(".punchcard-week").attr("style").value
+    expect(style).to include "--start-col: 4"
+  end
+
   it "assigns data-l based on distance" do
     cells = rendered.css(".punchcard-cell")
     expect(cells[0].attr("data-l")).to eq "3"
@@ -75,6 +81,8 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
     let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2026-04-01")) }
     let(:period_date_strings) { (competition.start_date..competition.end_date).map(&:to_s) }
     let(:user_daily) { {} }
+
+    around { |ex| travel_to(Date.parse("2026-04-16")) { ex.run } }
 
     it "renders empty spans for today and future, punchcard-cells for past days" do
       cells = rendered.css("div.h-7 > span")
