@@ -26,7 +26,8 @@ module Punchcard::Ridge
           date_string: day[:date_string],
           day: date.day,
           title: upcoming ? day_of_week : "#{day_of_week}\n#{miles.round(1)} mi\n#{number_with_delimiter(feet.to_i)} ft",
-          upcoming:
+          upcoming:,
+          weekend_label: (date.strftime("%a") if date.saturday? || date.sunday?)
         }
       end
     end
