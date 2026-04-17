@@ -46,6 +46,7 @@
   github.com/MayIsBikeMonth/may_is_bike_month
 
   -->
+    <%= render(SettingsModal::Component.new(current_user:)) %>
     <% if in_admin? %>
       <%= render(Navbar::Component.new(current_user:)) %>
     <% else %>

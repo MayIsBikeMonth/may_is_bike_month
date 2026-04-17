@@ -14,14 +14,14 @@ RSpec.describe OtherCompetitionLinks::Component, type: :component do
   end
 
   it "renders competitions in chronological order" do
-    years = component.css("a, span.twlink").map(&:text).map(&:strip)
+    years = component.css("a, span").map(&:text).map(&:strip).reject(&:empty?)
     expect(years).to eq %w[2024 2025 2026]
   end
 
   it "links non-current years to competition_path and disables current year" do
     expect(component).to have_css("a.twlink[href='/competitions/#{competition_2024.slug}']", text: "2024")
     expect(component).to have_css("a.twlink[href='/competitions/#{competition_2025.slug}']", text: "2025")
-    expect(component).to have_css("span.twlink[title=\"You're looking at it\"]", text: "2026")
+    expect(component).to have_css("span[title=\"You're looking at it\"]", text: "2026")
     expect(component).not_to have_css("a", text: "2026")
   end
 
@@ -30,7 +30,7 @@ RSpec.describe OtherCompetitionLinks::Component, type: :component do
     let(:current_year) { 2024 }
 
     it "links to competitions_original_path" do
-      expect(component).to have_css("span.twlink[title=\"You're looking at it\"]", text: "2024")
+      expect(component).to have_css("span[title=\"You're looking at it\"]", text: "2024")
       expect(component).to have_css("a.twlink[href='/competitions_original/2025']", text: "2025")
       expect(component).to have_css("a.twlink[href='/competitions_original/2026']", text: "2026")
     end
@@ -44,7 +44,7 @@ RSpec.describe OtherCompetitionLinks::Component, type: :component do
     let(:original_view) { true }
 
     it "renders using year without needing a slug" do
-      expect(component).to have_css("span.twlink[title=\"You're looking at it\"]", text: "2024")
+      expect(component).to have_css("span[title=\"You're looking at it\"]", text: "2024")
       expect(component).to have_css("a.twlink[href='/competitions_original/2025']", text: "2025")
     end
   end

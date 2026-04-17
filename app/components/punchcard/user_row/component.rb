@@ -17,12 +17,12 @@ module Punchcard::UserRow
       @period_date_strings.map do |date_string|
         distance_meters = @user_daily.dig(date_string, :distance_meters).to_f
         date = Date.parse(date_string)
-        miles = distance_meters / PunchcardData::MILE_METERS
-        level = PunchcardData.level_for(distance_meters) if miles >= 2
+        miles = distance_meters / Punchcard::Wrapper::Component::MILE_METERS
+        level = Punchcard::Wrapper::Component.level_for(distance_meters) if miles >= 2
         {
           level:,
           weekend: date.saturday? || date.sunday?,
-          century: PunchcardData.century?(distance_meters),
+          century: Punchcard::Wrapper::Component.century?(distance_meters),
           title: (miles >= 2) ? "#{date_string}: #{miles.round(1)} mi" : "no rides"
         }
       end
@@ -37,7 +37,7 @@ module Punchcard::UserRow
     end
 
     def total_miles
-      @competition_user.distance_meters / PunchcardData::MILE_METERS
+      @competition_user.distance_meters / Punchcard::Wrapper::Component::MILE_METERS
     end
 
     def total_feet

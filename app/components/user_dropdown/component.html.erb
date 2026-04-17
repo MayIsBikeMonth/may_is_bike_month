@@ -1,6 +1,5 @@
 <ul class="relative flex items-center gap-4 px-2 lg:px-4 justify-end mt-2 mb-2">
   <% if !@signed_in %>
-    <%= render(SettingsModal::Component.new(current_user: @current_user)) %>
     <li>
       <button
         type="button"
@@ -38,7 +37,6 @@
       <%= button_to "Sign in", user_strava_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "twlink", form: { data: { controller: "theme", action: "submit->theme#setSignupCookies" } } %>
     </li>
   <% else %>
-    <%= render(SettingsModal::Component.new(current_user: @current_user)) %>
     <div class="relative inline-block" data-controller="dropdown">
       <button
         type="button"

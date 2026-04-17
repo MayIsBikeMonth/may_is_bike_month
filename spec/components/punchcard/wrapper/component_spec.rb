@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe PunchcardData do
+RSpec.describe Punchcard::Wrapper::Component, type: :component do
   describe ".level_for" do
     {
       0 => nil,
@@ -58,6 +58,15 @@ RSpec.describe PunchcardData do
         expect(metrics["2025-05-03"][:distance_meters]).to be_within(0.01).of(16_093.44)
         expect(metrics["2025-05-03"][:elevation_meters]).to eq 300.0
       end
+    end
+  end
+
+  describe "render" do
+    let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2025-05-01")) }
+
+    it "wraps the body in .punchcard-wrap" do
+      rendered = render_inline(described_class.new(competition:, competition_users: []))
+      expect(rendered.css(".punchcard-wrap")).to be_present
     end
   end
 end

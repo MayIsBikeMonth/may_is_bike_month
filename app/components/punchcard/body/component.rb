@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Punchcard
+module Punchcard::Body
   class Component < ApplicationComponent
     def initialize(competition:, competition_users:, updated_at: nil, competitions: [])
       @competition = competition
@@ -34,7 +34,7 @@ module Punchcard
 
     def user_daily(competition_user)
       (@user_daily ||= {})[competition_user.id] ||=
-        PunchcardData.daily_metrics(competition_user)
+        Punchcard::Wrapper::Component.daily_metrics(competition_user)
     end
 
     def total_miles

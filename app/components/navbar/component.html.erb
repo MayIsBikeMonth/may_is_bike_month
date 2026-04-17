@@ -10,5 +10,6 @@
 
   <%= helpers.active_link "Competition Users", admin_competition_users_path, class: "twlink ml-2", match_controller: true %>
   <%= helpers.active_link "Competitions", admin_competitions_path, class: "twlink ml-2", match_controller: true %>
-  <%= link_to "Exit", root_url, class: "twlink ml-auto less-strong" %>
+  <button type="button" data-open-modal="user-settings-modal" class="twlink ml-auto">Settings</button>
+  <%= link_to "Exit", root_url, class: "twlink less-strong" %>
 </ul>

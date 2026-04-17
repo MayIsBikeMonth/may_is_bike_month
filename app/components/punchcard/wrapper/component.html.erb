@@ -1,0 +1,8 @@
+<div class="punchcard-wrap">
+  <%= render(Punchcard::Body::Component.new(
+    competition: @competition,
+    competition_users: @competition_users,
+    updated_at: @updated_at,
+    competitions: @competitions
+  )) %>
+</div>
