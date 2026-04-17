@@ -16,7 +16,7 @@
 #  index_strava_requests_on_user_id  (user_id)
 #
 class StravaRequest < ApplicationRecord
-  KIND_ENUM = {get_activities: 0, get_athlete: 1}.freeze
+  KIND_ENUM = {get_activities: 0, get_athlete: 1, incoming_webhook: 2}.freeze
   SUCCESS_CODES = [200, 201].freeze
   # As of 2025-5-5, we get 3000 per day
   MAXIMUM_REQUESTS_PER_DAY = (ENV["STRAVA_MAX_REQUESTS_PER_HOUR"] || 3_000)&.to_i
@@ -29,6 +29,7 @@ class StravaRequest < ApplicationRecord
 
   scope :success_response, -> { where(status: SUCCESS_CODES) }
   scope :error_response, -> { where.not(status: SUCCESS_CODES) }
+  scope :outbound, -> { where.not(kind: :incoming_webhook) }
 
   class << self
     def success_status?(status)
@@ -36,7 +37,7 @@ class StravaRequest < ApplicationRecord
     end
 
     def most_recent_update
-      maximum(:created_at)
+      outbound.maximum(:created_at)
     end
 
     def over_rate_limit?
