@@ -46,6 +46,10 @@ module Punchcard::UserRow
       @user_slug ||= @competition_user.user.slug
     end
 
+    def start_col
+      (@competition.start_date.wday - 1) % 7 + 1
+    end
+
     def activities_by_date
       @activities_by_date ||= @competition_user.competition_activities_included
         .sort_by { |a| a.start_at || Time.at(0) }
