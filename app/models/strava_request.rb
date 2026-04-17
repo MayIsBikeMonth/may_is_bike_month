@@ -29,6 +29,7 @@ class StravaRequest < ApplicationRecord
 
   scope :success_response, -> { where(status: SUCCESS_CODES) }
   scope :error_response, -> { where.not(status: SUCCESS_CODES) }
+  scope :outbound, -> { where.not(kind: :incoming_webhook) }
 
   class << self
     def success_status?(status)
@@ -36,7 +37,7 @@ class StravaRequest < ApplicationRecord
     end
 
     def most_recent_update
-      maximum(:created_at)
+      outbound.maximum(:created_at)
     end
 
     def over_rate_limit?

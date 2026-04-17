@@ -21,7 +21,7 @@ class ProcessStravaWebhookJob < ApplicationJob
       CompetitionActivity.joins(:competition_user)
         .where(competition_users: {user_id: user.id}, strava_id: params["object_id"].to_s)
         .destroy_all
-    else
+    elsif StravaRequest.update_due?
       competition_user = user.competition_users.current_competition.last
       UpdateCompetitionUserJob.perform_async(competition_user.id) if competition_user
     end
