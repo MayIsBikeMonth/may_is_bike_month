@@ -47,9 +47,7 @@ module Punchcard::Body
     end
 
     def everyday_rider_count
-      @everyday_rider_count ||= @competition_users.count do |cu|
-        cu.activity_dates.count >= period_dates.count
-      end
+      @everyday_rider_count ||= @competition_users.count(&:everyday_rider?)
     end
   end
 end

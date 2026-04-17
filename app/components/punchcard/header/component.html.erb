@@ -27,13 +27,9 @@
 
     <div>
       <div class="<%= meta_num_class %>">
-        <span class="unit-imperial">
-          <%= number_display(total_miles) %>
-        </span>
+        <span class="unit-imperial"><%= number_display(total_miles) %></span>
 
-        <span class="unit-metric hidden">
-          <%= number_display(total_km) %>
-        </span>
+        <span class="unit-metric hidden"><%= number_display(total_km) %></span>
       </div>
 
       <div class="<%= meta_label_class %>">
@@ -52,9 +48,7 @@
             <%= thousands_display(total_meters) %>
           </span>
         <% else %>
-          <span class="unit-imperial">
-            <%= number_display(total_feet) %>
-          </span>
+          <span class="unit-imperial"><%= number_display(total_feet) %></span>
           <span class="unit-metric hidden">
             <%= number_display(total_meters) %>
           </span>
