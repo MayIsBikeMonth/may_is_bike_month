@@ -2,8 +2,6 @@
 
 module Punchcard::UserPunch
   class Component < ApplicationComponent
-    CENTURY_MILES = 100
-
     def initialize(date_string:, distance_meters:, competition:, punch_id: nil, user_slug: nil)
       @date_string = date_string
       @distance_meters = distance_meters
@@ -56,7 +54,7 @@ module Punchcard::UserPunch
     end
 
     def century?
-      miles >= CENTURY_MILES
+      miles >= 100
     end
 
     def title
