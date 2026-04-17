@@ -21,6 +21,16 @@ module Punchcard::Header
       safe_join([before, highlighted, after])
     end
 
+    def days_left
+      @days_left ||= (Date.current..@competition.end_date).count
+    end
+
+    def competition_over? = days_left.zero?
+
+    def metric_grid_class
+      competition_over? ? "grid-cols-[repeat(4,auto)]" : "grid-cols-[repeat(5,auto)]"
+    end
+
     def total_miles = meters_to_miles(@distance_meters)
     def total_km = @distance_meters / 1000.0
     def total_feet = meters_to_feet(@elevation_meters)

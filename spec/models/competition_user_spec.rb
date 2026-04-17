@@ -83,6 +83,20 @@ RSpec.describe CompetitionUser, type: :model do
     end
   end
 
+  describe "start_ordered_desc" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:c_2024) { FactoryBot.create(:competition, start_date: Date.new(2024, 5, 1)) }
+    let(:c_2025) { FactoryBot.create(:competition, start_date: Date.new(2025, 5, 1)) }
+    let(:c_2026) { FactoryBot.create(:competition, start_date: Date.new(2026, 4, 1)) }
+    let!(:cu_2024) { FactoryBot.create(:competition_user, user:, competition: c_2024) }
+    let!(:cu_2026) { FactoryBot.create(:competition_user, user:, competition: c_2026) }
+    let!(:cu_2025) { FactoryBot.create(:competition_user, user:, competition: c_2025) }
+
+    it "orders by joined competition.start_date descending" do
+      expect(user.competition_users.start_ordered_desc.map(&:id)).to eq [cu_2026.id, cu_2025.id, cu_2024.id]
+    end
+  end
+
   describe "current_timezone" do
     let(:competition_user) { FactoryBot.create(:competition_user) }
 

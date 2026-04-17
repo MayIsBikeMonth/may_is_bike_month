@@ -67,7 +67,7 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
     expect(cells[3].attr("data-l")).to eq "5"
   end
 
-  it "shows total days / period days" do
+  it "shows days_count / days_so_far (competition ended, full 31)" do
     expect(rendered.text).to include "/31"
   end
 
@@ -80,6 +80,10 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
       cells = rendered.css("div.h-7 > span")
       expect(cells.count).to eq 30
       expect(rendered.css("div.h-7 .punchcard-cell").count).to eq 15
+    end
+
+    it "uses days_so_far (days through current_date, inclusive) as the denominator" do
+      expect(rendered.text).to include "/16"
     end
   end
 end

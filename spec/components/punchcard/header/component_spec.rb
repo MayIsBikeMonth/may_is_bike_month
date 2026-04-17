@@ -56,4 +56,23 @@ RSpec.describe Punchcard::Header::Component, type: :component do
     expect(rendered.css(".unit-imperial").count).to eq 4
     expect(rendered.css(".unit-metric.hidden").count).to eq 4
   end
+
+  context "when the competition is over" do
+    # 2025 competition; today is 2026-04-16 per CLAUDE.md
+    it "omits the Days Left metric" do
+      expect(rendered.text).not_to include "Days"
+    end
+  end
+
+  context "when the competition is current (April 2026, today 2026-04-16)" do
+    let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2026-04-01")) }
+
+    it "shows Days Left to the left of Riders" do
+      labels = rendered.css("div.text-\\[10px\\]").map(&:text).map(&:squish)
+      expect(labels.first).to eq "DaysLeft"
+      expect(labels[1]).to eq "Riders"
+      numbers = rendered.css("div.text-\\[22px\\]").map(&:text).map(&:strip)
+      expect(numbers.first).to eq "15" # 2026-04-16..2026-04-30 inclusive
+    end
+  end
 end

@@ -28,8 +28,10 @@ module Punchcard::UserRow
       @competition_user.activity_dates.count
     end
 
-    def total_days
-      @period_date_strings.count
+    def days_so_far
+      last = [@competition_user.current_date, @competition.end_date].min
+      return 0 if last < @competition.start_date
+      (@competition.start_date..last).count
     end
 
     def distance_meters = @competition_user.distance_meters

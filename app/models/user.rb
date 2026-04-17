@@ -82,7 +82,7 @@ class User < ApplicationRecord
   end
 
   def current_competition_user
-    competition_users.current_competition.last
+    competition_users.current_competition.start_ordered_desc.first
   end
 
   def strava_auth_needs_refresh?

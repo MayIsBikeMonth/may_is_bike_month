@@ -38,6 +38,7 @@ class CompetitionUser < ApplicationRecord
   scope :excluded_from_competition, -> { where(included_in_competition: false) }
   scope :included_in_current_competition, -> { included_in_competition.current_competition }
   scope :score_ordered, -> { reorder(score: :desc) }
+  scope :start_ordered_desc, -> { joins(:competition).reorder(Competition.arel_table[:start_date].desc) }
 
   class << self
     def score_for(dates:, distance:, **)

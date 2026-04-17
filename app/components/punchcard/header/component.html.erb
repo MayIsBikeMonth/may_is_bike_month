@@ -15,10 +15,17 @@
 
   <div
     class="
-      grid grid-cols-[repeat(4,auto)] gap-6 justify-end text-right
+      grid <%= metric_grid_class %> gap-6 justify-end text-right
       max-lg:justify-start max-lg:text-left
     "
   >
+    <% unless competition_over? %>
+      <div>
+        <div class="<%= meta_num_class %>"><%= days_left %></div>
+        <div class="<%= meta_label_class %>">Days<br>Left</div>
+      </div>
+    <% end %>
+
     <div>
       <div class="<%= meta_num_class %>"><%= @rider_count %></div>
       <div class="<%= meta_label_class %>">Riders</div>
