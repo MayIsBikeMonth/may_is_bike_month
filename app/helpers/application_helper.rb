@@ -1,5 +1,6 @@
 module ApplicationHelper
   include Binxtils::SortableHelper
+  include Binxtils::NavHelper
 
   def page_title
     return @page_title if defined?(@page_title)
@@ -46,19 +47,6 @@ module ApplicationHelper
   end
 
   private
-
-  def current_page_active?(link_path, match_controller = false)
-    if match_controller
-      begin
-        link_controller = Rails.application.routes.recognize_path(link_path)[:controller]
-        Rails.application.routes.recognize_path(request.url)[:controller] == link_controller
-      rescue
-        false
-      end
-    else
-      current_page?(link_path)
-    end
-  end
 
   def default_action_name_title
     if action_name == "show"
