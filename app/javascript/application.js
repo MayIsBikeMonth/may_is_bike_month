@@ -133,37 +133,6 @@ window.showPreferredUnit = () => {
   document.querySelectorAll(`.unit-${hiddenUnit}`).forEach(el => el.classList.add('hidden'))
 }
 
-const currentActivityVisibility = () => {
-  let activityVisibility = localStorage.getItem('activityVisibility')
-  if (activityVisibility === null || activityVisibility !== 'show-all') {
-    activityVisibility = 'hidden'
-  } else {
-    activityVisibility = 'show-all'
-  }
-  localStorage.setItem('activityVisibility', activityVisibility)
-  return activityVisibility
-}
-
-const showActivityVisibility = () => {
-  if (currentActivityVisibility() === 'hidden') {
-    document.querySelectorAll('.activityList').forEach(el => el.classList.add('hidden'))
-    document.querySelectorAll('.toggleActivities-shown').forEach(el => el.classList.add('hidden'))
-    document.querySelectorAll('.toggleActivities-hidden').forEach(el => el.classList.remove('hidden'))
-  } else {
-    document.querySelectorAll('.activityList, .toggleActivities-shown').forEach(el => el.classList.remove('hidden'))
-    document.querySelectorAll('.toggleActivities-hidden').forEach(el => el.classList.add('hidden'))
-    document.querySelectorAll('.toggleActivities-shown').forEach(el => el.classList.remove('hidden'))
-  }
-}
-
-const toggleActivities = () => {
-  document.querySelectorAll('.activityList').forEach(el => el.classList.toggle('hidden'))
-  const newVisibility = currentActivityVisibility() === 'hidden' ? 'show-all' : 'hidden'
-  localStorage.setItem('activityVisibility', newVisibility)
-  // console.log(newVisibility, currentActivityVisibility())
-  showActivityVisibility()
-}
-
 // document.addEventListener('turbo:load', () => {
 //   scrollToStoredLocation()
 
@@ -197,9 +166,4 @@ document.addEventListener('turbo:load', () => {
   // Apply unit preference globally — no-op if there are no .unit-metric/.unit-imperial elements
   document.querySelectorAll('a.toggleUnitPreference').forEach(el => el.addEventListener('click', window.toggleUnitPreference))
   window.showPreferredUnit()
-
-  if (window.enableToggles) {
-    showActivityVisibility()
-    document.querySelector('#toggleIndividualActivities')?.addEventListener('click', toggleActivities)
-  }
 })

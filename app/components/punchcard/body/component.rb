@@ -38,12 +38,12 @@ module Punchcard::Body
         Punchcard::Wrapper::Component.daily_metrics(competition_user)
     end
 
-    def total_miles
-      @total_miles ||= meters_to_miles(@competition_users.sum { |cu| cu.distance_meters })
+    def total_distance_meters
+      @total_distance_meters ||= @competition_users.sum { |cu| cu.distance_meters }
     end
 
-    def total_feet
-      @total_feet ||= meters_to_feet(@competition_users.sum { |cu| cu.elevation_meters })
+    def total_elevation_meters
+      @total_elevation_meters ||= @competition_users.sum { |cu| cu.elevation_meters }
     end
 
     def everyday_rider_count

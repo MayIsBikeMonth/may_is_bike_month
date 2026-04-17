@@ -8,8 +8,8 @@ RSpec.describe Punchcard::Header::Component, type: :component do
     {
       competition:,
       rider_count: 19,
-      total_miles: 8_215,
-      total_feet: 496_100,
+      distance_meters: 8_215 * 1609.344, # 8,215 mi
+      elevation_meters: 496_100 / 3.28084, # 496,100 ft
       everyday_rider_count: 6
     }
   end
@@ -29,7 +29,7 @@ RSpec.describe Punchcard::Header::Component, type: :component do
   end
 
   context "with feet under 1000" do
-    let(:options) { super().merge(total_feet: 500) }
+    let(:options) { super().merge(elevation_meters: 500 / 3.28084) }
 
     it "renders raw feet without k suffix" do
       imperial_text = rendered.css(".unit-imperial").map(&:text).join(" ")

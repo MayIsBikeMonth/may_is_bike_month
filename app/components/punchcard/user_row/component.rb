@@ -24,29 +24,16 @@ module Punchcard::UserRow
       @period_date_strings.count
     end
 
-    def total_miles
-      meters_to_miles(@competition_user.distance_meters)
-    end
+    def distance_meters = @competition_user.distance_meters
 
-    def total_km
-      @competition_user.distance_meters / 1000.0
-    end
-
-    def total_feet
-      meters_to_feet(@competition_user.elevation_meters)
-    end
-
-    def total_meters
-      @competition_user.elevation_meters
-    end
+    def elevation_meters = @competition_user.elevation_meters
 
     def strava_url
       @competition_user.user.strava_user_url
     end
 
     def user_slug
-      user = @competition_user.user
-      user.strava_username.presence || Slugifyer.slugify(user.display_name).presence || user.id.to_s
+      @user_slug ||= @competition_user.user.slug
     end
 
     def activities_by_date

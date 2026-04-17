@@ -114,6 +114,10 @@ class User < ApplicationRecord
     "https://www.strava.com/athletes/#{strava_id}"
   end
 
+  def slug
+    strava_username.presence || Slugifyer.slugify(display_name).presence || id.to_s
+  end
+
   private
 
   def refresh_strava_token!

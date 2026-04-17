@@ -1,8 +1,8 @@
 <%= render(Punchcard::Header::Component.new(
   competition: @competition,
   rider_count: @competition_users.size,
-  total_miles:,
-  total_feet:,
+  distance_meters: total_distance_meters,
+  elevation_meters: total_elevation_meters,
   everyday_rider_count:
 )) %>
 

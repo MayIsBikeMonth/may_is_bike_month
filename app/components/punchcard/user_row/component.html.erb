@@ -63,22 +63,22 @@
       </span><br>
 
       <span class="unit-imperial">
-        <%= number_with_delimiter(total_miles.round(1)) %> mi
+        <%= number_display(meters_to_miles(distance_meters), round_to: 1) %> mi
       </span>
 
       <span class="unit-metric hidden">
-        <%= number_with_delimiter(total_km.round(1)) %> km
+        <%= number_display(distance_meters / 1000.0, round_to: 1) %> km
       </span>
 
       <br>
 
       <span class="opacity-40">
         <span class="unit-imperial">
-          <%= "%.1f" % (total_feet / 1000.0) %>k ft
+          <%= "%.1f" % (meters_to_feet(elevation_meters) / 1000.0) %>k ft
         </span>
 
         <span class="unit-metric hidden">
-          <%= "%.1f" % (total_meters / 1000.0) %>k m
+          <%= "%.1f" % (elevation_meters / 1000.0) %>k m
         </span>
       </span>
     </div>

@@ -10,21 +10,36 @@ export default class extends Controller {
   static targets = ['punch', 'ridgeBar', 'userButton', 'hideAllBtn']
 
   connect () {
+    this.indexPunches()
     const selected = new URLSearchParams(window.location.search).get('selected')
-    const active = new Set()
     if (selected) {
       selected.split(';').forEach(group => {
         const [slug, daysStr] = group.split(':')
         if (!slug || !daysStr) return
-        daysStr.split(',').forEach(day => active.add(`${slug}:${parseInt(day, 10)}`))
+        daysStr.split(',').forEach(day => {
+          this.punchesByKey.get(`${slug}:${parseInt(day, 10)}`)?.setAttribute('aria-pressed', 'true')
+        })
       })
     }
-    this.punchTargets.forEach(el => {
-      if (active.has(this.punchKey(el))) {
-        el.setAttribute('aria-pressed', 'true')
-      }
-    })
     this.sync()
+  }
+
+  indexPunches () {
+    this.punchesByDate = new Map()
+    this.punchesByUser = new Map()
+    this.punchesByKey = new Map()
+    this.punchTargets.forEach(el => {
+      const date = el.dataset.date
+      const slug = el.dataset.userSlug
+      const day = parseInt(date.slice(-2), 10)
+      el._punchDay = day
+      if (!this.punchesByDate.has(date)) this.punchesByDate.set(date, [])
+      this.punchesByDate.get(date).push(el)
+      if (!this.punchesByUser.has(slug)) this.punchesByUser.set(slug, [])
+      this.punchesByUser.get(slug).push(el)
+      this.punchesByKey.set(`${slug}:${day}`, el)
+    })
+    this.activityEls = Array.from(this.element.querySelectorAll('[data-punch-activities-for]'))
   }
 
   toggle (event) {
@@ -35,20 +50,17 @@ export default class extends Controller {
   }
 
   toggleDay (event) {
-    const date = event.currentTarget.dataset.date
-    const dayPunches = this.punchTargets.filter(el => el.dataset.date === date)
-    if (dayPunches.length === 0) return
-    const allActive = dayPunches.every(el => el.getAttribute('aria-pressed') === 'true')
-    dayPunches.forEach(el => el.setAttribute('aria-pressed', allActive ? 'false' : 'true'))
-    this.afterToggle()
+    this.toggleGroup(this.punchesByDate.get(event.currentTarget.dataset.date))
   }
 
   toggleUser (event) {
-    const slug = event.currentTarget.dataset.userSlug
-    const userPunches = this.punchTargets.filter(el => el.dataset.userSlug === slug)
-    if (userPunches.length === 0) return
-    const allActive = userPunches.every(el => el.getAttribute('aria-pressed') === 'true')
-    userPunches.forEach(el => el.setAttribute('aria-pressed', allActive ? 'false' : 'true'))
+    this.toggleGroup(this.punchesByUser.get(event.currentTarget.dataset.userSlug))
+  }
+
+  toggleGroup (targets) {
+    if (!targets || targets.length === 0) return
+    const allActive = targets.every(el => el.getAttribute('aria-pressed') === 'true')
+    targets.forEach(el => el.setAttribute('aria-pressed', allActive ? 'false' : 'true'))
     this.afterToggle()
   }
 
@@ -76,16 +88,16 @@ export default class extends Controller {
 
   syncRidgeBars () {
     this.ridgeBarTargets.forEach(bar => {
-      const dayPunches = this.punchTargets.filter(el => el.dataset.date === bar.dataset.date)
-      const allActive = dayPunches.length > 0 && dayPunches.every(el => el.getAttribute('aria-pressed') === 'true')
+      const targets = this.punchesByDate.get(bar.dataset.date) || []
+      const allActive = targets.length > 0 && targets.every(el => el.getAttribute('aria-pressed') === 'true')
       bar.setAttribute('aria-pressed', allActive ? 'true' : 'false')
     })
   }
 
   syncUserButtons () {
     this.userButtonTargets.forEach(btn => {
-      const userPunches = this.punchTargets.filter(el => el.dataset.userSlug === btn.dataset.userSlug)
-      const allActive = userPunches.length > 0 && userPunches.every(el => el.getAttribute('aria-pressed') === 'true')
+      const targets = this.punchesByUser.get(btn.dataset.userSlug) || []
+      const allActive = targets.length > 0 && targets.every(el => el.getAttribute('aria-pressed') === 'true')
       btn.setAttribute('aria-pressed', allActive ? 'true' : 'false')
     })
   }
@@ -96,7 +108,7 @@ export default class extends Controller {
         .filter(el => el.getAttribute('aria-pressed') === 'true')
         .map(el => el.dataset.punchId)
     )
-    this.element.querySelectorAll('[data-punch-activities-for]').forEach(el => {
+    this.activityEls.forEach(el => {
       el.classList.toggle('hidden!', !activeIds.has(el.dataset.punchActivitiesFor))
     })
   }
@@ -112,27 +124,20 @@ export default class extends Controller {
       .filter(el => el.getAttribute('aria-pressed') === 'true')
       .forEach(el => {
         const slug = el.dataset.userSlug
-        const day = this.dayOf(el)
         if (!byUser.has(slug)) byUser.set(slug, [])
-        byUser.get(slug).push(day)
+        byUser.get(slug).push(el._punchDay)
       })
     const encoded = Array.from(byUser, ([slug, days]) =>
       `${slug}:${days.sort((a, b) => a - b).join(',')}`
     ).join(';')
     const url = new URL(window.location.href)
+    const current = url.searchParams.get('selected') ?? ''
+    if (encoded === current) return
     if (encoded) {
       url.searchParams.set('selected', encoded)
     } else {
       url.searchParams.delete('selected')
     }
     window.history.replaceState(null, '', url)
-  }
-
-  punchKey (el) {
-    return `${el.dataset.userSlug}:${this.dayOf(el)}`
-  }
-
-  dayOf (el) {
-    return parseInt(el.dataset.date.slice(-2), 10)
   }
 }

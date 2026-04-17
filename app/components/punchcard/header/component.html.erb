@@ -28,11 +28,11 @@
     <div>
       <div class="<%= meta_num_class %>">
         <span class="unit-imperial">
-          <%= number_with_delimiter(@total_miles.to_i) %>
+          <%= number_display(total_miles) %>
         </span>
 
         <span class="unit-metric hidden">
-          <%= number_with_delimiter(total_km.to_i) %>
+          <%= number_display(total_km) %>
         </span>
       </div>
 
@@ -44,19 +44,19 @@
 
     <div>
       <div class="<%= meta_num_class %>">
-        <% if @total_feet >= 1_000 %>
+        <% if total_feet >= 1_000 %>
           <span class="unit-imperial">
-            <%= thousands_display(@total_feet) %>
+            <%= thousands_display(total_feet) %>
           </span>
           <span class="unit-metric hidden">
             <%= thousands_display(total_meters) %>
           </span>
         <% else %>
           <span class="unit-imperial">
-            <%= number_with_delimiter(@total_feet.to_i) %>
+            <%= number_display(total_feet) %>
           </span>
           <span class="unit-metric hidden">
-            <%= number_with_delimiter(total_meters.to_i) %>
+            <%= number_display(total_meters) %>
           </span>
         <% end %>
       </div>
