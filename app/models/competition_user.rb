@@ -103,7 +103,7 @@ class CompetitionUser < ApplicationRecord
   end
 
   def current_timezone
-    competition_activities.reorder(start_at: :desc).first&.timezone || "America/Los_Angeles"
+    competition_activities.start_ordered.last&.timezone || "America/Los_Angeles"
   end
 
   def update_score_data!
