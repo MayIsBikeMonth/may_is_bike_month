@@ -1,5 +1,4 @@
 require "nokogiri"
-require "set"
 
 USERS_2025 = {
   "2430215" => {strava_username: "sethherr", display_name: "seth herr", role: :developer},
@@ -47,7 +46,7 @@ USERS_2025.each do |strava_id, attrs|
 
     timezone = "(GMT-08:00) America/Los_Angeles"
     local_start = date.strftime("%Y-%m-%dT12:00:00Z")
-    utc_start = (Time.utc(date.year, date.month, date.day, 19)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    utc_start = Time.utc(date.year, date.month, date.day, 19).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     strava_data = {
       "id" => activity_strava_id.to_i,
