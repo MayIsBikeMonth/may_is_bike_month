@@ -11,6 +11,13 @@ Rails.application.routes.draw do
 
   get "up" => "rails/health#show", :as => :rails_health_check
 
+  resources :webhooks, only: [] do
+    collection do
+      get :strava
+      post :strava
+    end
+  end
+
   resources :competitions, only: %i[show]
   resources :competitions_original, only: %i[show]
 
