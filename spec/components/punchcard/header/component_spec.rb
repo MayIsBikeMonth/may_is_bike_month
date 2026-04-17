@@ -67,6 +67,8 @@ RSpec.describe Punchcard::Header::Component, type: :component do
   context "when the competition is current (April 2026, today 2026-04-16)" do
     let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2026-04-01")) }
 
+    around { |example| travel_to(Date.parse("2026-04-16")) { example.run } }
+
     it "shows Days Left to the left of Riders" do
       labels = rendered.css("div.text-\\[10px\\]").map(&:text).map(&:squish)
       expect(labels.first).to eq "DaysLeft"

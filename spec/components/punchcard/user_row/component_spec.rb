@@ -76,6 +76,8 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
     let(:period_date_strings) { (competition.start_date..competition.end_date).map(&:to_s) }
     let(:user_daily) { {} }
 
+    around { |example| travel_to(Time.zone.local(2026, 4, 16, 12)) { example.run } }
+
     it "renders empty spans for today and future, punchcard-cells for past days" do
       cells = rendered.css("div.h-7 > span")
       expect(cells.count).to eq 30
