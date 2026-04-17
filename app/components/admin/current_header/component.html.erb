@@ -13,7 +13,7 @@
       <em>
         &ndash; view for
         <% if @searchable_competitions.present? %>
-          <%= select_tag :search_competition_id, options_for_select(@searchable_competitions.map { |s| [s.display_name, s.id] }, @competition_subject&.id), prompt: "Choose competition", class: "updateOnChange mx-1", "data-updateUrl" => url_for(@s_params.merge(search_competition_id: "UpdateThis")) %>
+          <%= select_tag :search_competition_id, options_for_select(@searchable_competitions.map { |s| [s.display_name, s.id] }, @competition_subject&.id), prompt: "Choose competition", class: "cursor-pointer updateOnChange mx-1", "data-updateUrl" => url_for(@s_params.merge(search_competition_id: "UpdateThis")) %>
           <% unless @competition_subject.blank? %>
             or for
           <% end %>
