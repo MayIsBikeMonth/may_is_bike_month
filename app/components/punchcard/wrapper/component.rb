@@ -17,7 +17,7 @@ module Punchcard::Wrapper
     end
 
     def self.level_thresholds(competition)
-      {1 => meters_to_miles(competition.daily_distance_requirement).ceil}.merge(LEVEL_THRESHOLDS_MILES)
+      {1 => meters_to_miles(competition.daily_distance_requirement)}.merge(LEVEL_THRESHOLDS_MILES)
     end
 
     def initialize(competition:, competition_users:, updated_at: nil, competitions: [])

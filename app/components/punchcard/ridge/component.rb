@@ -16,9 +16,10 @@ module Punchcard::Ridge
         miles = meters_to_miles(day[:distance_meters])
         feet = meters_to_feet(day[:elevation_meters])
         height = (day[:distance_meters] / max_distance) * 100
+        day_of_week = Date.parse(day[:date_string]).strftime("%A")
         {
           height:,
-          title: "#{miles.round(1)} mi\n#{number_with_delimiter(feet.to_i)} ft"
+          title: "#{day_of_week}\n#{miles.round(1)} mi\n#{number_with_delimiter(feet.to_i)} ft"
         }
       end
     end

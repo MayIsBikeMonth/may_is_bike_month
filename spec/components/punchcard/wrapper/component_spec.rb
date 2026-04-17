@@ -6,8 +6,10 @@ RSpec.describe Punchcard::Wrapper::Component, type: :component do
   let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2025-05-01")) }
 
   describe ".level_thresholds" do
-    it "derives level 1 by ceiling the competition daily distance requirement in miles" do
-      expect(described_class.level_thresholds(competition)).to eq(1 => 3, 2 => 9, 3 => 20, 4 => 40, 5 => 62.14)
+    it "derives level 1 from the competition daily distance requirement in miles" do
+      thresholds = described_class.level_thresholds(competition)
+      expect(thresholds[1]).to be_within(0.001).of(2.0002)
+      expect(thresholds.slice(2, 3, 4, 5)).to eq(2 => 9, 3 => 20, 4 => 40, 5 => 62.14)
     end
   end
 

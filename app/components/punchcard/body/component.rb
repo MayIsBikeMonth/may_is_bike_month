@@ -22,6 +22,7 @@ module Punchcard::Body
     def daily_totals
       @daily_totals ||= period_date_strings.map do |date_string|
         {
+          date_string:,
           distance_meters: sum_across_users(:distance_meters, date_string),
           elevation_meters: sum_across_users(:elevation_meters, date_string)
         }
