@@ -1,17 +1,26 @@
 import { Controller } from '@hotwired/stimulus'
 
 // Connects to data-controller="punch"
-// Any number of punches can be active. Active punches are encoded in the URL
-// as `?punches=ID,ID,...` and restored on load. History is not pushed.
+// Active punches are encoded in the URL as
+//   ?selected=userSlug:day,day;userSlug:day,...
+// and restored on load. History is not pushed.
 // Elements with `data-punch-activities-for="<id>"` are revealed when the
 // matching punch is active.
 export default class extends Controller {
   static targets = ['punch', 'ridgeBar', 'userButton', 'hideAllBtn']
 
   connect () {
-    const ids = new URLSearchParams(window.location.search).get('punches')?.split(',') || []
+    const selected = new URLSearchParams(window.location.search).get('selected')
+    const active = new Set()
+    if (selected) {
+      selected.split(';').forEach(group => {
+        const [slug, daysStr] = group.split(':')
+        if (!slug || !daysStr) return
+        daysStr.split(',').forEach(day => active.add(`${slug}:${parseInt(day, 10)}`))
+      })
+    }
     this.punchTargets.forEach(el => {
-      if (ids.includes(el.dataset.punchId)) {
+      if (active.has(this.punchKey(el))) {
         el.setAttribute('aria-pressed', 'true')
       }
     })
@@ -98,15 +107,32 @@ export default class extends Controller {
   }
 
   updateUrl () {
-    const activeIds = this.punchTargets
+    const byUser = new Map()
+    this.punchTargets
       .filter(el => el.getAttribute('aria-pressed') === 'true')
-      .map(el => el.dataset.punchId)
+      .forEach(el => {
+        const slug = el.dataset.userSlug
+        const day = this.dayOf(el)
+        if (!byUser.has(slug)) byUser.set(slug, [])
+        byUser.get(slug).push(day)
+      })
+    const encoded = Array.from(byUser, ([slug, days]) =>
+      `${slug}:${days.sort((a, b) => a - b).join(',')}`
+    ).join(';')
     const url = new URL(window.location.href)
-    if (activeIds.length > 0) {
-      url.searchParams.set('punches', activeIds.join(','))
+    if (encoded) {
+      url.searchParams.set('selected', encoded)
     } else {
-      url.searchParams.delete('punches')
+      url.searchParams.delete('selected')
     }
     window.history.replaceState(null, '', url)
+  }
+
+  punchKey (el) {
+    return `${el.dataset.userSlug}:${this.dayOf(el)}`
+  }
+
+  dayOf (el) {
+    return parseInt(el.dataset.date.slice(-2), 10)
   }
 }

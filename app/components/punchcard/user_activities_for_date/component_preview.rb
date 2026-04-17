@@ -6,14 +6,35 @@ module Punchcard::UserActivitiesForDate
     def default
       render_with_template(
         template: "punchcard/user_activities_for_date/component_preview/default",
-        locals: {activities: sample_activities}
+        locals: {
+          dates: [
+            {date_string: "2025-05-15", activities: sample_activities, punch_id: "sample-2025-05-15"}
+          ]
+        }
       )
     end
 
     def single_activity
       render_with_template(
         template: "punchcard/user_activities_for_date/component_preview/default",
-        locals: {activities: [sample_activities.first]}
+        locals: {
+          dates: [
+            {date_string: "2025-05-15", activities: [sample_activities.first], punch_id: "sample-2025-05-15"}
+          ]
+        }
+      )
+    end
+
+    def multiple_dates
+      render_with_template(
+        template: "punchcard/user_activities_for_date/component_preview/default",
+        locals: {
+          dates: [
+            {date_string: "2025-05-15", activities: [sample_activities[0]], punch_id: "sample-2025-05-15"},
+            {date_string: "2025-05-16", activities: sample_activities[0..1], punch_id: "sample-2025-05-16"},
+            {date_string: "2025-05-20", activities: sample_activities, punch_id: "sample-2025-05-20"}
+          ]
+        }
       )
     end
     # @!endgroup
