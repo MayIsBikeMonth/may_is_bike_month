@@ -9,6 +9,7 @@ export default class extends Controller {
   connect () {
     // Don't override Lookbook's display theme setting on connect
     if (window.inComponentPreview) return
+    if (!this.currentValue) return
     this.applyTheme(this.currentValue)
     this.highlightActive()
   }
@@ -44,10 +45,8 @@ export default class extends Controller {
   highlightActive () {
     this.optionTargets.forEach(el => {
       const isActive = el.dataset.theme === this.currentValue
-      el.classList.toggle('ring-2', isActive)
-      el.classList.toggle('ring-purple-400', isActive)
-      el.classList.toggle('opacity-60', !isActive)
-      el.classList.toggle('opacity-100', isActive)
+      el.classList.toggle('option-active', isActive)
+      el.classList.toggle('option-inactive', !isActive)
     })
   }
 
