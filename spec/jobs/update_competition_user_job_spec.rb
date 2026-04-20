@@ -38,6 +38,13 @@ RSpec.describe UpdateCompetitionUserJob, type: :job do
       expect { described_class.enqueue_current }.not_to change(described_class.jobs, :count)
     end
 
+    it "triggers a punchcard refresh" do
+      expect(Punchcard::Wrapper::Component).to receive(:broadcast_refresh_current!)
+      VCR.use_cassette("update_competition_user_job", match_requests_on: [:path]) do
+        instance.perform(competition_user.id)
+      end
+    end
+
     context "data exists" do
       let(:time) { Time.current - 5.minutes }
       it "doesn't update" do

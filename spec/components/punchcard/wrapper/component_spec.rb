@@ -44,5 +44,60 @@ RSpec.describe Punchcard::Wrapper::Component, type: :component do
       rendered = render_inline(described_class.new(competition:, competition_users: []))
       expect(rendered.css("h1").text).to include competition.year.to_s
     end
+
+    context "with non-current competition" do
+      it "does not subscribe to a turbo stream" do
+        rendered = render_inline(described_class.new(competition:, competition_users: []))
+        expect(rendered.css("turbo-cable-stream-source")).to be_empty
+      end
+    end
+
+    context "with the current competition" do
+      let(:competition) { FactoryBot.create(:competition, current: true) }
+
+      it "subscribes to the wrapper turbo stream" do
+        rendered = render_inline(described_class.new(competition:, competition_users: []))
+        expect(rendered.css("turbo-cable-stream-source").length).to eq 1
+        expect(rendered.css("##{described_class.new(competition:, competition_users: []).id}")).not_to be_empty
+      end
+    end
+  end
+
+  describe "#broadcast_refresh!" do
+    let(:competition) { FactoryBot.create(:competition, current: true) }
+    let(:component) { described_class.new(competition:, competition_users: []) }
+
+    it "broadcasts a replace to the wrapper channel" do
+      expect(Turbo::StreamsChannel).to receive(:broadcast_replace_to).with(
+        component.broadcast_channel,
+        target: component.id,
+        renderable: component,
+        layout: false
+      )
+      component.broadcast_refresh!
+    end
+  end
+
+  describe ".broadcast_refresh_current!" do
+    context "without a current competition" do
+      it "does not broadcast" do
+        expect(Turbo::StreamsChannel).not_to receive(:broadcast_replace_to)
+        described_class.broadcast_refresh_current!
+      end
+    end
+
+    context "with a current competition" do
+      let!(:current_competition) { FactoryBot.create(:competition, current: true) }
+
+      it "broadcasts a replace using the current competition channel" do
+        expect(Turbo::StreamsChannel).to receive(:broadcast_replace_to) do |channel, target:, renderable:, layout:|
+          expect(channel).to eq [current_competition, :punchcard_wrapper]
+          expect(target).to eq renderable.id
+          expect(renderable).to be_a(described_class)
+          expect(layout).to be false
+        end
+        described_class.broadcast_refresh_current!
+      end
+    end
   end
 end
