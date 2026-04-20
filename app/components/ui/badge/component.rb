@@ -2,7 +2,7 @@
 
 module UI::Badge
   class Component < ApplicationComponent
-    BASE_CLASSES = "inline-flex border items-center leading-4 rounded-full cursor-default"
+    BASE_CLASSES = "inline-flex border items-center leading-4 rounded-full"
 
     SIZES = {
       sm: "text-xs font-medium px-1 py-px",
@@ -24,20 +24,29 @@ module UI::Badge
       empty: "bg-white text-gray-700 border-gray-300 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-600"
     }.freeze
 
-    def self.badge_classes(color:, size:)
-      [BASE_CLASSES, COLORS[color], SIZES[size]].join(" ")
+    def self.badge_classes(color:, size:, cursor: "cursor-default")
+      [BASE_CLASSES, cursor, COLORS[color], SIZES[size]].join(" ")
     end
 
     def initialize(text:, title: nil, color: :gray, size: :md)
       @text = text
-      @title = title || text
+      @title = title
       @color = COLORS.key?(color) ? color : :gray
       @size = SIZES.include?(size) ? size : :md
     end
 
-    def call
-      content_tag(:span, content.presence || @text,
-        class: self.class.badge_classes(color: @color, size: @size), title: @title)
+    private
+
+    def custom_title?
+      @title.present? && @title != @text
+    end
+
+    def badge_class
+      self.class.badge_classes(color: @color, size: @size, cursor: custom_title? ? "cursor-help" : "cursor-default")
+    end
+
+    def badge_content
+      content.presence || @text
     end
   end
 end
