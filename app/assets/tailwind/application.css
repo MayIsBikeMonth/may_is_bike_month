@@ -140,9 +140,9 @@
   }
   .punchcard-cell[data-l="1"] { @apply bg-purple-200 dark:bg-purple-900; }
   .punchcard-cell[data-l="2"] { @apply bg-purple-300 dark:bg-purple-800; }
-  .punchcard-cell[data-l="3"] { @apply bg-purple-400 dark:bg-purple-700 shadow-[0_0_6px_rgba(83,46,110,0.45)]; }
-  .punchcard-cell[data-l="4"] { @apply bg-purple-500 dark:bg-purple-600 shadow-[0_0_10px_rgba(110,61,147,0.6)]; }
-  .punchcard-cell[data-l="5"] { @apply bg-purple-600 dark:bg-purple-500 shadow-[0_0_14px_rgba(138,76,184,0.75)]; }
+  .punchcard-cell[data-l="3"] { @apply bg-purple-400 dark:bg-purple-700 shadow-[0_0_5px_rgba(83,46,110,0.3)] dark:shadow-[0_0_6px_rgba(83,46,110,0.45)]; }
+  .punchcard-cell[data-l="4"] { @apply bg-purple-500 dark:bg-purple-600 shadow-[0_0_8px_rgba(110,61,147,0.4)] dark:shadow-[0_0_10px_rgba(110,61,147,0.6)]; }
+  .punchcard-cell[data-l="5"] { @apply bg-purple-600 dark:bg-purple-500 shadow-[0_0_12px_rgba(138,76,184,0.5)] dark:shadow-[0_0_14px_rgba(138,76,184,0.75)]; }
 
   .punchcard-cell:not([data-l])::before,
   .punchcard-cell:not([data-l])::after {

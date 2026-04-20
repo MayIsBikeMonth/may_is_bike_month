@@ -32,12 +32,11 @@
     <span class="uppercase">more</span>
   </div>
 
-  <div class="uppercase">
-    <% if @updated_at %>
-      updated
-      <%= render(UI::Time::Component.new(time: @updated_at)) %>
-    <% end %>
-  </div>
+  <% if @updated_at %>
+    <div>
+      updated <%= render(UI::Time::Component.new(time: @updated_at)) %>
+    </div>
+  <% end %>
 </div>
 
 <% if @competitions.many? %>
