@@ -103,7 +103,12 @@
     </div>
   </div>
 
-  <div class="columns-1 md:columns-2 lg:columns-3 [column-gap:1.5rem] mb-2 text-[12px] mt-2 max-lg:mt-4">
+  <div
+    class="
+      punch-activities-container hidden! columns-1 md:columns-2 lg:columns-3
+      [column-gap:1.5rem] mb-2 text-[12px] mt-2 max-lg:mt-4
+    "
+  >
     <% activities_by_date.each do |date_string, activities| %>
       <%= render(Punchcard::UserActivitiesForDate::Component.new(
         date_string:,

@@ -182,4 +182,28 @@
       grid-column-start: var(--start-col, 4);
     }
   }
+
+  [data-punch-activities-for],
+  .punch-activities-container {
+    transition:
+      opacity 250ms ease,
+      transform 250ms ease,
+      display 250ms allow-discrete;
+  }
+  [data-punch-activities-for].hidden\!,
+  .punch-activities-container.hidden\! {
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      opacity 120ms ease,
+      transform 120ms ease,
+      display 120ms allow-discrete;
+  }
+  @starting-style {
+    [data-punch-activities-for]:not(.hidden\!),
+    .punch-activities-container:not(.hidden\!) {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
 }
