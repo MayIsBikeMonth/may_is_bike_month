@@ -4,6 +4,6 @@ class CompetitionsController < ApplicationController
     @competition_users = @competition.competition_users_included
       .includes(:user, :competition_activities_included).score_ordered
     @competitions = Competition.start_ordered_desc
-    @page_title = "May is Bike Month #{@competition}"
+    @page_title = @competition.display_name
   end
 end

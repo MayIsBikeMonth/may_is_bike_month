@@ -62,7 +62,7 @@
       <%= render(UserDropdown::Component.new(current_user:)) %>
     <% end %>
 
-    <div class="<%= "px-4 pb-10 pt-4" if in_admin? %>">
+    <div class="<%= "wrapper-padding pb-10 pt-4" if in_admin? %>">
       <%= yield %>
     </div>
 

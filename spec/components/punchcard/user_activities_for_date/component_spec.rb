@@ -29,11 +29,13 @@ RSpec.describe Punchcard::UserActivitiesForDate::Component, type: :component do
   end
   let(:rendered) { render_inline(component) }
 
-  it "renders a container keyed by punch_id, hidden by default, inline-flex" do
+  it "renders a container keyed by punch_id, hidden by default, with hanging indent" do
     container = rendered.css("[data-punch-activities-for]").first
     expect(container.attr("data-punch-activities-for")).to eq "sam-2025-05-03"
     expect(container.attr("class")).to include "hidden"
-    expect(container.attr("class")).to include "inline-flex"
+    expect(container.attr("class")).to include "pl-9"
+    expect(container.attr("class")).to include "-indent-9"
+    expect(container.attr("class")).to include "break-inside-avoid"
   end
 
   it "shows the short date exactly once" do

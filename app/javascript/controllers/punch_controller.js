@@ -111,6 +111,11 @@ export default class extends Controller {
     this.activityEls.forEach(el => {
       el.classList.toggle('hidden!', !activeIds.has(el.dataset.punchActivitiesFor))
     })
+    const containers = new Set(this.activityEls.map(el => el.parentElement))
+    containers.forEach(container => {
+      const anyVisible = Array.from(container.children).some(child => !child.classList.contains('hidden!'))
+      container.classList.toggle('hidden!', !anyVisible)
+    })
   }
 
   syncHideAllButton () {
