@@ -1,7 +1,3 @@
-<h1 class="mb-4">
-  Admin Strava Requests
-</h1>
-
 <%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, competition_subject: nil, searchable_competitions: nil, render_period: false, s_params: sortable_params, render_chart: @render_chart, chart_collection: @matching_strava_requests, time_range: @time_range)) %>
 
 <%# Local var because cell blocks run via instance_exec in the table component context %>

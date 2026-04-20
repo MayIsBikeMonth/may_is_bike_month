@@ -16,12 +16,16 @@ module Admin
         @time_range_column = time_range_column
       end
 
+      def title
+        "Admin #{@viewing}".titleize
+      end
+
       def chart_toggle_url
         url_for(@s_params.merge(render_chart: !@render_chart))
       end
 
       def chart_toggle_class
-        "twlink #{"font-bold" if @render_chart}"
+        "twlink #{"active" if @render_chart}"
       end
 
       def render_chart?

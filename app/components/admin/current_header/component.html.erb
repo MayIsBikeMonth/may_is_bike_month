@@ -1,4 +1,13 @@
 <div class="mb-6" data-controller="admin--current-header--component">
+  <div class="flex justify-between items-baseline mb-4 gap-4">
+    <h1><%= title %></h1>
+
+    <div class="flex items-baseline gap-4">
+      <%= content if content.present? %>
+      <%= link_to "graph", chart_toggle_url, class: chart_toggle_class %>
+    </div>
+  </div>
+
   <p class="mb-2">
     <%= @viewing %>
 
@@ -25,11 +34,6 @@
         </em>
       </span>
     <% end %>
-
-    <span class="ml-2">
-      &middot;
-      <%= link_to "graph", chart_toggle_url, class: chart_toggle_class %>
-    </span>
   </p>
 
   <% if render_chart? %>
