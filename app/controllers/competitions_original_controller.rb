@@ -6,6 +6,5 @@ class CompetitionsOriginalController < ApplicationController
     raise ActionController::RoutingError, "Not Found" unless AVAILABLE_YEARS.include?(@year)
     @competitions = AVAILABLE_YEARS.reverse.map { |y| Competition.new(start_date: Date.new(y.to_i, 5, 1)) }
     @page_title = "May is Bike Month #{@year}"
-    @skip_wrapper_class = true
   end
 end

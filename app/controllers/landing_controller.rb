@@ -5,7 +5,6 @@ class LandingController < ApplicationController
       .includes(:user, :competition_activities_included).score_ordered
     @page_title = "May is Bike Month"
     @competitions = Competition.start_ordered_desc
-    @skip_wrapper_class = true
   end
 
   def update_strava

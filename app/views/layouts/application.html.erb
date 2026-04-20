@@ -62,7 +62,7 @@
       <%= render(UserDropdown::Component.new(current_user:)) %>
     <% end %>
 
-    <div class="<%= @skip_wrapper_class ? "" : "wrapper-class" %>">
+    <div class="<%= "px-4 pb-10 pt-4" if in_admin? %>">
       <%= yield %>
     </div>
 

@@ -11,9 +11,8 @@
 <% show_dev_info = display_dev_info? %>
 
 <%= render(UI::Table::Component.new(records: @competitions, render_sortable: true)) do |table|
-  table.column(sortable: "start_date") do |competition|
-    safe_join([competition.start_date.to_s,
-      (tag.code(competition.id, class: "only-dev-visible-small") if show_dev_info)].compact)
+  table.column(sortable: "start_date", lower_right: (->(c) { c.id } if show_dev_info)) do |competition|
+    competition.start_date.to_s
   end
 
   table.column(sortable: "end_date") do |competition|

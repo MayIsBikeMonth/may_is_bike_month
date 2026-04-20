@@ -5,6 +5,5 @@ class CompetitionsController < ApplicationController
       .includes(:user, :competition_activities_included).score_ordered
     @competitions = Competition.start_ordered_desc
     @page_title = "May is Bike Month #{@competition}"
-    @skip_wrapper_class = true
   end
 end
