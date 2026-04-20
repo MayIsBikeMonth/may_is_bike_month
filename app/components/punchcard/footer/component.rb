@@ -14,7 +14,12 @@ module Punchcard::Footer
 
     def swatches
       pairs = Punchcard::Wrapper::Component.level_thresholds(@competition).to_a
-      pairs.map.with_index do |(level, min_mi), i|
+      below_min = {
+        level: nil,
+        title_imperial: not_counted_title("mi", meters_to_miles(@competition.daily_distance_requirement)),
+        title_metric: not_counted_title("km", @competition.daily_distance_requirement / 1000.0)
+      }
+      levels = pairs.map.with_index do |(level, min_mi), i|
         next_mi = pairs[i + 1]&.last
         {
           level:,
@@ -22,6 +27,11 @@ module Punchcard::Footer
           title_metric: range_title(min_mi * MILE_KM, next_mi&.*(MILE_KM), "km")
         }
       end
+      [below_min, *levels]
+    end
+
+    def not_counted_title(unit, distance)
+      "Didn't ride required #{distance.round} #{unit}"
     end
 
     def range_title(min, next_min, unit)

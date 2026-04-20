@@ -7,23 +7,17 @@
   <div class="flex items-center gap-2">
     <span class="uppercase">less</span>
 
-    <span class="inline-grid grid-cols-5 gap-1">
+    <span class="inline-grid grid-cols-6 gap-1">
       <% swatches.each do |swatch| %>
         <span class="unit-imperial">
           <%= render(UI::Tooltip::Component.new(text: swatch[:title_imperial])) do %>
-            <i
-              class="punchcard-cell block h-5 w-5 cursor-help"
-              data-l="<%= swatch[:level] %>"
-            ></i>
+            <i class="punchcard-cell block h-5 w-5 cursor-help" <% if swatch[:level] %> data-l="<%= swatch[:level] %>" <% end %>></i>
           <% end %>
         </span>
 
         <span class="unit-metric hidden">
           <%= render(UI::Tooltip::Component.new(text: swatch[:title_metric])) do %>
-            <i
-              class="punchcard-cell block h-5 w-5 cursor-help"
-              data-l="<%= swatch[:level] %>"
-            ></i>
+            <i class="punchcard-cell block h-5 w-5 cursor-help" <% if swatch[:level] %> data-l="<%= swatch[:level] %>" <% end %>></i>
           <% end %>
         </span>
       <% end %>
