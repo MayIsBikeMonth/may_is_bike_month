@@ -14,7 +14,7 @@ RSpec.describe SettingsModal::Component, :js, type: :system do
     expect(page).to have_content("Theme")
     expect(page).to have_content("Units")
 
-    find("button[data-action='click->modal#close']").click
+    find("button[data-action='click->ui--modal#close']").click
 
     expect(page).to have_no_css("dialog[open]")
   end

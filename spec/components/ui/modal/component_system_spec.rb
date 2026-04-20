@@ -15,7 +15,7 @@ RSpec.describe UI::Modal::Component, :js, type: :system do
       expect(page).to have_content("Modal body content")
       expect(page).to be_axe_clean.skipping(SKIPPABLE_AXE_RULES)
 
-      find("button[data-action='click->modal#close']").click
+      find("button[data-action='click->ui--modal#close']").click
 
       expect(page).to have_no_css("dialog[open]")
     end
