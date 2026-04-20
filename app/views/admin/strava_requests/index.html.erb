@@ -8,9 +8,8 @@
 <% show_dev_info = display_dev_info? %>
 
 <%= render(UI::Table::Component.new(records: @strava_requests, render_sortable: true)) do |table|
-  table.column(sortable: "created_at") do |strava_request|
-    safe_join([render(UI::Time::Component.new(time: strava_request.created_at)),
-      (tag.code(strava_request.id, class: "only-dev-visible-small") if show_dev_info)].compact)
+  table.column(sortable: "created_at", lower_right: (->(sr) { sr.id } if show_dev_info)) do |strava_request|
+    render(UI::Time::Component.new(time: strava_request.created_at))
   end
 
   table.column(sortable: "user_id", label: "User") do |strava_request|

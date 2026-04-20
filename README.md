@@ -69,3 +69,54 @@ Requires [GitHub CLI](https://cli.github.com/) (`gh`), [1Password CLI](https://d
 ```bash
 bin/kamal deploy
 ```
+
+CI also deploys from `main` via `.github/workflows/ruby.yml` — secrets there are pulled from repo GitHub Actions secrets rather than 1Password.
+
+### Accessing the running app
+
+From the project root:
+
+```bash
+bin/kamal shell    # bash in the web container
+bin/kamal console  # rails console
+bin/kamal dbc      # rails dbconsole
+bin/kamal logs     # tail web logs
+bin/kamal app logs -r worker -f   # tail sidekiq logs
+```
+
+For host-level access (Docker, disk, systemd), SSH directly to the droplet (IP in `config/deploy.yml`):
+
+```bash
+ssh root@<server_ip>
+```
+
+### Adding a new secret ENV var
+
+Secrets need to be added in six places. Using `EXAMPLE_TOKEN` as the var name:
+
+1. 1Password — add `EXAMPLE_TOKEN` to the `Kamal/MayIsBikeMonth` item in the `bike-index` account.
+2. GitHub Actions — add `EXAMPLE_TOKEN` as a repo secret (Settings → Secrets and variables → Actions) so CI deploys can inject it.
+3. `config/deploy.yml` — add to the `env.secret` list.
+4. `.kamal/secrets` — add to the `kamal secrets fetch` args and add a matching `extract` line.
+5. `.kamal/secrets-ci` — add a `EXAMPLE_TOKEN=$EXAMPLE_TOKEN` passthrough line.
+6. `.github/workflows/ruby.yml` — add `EXAMPLE_TOKEN: ${{ secrets.EXAMPLE_TOKEN }}` to the deploy step env block.
+
+### Initial production setup
+
+One-time steps after the droplet and secrets are in place:
+
+```bash
+bin/kamal setup                    # first deploy (provisions accessories, etc.)
+```
+
+Strava webhooks must be registered once per environment. In a production rails console (`bin/kamal console`):
+
+```ruby
+StravaIntegration.create_webhook_subscription
+# Check existing subscriptions:
+StravaIntegration.view_webhook_subscriptions
+# To remove one:
+StravaIntegration.delete_webhook_subscription(subscription_id)
+```
+
+Strava will POST activity updates to `/webhooks/strava`, authenticated against `STRAVA_WEBHOOK_VERIFY_TOKEN`. Only one subscription can exist per Strava app — if you rotate `STRAVA_WEBHOOK_VERIFY_TOKEN`, delete and recreate the subscription.

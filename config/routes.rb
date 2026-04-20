@@ -21,7 +21,7 @@ Rails.application.routes.draw do
   resources :competitions, only: %i[show]
   resources :competitions_original, only: %i[show]
 
-  resource :account, only: %i[edit update]
+  resource :account, only: %i[update]
 
   namespace :admin do
     root to: "competition_users#index"
