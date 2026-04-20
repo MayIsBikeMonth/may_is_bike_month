@@ -4,10 +4,20 @@ import { computePosition, flip, shift, offset, autoUpdate } from '@floating-ui/d
 let topZIndex = 50
 
 // Connects to data-controller="ui--tooltip"
+//
+// State model: two independent flags, OR'd together.
+//   hoverActive       toggled by mouseenter/mouseleave
+//   persistentActive  toggled by focus / cleared by focusout or click-outside
+// The tooltip is visible whenever either flag is true.
 export default class extends Controller {
   static targets = ['trigger', 'tooltip']
   static values = {
     placement: { type: String, default: 'top' }
+  }
+
+  initialize () {
+    this.hoverActive = false
+    this.persistentActive = false
   }
 
   connect () {
@@ -15,48 +25,59 @@ export default class extends Controller {
   }
 
   disconnect () {
-    this.hide()
+    this.close()
   }
 
   showOnHover () {
-    if (this.shownBy === 'focus') return
-    this.shownBy = 'hover'
-    this.open()
+    this.hoverActive = true
+    this.sync()
   }
 
   hideOnHover () {
-    if (this.shownBy === 'hover') this.hide()
+    this.hoverActive = false
+    this.sync()
   }
 
   showOnFocus () {
-    this.shownBy = 'focus'
-    this.open()
+    this.persistentActive = true
     document.addEventListener('click', this.clickOutside)
+    this.sync()
   }
 
   hideOnFocusout () {
-    if (this.shownBy === 'focus') this.hide()
+    this.persistentActive = false
+    this.sync()
+  }
+
+  clickOutside (event) {
+    if (this.element.contains(event.target)) return
+    this.persistentActive = false
+    this.sync()
+  }
+
+  sync () {
+    if (this.hoverActive || this.persistentActive) this.open()
+    else this.close()
   }
 
   open () {
+    if (this.isOpen) return
+    this.isOpen = true
     topZIndex += 1
     this.tooltipTarget.style.zIndex = topZIndex
     this.tooltipTarget.classList.remove('hidden')
     this.cleanup = autoUpdate(this.triggerTarget, this.tooltipTarget, () => this.updatePosition())
   }
 
-  hide () {
+  close () {
+    if (!this.isOpen) return
+    this.isOpen = false
     this.tooltipTarget.classList.add('hidden')
-    this.shownBy = null
     document.removeEventListener('click', this.clickOutside)
     if (this.cleanup) {
       this.cleanup()
       this.cleanup = null
     }
-  }
-
-  clickOutside (event) {
-    if (!this.element.contains(event.target)) this.hide()
   }
 
   async updatePosition () {

@@ -36,6 +36,55 @@ RSpec.describe UI::Tooltip::Component, :js, type: :system do
     expect(tooltip).not_to be_visible
   end
 
+  it "stays visible when tabbed into while hovered, until focus and hover both clear" do
+    visit preview_url
+
+    tooltip = first("[role='tooltip']", visible: :all)
+    trigger = find("[aria-describedby='#{tooltip[:id]}']")
+
+    trigger.hover
+    expect(tooltip).to be_visible
+
+    page.execute_script("arguments[0].focus()", trigger)
+    expect(tooltip).to be_visible
+
+    find("body").hover
+    expect(tooltip).to be_visible
+
+    page.execute_script("arguments[0].blur()", trigger)
+    expect(tooltip).not_to be_visible
+  end
+
+  it "stays visible when hovered while focused, through mouseleave" do
+    visit preview_url
+
+    tooltip = first("[role='tooltip']", visible: :all)
+    trigger = find("[aria-describedby='#{tooltip[:id]}']")
+
+    page.execute_script("arguments[0].focus()", trigger)
+    trigger.hover
+    expect(tooltip).to be_visible
+
+    find("body").hover
+    expect(tooltip).to be_visible
+
+    page.execute_script("arguments[0].blur()", trigger)
+    expect(tooltip).not_to be_visible
+  end
+
+  it "click-outside only dismisses a focus-activated tooltip, not a hover-only one" do
+    visit preview_url
+
+    tooltip = first("[role='tooltip']", visible: :all)
+    trigger = find("[aria-describedby='#{tooltip[:id]}']")
+
+    trigger.hover
+    expect(tooltip).to be_visible
+
+    page.execute_script("document.body.click()")
+    expect(tooltip).to be_visible
+  end
+
   it "hides when focus moves to another element" do
     visit preview_url
 
