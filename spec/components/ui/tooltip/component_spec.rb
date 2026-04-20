@@ -22,6 +22,20 @@ RSpec.describe UI::Tooltip::Component, type: :component do
     expect(component.css("[aria-describedby]").attr("tabindex").value).to eq "0"
   end
 
+  context "with a body slot" do
+    let(:component) do
+      render_inline(described_class.new) do |tooltip|
+        tooltip.with_body { '<span class="unit-imperial">5 mi</span>'.html_safe }
+        "trigger".html_safe
+      end
+    end
+
+    it "renders the slot content in the tooltip body" do
+      tooltip = component.css("[role='tooltip']")
+      expect(tooltip.css(".unit-imperial").text).to eq "5 mi"
+    end
+  end
+
   context "with multiple instances" do
     let(:components) do
       [

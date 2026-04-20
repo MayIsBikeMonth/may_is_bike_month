@@ -2,11 +2,17 @@
 
 module UI::Tooltip
   class Component < ApplicationComponent
-    def initialize(text:)
+    renders_one :body
+
+    def initialize(text: nil)
       @text = text
     end
 
     private
+
+    def tooltip_body
+      body? ? body : @text
+    end
 
     def tooltip_id
       @tooltip_id ||= "tooltip-#{SecureRandom.hex(4)}"

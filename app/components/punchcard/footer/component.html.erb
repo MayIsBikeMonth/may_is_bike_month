@@ -9,17 +9,14 @@
 
     <span class="inline-grid grid-cols-6 gap-1">
       <% swatches.each do |swatch| %>
-        <span class="unit-imperial">
-          <%= render(UI::Tooltip::Component.new(text: swatch[:title_imperial])) do %>
-            <i class="punchcard-cell block h-5 w-5 cursor-help" <% if swatch[:level] %> data-l="<%= swatch[:level] %>" <% end %>></i>
+        <%= render(UI::Tooltip::Component.new) do |tooltip| %>
+          <% tooltip.with_body do %>
+            <span class="unit-imperial"><%= swatch[:title_imperial] %></span>
+            <span class="unit-metric hidden"><%= swatch[:title_metric] %></span>
           <% end %>
-        </span>
 
-        <span class="unit-metric hidden">
-          <%= render(UI::Tooltip::Component.new(text: swatch[:title_metric])) do %>
-            <i class="punchcard-cell block h-5 w-5 cursor-help" <% if swatch[:level] %> data-l="<%= swatch[:level] %>" <% end %>></i>
-          <% end %>
-        </span>
+          <i class="punchcard-cell block h-5 w-5 cursor-help" <% if swatch[:level] %> data-l="<%= swatch[:level] %>" <% end %>></i>
+        <% end %>
       <% end %>
     </span>
 
