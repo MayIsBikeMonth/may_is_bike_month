@@ -9,11 +9,11 @@
     <div class="flex items-center gap-2 min-w-0 max-lg:col-start-1 max-lg:row-start-1">
       <span
         class="
-          font-mono text-purple-300 dark:text-purple-400 text-[11px]
-          w-[22px] text-right shrink-0
+          font-mono font-bold text-purple-300 dark:text-purple-400 text-[13px]
+          text-left shrink-0
         "
       >
-        <%= format("%02d", @rank) %>
+        <%= @rank %>
       </span>
 
       <a
@@ -103,7 +103,7 @@
     </div>
   </div>
 
-  <div class="flex flex-wrap gap-x-3 gap-t-2 pb-2 text-[12px]">
+  <div class="columns-1 md:columns-2 lg:columns-3 [column-gap:1.5rem] mb-2 text-[12px] mt-2 max-lg:mt-4">
     <% activities_by_date.each do |date_string, activities| %>
       <%= render(Punchcard::UserActivitiesForDate::Component.new(
         date_string:,

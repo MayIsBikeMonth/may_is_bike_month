@@ -34,8 +34,8 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
   end
   let(:rendered) { render_inline(component) }
 
-  it "renders rank zero-padded" do
-    expect(rendered.text).to include "01"
+  it "renders the rank" do
+    expect(rendered.text).to include "1"
   end
 
   it "renders the user display name" do
