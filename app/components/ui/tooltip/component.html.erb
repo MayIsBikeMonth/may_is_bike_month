@@ -1,0 +1,31 @@
+<span class="ui-tooltip inline-block" data-controller="ui--tooltip">
+  <span
+    data-ui--tooltip-target="trigger"
+    data-action="
+      mouseenter->ui--tooltip#showOnHover
+      mouseleave->ui--tooltip#hideOnHover
+      focusin->ui--tooltip#showOnFocus
+    "
+    tabindex="0"
+    aria-describedby="<%= tooltip_id %>"
+    class="
+      inline-block rounded focus:outline-none focus-visible:ring-2
+      focus-visible:ring-purple-400
+    "
+  >
+    <%= content %>
+  </span>
+
+  <span
+    data-ui--tooltip-target="tooltip"
+    role="tooltip"
+    id="<%= tooltip_id %>"
+    class="
+      hidden pointer-events-none whitespace-nowrap rounded bg-purple-900 px-2
+      py-1 text-xs text-white shadow-sm z-50
+      dark:bg-purple-100 dark:text-purple-900
+    "
+  >
+    <%= @text %>
+  </span>
+</span>

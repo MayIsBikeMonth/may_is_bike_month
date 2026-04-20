@@ -1,13 +1,23 @@
 <div
   class="
     flex justify-between mt-7 text-purple-300 dark:text-purple-400 font-mono
-    text-[13px] uppercase tracking-[0.12em]
+    text-[13px] tracking-[0.12em]
   "
 >
   <div class="flex items-center gap-2">
-    less
-    <span class="inline-grid grid-cols-5 gap-1"><% swatches.each do |swatch| %>      <i        class="unit-imperial block h-5 w-5 rounded cursor-help <%= swatch[:color_class] %>"        title="<%= swatch[:title_imperial] %>"      ></i>      <i        class="unit-metric hidden h-5 w-5 rounded cursor-help <%= swatch[:color_class] %>"        title="<%= swatch[:title_metric] %>"      ></i><% end %></span>
-    more
+    <span class="uppercase">less</span>
+
+    <span class="inline-grid grid-cols-5 gap-1">
+      <% swatches.each do |swatch| %>
+        <span class="unit-imperial">
+          <%= render(UI::Tooltip::Component.new(text: swatch[:title_imperial])) do %>
+            <i class="block h-5 w-5 rounded cursor-help <%= swatch[:color_class] %>"></i>
+          <% end %>
+        </span><span class="unit-metric hidden"><%= render(UI::Tooltip::Component.new(text: swatch[:title_metric])) do %><i class="block h-5 w-5 rounded cursor-help <%= swatch[:color_class] %>"></i><% end %>        </span>
+      <% end %>
+    </span>
+
+    <span class="uppercase">more</span>
   </div>
 
   <div>
