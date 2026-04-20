@@ -43,14 +43,6 @@ module Punchcard::Wrapper
       @competitions = competitions
     end
 
-    def id
-      dom_id(@competition, :punchcard_wrapper)
-    end
-
-    def broadcast_channel
-      [@competition, :punchcard_wrapper]
-    end
-
     def broadcast_refresh!
       Turbo::StreamsChannel.broadcast_replace_to(
         broadcast_channel,
@@ -58,6 +50,16 @@ module Punchcard::Wrapper
         renderable: self,
         layout: false
       )
+    end
+
+    private
+
+    def id
+      dom_id(@competition, :punchcard_wrapper)
+    end
+
+    def broadcast_channel
+      [@competition, :punchcard_wrapper]
     end
   end
 end
