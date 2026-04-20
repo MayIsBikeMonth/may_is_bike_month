@@ -60,10 +60,6 @@
   @apply bg-purple-800 dark:bg-purple-0;
 }
 
-.wrapper-class {
-  @apply px-2 xl:px-4 pb-10 pt-4;
-}
-
 .only-dev-visible,
 .only-dev-visible-small {
   border: 1px solid #9400d3;
