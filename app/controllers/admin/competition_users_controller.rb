@@ -4,7 +4,8 @@ class Admin::CompetitionUsersController < Admin::BaseController
   before_action :find_competition_user, except: [:index]
 
   def index
-    @competition_users = searched_competition_users
+    @matching_competition_users = searched_competition_users
+    @competition_users = @matching_competition_users
       .reorder("competition_users.#{sort_column} #{sort_direction}")
       .includes(:competition, :competition_activities)
   end

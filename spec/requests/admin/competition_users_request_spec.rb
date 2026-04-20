@@ -28,6 +28,17 @@ RSpec.describe base_url, type: :request do
         get base_url
         expect(response.code).to eq "200"
         expect(response).to render_template("admin/competition_users/index")
+        expect(response.body).to include("render_chart=true")
+        expect(assigns(:render_chart)).to be_falsey
+      end
+      context "with render_chart=true" do
+        it "renders the chart" do
+          get "#{base_url}?render_chart=true&period=week"
+          expect(response.code).to eq "200"
+          expect(assigns(:render_chart)).to be_truthy
+          expect(assigns(:matching_competition_users)).not_to be_nil
+          expect(response.body).to include("render_chart=false")
+        end
       end
       context "with things" do
         let!(:competition_user1) { FactoryBot.create(:competition_user) }

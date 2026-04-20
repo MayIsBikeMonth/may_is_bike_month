@@ -2,7 +2,7 @@
   Admin Competition Users
 </h1>
 
-<%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, include_competition_select: true, competition_subject:, searchable_competitions:, render_period: false, s_params: sortable_params)) %>
+<%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, include_competition_select: true, competition_subject:, searchable_competitions:, render_period: false, s_params: sortable_params, render_chart: @render_chart, chart_collection: @matching_competition_users, time_range: @time_range, time_range_column: @time_range_column)) %>
 
 <% include_competition ||= competition_subject.blank? %>
 

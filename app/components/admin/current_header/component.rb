@@ -3,24 +3,34 @@
 module Admin
   module CurrentHeader
     class Component < ApplicationComponent
-      def initialize(viewing:, searchable_competitions:, s_params:, include_competition_select: false, competition_subject: nil, render_period: false)
+      def initialize(viewing:, searchable_competitions:, s_params:, include_competition_select: false, competition_subject: nil, render_period: false, render_chart: false, chart_collection: nil, time_range: nil, time_range_column: "created_at")
         @viewing = viewing
         @include_competition_select = include_competition_select
         @s_params = s_params
         @competition_subject = competition_subject
         @searchable_competitions = searchable_competitions
         @render_period = render_period
+        @render_chart = render_chart
+        @chart_collection = chart_collection
+        @time_range = time_range
+        @time_range_column = time_range_column
       end
 
-      def render?
-        (header_keys & @s_params.keys).any? || @include_competition_select
+      def chart_toggle_url
+        url_for(@s_params.merge(render_chart: !@render_chart))
       end
 
-      private
+      def chart_toggle_class
+        "twlink #{"font-bold" if @render_chart}"
+      end
 
-      # NOTE: when you add new search_ params here, also add it to hidden_search_fields
-      def header_keys
-        %w[user_id competition_id]
+      def render_chart?
+        @render_chart && @chart_collection.present? && @time_range.present?
+      end
+
+      def chart_component
+        data = UI::Chart::Component.time_range_counts(collection: @chart_collection, time_range: @time_range, column: @time_range_column)
+        UI::Chart::Component.new(series: [{name: @viewing, data:}], time_range: @time_range)
       end
     end
   end

@@ -5,7 +5,7 @@
       class: "twlink" %>
 </div>
 
-<%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, competition_subject:, searchable_competitions:, render_period: false, s_params: sortable_params)) %>
+<%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, competition_subject:, searchable_competitions:, render_period: false, s_params: sortable_params, render_chart: @render_chart, chart_collection: @matching_competitions, time_range: @time_range, time_range_column: @time_range_column)) %>
 
 <%# Local var because cell blocks run via instance_exec in the table component context %>
 <% show_dev_info = display_dev_info? %>
