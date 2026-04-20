@@ -1,7 +1,0 @@
-<% if custom_title? %>
-  <%= render(UI::Tooltip::Component.new(text: @title)) do %>
-    <span class="<%= badge_class %>"><%= badge_content %></span>
-  <% end %>
-<% else %>
-  <span class="<%= badge_class %>"><%= badge_content %></span>
-<% end %>

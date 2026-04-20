@@ -35,6 +35,12 @@ module UI::Badge
       @size = SIZES.include?(size) ? size : :md
     end
 
+    def call
+      badge = content_tag(:span, content.presence || @text, class: badge_class)
+      return badge unless custom_title?
+      render(UI::Tooltip::Component.new(text: @title)) { badge }
+    end
+
     private
 
     def custom_title?
@@ -43,10 +49,6 @@ module UI::Badge
 
     def badge_class
       self.class.badge_classes(color: @color, size: @size, cursor: custom_title? ? "cursor-help" : "cursor-default")
-    end
-
-    def badge_content
-      content.presence || @text
     end
   end
 end
