@@ -1,10 +1,7 @@
 <div
-  class="hidden! inline-flex items-baseline gap-x-1"
+  class="hidden! pl-9 -indent-9 break-inside-avoid pb-1"
   data-punch-activities-for="<%= @punch_id %>"
 >
-  <span class="opacity-50 font-mono text-[11px] shrink-0">
-    <%= short_date %>
-  </span>
-
-  <span><%= activities_html %></span>
+  <span class="opacity-50 font-mono text-[11px]"><%= short_date %></span>
+  <%= activities_html %>
 </div>
