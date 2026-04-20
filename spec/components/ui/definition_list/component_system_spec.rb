@@ -8,7 +8,7 @@ RSpec.describe UI::DefinitionList::Component, :js, type: :system do
   it "default preview" do
     visit(preview_path)
 
-    expect(page).to have_css("dl dt", text: "Application for")
-    expect(page).to have_css("dl dd", text: "Backend Developer")
+    expect(page).to have_css("dl dt", text: "Competition")
+    expect(page).to have_css("dl dd", text: "May is Bike Month 2026")
   end
 end
