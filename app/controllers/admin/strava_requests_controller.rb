@@ -2,7 +2,8 @@ class Admin::StravaRequestsController < Admin::BaseController
   include Binxtils::SortableTable
 
   def index
-    @strava_requests = searched_strava_requests
+    @matching_strava_requests = searched_strava_requests
+    @strava_requests = @matching_strava_requests
       .reorder("strava_requests.#{sort_column} #{sort_direction}")
       .includes(:user)
       .limit(100)

@@ -2,7 +2,8 @@ class Admin::CompetitionsController < Admin::BaseController
   include Binxtils::SortableTable
 
   def index
-    @competitions = searched_competitions
+    @matching_competitions = searched_competitions
+    @competitions = @matching_competitions
       .reorder("competitions.#{sort_column} #{sort_direction}")
       .includes(:competition_users)
   end

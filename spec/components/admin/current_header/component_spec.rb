@@ -15,21 +15,50 @@ RSpec.describe Admin::CurrentHeader::Component, type: :component do
   end
   let(:options) { default_options }
   let(:instance) { described_class.new(**options) }
-  let(:component) { render_inline(instance) }
+  let(:component) { with_request_url("/admin/competition_users") { render_inline(instance) } }
 
-  it "renders" do
+  it "renders the h1 and graph toggle" do
     expect(component).to be_present
 
-    expect(instance.render?).to be_truthy
+    expect(component.css("h1").text.strip).to eq "Admin Competition Users"
+    expect(component.css("a").map(&:text)).to include("graph")
+    expect(component.css("a[href*='render_chart=true']")).to be_present
+  end
+
+  context "with a content block" do
+    let(:component) do
+      with_request_url("/admin/competition_users") do
+        render_inline(instance) { "New Competition".html_safe }
+      end
+    end
+
+    it "renders the block alongside the graph toggle" do
+      expect(component.to_html).to include("New Competition")
+      expect(component.css("a").map(&:text)).to include("graph")
+    end
   end
 
   context "with include_competition_select: false" do
     let(:options) { default_options.except(:include_competition_select) }
 
-    it "does not render" do
-      expect(component).to be_present
+    it "still renders the graph toggle" do
+      expect(component.css("a").map(&:text)).to include("graph")
+    end
+  end
 
-      expect(instance.render?).to be_falsey
+  context "with render_chart: true and chart_collection" do
+    let(:options) do
+      default_options.merge(
+        render_chart: true,
+        chart_collection: CompetitionUser.all,
+        time_range: 1.week.ago..Time.current,
+        time_range_column: "created_at"
+      )
+    end
+
+    it "renders the chart and flips render_chart to false on toggle" do
+      expect(component.css("a[href*='render_chart=false']")).to be_present
+      expect(component.css("a.active").map(&:text)).to include("graph")
     end
   end
 end
