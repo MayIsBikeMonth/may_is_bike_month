@@ -1,21 +1,33 @@
 <div
   class="
     flex justify-between mt-7 text-purple-300 dark:text-purple-400 font-mono
-    text-[13px] uppercase tracking-[0.12em]
+    text-[13px] tracking-[0.12em]
   "
 >
   <div class="flex items-center gap-2">
-    less
-    <span class="inline-grid grid-cols-5 gap-1"><% swatches.each do |swatch| %>      <i        class="unit-imperial block h-5 w-5 rounded cursor-help <%= swatch[:color_class] %>"        title="<%= swatch[:title_imperial] %>"      ></i>      <i        class="unit-metric hidden h-5 w-5 rounded cursor-help <%= swatch[:color_class] %>"        title="<%= swatch[:title_metric] %>"      ></i><% end %></span>
-    more
+    <span class="uppercase">less</span>
+
+    <span class="inline-grid grid-cols-6 gap-1">
+      <% swatches.each do |swatch| %>
+        <%= render(UI::Tooltip::Component.new) do |tooltip| %>
+          <% tooltip.with_body do %>
+            <span class="unit-imperial"><%= swatch[:title_imperial] %></span>
+            <span class="unit-metric hidden"><%= swatch[:title_metric] %></span>
+          <% end %>
+
+          <i class="punchcard-cell block h-5 w-5 cursor-help" <% if swatch[:level] %> data-l="<%= swatch[:level] %>" <% end %>></i>
+        <% end %>
+      <% end %>
+    </span>
+
+    <span class="uppercase">more</span>
   </div>
 
-  <div>
-    <% if @updated_at %>
-      updated
-      <%= render(UI::Time::Component.new(time: @updated_at)) %>
-    <% end %>
-  </div>
+  <% if @updated_at %>
+    <div>
+      updated <%= render(UI::Time::Component.new(time: @updated_at)) %>
+    </div>
+  <% end %>
 </div>
 
 <% if @competitions.many? %>

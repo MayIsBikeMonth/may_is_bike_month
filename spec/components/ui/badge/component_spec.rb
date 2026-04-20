@@ -10,21 +10,31 @@ RSpec.describe UI::Badge::Component, type: :component do
   let(:color) { nil }
   let(:title) { nil }
 
-  it "renders with default gray color" do
+  it "renders with default gray color and no tooltip" do
     expect(component).to have_css("span")
     expect(component).to have_text("Test Badge")
-    expect(component).to have_css("span[title='Test Badge']")
+    expect(component).not_to have_css("[role='tooltip']")
 
     html = component.to_html
     expect(html).to include("bg-gray-300")
     expect(html).to include("inline-flex")
     expect(html).to include("rounded-full")
+    expect(html).to include("cursor-default")
   end
 
-  context "with custom title" do
+  context "with title equal to text" do
+    let(:title) { "Test Badge" }
+    it "does not render a tooltip" do
+      expect(component).not_to have_css("[role='tooltip']")
+      expect(component.to_html).to include("cursor-default")
+    end
+  end
+
+  context "with custom title differing from text" do
     let(:title) { "Custom Title" }
-    it "uses custom title" do
-      expect(component).to have_css("span[title='Custom Title']")
+    it "wraps in a UI::Tooltip with cursor-help" do
+      expect(component.css("[role='tooltip']").text.strip).to eq "Custom Title"
+      expect(component.to_html).to include("cursor-help")
       expect(component).to have_text("Test Badge")
     end
   end
