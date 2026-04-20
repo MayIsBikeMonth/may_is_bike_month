@@ -1,6 +1,8 @@
 import { Controller } from '@hotwired/stimulus'
 import { computePosition, flip, shift, offset, autoUpdate } from '@floating-ui/dom'
 
+let topZIndex = 50
+
 // Connects to data-controller="ui--tooltip"
 export default class extends Controller {
   static targets = ['trigger', 'tooltip']
@@ -17,6 +19,7 @@ export default class extends Controller {
   }
 
   showOnHover () {
+    if (this.shownBy === 'focus') return
     this.shownBy = 'hover'
     this.open()
   }
@@ -26,13 +29,18 @@ export default class extends Controller {
   }
 
   showOnFocus () {
-    if (this.shownBy) return
     this.shownBy = 'focus'
     this.open()
     document.addEventListener('click', this.clickOutside)
   }
 
+  hideOnFocusout () {
+    if (this.shownBy === 'focus') this.hide()
+  }
+
   open () {
+    topZIndex += 1
+    this.tooltipTarget.style.zIndex = topZIndex
     this.tooltipTarget.classList.remove('hidden')
     this.cleanup = autoUpdate(this.triggerTarget, this.tooltipTarget, () => this.updatePosition())
   }

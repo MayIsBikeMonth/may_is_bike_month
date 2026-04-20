@@ -36,6 +36,48 @@ RSpec.describe UI::Tooltip::Component, :js, type: :system do
     expect(tooltip).not_to be_visible
   end
 
+  it "hides when focus moves to another element" do
+    visit preview_url
+
+    tooltips = all("[role='tooltip']", visible: :all)
+    triggers = tooltips.map { |t| find("[aria-describedby='#{t[:id]}']") }
+
+    page.execute_script("arguments[0].focus()", triggers.first)
+    expect(tooltips.first).to be_visible
+
+    page.execute_script("arguments[0].focus()", triggers.last)
+    expect(tooltips.first).not_to be_visible
+  end
+
+  it "persists when the trigger is clicked, even after mouseleave" do
+    visit preview_url
+
+    tooltip = first("[role='tooltip']", visible: :all)
+    trigger = find("[aria-describedby='#{tooltip[:id]}']")
+
+    trigger.hover
+    trigger.click
+    find("body").hover
+
+    expect(tooltip).to be_visible
+
+    find("body").click
+    expect(tooltip).not_to be_visible
+  end
+
+  it "layers the most recently activated tooltip in front" do
+    visit preview_url
+
+    tooltips = all("[role='tooltip']", visible: :all)
+    expect(tooltips.size).to be >= 2
+
+    tooltips.each { |t| find("[aria-describedby='#{t[:id]}']").click }
+
+    z_indexes = tooltips.map { |t| tooltip_z_index(t[:id]).to_i }
+    expect(z_indexes).to eq z_indexes.sort
+    expect(z_indexes.last).to be > z_indexes.first
+  end
+
   it "is accessible in dark mode" do
     visit "#{preview_url}?lookbook[display][theme]=dark"
 
@@ -50,5 +92,9 @@ RSpec.describe UI::Tooltip::Component, :js, type: :system do
         return { top: style.top, left: style.left }
       })()
     JS
+  end
+
+  def tooltip_z_index(id)
+    page.evaluate_script("document.getElementById(#{id.to_json}).style.zIndex")
   end
 end
