@@ -15,7 +15,6 @@ class ComponentGenerator < Rails::Generators::NamedBase
     # Create files in app/components/
     template("component.rb", File.join(app_component_dir, "component.rb"))
     template("component.html.erb", File.join(app_component_dir, "component.html.erb"))
-    template("component_controller.js", stimulus_controller_path)
     template("preview.rb", File.join(app_component_dir, "component_preview.rb"))
 
     # Create tests in spec/components/
@@ -49,14 +48,6 @@ class ComponentGenerator < Rails::Generators::NamedBase
 
   def component_class
     "#{class_name}::Component"
-  end
-
-  def stimulus_controller_path
-    File.join(app_component_dir, "component_controller.js")
-  end
-
-  def stimulus_controller
-    component_class.underscore.split("/").join("--").tr("_", "-")
   end
 
   def app_component_dir
