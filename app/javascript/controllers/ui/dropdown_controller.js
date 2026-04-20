@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus'
 import { computePosition, flip, shift, offset } from '@floating-ui/dom'
 
-// Connects to data-controller="dropdown"
+// Connects to data-controller="ui--dropdown"
 export default class extends Controller {
   static targets = ['menu', 'button']
   static values = {

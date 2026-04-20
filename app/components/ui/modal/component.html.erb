@@ -1,7 +1,7 @@
 <dialog
   id="<%= @id %>"
-  data-controller="modal"
-  data-action="click->modal#backdropClick keydown->modal#handleKeydown"
+  data-controller="ui--modal"
+  data-action="click->ui--modal#backdropClick keydown->ui--modal#handleKeydown"
   class="
     backdrop:bg-black/50 backdrop:backdrop-blur-sm
     bg-transparent p-0 m-auto
@@ -28,7 +28,7 @@
 
         <button
           type="button"
-          data-action="click->modal#close"
+          data-action="click->ui--modal#close"
           aria-label="Close"
           class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
         >
