@@ -8,6 +8,7 @@
 
 <%= render(Punchcard::Rules::Component.new(competition: @competition)) %>
 
+<%# NOTE: must match wrapper-padding for lg screens %>
 <main class="lg:overflow-x-auto lg:-mx-7">
   <div class="lg:min-w-[1340px] lg:px-7">
     <%= render(Punchcard::Ridge::Component.new(daily_totals:)) %>

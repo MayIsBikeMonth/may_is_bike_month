@@ -13,9 +13,9 @@
   >
     Daily total
   </div>
-
-  <div class="max-lg:order-1 max-sm:overflow-x-auto max-sm:pb-2 max-sm:-mx-7">
-    <div class="max-sm:min-w-[540px] max-sm:px-7">
+  <%# NOTE: must match wrapper-padding for sm screens %>
+  <div class="max-lg:order-1 max-sm:overflow-x-auto max-sm:pb-2 max-sm:-mx-4">
+    <div class="max-sm:min-w-[540px] max-sm:px-4">
       <div class="grid grid-cols-[repeat(31,1fr)] gap-0.5 mb-1 items-end">
         <% bars.each do |bar| %>
           <% if bar[:weekend_label] %>
