@@ -26,12 +26,13 @@ module Punchcard::Ridge
     private
 
     def bar_tag(bar, &)
+      extra_class = " pb-1" if bar[:weekend_label]
       if bar[:upcoming]
-        tag.span(class: SPAN_CLASS, title: bar[:title], &)
+        tag.span(class: "#{SPAN_CLASS}#{extra_class}", title: bar[:title], &)
       else
         tag.button(
           type: "button",
-          class: BUTTON_CLASS,
+          class: "#{BUTTON_CLASS}#{extra_class}",
           title: bar[:title],
           "aria-pressed": "false",
           data: {action: "click->punch#toggleDay", "punch-target": "ridgeBar", date: bar[:date_string]},
