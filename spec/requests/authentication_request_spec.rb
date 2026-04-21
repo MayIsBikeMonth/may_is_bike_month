@@ -111,6 +111,26 @@ RSpec.describe "Authentication", type: :request do
       expect(user.theme).to eq "theme_system"
     end
 
+    describe "sign-in tracking" do
+      let(:initial_time) { Time.current.change(usec: 0) - 1.day }
+      let(:return_time) { initial_time + 6.hours }
+
+      it "sets last_sign_in_at on initial auth and updates it on subsequent auth" do
+        user = travel_to(initial_time) { signup_and_get_user }
+        expect(user.last_sign_in_at).to match_time(initial_time)
+        expect(user.current_sign_in_at).to match_time(initial_time)
+        expect(user.sign_in_count).to eq 1
+
+        reset!
+        OmniAuth.config.add_mock(:strava, omniauth_data)
+        travel_to(return_time) { post path }
+        user.reload
+        expect(user.last_sign_in_at).to match_time(initial_time)
+        expect(user.current_sign_in_at).to match_time(return_time)
+        expect(user.sign_in_count).to eq 2
+      end
+    end
+
     context "with signup_theme cookie set to dark" do
       it "sets user theme to theme_dark" do
         expect(signup_and_get_user(signup_theme: "dark").theme).to eq "theme_dark"

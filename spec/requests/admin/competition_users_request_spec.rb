@@ -56,6 +56,18 @@ RSpec.describe base_url, type: :request do
           expect(response).to render_template("admin/competition_users/index")
           expect(assigns(:competition_subject).id).to eq competition1.id
           expect(assigns(:competition_users).pluck(:id)).to eq([competition_user1.id])
+
+          get "#{base_url}?user=#{competition_user2.user.slug}"
+          expect(response.code).to eq "200"
+          expect(assigns(:user_subject).id).to eq competition_user2.user_id
+          expect(assigns(:competition_users).pluck(:id)).to eq([competition_user2.id])
+          expect(response.body).to include("for user:")
+          expect(response.body).to include(competition_user2.user.display_name)
+
+          get "#{base_url}?user=unknown-slug"
+          expect(response.code).to eq "200"
+          expect(assigns(:user_subject)).to be_nil
+          expect(response.body).to include(%(User "unknown-slug" missing))
         end
       end
     end

@@ -33,6 +33,9 @@ class Admin::CompetitionUsersController < Admin::BaseController
     if competition_subject.present?
       competition_users = competition_users.where(competition_id: competition_subject.id)
     end
+    if user_subject.present?
+      competition_users = competition_users.where(user_id: user_subject.id)
+    end
 
     @time_range_column = (sort_column == "updated_at") ? "updated_at" : "created_at"
     competition_users.where(@time_range_column => @time_range)

@@ -28,6 +28,7 @@ Rails.application.routes.draw do
     resources :competitions, only: %i[index new create]
     resources :competition_users, only: %i[index edit update]
     resources :strava_requests, only: %i[index]
+    resources :users, only: %i[index]
   end
 
   mount Lookbook::Engine, at: "/lookbook" if defined?(Lookbook)

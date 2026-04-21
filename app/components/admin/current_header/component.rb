@@ -3,17 +3,23 @@
 module Admin
   module CurrentHeader
     class Component < ApplicationComponent
-      def initialize(viewing:, searchable_competitions:, s_params:, include_competition_select: false, competition_subject: nil, render_period: false, render_chart: false, chart_collection: nil, time_range: nil, time_range_column: "created_at")
+      def initialize(viewing:, searchable_competitions:, s_params:, include_competition_select: false, competition_subject: nil, user_subject: nil, user_param: nil, render_period: false, render_chart: false, chart_collection: nil, time_range: nil, time_range_column: "created_at")
         @viewing = viewing
         @include_competition_select = include_competition_select
         @s_params = s_params
         @competition_subject = competition_subject
+        @user_subject = user_subject
+        @user_param = user_param
         @searchable_competitions = searchable_competitions
         @render_period = render_period
         @render_chart = render_chart
         @chart_collection = chart_collection
         @time_range = time_range
         @time_range_column = time_range_column
+      end
+
+      def show_user?
+        @user_subject.present? || @user_param.present?
       end
 
       def title
