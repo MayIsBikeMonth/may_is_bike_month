@@ -1,4 +1,6 @@
 import { Controller } from '@hotwired/stimulus'
+import { isPressed, press, unpress, setPressed, allPressed } from 'utils/aria_pressed'
+import { readUrlSelection, writeUrlSelection } from 'utils/punchcard_url'
 
 /*
 Connects to data-controller="punch"
@@ -15,12 +17,8 @@ its state lives in the `selectedEmptyDays` Set.
 Elements with `data-punch-activities-for="<id>"` are revealed when the
 matching punch is pressed.
 
-URL persistence
----------------
-  ?selected=userSlug:day,day;userSlug:day,...   — explicit punch selections
-  ?days=d,d,...                                 — empty-day ridge bar selections
-
-Restored on load via replaceState; no history entries are pushed.
+URL persistence and serialization live in `utils/punchcard_url.js`.
+aria-pressed read/write helpers live in `utils/aria_pressed.js`.
 
 Turbo morph coordination
 ------------------------
@@ -34,14 +32,6 @@ Broadcasts morph the wrapper in place. We:
      updates on a MutationObserver microtask that hasn't run yet.
 */
 
-// ---- pure DOM helpers --------------------------------------------------
-
-const isPressed = (el) => el.getAttribute('aria-pressed') === 'true'
-const press = (el) => el.setAttribute('aria-pressed', 'true')
-const unpress = (el) => el.setAttribute('aria-pressed', 'false')
-const setPressed = (el, on) => el.setAttribute('aria-pressed', on ? 'true' : 'false')
-const allPressed = (els) => els.length > 0 && els.every(isPressed)
-
 // ---- small utilities ---------------------------------------------------
 
 const appendToMapKey = (map, key, value) => {
@@ -54,37 +44,6 @@ const toggleSetMember = (set, value) => {
 }
 
 const emptyIntent = () => ({ allActive: false, users: new Set(), days: new Set() })
-
-// ---- URL state serialization ------------------------------------------
-
-// Returns { byUser: Map<slug, number[]>, days: number[] } from the current URL.
-// Days are day-of-month integers; the competition always fits in one month.
-const readUrlSelection = () => {
-  const params = new URLSearchParams(window.location.search)
-  const byUser = new Map()
-  ;(params.get('selected') || '').split(';').forEach(entry => {
-    const [slug, daysStr] = entry.split(':')
-    if (!slug || !daysStr) return
-    byUser.set(slug, daysStr.split(',').map(d => parseInt(d, 10)))
-  })
-  const days = (params.get('days') || '').split(',').filter(Boolean).map(d => parseInt(d, 10))
-  return { byUser, days }
-}
-
-// replaceState only when the encoding actually changed.
-const writeUrlSelection = ({ byUser, days }) => {
-  const encodedSelected = Array.from(byUser, ([slug, daysArr]) =>
-    `${slug}:${[...daysArr].sort((a, b) => a - b).join(',')}`
-  ).join(';')
-  const encodedDays = [...days].sort((a, b) => a - b).join(',')
-  const url = new URL(window.location.href)
-  const currentSelected = url.searchParams.get('selected') ?? ''
-  const currentDays = url.searchParams.get('days') ?? ''
-  if (encodedSelected === currentSelected && encodedDays === currentDays) return
-  if (encodedSelected) url.searchParams.set('selected', encodedSelected); else url.searchParams.delete('selected')
-  if (encodedDays) url.searchParams.set('days', encodedDays); else url.searchParams.delete('days')
-  window.history.replaceState(null, '', url)
-}
 
 // ---- Stimulus controller ----------------------------------------------
 
