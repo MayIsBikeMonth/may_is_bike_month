@@ -6,23 +6,49 @@ import { Controller } from '@hotwired/stimulus'
 // and restored on load. History is not pushed.
 // Elements with `data-punch-activities-for="<id>"` are revealed when the
 // matching punch is active.
+//
+// Across turbo morphs we also preserve *group intent*: if a user row, a
+// specific day, or all activities were fully selected before the morph,
+// any newly-rendered punches in that group are re-activated so new
+// activities appear without the user having to re-click.
 export default class extends Controller {
-  static targets = ['punch', 'ridgeBar', 'userButton', 'hideAllBtn']
+  static targets = ['punch', 'ridgeBar', 'userButton', 'hideAllBtn', 'showAllBtn']
 
   connect () {
-    this.morphHandler = () => this.rebuild()
+    this.activeUsers = new Set()
+    this.activeDays = new Set()
+    this.allActive = false
+    this.beforeMorphHandler = (event) => {
+      if (event.target === this.element) this.captureActiveGroups()
+    }
+    // idiomorph bubbles turbo:morph-element for every descendant during the
+    // morph; debounce into one rebuild per morph cycle.
+    this.morphHandler = () => this.scheduleRebuild()
+    this.element.addEventListener('turbo:before-morph-element', this.beforeMorphHandler)
     this.element.addEventListener('turbo:morph-element', this.morphHandler)
     this.rebuild()
   }
 
+  scheduleRebuild () {
+    if (this.rebuildScheduled) return
+    this.rebuildScheduled = true
+    queueMicrotask(() => {
+      this.rebuildScheduled = false
+      this.rebuild()
+    })
+  }
+
   disconnect () {
+    this.element.removeEventListener('turbo:before-morph-element', this.beforeMorphHandler)
     this.element.removeEventListener('turbo:morph-element', this.morphHandler)
   }
 
   rebuild () {
     this.indexPunches()
     this.applySelectionFromUrl()
+    this.applyCapturedGroups()
     this.sync()
+    this.updateUrl()
   }
 
   applySelectionFromUrl () {
@@ -37,11 +63,21 @@ export default class extends Controller {
     })
   }
 
+  // Query the DOM directly (rather than via Stimulus target getters) so that
+  // newly-morphed-in elements are picked up inside a synchronous
+  // turbo:morph-element handler, before Stimulus's MutationObserver runs.
   indexPunches () {
+    this.punches = Array.from(this.element.querySelectorAll('[data-punch-target="punch"]'))
+    this.ridgeBars = Array.from(this.element.querySelectorAll('[data-punch-target="ridgeBar"]'))
+    this.userButtons = Array.from(this.element.querySelectorAll('[data-punch-target="userButton"]'))
+    this.hideAllBtns = Array.from(this.element.querySelectorAll('[data-punch-target="hideAllBtn"]'))
+    this.showAllBtns = Array.from(this.element.querySelectorAll('[data-punch-target="showAllBtn"]'))
+    this.activityEls = Array.from(this.element.querySelectorAll('[data-punch-activities-for]'))
+
     this.punchesByDate = new Map()
     this.punchesByUser = new Map()
     this.punchesByKey = new Map()
-    this.punchTargets.forEach(el => {
+    this.punches.forEach(el => {
       const date = el.dataset.date
       const slug = el.dataset.userSlug
       const day = parseInt(date.slice(-2), 10)
@@ -52,13 +88,33 @@ export default class extends Controller {
       this.punchesByUser.get(slug).push(el)
       this.punchesByKey.set(`${slug}:${day}`, el)
     })
-    this.activityEls = Array.from(this.element.querySelectorAll('[data-punch-activities-for]'))
+  }
+
+  captureActiveGroups () {
+    this.activeUsers = new Set()
+    this.activeDays = new Set()
+    this.allActive = this.punches?.length > 0 && this.punches.every(isPressed)
+    if (this.allActive) return
+    this.punchesByUser?.forEach((els, slug) => {
+      if (els.length > 0 && els.every(isPressed)) this.activeUsers.add(slug)
+    })
+    this.punchesByDate?.forEach((els, date) => {
+      if (els.length > 0 && els.every(isPressed)) this.activeDays.add(date)
+    })
+  }
+
+  applyCapturedGroups () {
+    if (this.allActive) {
+      this.punches.forEach(press)
+      return
+    }
+    this.activeUsers.forEach(slug => (this.punchesByUser.get(slug) || []).forEach(press))
+    this.activeDays.forEach(date => (this.punchesByDate.get(date) || []).forEach(press))
   }
 
   toggle (event) {
     const clicked = event.currentTarget
-    const wasActive = clicked.getAttribute('aria-pressed') === 'true'
-    clicked.setAttribute('aria-pressed', wasActive ? 'false' : 'true')
+    clicked.setAttribute('aria-pressed', isPressed(clicked) ? 'false' : 'true')
     this.afterToggle()
   }
 
@@ -72,18 +128,18 @@ export default class extends Controller {
 
   toggleGroup (targets) {
     if (!targets || targets.length === 0) return
-    const allActive = targets.every(el => el.getAttribute('aria-pressed') === 'true')
+    const allActive = targets.every(isPressed)
     targets.forEach(el => el.setAttribute('aria-pressed', allActive ? 'false' : 'true'))
     this.afterToggle()
   }
 
   showAll () {
-    this.punchTargets.forEach(el => el.setAttribute('aria-pressed', 'true'))
+    this.punches.forEach(press)
     this.afterToggle()
   }
 
   hideAll () {
-    this.punchTargets.forEach(el => el.setAttribute('aria-pressed', 'false'))
+    this.punches.forEach(unpress)
     this.afterToggle()
   }
 
@@ -96,30 +152,26 @@ export default class extends Controller {
     this.syncRidgeBars()
     this.syncUserButtons()
     this.syncActivities()
-    this.syncHideAllButton()
+    this.syncAllButtons()
   }
 
   syncRidgeBars () {
-    this.ridgeBarTargets.forEach(bar => {
+    this.ridgeBars.forEach(bar => {
       const targets = this.punchesByDate.get(bar.dataset.date) || []
-      const allActive = targets.length > 0 && targets.every(el => el.getAttribute('aria-pressed') === 'true')
-      bar.setAttribute('aria-pressed', allActive ? 'true' : 'false')
+      bar.setAttribute('aria-pressed', groupAllActive(targets) ? 'true' : 'false')
     })
   }
 
   syncUserButtons () {
-    this.userButtonTargets.forEach(btn => {
+    this.userButtons.forEach(btn => {
       const targets = this.punchesByUser.get(btn.dataset.userSlug) || []
-      const allActive = targets.length > 0 && targets.every(el => el.getAttribute('aria-pressed') === 'true')
-      btn.setAttribute('aria-pressed', allActive ? 'true' : 'false')
+      btn.setAttribute('aria-pressed', groupAllActive(targets) ? 'true' : 'false')
     })
   }
 
   syncActivities () {
     const activeIds = new Set(
-      this.punchTargets
-        .filter(el => el.getAttribute('aria-pressed') === 'true')
-        .map(el => el.dataset.punchId)
+      this.punches.filter(isPressed).map(el => el.dataset.punchId)
     )
     this.activityEls.forEach(el => {
       el.classList.toggle('hidden!', !activeIds.has(el.dataset.punchActivitiesFor))
@@ -131,20 +183,20 @@ export default class extends Controller {
     })
   }
 
-  syncHideAllButton () {
-    const anyActive = this.punchTargets.some(el => el.getAttribute('aria-pressed') === 'true')
-    this.hideAllBtnTargets.forEach(btn => btn.classList.toggle('hidden', !anyActive))
+  syncAllButtons () {
+    const anyActive = this.punches.some(isPressed)
+    const allActive = this.punches.length > 0 && this.punches.every(isPressed)
+    this.hideAllBtns.forEach(btn => btn.classList.toggle('hidden', !anyActive))
+    this.showAllBtns.forEach(btn => btn.setAttribute('aria-pressed', allActive ? 'true' : 'false'))
   }
 
   updateUrl () {
     const byUser = new Map()
-    this.punchTargets
-      .filter(el => el.getAttribute('aria-pressed') === 'true')
-      .forEach(el => {
-        const slug = el.dataset.userSlug
-        if (!byUser.has(slug)) byUser.set(slug, [])
-        byUser.get(slug).push(el._punchDay)
-      })
+    this.punches.filter(isPressed).forEach(el => {
+      const slug = el.dataset.userSlug
+      if (!byUser.has(slug)) byUser.set(slug, [])
+      byUser.get(slug).push(el._punchDay)
+    })
     const encoded = Array.from(byUser, ([slug, days]) =>
       `${slug}:${days.sort((a, b) => a - b).join(',')}`
     ).join(';')
@@ -159,3 +211,8 @@ export default class extends Controller {
     window.history.replaceState(null, '', url)
   }
 }
+
+const isPressed = (el) => el.getAttribute('aria-pressed') === 'true'
+const press = (el) => el.setAttribute('aria-pressed', 'true')
+const unpress = (el) => el.setAttribute('aria-pressed', 'false')
+const groupAllActive = (els) => els.length > 0 && els.every(isPressed)
