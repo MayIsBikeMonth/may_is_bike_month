@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "./tables.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -46,7 +45,7 @@
   @apply px-4 md:px-7;
 }
 .wrapper-padding-overflow {
-  @apply overflow-x-scroll md:px-7 md:-mx-7 px-4 -mx-4;
+  @apply md:px-7 md:-mx-7 px-4 -mx-4;
 }
 
 @layer components {
@@ -67,10 +66,12 @@
     @apply opacity-60;
   }
 
-  .ui-table tbody tr:nth-child(odd) {
+  .ui-table tbody tr:nth-child(odd),
+  dl.ui-table > *:nth-child(odd) {
     @apply bg-white dark:bg-purple-900;
   }
-  .ui-table tbody tr:nth-child(even) {
+  .ui-table tbody tr:nth-child(even),
+  dl.ui-table > *:nth-child(even) {
     @apply bg-purple-0 dark:bg-purple-800;
   }
   .ui-table thead tr th:first-child {
@@ -85,6 +86,12 @@
   .ui-table tbody tr:last-child td:last-child {
     @apply rounded-br-sm;
   }
+  dl.ui-table > *:first-child {
+    @apply rounded-t-sm;
+  }
+  dl.ui-table > *:last-child {
+    @apply rounded-b-sm;
+  }
   .ui-table-bordered tbody tr td:first-child {
     @apply ui-table-bordered-td-first;
   }
@@ -96,6 +103,9 @@
   }
   .ui-table-bordered thead tr th:last-child {
     @apply ui-table-bordered-th-last;
+  }
+  dl.ui-table-bordered {
+    @apply border border-purple-200 dark:border-purple-700 rounded-sm overflow-hidden;
   }
 }
 .twlink.active {
