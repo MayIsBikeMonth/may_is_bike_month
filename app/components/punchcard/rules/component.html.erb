@@ -16,11 +16,13 @@
   >
     <% if @competition.legacy? %>
       <li>
-        Winner rode the most total miles in <%= @competition.period_display %>
+        Winner is the person who rides the most total miles in
+        <%= @competition.period_display %>
       </li>
       <li>Ties broken by total elevation</li>
       <li>
-        First place chose what's for dinner, second and last place had to cook
+        First place chooses what's for dinner, second and last place have to
+        cook
       </li>
       <li>
         Pre-Strava &mdash; totals imported from

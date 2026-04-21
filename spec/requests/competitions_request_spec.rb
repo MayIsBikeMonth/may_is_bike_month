@@ -26,7 +26,7 @@ RSpec.describe "/competitions", type: :request do
         get "/competitions/#{competition.slug}"
         expect(response.code).to eq "200"
         expect(response.body).to include("Rider One")
-        expect(response.body).to include("Winner rode the most total miles")
+        expect(response.body).to include("Winner is the person who rides the most total miles")
         expect(response.body).not_to include("Everyday")
       end
     end
