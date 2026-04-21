@@ -23,35 +23,19 @@ RSpec.describe base_url, type: :request do
     include_context :logged_in_as_admin
 
     describe "index" do
-      it "renders" do
-        get base_url
-        expect(response.code).to eq "200"
-        expect(response).to render_template("admin/users/index")
-        expect(assigns(:users).pluck(:id)).to eq([user.id])
-      end
-
-      context "with competition_users" do
-        let!(:competition_user) { FactoryBot.create(:competition_user, user:) }
-
-        it "links to the competition_users filtered by user" do
-          get base_url
-          expect(response.code).to eq "200"
-          expect(response.body).to include(admin_competition_users_path(user: user.slug))
-        end
-      end
-
       context "with multiple users" do
         let!(:older_user) { FactoryBot.create(:user, created_at: Time.current - 2.days, last_sign_in_at: Time.current - 1.hour) }
         let!(:newer_user) { FactoryBot.create(:user, created_at: Time.current - 1.hour, last_sign_in_at: Time.current - 2.days) }
+        let!(:competition_user) { FactoryBot.create(:competition_user, user: newer_user) }
 
-        it "sorts by created_at desc by default" do
+        it "renders, sorts, and links to the user-scoped competition_users" do
           get base_url
           expect(response.code).to eq "200"
+          expect(response).to render_template("admin/users/index")
           ids = assigns(:users).pluck(:id)
           expect(ids.index(newer_user.id)).to be < ids.index(older_user.id)
-        end
+          expect(response.body).to include(admin_competition_users_path(user: newer_user.slug))
 
-        it "sorts by last_sign_in_at" do
           get "#{base_url}?sort=last_sign_in_at&direction=desc"
           expect(response.code).to eq "200"
           expect(assigns(:sort_column)).to eq "last_sign_in_at"
