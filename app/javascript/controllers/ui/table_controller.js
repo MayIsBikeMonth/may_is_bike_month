@@ -52,7 +52,6 @@ export default class extends Controller {
     const needsHorizontalScroll = table.scrollWidth > wrapper.clientWidth
 
     if (needsHorizontalScroll) {
-      wrapper.style.overflowX = ''
       wrapper.classList.add('overflow-x-scroll')
       ths.forEach(th => { th.style.willChange = 'transform' })
       this.cacheMeasurements(table, headerRow, ths)
@@ -60,9 +59,6 @@ export default class extends Controller {
       this.applyTransformSticky()
     } else {
       wrapper.classList.remove('overflow-x-scroll')
-      // Override .wrapper-padding-overflow's overflow-x:scroll so the wrapper isn't a scroll container,
-      // which would anchor position:sticky to it instead of the viewport.
-      wrapper.style.overflowX = 'visible'
       ths.forEach(th => th.classList.add('sticky', 'top-0'))
       this.unbindScroll()
     }
