@@ -1,6 +1,6 @@
 import { Controller } from '@hotwired/stimulus'
 
-// Connects to data-controller='admin--current-header--component'
+// Connects to data-controller='admin--current-header'
 export default class extends Controller {
   connect () {
     const updatePage = this.updatePage // eslint-disable-line
