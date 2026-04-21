@@ -165,33 +165,28 @@ RSpec.describe "Punchcard live update", :js, type: :system do
     # no punches to toggle.
     let(:day3_ridge) { find(%([data-punch-target="ridgeBar"][data-date="2026-05-03"])) }
 
-    it "toggles the ridge bar's aria-pressed state" do
+    it "toggles aria-pressed, persists to ?days=, survives reload, and picks up morphed-in punches" do
       expect(day3_ridge["aria-pressed"]).to eq "false"
 
       day3_ridge.click
       expect(day3_ridge["aria-pressed"]).to eq "true"
-
-      day3_ridge.click
-      expect(day3_ridge["aria-pressed"]).to eq "false"
-    end
-
-    it "activates any punch that arrives for the selected day via morph" do
-      day3_ridge.click
-      expect(day3_ridge["aria-pressed"]).to eq "true"
-
-      morph_in_punch(user_slug: alice.slug, date_string: "2026-05-03")
-
-      expect(pressed?(find(punch_selector(user_slug: alice.slug, date_string: "2026-05-03")))).to be true
-      # Ridge bar now reflects the fully-pressed punch group.
-      expect(find(%([data-punch-target="ridgeBar"][data-date="2026-05-03"]))["aria-pressed"]).to eq "true"
-    end
-
-    it "persists the selection across reload via the URL" do
-      day3_ridge.click
       expect(page.current_url).to include "days=3"
 
-      visit page.current_url
+      # Second click toggles off.
+      day3_ridge.click
+      expect(day3_ridge["aria-pressed"]).to eq "false"
+      expect(page.current_url).not_to include "days=3"
 
+      # Re-select, then reload: URL persistence restores the selection.
+      day3_ridge.click
+      visit page.current_url
+      reloaded_ridge = find(%([data-punch-target="ridgeBar"][data-date="2026-05-03"]))
+      expect(reloaded_ridge["aria-pressed"]).to eq "true"
+
+      # A subsequent morph brings in a punch for that day — it arrives pressed
+      # because day 3 is captured as active.
+      morph_in_punch(user_slug: alice.slug, date_string: "2026-05-03")
+      expect(pressed?(find(punch_selector(user_slug: alice.slug, date_string: "2026-05-03")))).to be true
       expect(find(%([data-punch-target="ridgeBar"][data-date="2026-05-03"]))["aria-pressed"]).to eq "true"
     end
   end
