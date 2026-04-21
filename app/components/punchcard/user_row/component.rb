@@ -53,15 +53,5 @@ module Punchcard::UserRow
     def start_col
       @start_col ||= (@competition.start_date.wday - 1) % 7 + 1
     end
-
-    def activities_by_date
-      @activities_by_date ||= @competition_user.competition_activities_included
-        .sort_by { |a| a.start_at || Time.at(0) }
-        .each_with_object({}) do |activity, hash|
-          activity.activity_dates_strings.each do |date_string|
-            (hash[date_string] ||= []) << activity
-          end
-        end
-    end
   end
 end
