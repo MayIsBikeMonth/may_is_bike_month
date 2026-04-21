@@ -78,6 +78,27 @@ RSpec.describe UpdateCompetitionUserJob, type: :job do
       end
     end
 
+    context "legacy competition" do
+      let(:competition) do
+        FactoryBot.create(:competition, kind: :legacy,
+          start_date: Date.parse("2024-05-01"), end_date: Date.parse("2024-05-31"))
+      end
+      let(:imported_score_data) do
+        {dates: [], distance: 1_000_000, elevation: 5_000,
+         periods: competition.periods.map { |p| p.merge(distance: 200_000, elevation: 1_000) }}.as_json
+      end
+
+      before { competition_user.update!(score_data: imported_score_data) }
+
+      it "imports activities without overwriting the imported score data" do
+        VCR.use_cassette("update_competition_user_job", match_requests_on: [:path]) do
+          instance.perform(competition_user.id)
+        end
+        expect(competition_user.reload.competition_activities.count).to eq 3
+        expect(competition_user.score_data).to eq imported_score_data
+      end
+    end
+
     context "data changes slightly" do
       let(:time) { Time.current - 5.minutes }
       it "doesn't update" do

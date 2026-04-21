@@ -124,6 +124,7 @@ class CompetitionUser < ApplicationRecord
   end
 
   def update_score_data!
+    return self if competition&.legacy?
     update(score_data: calculated_score_data)
     reload
   end

@@ -79,6 +79,66 @@ module RakeLegacy
     end
   end
 
+  DUMMY_STRAVA_PREFIX = "legacy-dummy-"
+
+  def self.dummy_activities_2023
+    competition = Competition.find_by(start_date: Date.new(2023, 5, 1), kind: :legacy)
+    raise "No 2023 legacy competition found — run legacy:import_2023 first" unless competition
+
+    CompetitionActivity
+      .joins(:competition_user)
+      .where(competition_users: {competition_id: competition.id})
+      .where("strava_id LIKE ?", "#{DUMMY_STRAVA_PREFIX}%")
+      .destroy_all
+
+    created = 0
+
+    competition.competition_users.find_each do |competition_user|
+      period_data = competition_user.score_data&.dig("periods") || []
+
+      period_data.each_with_index do |period, period_index|
+        distance = period["distance"].to_f
+        next if distance <= 0
+
+        elevation = period["elevation"].to_f
+        splits = [(distance / 45_000.0).ceil, 1].max
+        per_distance = distance / splits
+        per_elevation = elevation / splits
+        period_start = Date.parse(period["start_date"])
+        period_end = Date.parse(period["end_date"])
+        days_in_period = (period_end - period_start).to_i + 1
+
+        splits.times do |split_index|
+          day_offset = (days_in_period * split_index / splits.to_f).floor
+          activity_date = period_start + day_offset
+          strava_id = "#{DUMMY_STRAVA_PREFIX}#{competition_user.id}-#{period_index}-#{split_index}"
+          moving_seconds = (per_distance / 5.5).round
+          local_time = "#{activity_date}T09:30:00"
+
+          CompetitionActivity.create!(
+            competition_user:,
+            strava_data: {
+              "id" => strava_id,
+              "name" => "#{competition_user.display_name} ride",
+              "distance" => per_distance,
+              "moving_time" => moving_seconds,
+              "total_elevation_gain" => per_elevation,
+              "elapsed_time" => moving_seconds,
+              "type" => "Ride",
+              "timezone" => "(GMT-06:00) America/Denver",
+              "start_date" => Time.parse("#{local_time}-06:00").utc.rfc3339,
+              "start_date_local" => "#{local_time}Z",
+              "visibility" => "everyone"
+            }
+          )
+          created += 1
+        end
+      end
+    end
+
+    created
+  end
+
   def self.check_2023_matches
     unmatched = ROWS_2023.map(&:first).reject { |name| LegacyUserFinder.find(name) }
     if unmatched.empty?
@@ -107,5 +167,11 @@ namespace :legacy do
   desc "Dry-run: report 2023 legacy names that wouldn't match an existing user"
   task check_2023_matches: :environment do
     RakeLegacy.check_2023_matches
+  end
+
+  desc "Create dummy CompetitionActivities for the 2023 legacy competition (idempotent)"
+  task dummy_activities_2023: :environment do
+    count = RakeLegacy.dummy_activities_2023
+    puts "Created #{count} dummy legacy activities"
   end
 end
