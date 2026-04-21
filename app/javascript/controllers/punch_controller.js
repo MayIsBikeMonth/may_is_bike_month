@@ -10,18 +10,31 @@ export default class extends Controller {
   static targets = ['punch', 'ridgeBar', 'userButton', 'hideAllBtn']
 
   connect () {
+    this.morphHandler = () => this.rebuild()
+    this.element.addEventListener('turbo:morph-element', this.morphHandler)
+    this.rebuild()
+  }
+
+  disconnect () {
+    this.element.removeEventListener('turbo:morph-element', this.morphHandler)
+  }
+
+  rebuild () {
     this.indexPunches()
-    const selected = new URLSearchParams(window.location.search).get('selected')
-    if (selected) {
-      selected.split(';').forEach(group => {
-        const [slug, daysStr] = group.split(':')
-        if (!slug || !daysStr) return
-        daysStr.split(',').forEach(day => {
-          this.punchesByKey.get(`${slug}:${parseInt(day, 10)}`)?.setAttribute('aria-pressed', 'true')
-        })
-      })
-    }
+    this.applySelectionFromUrl()
     this.sync()
+  }
+
+  applySelectionFromUrl () {
+    const selected = new URLSearchParams(window.location.search).get('selected')
+    if (!selected) return
+    selected.split(';').forEach(group => {
+      const [slug, daysStr] = group.split(':')
+      if (!slug || !daysStr) return
+      daysStr.split(',').forEach(day => {
+        this.punchesByKey.get(`${slug}:${parseInt(day, 10)}`)?.setAttribute('aria-pressed', 'true')
+      })
+    })
   }
 
   indexPunches () {
