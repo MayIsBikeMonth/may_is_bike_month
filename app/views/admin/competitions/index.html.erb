@@ -5,8 +5,12 @@
 <%# Local var because cell blocks run via instance_exec in the table component context %>
 <% show_dev_info = display_dev_info? %>
 
-<%= render(UI::Table::Component.new(records: @competitions, render_sortable: true)) do |table|
-  table.column(sortable: "start_date", lower_right: (->(c) { c.id } if show_dev_info)) do |competition|
+<%= render(UI::Table::Component.new(records: @competitions, render_sortable: true, sticky: true)) do |table|
+  table.column(sortable: "created_at", lower_right: (->(c) { c.id } if show_dev_info)) do |competition|
+    render(UI::Time::Component.new(time: competition.created_at))
+  end
+
+  table.column(sortable: "start_date") do |competition|
     competition.start_date.to_s
   end
 
@@ -23,10 +27,6 @@
   end
 
   table.column(label: "Current?") { |c| check_mark if c.current }
-
-  table.column(sortable: "created_at") do |competition|
-    render(UI::Time::Component.new(time: competition.created_at))
-  end
 
   if show_dev_info
     table.column(sortable: "updated_at") do |competition|

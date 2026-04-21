@@ -5,13 +5,13 @@
 <%# Local var because cell blocks run via instance_exec in the table component context %>
 <% show_dev_info = display_dev_info? %>
 
-<%= render(UI::Table::Component.new(records: @competition_users, render_sortable: true)) do |table|
-  table.column(sortable: "display_name", lower_right: (->(cu) { cu.id } if show_dev_info)) do |cu|
-    link_to(cu.display_name, edit_admin_competition_user_path(cu), class: "twlink")
+<%= render(UI::Table::Component.new(records: @competition_users, render_sortable: true, sticky: true)) do |table|
+  table.column(sortable: "created_at", lower_right: (->(cu) { cu.id } if show_dev_info)) do |cu|
+    render(UI::Time::Component.new(time: cu.created_at))
   end
 
-  table.column(sortable: "created_at") do |cu|
-    render(UI::Time::Component.new(time: cu.created_at))
+  table.column(sortable: "display_name") do |cu|
+    link_to(cu.display_name, edit_admin_competition_user_path(cu), class: "twlink")
   end
 
   if include_competition
