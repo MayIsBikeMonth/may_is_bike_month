@@ -70,10 +70,13 @@
 
       <% @competition_users.each_with_index do |competition_user, index| %>
         <% entries = period_entries(competition_user) %>
-        <% activities = activities_by_date(competition_user) %>
+        <% has_activities = competition_user.competition_activities_included.any? %>
         <% user_slug = competition_user.user.slug %>
 
-        <div class="border-b border-purple-100 dark:border-purple-700 py-3">
+        <div
+          class="border-b border-purple-100 dark:border-purple-700 py-3"
+          data-user-slug="<%= user_slug %>"
+        >
           <div class="<%= grid_classes %> gap-3 items-baseline">
             <span
               class="
@@ -100,7 +103,7 @@
                 </a>
               <% end %>
 
-              <% if activities.any? %>
+              <% if has_activities %>
                 <button
                   type="button"
                   class="
@@ -189,25 +192,10 @@
             </div>
           </div>
 
-          <% if activities.any? %>
-            <div
-              class="
-                hidden! columns-1 md:columns-2 lg:columns-3
-                [column-gap:1.5rem] text-[12px] mt-3
-              "
-              data-legacy-activities-target="activities"
-              data-user-slug="<%= user_slug %>"
-            >
-              <% activities.each do |date_string, day_activities| %>
-                <div class="pl-9 -indent-9 break-inside-avoid pb-1">
-                  <span class="opacity-50 font-mono text-[11px]">
-                    <%= short_date(date_string) %>
-                  </span>
-
-                  <%= safe_join(day_activities.map { |a| activity_link(a) }, ", ") %>
-                </div>
-              <% end %>
-            </div>
+          <% if has_activities %>
+            <%= render(Leaderboard::UserActivitiesForDateWrapper::Component.new(
+              competition_user:, competition: @competition
+            )) %>
           <% end %>
         </div>
       <% end %>
