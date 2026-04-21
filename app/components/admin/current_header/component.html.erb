@@ -36,6 +36,25 @@
     <% end %>
   </p>
 
+  <% if show_user? %>
+    <p class="mb-2">
+      <%= @viewing %> for user:
+      <% if @user_subject.present? %>
+        <strong><%= @user_subject.display_name %></strong>
+      <% else %>
+        <em class="text-rose-600 dark:text-rose-400">
+          User "<%= @user_param %>" missing
+        </em>
+      <% end %>
+      <span class="less-strong">
+        <em>
+          &ndash;
+          <%= link_to "view for all users", url_for(@s_params.merge(user: nil)), class: "twlink" %>
+        </em>
+      </span>
+    </p>
+  <% end %>
+
   <% if render_chart? %>
     <div class="mb-4">
       <%= render(chart_component) %>
