@@ -48,7 +48,8 @@ module Punchcard::Wrapper
         broadcast_channel,
         target: id,
         renderable: self,
-        layout: false
+        layout: false,
+        attributes: {method: :morph}
       )
     end
 
