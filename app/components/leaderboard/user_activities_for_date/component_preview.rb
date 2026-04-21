@@ -6,7 +6,7 @@ module Leaderboard
       # @!group Activities
       def default
         render_with_template(
-          template: "punchcard/user_activities_for_date/component_preview/default",
+          template: "leaderboard/user_activities_for_date/component_preview/default",
           locals: {
             dates: [
               {date_string: "2025-05-15", activities: sample_activities, punch_id: "sample-2025-05-15"}
@@ -17,7 +17,7 @@ module Leaderboard
 
       def single_activity
         render_with_template(
-          template: "punchcard/user_activities_for_date/component_preview/default",
+          template: "leaderboard/user_activities_for_date/component_preview/default",
           locals: {
             dates: [
               {date_string: "2025-05-15", activities: [sample_activities.first], punch_id: "sample-2025-05-15"}
@@ -28,7 +28,7 @@ module Leaderboard
 
       def multiple_dates
         render_with_template(
-          template: "punchcard/user_activities_for_date/component_preview/default",
+          template: "leaderboard/user_activities_for_date/component_preview/default",
           locals: {
             dates: [
               {date_string: "2025-05-15", activities: [sample_activities[0]], punch_id: "sample-2025-05-15"},

@@ -17,7 +17,7 @@ module Leaderboard
 
       def render_punch(miles)
         render_with_template(
-          template: "punchcard/user_punch/component_preview/punch",
+          template: "leaderboard/punchcard_user_punch/component_preview/punch",
           locals: {miles:}
         )
       end
