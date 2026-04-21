@@ -16,13 +16,13 @@
   >
     <% if @competition.legacy? %>
       <li>Winner is the person who rides the most total miles</li>
-      <li>Ties broken by total elevation</li>
       <li>
         First place chooses what's for dinner, second and last place have to
         cook
       </li>
+      <li>Person with the most elevation chooses desert</li>
       <li>
-        Pre-Strava &mdash; totals imported from
+        Imported from
         <%= link_to "the original spreadsheet", @competition.legacy_url, class: "twlink", target: "_blank", rel: "noopener" %>
       </li>
     <% else %>
