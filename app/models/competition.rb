@@ -6,7 +6,7 @@
 #  current      :boolean
 #  display_name :string
 #  end_date     :date
-#  kind         :integer          default("punchcard"), not null
+#  kind         :integer          default("ride_2_miles_every_day"), not null
 #  legacy_url   :string
 #  slug         :string
 #  start_date   :date
@@ -17,7 +17,7 @@ class Competition < ApplicationRecord
   include FriendlyFindable
 
   DEFAULT_ACTIVITY_TYPES = %w[EBikeRide Handcycle Ride Velomobile].freeze
-  KIND_ENUM = {punchcard: 0, legacy: 1}.freeze
+  KIND_ENUM = {ride_2_miles_every_day: 0, legacy: 1}.freeze
 
   enum :kind, KIND_ENUM
 

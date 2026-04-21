@@ -20,15 +20,15 @@ RSpec.describe Competition, type: :model do
   end
 
   describe "kind" do
-    it "defaults to punchcard" do
-      expect(Competition.new.kind).to eq "punchcard"
+    it "defaults to ride_2_miles_every_day" do
+      expect(Competition.new.kind).to eq "ride_2_miles_every_day"
     end
 
     context "legacy" do
       let(:competition) { FactoryBot.create(:competition, kind: :legacy, start_date: Date.parse("2023-05-01")) }
       it "persists the kind" do
         expect(competition.reload.legacy?).to be true
-        expect(competition.punchcard?).to be false
+        expect(competition.ride_2_miles_every_day?).to be false
       end
     end
   end
