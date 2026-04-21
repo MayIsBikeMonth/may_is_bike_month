@@ -3,15 +3,19 @@ import { Controller } from '@hotwired/stimulus'
 // Connects to data-controller="punch"
 // Active punches are encoded in the URL as
 //   ?selected=userSlug:day,day;userSlug:day,...
-// and restored on load. History is not pushed.
+// and restored on load. History is not pushed. A separate `days=d,d,...`
+// parameter tracks ridge-bar selection for days that have no punches yet
+// (the user clicked the bar to pre-select a day).
 // Elements with `data-punch-activities-for="<id>"` are revealed when the
 // matching punch is active.
 export default class extends Controller {
   static targets = ['punch', 'ridgeBar', 'userButton', 'hideAllBtn']
 
   connect () {
+    this.selectedEmptyDays = new Set()
     this.indexPunches()
-    const selected = new URLSearchParams(window.location.search).get('selected')
+    const params = new URLSearchParams(window.location.search)
+    const selected = params.get('selected')
     if (selected) {
       selected.split(';').forEach(group => {
         const [slug, daysStr] = group.split(':')
@@ -21,7 +25,19 @@ export default class extends Controller {
         })
       })
     }
+    const days = params.get('days')
+    if (days) {
+      days.split(',').forEach(day => {
+        const date = this.dateStringForDay(parseInt(day, 10))
+        if (date && !this.punchesByDate.has(date)) this.selectedEmptyDays.add(date)
+      })
+    }
     this.sync()
+  }
+
+  dateStringForDay (day) {
+    const bar = this.ridgeBarTargets.find(b => parseInt(b.dataset.date.slice(-2), 10) === day)
+    return bar?.dataset.date
   }
 
   indexPunches () {
@@ -50,7 +66,18 @@ export default class extends Controller {
   }
 
   toggleDay (event) {
-    this.toggleGroup(this.punchesByDate.get(event.currentTarget.dataset.date))
+    const date = event.currentTarget.dataset.date
+    const targets = this.punchesByDate.get(date)
+    if (targets && targets.length > 0) {
+      this.toggleGroup(targets)
+    } else {
+      if (this.selectedEmptyDays.has(date)) {
+        this.selectedEmptyDays.delete(date)
+      } else {
+        this.selectedEmptyDays.add(date)
+      }
+      this.afterToggle()
+    }
   }
 
   toggleUser (event) {
@@ -88,9 +115,12 @@ export default class extends Controller {
 
   syncRidgeBars () {
     this.ridgeBarTargets.forEach(bar => {
-      const targets = this.punchesByDate.get(bar.dataset.date) || []
-      const allActive = targets.length > 0 && targets.every(el => el.getAttribute('aria-pressed') === 'true')
-      bar.setAttribute('aria-pressed', allActive ? 'true' : 'false')
+      const date = bar.dataset.date
+      const targets = this.punchesByDate.get(date) || []
+      const pressed = targets.length > 0
+        ? targets.every(el => el.getAttribute('aria-pressed') === 'true')
+        : this.selectedEmptyDays.has(date)
+      bar.setAttribute('aria-pressed', pressed ? 'true' : 'false')
     })
   }
 
@@ -135,14 +165,16 @@ export default class extends Controller {
     const encoded = Array.from(byUser, ([slug, days]) =>
       `${slug}:${days.sort((a, b) => a - b).join(',')}`
     ).join(';')
+    const emptyDays = Array.from(this.selectedEmptyDays)
+      .map(d => parseInt(d.slice(-2), 10))
+      .sort((a, b) => a - b)
+      .join(',')
     const url = new URL(window.location.href)
-    const current = url.searchParams.get('selected') ?? ''
-    if (encoded === current) return
-    if (encoded) {
-      url.searchParams.set('selected', encoded)
-    } else {
-      url.searchParams.delete('selected')
-    }
+    const currentSelected = url.searchParams.get('selected') ?? ''
+    const currentDays = url.searchParams.get('days') ?? ''
+    if (encoded === currentSelected && emptyDays === currentDays) return
+    if (encoded) url.searchParams.set('selected', encoded); else url.searchParams.delete('selected')
+    if (emptyDays) url.searchParams.set('days', emptyDays); else url.searchParams.delete('days')
     window.history.replaceState(null, '', url)
   }
 }

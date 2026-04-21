@@ -3,17 +3,32 @@
 module OtherCompetitionLinks
   class ComponentPreview < ApplicationComponentPreview
     def default
+      competitions = sample_competitions
       render(OtherCompetitionLinks::Component.new(
-        competitions: sample_competitions,
-        current_year: 2025
+        competitions:,
+        current_competition: competitions.find { |c| c.year == 2025 }
       ))
     end
 
     def original_view
+      competitions = sample_competitions
       render(OtherCompetitionLinks::Component.new(
-        competitions: sample_competitions,
-        current_year: 2024,
+        competitions:,
+        current_competition: competitions.find { |c| c.year == 2024 },
         original_view: true
+      ))
+    end
+
+    def multiple_per_year
+      competitions = [
+        Competition.new(start_date: Date.new(2026, 5, 1), display_name: "MIBM 2026"),
+        Competition.new(start_date: Date.new(2025, 5, 1), display_name: "MIBM Spring 2025"),
+        Competition.new(start_date: Date.new(2025, 5, 1), display_name: "MIBM Fall 2025"),
+        Competition.new(start_date: Date.new(2024, 5, 1), display_name: "MIBM 2024")
+      ]
+      render(OtherCompetitionLinks::Component.new(
+        competitions:,
+        current_competition: competitions[1]
       ))
     end
 
