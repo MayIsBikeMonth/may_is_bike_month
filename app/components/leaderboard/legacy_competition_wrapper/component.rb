@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Leaderboard
-  module LegacyCompetition
+  module LegacyCompetitionWrapper
     class Component < ApplicationComponent
       def initialize(competition:, competition_users:, competitions: [])
         @competition = competition
@@ -21,12 +21,13 @@ module Leaderboard
         "#{start_date.strftime("%b %-d")}–#{end_date.strftime("%-d")}"
       end
 
-      def period_entries(competition_user)
-        stored = competition_user.score_data&.dig("periods") || []
-        periods.map do |period|
-          stored.find { |p| p["start_date"] == period[:start_date] } ||
-            {"distance" => 0, "elevation" => 0}
-        end
+      def grid_classes
+        "grid [grid-template-columns:var(--legacy-grid-mobile)] lg:[grid-template-columns:var(--legacy-grid-desktop)]"
+      end
+
+      def grid_style
+        "--legacy-grid-desktop: 40px minmax(120px, 1fr) repeat(#{periods.size}, minmax(68px, 1fr)) 110px; " \
+          "--legacy-grid-mobile: 40px minmax(120px, 1fr) 110px repeat(#{periods.size}, minmax(68px, 1fr));"
       end
 
       def total_distance_meters
@@ -35,6 +36,10 @@ module Leaderboard
 
       def total_elevation_meters
         @total_elevation_meters ||= @competition_users.sum(&:elevation_meters)
+      end
+
+      def any_activities?
+        @competition_users.any? { |cu| cu.competition_activities_included.any? }
       end
     end
   end

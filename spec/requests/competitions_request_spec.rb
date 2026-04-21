@@ -27,9 +27,8 @@ RSpec.describe "/competitions", type: :request do
         expect(response.code).to eq "200"
         expect(response.body).to include("Rider One")
         expect(response.body).to include("Winner is the person who rides the most total miles")
-        expect(response.body).to include("Show all activities")
-        expect(response.body).to include("Hide all activities")
         expect(response.body).to include('data-controller="legacy-activities"')
+        expect(response.body).not_to include("Show all activities")
         expect(response.body).not_to include("Everyday")
       end
     end
