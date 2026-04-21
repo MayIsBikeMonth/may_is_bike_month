@@ -11,7 +11,7 @@ module UI::DefinitionList
     private
 
     def dl_classes
-      base = "ui-table md:grid md:grid-cols-[fit-content(10%)_1fr]"
+      base = "ui-table @md:grid @md:grid-cols-[fit-content(10%)_1fr]"
       @bordered ? "#{base} ui-table-bordered" : base
     end
 
@@ -21,10 +21,10 @@ module UI::DefinitionList
       end
 
       def call
-        tag.div(class: "px-1 py-1 md:col-span-2 md:grid md:grid-cols-subgrid md:gap-x-6") do
+        tag.div(class: "px-1 py-1 @md:col-span-2 @md:grid @md:grid-cols-subgrid @md:gap-x-6") do
           safe_join([
             tag.dt(@label, class: "text-sm font-medium text-gray-900 dark:text-white"),
-            tag.dd(content, class: "mt-1 md:mt-0 text-sm text-gray-700 dark:text-gray-400")
+            tag.dd(content, class: "mt-1 @md:mt-0 text-sm text-gray-700 dark:text-gray-400")
           ])
         end
       end
