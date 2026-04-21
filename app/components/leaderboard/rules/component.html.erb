@@ -23,7 +23,7 @@
       <li>Person with the most elevation chooses desert</li>
       <li>
         Imported from
-        <%= link_to "the original spreadsheet", @competition.legacy_url, class: "twlink", target: "_blank", rel: "noopener" %>
+        <%= link_to "the #{@competition.year} competition spreadsheet", @competition.legacy_url, class: "twlink", target: "_blank", rel: "noopener" %>
       </li>
     <% else %>
       <li>
