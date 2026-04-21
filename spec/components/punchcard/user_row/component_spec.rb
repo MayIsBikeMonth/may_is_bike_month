@@ -83,14 +83,30 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
     let(:user_daily) { {} }
     around { |ex| travel_to(Date.parse("2026-04-16")) { ex.run } }
 
-    it "renders empty spans for today and future, punchcard-cells for past days" do
-      cells = rendered.css("div.h-7 > span")
-      expect(cells.count).to eq 30
-      expect(rendered.css("div.h-7 .punchcard-cell").count).to eq 15
+    it "renders cells for past days and today, plain spans only for future days" do
+      expect(rendered.css("div.h-7 > *").count).to eq 30
+      # past (15) + today (1) = 16 cells; future (14) are plain spans
+      expect(rendered.css("div.h-7 .punchcard-cell").count).to eq 16
     end
 
     it "uses days_so_far (days through current_date, inclusive) as the denominator" do
       expect(rendered.text).to include "/16"
+    end
+
+    context "when the user has activity today" do
+      let(:user_daily) { {"2026-04-16" => {distance_meters: 16_093, elevation_meters: 100}} }
+
+      it "renders today as a clickable punch button" do
+        today_cell = rendered.css("div.h-7 > *")[15]
+        expect(today_cell.name).to eq "button"
+        expect(today_cell["data-date"]).to eq "2026-04-16"
+      end
+
+      it "includes today's activity in the punch-activities-container" do
+        competition_user.competition_activities << FactoryBot.create(:competition_activity,
+          competition_user:, distance_meters: 16_093, start_at: Time.parse("2026-04-16T15:00:00Z"))
+        expect(rendered.css(%([data-punch-activities-for="#{user.slug}-2026-04-16"])).count).to eq 1
+      end
     end
   end
 end

@@ -17,7 +17,7 @@ module Punchcard::UserRow
     end
 
     def upcoming?(date_string)
-      date_string >= current_date_string
+      date_string > current_date_string
     end
 
     def current_date_string
