@@ -29,9 +29,9 @@ module Punchcard::Header
 
     def show_everyday_riders? = !@everyday_rider_count.nil?
 
-    def metric_grid_class
+    def metric_grid_style
       count = 3 + (competition_over? ? 0 : 1) + (show_everyday_riders? ? 1 : 0)
-      "grid-cols-[repeat(#{count},auto)]"
+      "grid-template-columns: repeat(#{count}, auto);"
     end
 
     def total_miles = meters_to_miles(@distance_meters)

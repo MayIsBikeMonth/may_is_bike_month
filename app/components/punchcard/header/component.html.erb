@@ -15,9 +15,10 @@
 
   <div
     class="
-      grid <%= metric_grid_class %> gap-6 justify-end text-right
+      grid gap-6 justify-end text-right
       max-lg:justify-start max-lg:text-left max-sm:overflow-x-auto wrapper-padding-overflow overflow-x-scroll
     "
+    style="<%= metric_grid_style %>"
   >
     <% unless competition_over? %>
       <div>
