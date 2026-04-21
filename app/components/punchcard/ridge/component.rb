@@ -57,11 +57,12 @@ module Punchcard::Ridge
         date = Date.parse(day[:date_string])
         day_of_week = date.strftime("%A")
         upcoming = date > today
+        activities = "#{number_with_delimiter(day[:activity_count])} #{"activity".pluralize(day[:activity_count])}"
         {
           height_px:,
           date_string: day[:date_string],
           day: date.day,
-          title: upcoming ? day_of_week : "#{day_of_week}\n#{miles.round(1)} mi\n#{number_with_delimiter(feet.to_i)} ft",
+          title: upcoming ? day_of_week : "#{day_of_week}\n#{activities}\n#{miles.round(1)} mi\n#{number_with_delimiter(feet.to_i)} ft",
           upcoming:,
           weekend_label: (date.strftime("%a") if date.saturday? || date.sunday?)
         }

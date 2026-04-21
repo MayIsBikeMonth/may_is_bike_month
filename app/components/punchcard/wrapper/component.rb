@@ -6,11 +6,12 @@ module Punchcard::Wrapper
 
     def self.daily_metrics(competition_user)
       activities = competition_user.competition_activities_included
-      Hash.new { |hash, key| hash[key] = {distance_meters: 0.0, elevation_meters: 0.0} }.tap do |result|
+      Hash.new { |hash, key| hash[key] = {distance_meters: 0.0, elevation_meters: 0.0, activity_count: 0} }.tap do |result|
         activities.each do |activity|
           activity.activity_dates_strings.each do |date_string|
             result[date_string][:distance_meters] += activity.distance_meters.to_f
             result[date_string][:elevation_meters] += activity.elevation_meters.to_f
+            result[date_string][:activity_count] += 1
           end
         end
       end

@@ -31,5 +31,5 @@
 </div>
 
 <% if @competitions.many? %>
-  <%= render(OtherCompetitionLinks::Component.new(competitions: @competitions, current_year: @competition.year)) %>
+  <%= render(OtherCompetitionLinks::Component.new(competitions: @competitions, current_competition: @competition)) %>
 <% end %>

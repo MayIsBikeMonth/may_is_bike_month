@@ -24,7 +24,8 @@ module Punchcard::Body
         {
           date_string:,
           distance_meters: sum_across_users(:distance_meters, date_string),
-          elevation_meters: sum_across_users(:elevation_meters, date_string)
+          elevation_meters: sum_across_users(:elevation_meters, date_string),
+          activity_count: sum_across_users(:activity_count, date_string).to_i
         }
       end
     end
