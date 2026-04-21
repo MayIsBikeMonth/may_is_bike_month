@@ -106,9 +106,6 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
     end
 
     context "when current_date has rolled into tomorrow for this user (eastward timezone)" do
-      # Simulates the timezone case: it's still 4/16 for the viewer but the
-      # competition_user's timezone puts them at 4/17 with no activity yet.
-      # We must not render an "x" for 4/17.
       before { allow(competition_user).to receive(:current_date).and_return(Date.parse("2026-04-17")) }
 
       it "keeps 4/17 as an upcoming plain span (no x) when there's no activity" do
@@ -119,9 +116,6 @@ RSpec.describe Punchcard::UserRow::Component, type: :component do
     end
   end
 
-  # Exercises the real timezone resolution: current_date comes from
-  # Time.current evaluated in the user's timezone (derived from their latest
-  # activity). Nothing past that cutoff may render an "x".
   describe "upcoming-day cutoff honors the user's current timezone" do
     let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2026-04-01")) }
     let(:period_date_strings) { (competition.start_date..competition.end_date).map(&:to_s) }
