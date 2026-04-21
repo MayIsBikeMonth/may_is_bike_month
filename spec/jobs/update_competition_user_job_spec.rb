@@ -38,6 +38,19 @@ RSpec.describe UpdateCompetitionUserJob, type: :job do
       expect { described_class.enqueue_current }.not_to change(described_class.jobs, :count)
     end
 
+    context "with a current competition" do
+      include ActionCable::TestHelper
+
+      let(:competition) { FactoryBot.create(:competition, start_date: Time.parse("2024-05-01"), current: true) }
+      let(:stream) { "#{competition.to_gid_param}:punchcard_wrapper" }
+
+      it "broadcasts a punchcard refresh" do
+        VCR.use_cassette("update_competition_user_job", match_requests_on: [:path]) do
+          expect { instance.perform(competition_user.id) }.to have_broadcasted_to(stream)
+        end
+      end
+    end
+
     context "data exists" do
       let(:time) { Time.current - 5.minutes }
       it "doesn't update" do

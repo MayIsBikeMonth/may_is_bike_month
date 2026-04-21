@@ -1,56 +1,183 @@
 import { Controller } from '@hotwired/stimulus'
+import { isPressed, press, unpress, setPressed, allPressed } from 'utils/aria_pressed'
+import { readUrlSelection, writeUrlSelection } from 'utils/punchcard_url'
 
-// Connects to data-controller="punch"
-// Active punches are encoded in the URL as
-//   ?selected=userSlug:day,day;userSlug:day,...
-// and restored on load. History is not pushed.
-// Elements with `data-punch-activities-for="<id>"` are revealed when the
-// matching punch is active.
+// data-controller="punch". Selection state is aria-pressed on the DOM
+// itself (punches drive everything; group buttons reflect their punches;
+// empty-day ridge bars use selectedEmptyDays since they have no punches).
+//
+// Across a turbo morph: capture group intent on turbo:before-morph-element,
+// rebuild + re-apply on turbo:morph-element. Indexing uses querySelectorAll
+// because Stimulus target getters are stale inside the synchronous morph
+// handler (target tracking updates on a later MutationObserver microtask).
+
+// ---- small utilities ---------------------------------------------------
+
+const appendToMapKey = (map, key, value) => {
+  if (!map.has(key)) map.set(key, [])
+  map.get(key).push(value)
+}
+
+const toggleSetMember = (set, value) => {
+  if (set.has(value)) set.delete(value); else set.add(value)
+}
+
+const emptyIntent = () => ({ allActive: false, users: new Set(), days: new Set() })
+
+// ---- Stimulus controller ----------------------------------------------
+
 export default class extends Controller {
-  static targets = ['punch', 'ridgeBar', 'userButton', 'hideAllBtn']
+  static targets = ['punch', 'ridgeBar', 'userButton', 'hideAllBtn', 'showAllBtn']
+
+  // === Lifecycle =========================================================
 
   connect () {
-    this.indexPunches()
-    const selected = new URLSearchParams(window.location.search).get('selected')
-    if (selected) {
-      selected.split(';').forEach(group => {
-        const [slug, daysStr] = group.split(':')
-        if (!slug || !daysStr) return
-        daysStr.split(',').forEach(day => {
-          this.punchesByKey.get(`${slug}:${parseInt(day, 10)}`)?.setAttribute('aria-pressed', 'true')
-        })
-      })
+    this.selectedEmptyDays = new Set()
+    this.capturedIntent = emptyIntent()
+    this.beforeMorphHandler = (event) => {
+      if (event.target === this.element) this.captureActiveGroups()
     }
-    this.sync()
+    // idiomorph bubbles turbo:morph-element for every descendant during one
+    // morph cycle — debounce into a single rebuild.
+    this.morphHandler = () => this.scheduleRebuild()
+    this.element.addEventListener('turbo:before-morph-element', this.beforeMorphHandler)
+    this.element.addEventListener('turbo:morph-element', this.morphHandler)
+    this.rebuild()
   }
 
-  indexPunches () {
+  disconnect () {
+    this.element.removeEventListener('turbo:before-morph-element', this.beforeMorphHandler)
+    this.element.removeEventListener('turbo:morph-element', this.morphHandler)
+  }
+
+  // === Rebuild orchestration =============================================
+
+  scheduleRebuild () {
+    if (this.rebuildScheduled) return
+    this.rebuildScheduled = true
+    queueMicrotask(() => {
+      this.rebuildScheduled = false
+      this.rebuild()
+    })
+  }
+
+  rebuild () {
+    this.indexDom()
+    this.selectedEmptyDays = new Set()
+    this.applyUrlSelection()
+    this.pruneSelectedEmptyDays()
+    this.applyCapturedGroups()
+    this.sync()
+    this.syncUrl()
+  }
+
+  // === DOM indexing ======================================================
+
+  // Read the DOM directly; see file-header note on morph timing / stale
+  // Stimulus targets.
+  indexDom () {
+    const q = (selector) => Array.from(this.element.querySelectorAll(selector))
+    this.punches = q('[data-punch-target="punch"]')
+    this.ridgeBars = q('[data-punch-target="ridgeBar"]')
+    this.userButtons = q('[data-punch-target="userButton"]')
+    this.hideAllBtns = q('[data-punch-target="hideAllBtn"]')
+    this.showAllBtns = q('[data-punch-target="showAllBtn"]')
+    this.activityEls = q('[data-punch-activities-for]')
+
     this.punchesByDate = new Map()
     this.punchesByUser = new Map()
     this.punchesByKey = new Map()
-    this.punchTargets.forEach(el => {
-      const date = el.dataset.date
-      const slug = el.dataset.userSlug
+    for (const el of this.punches) {
+      const { date, userSlug: slug } = el.dataset
       const day = parseInt(date.slice(-2), 10)
       el._punchDay = day
-      if (!this.punchesByDate.has(date)) this.punchesByDate.set(date, [])
-      this.punchesByDate.get(date).push(el)
-      if (!this.punchesByUser.has(slug)) this.punchesByUser.set(slug, [])
-      this.punchesByUser.get(slug).push(el)
+      appendToMapKey(this.punchesByDate, date, el)
+      appendToMapKey(this.punchesByUser, slug, el)
       this.punchesByKey.set(`${slug}:${day}`, el)
-    })
-    this.activityEls = Array.from(this.element.querySelectorAll('[data-punch-activities-for]'))
+    }
   }
 
+  dateStringForDay (day) {
+    const bar = this.ridgeBars.find(b => parseInt(b.dataset.date.slice(-2), 10) === day)
+    return bar?.dataset.date
+  }
+
+  // === URL state =========================================================
+
+  applyUrlSelection () {
+    const { byUser, days } = readUrlSelection()
+    byUser.forEach((dayList, slug) => {
+      dayList.forEach(day => {
+        const punch = this.punchesByKey.get(`${slug}:${day}`)
+        if (punch) press(punch)
+      })
+    })
+    days.forEach(day => {
+      const date = this.dateStringForDay(day)
+      if (date) this.selectedEmptyDays.add(date)
+    })
+  }
+
+  syncUrl () {
+    const byUser = new Map()
+    this.punches.filter(isPressed).forEach(el => {
+      appendToMapKey(byUser, el.dataset.userSlug, el._punchDay)
+    })
+    const days = Array.from(this.selectedEmptyDays).map(d => parseInt(d.slice(-2), 10))
+    writeUrlSelection({ byUser, days })
+  }
+
+  // Dates with punches now have their state derived from those punches, so
+  // drop them from selectedEmptyDays (which is only meaningful for dates
+  // that have zero punches).
+  pruneSelectedEmptyDays () {
+    for (const date of [...this.selectedEmptyDays]) {
+      if (this.punchesByDate.has(date)) this.selectedEmptyDays.delete(date)
+    }
+  }
+
+  // === Group intent captured / replayed across morph =====================
+
+  captureActiveGroups () {
+    if (allPressed(this.punches)) {
+      this.capturedIntent = { allActive: true, users: new Set(), days: new Set() }
+      return
+    }
+    const users = new Set()
+    const days = new Set()
+    this.punchesByUser.forEach((els, slug) => { if (allPressed(els)) users.add(slug) })
+    this.punchesByDate.forEach((els, date) => { if (allPressed(els)) days.add(date) })
+    this.selectedEmptyDays.forEach(date => days.add(date))
+    this.capturedIntent = { allActive: false, users, days }
+  }
+
+  applyCapturedGroups () {
+    const { allActive, users, days } = this.capturedIntent
+    if (allActive) {
+      this.punches.forEach(press)
+      return
+    }
+    users.forEach(slug => (this.punchesByUser.get(slug) || []).forEach(press))
+    days.forEach(date => (this.punchesByDate.get(date) || []).forEach(press))
+  }
+
+  // === User actions ======================================================
+
   toggle (event) {
-    const clicked = event.currentTarget
-    const wasActive = clicked.getAttribute('aria-pressed') === 'true'
-    clicked.setAttribute('aria-pressed', wasActive ? 'false' : 'true')
+    const el = event.currentTarget
+    setPressed(el, !isPressed(el))
     this.afterToggle()
   }
 
   toggleDay (event) {
-    this.toggleGroup(this.punchesByDate.get(event.currentTarget.dataset.date))
+    const date = event.currentTarget.dataset.date
+    const punches = this.punchesByDate.get(date)
+    if (punches && punches.length > 0) {
+      this.toggleGroup(punches)
+    } else {
+      toggleSetMember(this.selectedEmptyDays, date)
+      this.afterToggle()
+    }
   }
 
   toggleUser (event) {
@@ -59,55 +186,45 @@ export default class extends Controller {
 
   toggleGroup (targets) {
     if (!targets || targets.length === 0) return
-    const allActive = targets.every(el => el.getAttribute('aria-pressed') === 'true')
-    targets.forEach(el => el.setAttribute('aria-pressed', allActive ? 'false' : 'true'))
+    const on = !targets.every(isPressed)
+    targets.forEach(el => setPressed(el, on))
     this.afterToggle()
   }
 
-  showAll () {
-    this.punchTargets.forEach(el => el.setAttribute('aria-pressed', 'true'))
-    this.afterToggle()
-  }
-
-  hideAll () {
-    this.punchTargets.forEach(el => el.setAttribute('aria-pressed', 'false'))
-    this.afterToggle()
-  }
+  showAll () { this.punches.forEach(press); this.afterToggle() }
+  hideAll () { this.punches.forEach(unpress); this.afterToggle() }
 
   afterToggle () {
     this.sync()
-    this.updateUrl()
+    this.syncUrl()
   }
+
+  // === Sync rendered UI ==================================================
 
   sync () {
     this.syncRidgeBars()
     this.syncUserButtons()
     this.syncActivities()
-    this.syncHideAllButton()
+    this.syncAllButtons()
   }
 
   syncRidgeBars () {
-    this.ridgeBarTargets.forEach(bar => {
-      const targets = this.punchesByDate.get(bar.dataset.date) || []
-      const allActive = targets.length > 0 && targets.every(el => el.getAttribute('aria-pressed') === 'true')
-      bar.setAttribute('aria-pressed', allActive ? 'true' : 'false')
+    this.ridgeBars.forEach(bar => {
+      const date = bar.dataset.date
+      const punches = this.punchesByDate.get(date) || []
+      const on = punches.length > 0 ? allPressed(punches) : this.selectedEmptyDays.has(date)
+      setPressed(bar, on)
     })
   }
 
   syncUserButtons () {
-    this.userButtonTargets.forEach(btn => {
-      const targets = this.punchesByUser.get(btn.dataset.userSlug) || []
-      const allActive = targets.length > 0 && targets.every(el => el.getAttribute('aria-pressed') === 'true')
-      btn.setAttribute('aria-pressed', allActive ? 'true' : 'false')
+    this.userButtons.forEach(btn => {
+      setPressed(btn, allPressed(this.punchesByUser.get(btn.dataset.userSlug) || []))
     })
   }
 
   syncActivities () {
-    const activeIds = new Set(
-      this.punchTargets
-        .filter(el => el.getAttribute('aria-pressed') === 'true')
-        .map(el => el.dataset.punchId)
-    )
+    const activeIds = new Set(this.punches.filter(isPressed).map(el => el.dataset.punchId))
     this.activityEls.forEach(el => {
       el.classList.toggle('hidden!', !activeIds.has(el.dataset.punchActivitiesFor))
     })
@@ -118,31 +235,9 @@ export default class extends Controller {
     })
   }
 
-  syncHideAllButton () {
-    const anyActive = this.punchTargets.some(el => el.getAttribute('aria-pressed') === 'true')
-    this.hideAllBtnTargets.forEach(btn => btn.classList.toggle('hidden', !anyActive))
-  }
-
-  updateUrl () {
-    const byUser = new Map()
-    this.punchTargets
-      .filter(el => el.getAttribute('aria-pressed') === 'true')
-      .forEach(el => {
-        const slug = el.dataset.userSlug
-        if (!byUser.has(slug)) byUser.set(slug, [])
-        byUser.get(slug).push(el._punchDay)
-      })
-    const encoded = Array.from(byUser, ([slug, days]) =>
-      `${slug}:${days.sort((a, b) => a - b).join(',')}`
-    ).join(';')
-    const url = new URL(window.location.href)
-    const current = url.searchParams.get('selected') ?? ''
-    if (encoded === current) return
-    if (encoded) {
-      url.searchParams.set('selected', encoded)
-    } else {
-      url.searchParams.delete('selected')
-    }
-    window.history.replaceState(null, '', url)
+  syncAllButtons () {
+    const anyActive = this.punches.some(isPressed)
+    this.hideAllBtns.forEach(btn => btn.classList.toggle('hidden', !anyActive))
+    this.showAllBtns.forEach(btn => setPressed(btn, allPressed(this.punches)))
   }
 }

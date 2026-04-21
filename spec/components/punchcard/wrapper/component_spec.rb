@@ -52,5 +52,54 @@ RSpec.describe Punchcard::Wrapper::Component, type: :component do
       rendered = render_inline(described_class.new(competition:, competition_users: []))
       expect(rendered.css("h1").text).to include competition.year.to_s
     end
+
+    context "with non-current competition" do
+      it "does not subscribe to a turbo stream" do
+        rendered = render_inline(described_class.new(competition:, competition_users: []))
+        expect(rendered.css("turbo-cable-stream-source")).to be_empty
+      end
+    end
+
+    context "with the current competition" do
+      let(:competition) { FactoryBot.create(:competition, current: true) }
+
+      it "subscribes to the wrapper turbo stream" do
+        rendered = render_inline(described_class.new(competition:, competition_users: []))
+        expect(rendered.css("turbo-cable-stream-source").length).to eq 1
+        expected_id = ActionView::RecordIdentifier.dom_id(competition, :punchcard_wrapper)
+        expect(rendered.css("##{expected_id}")).not_to be_empty
+      end
+    end
+  end
+
+  describe "#broadcast_refresh!" do
+    include ActionCable::TestHelper
+
+    let(:competition) { FactoryBot.create(:competition, current: true) }
+    let(:component) { described_class.new(competition:, competition_users: []) }
+    let(:stream) { "#{competition.to_gid_param}:punchcard_wrapper" }
+
+    it "broadcasts a replace to the wrapper channel" do
+      expect { component.broadcast_refresh! }.to have_broadcasted_to(stream)
+    end
+  end
+
+  describe ".broadcast_refresh_current!" do
+    include ActionCable::TestHelper
+
+    context "without a current competition" do
+      it "returns nil" do
+        expect(described_class.broadcast_refresh_current!).to be_nil
+      end
+    end
+
+    context "with a current competition" do
+      let!(:current_competition) { FactoryBot.create(:competition, current: true) }
+      let(:stream) { "#{current_competition.to_gid_param}:punchcard_wrapper" }
+
+      it "broadcasts a replace using the current competition channel" do
+        expect { described_class.broadcast_refresh_current! }.to have_broadcasted_to(stream)
+      end
+    end
   end
 end

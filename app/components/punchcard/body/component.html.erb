@@ -24,8 +24,12 @@
         class="
           text-purple-300 dark:text-purple-400 hover:text-purple-500
           dark:hover:text-purple-200 hover:underline cursor-pointer
+          aria-pressed:text-purple-500 dark:aria-pressed:text-purple-200
+          aria-pressed:underline
         "
+        aria-pressed="false"
         data-action="click->punch#showAll"
+        data-punch-target="showAllBtn"
       >
         Show all activities
       </button>
