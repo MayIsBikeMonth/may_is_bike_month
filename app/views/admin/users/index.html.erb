@@ -3,7 +3,7 @@
 <%# Local var because cell blocks run via instance_exec in the table component context %>
 <% show_dev_info = display_dev_info? %>
 
-<%= render(UI::Table::Component.new(records: @users, render_sortable: true)) do |table|
+<%= render(UI::Table::Component.new(records: @users, render_sortable: true, sticky: true)) do |table|
   table.column(sortable: "display_name", lower_right: (->(u) { u.id } if show_dev_info)) do |user|
     user.display_name
   end
