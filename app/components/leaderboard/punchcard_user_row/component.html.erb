@@ -103,7 +103,7 @@
     </div>
   </div>
 
-  <%= render(Leaderboard::UserRowActivities::Component.new(
+  <%= render(Leaderboard::UserActivitiesForDateWrapper::Component.new(
     competition_user: @competition_user,
     competition: @competition
   )) %>

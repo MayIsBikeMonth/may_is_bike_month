@@ -10,6 +10,17 @@ module Leaderboard
         @competition_year = competition_year
       end
 
+      def call
+        tag.div(class: "hidden! pl-9 -indent-9 break-inside-avoid pb-1",
+          data: {punch_activities_for: @punch_id}) do
+          safe_join([
+            tag.span(short_date, class: "opacity-50 font-mono text-[11px]"),
+            " ".html_safe,
+            activities_html
+          ])
+        end
+      end
+
       private
 
       def short_date

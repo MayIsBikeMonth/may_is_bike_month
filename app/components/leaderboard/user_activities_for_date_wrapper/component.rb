@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Leaderboard
-  module UserRowActivities
+  module UserActivitiesForDateWrapper
     class Component < ApplicationComponent
       def initialize(competition_user:, competition:)
         @competition_user = competition_user
