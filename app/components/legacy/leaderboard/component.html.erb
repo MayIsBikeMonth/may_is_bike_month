@@ -1,0 +1,172 @@
+<% grid_style = "grid-template-columns: 40px minmax(120px, 1fr) repeat(#{periods.size}, minmax(68px, 1fr)) 110px;" %>
+
+<div class="max-w-[1340px] mx-auto pt-8 wrapper-padding pb-20">
+  <%= render(Punchcard::Header::Component.new(
+    competition: @competition,
+    rider_count: @competition_users.size,
+    distance_meters: total_distance_meters,
+    elevation_meters: total_elevation_meters
+  )) %>
+
+  <section class="mb-8 lg:mb-16 lg:grid lg:grid-cols-[auto_1fr] lg:gap-x-6 lg:items-start">
+    <h4
+      class="
+        font-mono text-[11px] font-medium uppercase tracking-[0.14em]
+        text-purple-300 dark:text-purple-400 mb-1.5 lg:m-0 lg:pt-0.5 text-left
+      "
+    >
+      Rules
+    </h4>
+
+    <ul
+      class="
+        flex flex-col lg:flex-row lg:flex-wrap list-none gap-y-1.5 gap-x-[22px]
+        text-[13px] text-purple-400 dark:text-purple-300 m-0 p-0
+      "
+    >
+      <li>Winner is the person who rides the most miles in May</li>
+      <li>Ties are broken by total elevation</li>
+
+      <li>
+        This year predates the Strava integration — totals were tracked
+        manually, so only weekly aggregates are shown
+      </li>
+    </ul>
+  </section>
+
+  <main class="lg:overflow-x-auto lg:-mx-7">
+    <div class="lg:min-w-[900px] lg:px-7">
+      <div
+        class="
+          max-lg:hidden lg:grid gap-3 items-end pb-2 mb-2 border-b border-purple-100
+          dark:border-purple-700 font-mono text-[11px] uppercase tracking-[0.1em]
+          text-purple-300 dark:text-purple-400
+        "
+        style="<%= grid_style %>"
+      >
+        <span>#</span>
+        <span>Rider</span>
+
+        <% periods.each do |period| %>
+          <span class="text-right"><%= period_label(period) %></span>
+        <% end %>
+
+        <span class="text-right">Total</span>
+      </div>
+
+      <% @competition_users.each_with_index do |competition_user, index| %>
+        <% entries = period_entries(competition_user) %>
+
+        <div
+          class="
+            border-b border-purple-100 dark:border-purple-700 py-3 gap-3
+            items-center lg:grid
+            max-lg:grid max-lg:grid-cols-[auto_1fr_auto] max-lg:grid-rows-[auto_auto]
+          "
+          style="<%= grid_style %>"
+        >
+          <span
+            class="
+              font-mono font-bold text-purple-300 dark:text-purple-400 text-[13px]
+              max-lg:row-start-1
+            "
+          >
+            <%= index + 1 %>
+          </span>
+
+          <div class="flex items-center gap-2 min-w-0 max-lg:row-start-1">
+            <% if competition_user.user.strava_id.present? %>
+              <a
+                class="
+                  inline-flex items-center shrink-0 opacity-75
+                  hover:opacity-100 transition-opacity
+                "
+                href="<%= competition_user.user.strava_user_url %>"
+                target="_blank"
+                rel="noopener"
+                title="View on Strava"
+              >
+                <%= helpers.image_tag("strava_logo.svg", alt: "Strava", class: "w-3.5 h-3.5 block") %>
+              </a>
+            <% end %>
+
+            <span class="text-purple-900 dark:text-purple-0 font-medium truncate">
+              <%= competition_user.display_name %>
+            </span>
+          </div>
+
+          <% entries.each do |entry| %>
+            <div
+              class="
+                text-right font-mono text-[12px] text-purple-400
+                dark:text-purple-300 max-lg:hidden
+              "
+            >
+              <span class="unit-imperial">
+                <%= number_display(meters_to_miles(entry["distance"].to_f), round_to: 1) %>
+                mi
+              </span>
+
+              <span class="unit-metric hidden">
+                <%= number_display(entry["distance"].to_f / 1000.0, round_to: 1) %>
+                km
+              </span>
+
+              <br>
+
+              <span class="opacity-40">
+                <span class="unit-imperial">
+                  <%= number_display(meters_to_feet(entry["elevation"].to_f)) %>
+                  ft
+                </span>
+
+                <span class="unit-metric hidden">
+                  <%= number_display(entry["elevation"].to_f) %> m
+                </span>
+              </span>
+            </div>
+          <% end %>
+
+          <div
+            class="
+              text-right font-mono text-[12px] text-purple-400 dark:text-purple-300
+              max-lg:row-start-2 max-lg:col-span-3 max-lg:text-left
+            "
+          >
+            <span class="text-purple-900 dark:text-purple-0 text-[18px] font-medium">
+              <span class="unit-imperial">
+                <%= number_display(meters_to_miles(competition_user.distance_meters), round_to: 1) %>
+                mi
+              </span>
+
+              <span class="unit-metric hidden">
+                <%= number_display(competition_user.distance_meters / 1000.0, round_to: 1) %>
+                km
+              </span>
+            </span>
+
+            <br>
+
+            <span class="opacity-40">
+              <span class="unit-imperial">
+                <%= number_display(meters_to_feet(competition_user.elevation_meters)) %>
+                ft
+              </span>
+
+              <span class="unit-metric hidden">
+                <%= number_display(competition_user.elevation_meters) %> m
+              </span>
+            </span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </main>
+
+  <% if @competitions.many? %>
+    <%= render(OtherCompetitionLinks::Component.new(
+      competitions: @competitions,
+      current_competition: @competition
+    )) %>
+  <% end %>
+</div>

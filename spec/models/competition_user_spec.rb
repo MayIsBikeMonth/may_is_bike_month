@@ -225,5 +225,16 @@ RSpec.describe CompetitionUser, type: :model do
       expect(competition_user2.score).to be > 1.0
       expect(CompetitionUser.score_ordered.pluck(:id)).to eq([competition_user2.id, competition_user1.id])
     end
+
+    context "when competition is legacy" do
+      let(:competition) { FactoryBot.create(:competition, kind: :legacy, start_date: Date.parse("2023-05-01")) }
+      let(:competition_user1) { FactoryBot.create(:competition_user, competition:, score_data: {dates: [], distance: 5000, elevation: 100}) }
+      let(:competition_user2) { FactoryBot.create(:competition_user, competition:, score_data: {dates: [], distance: 12000, elevation: 300}) }
+      it "scores by total distance and orders by it" do
+        expect(competition_user1.score).to eq 5000
+        expect(competition_user2.score).to eq 12000
+        expect(CompetitionUser.score_ordered.pluck(:id)).to eq([competition_user2.id, competition_user1.id])
+      end
+    end
   end
 end

@@ -1,5 +1,13 @@
-<%= render(Punchcard::Wrapper::Component.new(
-  competition: @competition,
-  competition_users: @competition_users,
-  competitions: @competitions
-)) %>
+<% if @competition.legacy? %>
+  <%= render(Legacy::Leaderboard::Component.new(
+    competition: @competition,
+    competition_users: @competition_users,
+    competitions: @competitions
+  )) %>
+<% else %>
+  <%= render(Punchcard::Wrapper::Component.new(
+    competition: @competition,
+    competition_users: @competition_users,
+    competitions: @competitions
+  )) %>
+<% end %>
