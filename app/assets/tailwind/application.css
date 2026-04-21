@@ -45,7 +45,7 @@
   @apply px-4 md:px-7;
 }
 .wrapper-padding-overflow {
-  @apply overflow-x-scroll md:px-7 md:-mx-7 px-4 -mx-4;
+  @apply md:px-7 md:-mx-7 px-4 -mx-4;
 }
 
 @layer components {
