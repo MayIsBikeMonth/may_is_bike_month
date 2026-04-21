@@ -158,4 +158,41 @@ RSpec.describe "Punchcard live update", :js, type: :system do
       expect(find(%([data-punch-target="ridgeBar"][data-date="2026-05-15"]))["aria-pressed"]).to eq "true"
     end
   end
+
+  describe "selecting a day that has no activity yet" do
+    # Day 3 has no activity from anyone; its ridge bar renders as a button
+    # (past/today) but previously did nothing on click because there were
+    # no punches to toggle.
+    let(:day3_ridge) { find(%([data-punch-target="ridgeBar"][data-date="2026-05-03"])) }
+
+    it "toggles the ridge bar's aria-pressed state" do
+      expect(day3_ridge["aria-pressed"]).to eq "false"
+
+      day3_ridge.click
+      expect(day3_ridge["aria-pressed"]).to eq "true"
+
+      day3_ridge.click
+      expect(day3_ridge["aria-pressed"]).to eq "false"
+    end
+
+    it "activates any punch that arrives for the selected day via morph" do
+      day3_ridge.click
+      expect(day3_ridge["aria-pressed"]).to eq "true"
+
+      morph_in_punch(user_slug: alice.slug, date_string: "2026-05-03")
+
+      expect(pressed?(find(punch_selector(user_slug: alice.slug, date_string: "2026-05-03")))).to be true
+      # Ridge bar now reflects the fully-pressed punch group.
+      expect(find(%([data-punch-target="ridgeBar"][data-date="2026-05-03"]))["aria-pressed"]).to eq "true"
+    end
+
+    it "persists the selection across reload via the URL" do
+      day3_ridge.click
+      expect(page.current_url).to include "days=3"
+
+      visit page.current_url
+
+      expect(find(%([data-punch-target="ridgeBar"][data-date="2026-05-03"]))["aria-pressed"]).to eq "true"
+    end
+  end
 end
