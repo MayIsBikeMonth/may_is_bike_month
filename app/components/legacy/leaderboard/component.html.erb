@@ -1,4 +1,4 @@
-<% grid_style = "grid-template-columns: 40px minmax(120px, 1fr) repeat(#{periods.size}, minmax(68px, 1fr)) 110px;" %>
+<% grid_style = "--legacy-grid: 40px minmax(120px, 1fr) repeat(#{periods.size}, minmax(68px, 1fr)) 110px;" %>
 
 <div class="max-w-[1340px] mx-auto pt-8 wrapper-padding pb-20">
   <%= render(Punchcard::Header::Component.new(
@@ -14,7 +14,8 @@
     <div class="lg:min-w-[900px] lg:px-7">
       <div
         class="
-          max-lg:hidden lg:grid gap-3 items-end pb-2 mb-2 border-b border-purple-100
+          max-lg:hidden lg:grid lg:[grid-template-columns:var(--legacy-grid)]
+          gap-3 items-end pb-2 mb-2 border-b border-purple-100
           dark:border-purple-700 font-mono text-[11px] uppercase tracking-[0.1em]
           text-purple-300 dark:text-purple-400
         "
@@ -36,8 +37,8 @@
         <div
           class="
             border-b border-purple-100 dark:border-purple-700 py-3 gap-3
-            items-center lg:grid
-            max-lg:grid max-lg:grid-cols-[auto_1fr_auto] max-lg:grid-rows-[auto_auto]
+            items-center lg:grid lg:[grid-template-columns:var(--legacy-grid)]
+            max-lg:grid max-lg:grid-cols-[auto_1fr_auto]
           "
           style="<%= grid_style %>"
         >
@@ -106,7 +107,6 @@
           <div
             class="
               text-right font-mono text-[12px] text-purple-400 dark:text-purple-300
-              max-lg:row-start-2 max-lg:col-span-3 max-lg:text-left
             "
           >
             <span class="text-purple-900 dark:text-purple-0 text-[18px] font-medium">
