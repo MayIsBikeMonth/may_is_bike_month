@@ -70,6 +70,23 @@ module RakeLegacy
       competition_user.save!
     end
   end
+
+  def self.check_2023_matches
+    unmatched = ROWS_2023.map(&:first).reject { |name| LegacyUserFinder.find(name) }
+    if unmatched.empty?
+      puts "All #{ROWS_2023.size} legacy names matched existing users."
+      return
+    end
+
+    width = unmatched.map(&:length).max + 4
+    puts "Unmatched names:"
+    puts
+    unmatched.each do |name|
+      matches = LegacyUserFinder.potential_matches(name)
+      label = matches.any? ? "potential matches: #{matches.join(", ")}" : "no potential matches"
+      puts "#{name.ljust(width)}#{label}"
+    end
+  end
 end
 
 namespace :legacy do
@@ -77,5 +94,10 @@ namespace :legacy do
   task import_2023: :environment do
     RakeLegacy.import_2023
     puts "Imported #{RakeLegacy::ROWS_2023.size} legacy 2023 rows"
+  end
+
+  desc "Dry-run: report 2023 legacy names that wouldn't match an existing user"
+  task check_2023_matches: :environment do
+    RakeLegacy.check_2023_matches
   end
 end
