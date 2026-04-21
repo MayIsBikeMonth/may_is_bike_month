@@ -25,6 +25,6 @@ class UpdateCompetitionUserJob < ApplicationJob
     return unless User.valid_strava_auth?(competition_user.user.strava_auth)
     StravaRequest.update_competition_user_activities(competition_user)
     competition_user.reload.update_score_data!
-    Punchcard::Wrapper::Component.broadcast_refresh_current!
+    Leaderboard::PunchcardWrapper::Component.broadcast_refresh_current!
   end
 end

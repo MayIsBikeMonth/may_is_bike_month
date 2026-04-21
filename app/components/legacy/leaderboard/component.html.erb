@@ -5,14 +5,14 @@
   class="max-w-[1340px] mx-auto pt-8 wrapper-padding pb-20"
   data-controller="legacy-activities"
 >
-  <%= render(Punchcard::Header::Component.new(
+  <%= render(Leaderboard::Header::Component.new(
     competition: @competition,
     rider_count: @competition_users.size,
     distance_meters: total_distance_meters,
     elevation_meters: total_elevation_meters
   )) %>
 
-  <%= render(Punchcard::Rules::Component.new(competition: @competition)) %>
+  <%= render(Leaderboard::Rules::Component.new(competition: @competition)) %>
 
   <main
     class="wrapper-padding-overflow overflow-x-auto"
@@ -215,7 +215,7 @@
   </main>
 
   <% if @competitions.many? %>
-    <%= render(OtherCompetitionLinks::Component.new(
+    <%= render(Leaderboard::OtherCompetitionLinks::Component.new(
       competitions: @competitions,
       current_competition: @competition
     )) %>
