@@ -1,5 +1,5 @@
 <% if @competition.legacy? %>
-  <%= render(Legacy::Leaderboard::Component.new(
+  <%= render(Leaderboard::LegacyCompetition::Component.new(
     competition: @competition,
     competition_users: @competition_users,
     competitions: @competitions

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Legacy
-  module Leaderboard
+module Leaderboard
+  module LegacyCompetition
     class Component < ApplicationComponent
       def initialize(competition:, competition_users:, competitions: [])
         @competition = competition
