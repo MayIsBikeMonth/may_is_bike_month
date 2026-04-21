@@ -38,6 +38,17 @@ RSpec.describe UpdateCompetitionUserJob, type: :job do
       expect { described_class.enqueue_current }.not_to change(described_class.jobs, :count)
     end
 
+    context "user without strava auth" do
+      let(:user) { FactoryBot.create(:user) }
+
+      it "returns early without hitting strava" do
+        competition_user.update!(score_data: {dates: [], distance: 500, elevation: 10})
+        instance.perform(competition_user.id)
+        expect(competition_user.reload.competition_activities.count).to eq 0
+        expect(competition_user.score_data["distance"]).to eq 500
+      end
+    end
+
     context "with a current competition" do
       include ActionCable::TestHelper
 

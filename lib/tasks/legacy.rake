@@ -73,6 +73,10 @@ module RakeLegacy
         score_data: score_data
       )
     end
+
+    competition.competition_users.find_each do |cu|
+      UpdateCompetitionUserJob.perform_async(cu.id)
+    end
   end
 
   def self.check_2023_matches
