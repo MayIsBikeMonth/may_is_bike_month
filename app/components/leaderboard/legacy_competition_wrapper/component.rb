@@ -3,6 +3,8 @@
 module Leaderboard
   module LegacyCompetitionWrapper
     class Component < ApplicationComponent
+      GRID_CLASSES = "grid [grid-template-columns:var(--legacy-grid-mobile)] lg:[grid-template-columns:var(--legacy-grid-desktop)]"
+
       def initialize(competition:, competition_users:, competitions: [])
         @competition = competition
         @competition_users = competition_users
@@ -22,7 +24,7 @@ module Leaderboard
       end
 
       def grid_classes
-        "grid [grid-template-columns:var(--legacy-grid-mobile)] lg:[grid-template-columns:var(--legacy-grid-desktop)]"
+        GRID_CLASSES
       end
 
       def grid_style

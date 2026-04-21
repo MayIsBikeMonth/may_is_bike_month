@@ -7,6 +7,8 @@ module RakeLegacy
 
   SOURCE_URL_2023 = "https://docs.google.com/spreadsheets/d/1wk8oUY1yx8wFn2GaCd-Yw121fGVkiFf8oJJJJdiS8PU"
 
+  DUMMY_STRAVA_PREFIX = "legacy-dummy-"
+
   # [name, mi_w1, ft_w1, mi_w2, ft_w2, mi_w3, ft_w3, mi_w4, ft_w4, mi_w5, ft_w5, total_mi, total_ft]
   ROWS_2023 = [
     ["Noah", 644.8, 32_580, 424.4, 19_656, 246.9, 14_298, 291.4, 23_700, 225.5, 14_390, 1833, 104_624],
@@ -79,8 +81,6 @@ module RakeLegacy
     end
   end
 
-  DUMMY_STRAVA_PREFIX = "legacy-dummy-"
-
   def self.dummy_activities_2023
     competition = Competition.find_by(start_date: Date.new(2023, 5, 1), kind: :legacy)
     raise "No 2023 legacy competition found — run legacy:import_2023 first" unless competition
@@ -113,7 +113,7 @@ module RakeLegacy
           activity_date = period_start + day_offset
           strava_id = "#{DUMMY_STRAVA_PREFIX}#{competition_user.id}-#{period_index}-#{split_index}"
           moving_seconds = (per_distance / 5.5).round
-          local_time = "#{activity_date}T09:30:00"
+          start_date = "#{activity_date}T09:30:00Z"
 
           CompetitionActivity.create!(
             competition_user:,
@@ -125,9 +125,9 @@ module RakeLegacy
               "total_elevation_gain" => per_elevation,
               "elapsed_time" => moving_seconds,
               "type" => "Ride",
-              "timezone" => "(GMT-06:00) America/Denver",
-              "start_date" => Time.parse("#{local_time}-06:00").utc.rfc3339,
-              "start_date_local" => "#{local_time}Z",
+              "timezone" => "UTC",
+              "start_date" => start_date,
+              "start_date_local" => start_date,
               "visibility" => "everyone"
             }
           )

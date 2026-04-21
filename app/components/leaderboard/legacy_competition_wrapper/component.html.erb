@@ -71,9 +71,7 @@
         <%= render(Leaderboard::LegacyCompetitionUserRow::Component.new(
           competition_user:,
           competition: @competition,
-          rank: index + 1,
-          periods:,
-          grid_classes:
+          rank: index + 1
         )) %>
       <% end %>
     </div>
