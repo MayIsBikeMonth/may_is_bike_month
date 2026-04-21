@@ -8,31 +8,7 @@
     elevation_meters: total_elevation_meters
   )) %>
 
-  <section class="mb-8 lg:mb-16 lg:grid lg:grid-cols-[auto_1fr] lg:gap-x-6 lg:items-start">
-    <h4
-      class="
-        font-mono text-[11px] font-medium uppercase tracking-[0.14em]
-        text-purple-300 dark:text-purple-400 mb-1.5 lg:m-0 lg:pt-0.5 text-left
-      "
-    >
-      Rules
-    </h4>
-
-    <ul
-      class="
-        flex flex-col lg:flex-row lg:flex-wrap list-none gap-y-1.5 gap-x-[22px]
-        text-[13px] text-purple-400 dark:text-purple-300 m-0 p-0
-      "
-    >
-      <li>Winner is the person who rides the most miles in May</li>
-      <li>Ties are broken by total elevation</li>
-
-      <li>
-        This year predates the Strava integration — totals were tracked
-        manually, so only weekly aggregates are shown
-      </li>
-    </ul>
-  </section>
+  <%= render(Punchcard::Rules::Component.new(competition: @competition)) %>
 
   <main class="lg:overflow-x-auto lg:-mx-7">
     <div class="lg:min-w-[900px] lg:px-7">

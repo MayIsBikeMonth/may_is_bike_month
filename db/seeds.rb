@@ -1,7 +1,5 @@
 require "nokogiri"
 
-load Rails.root.join("db/seeds/legacy_2023.rb")
-
 USERS_2025 = {
   "2430215" => {strava_username: "sethherr", display_name: "seth herr", role: :developer},
   "2557663" => {strava_username: "old_scott", display_name: "Old Scott", role: :basic_user},
@@ -70,3 +68,5 @@ USERS_2025.each do |strava_id, attrs|
 
   competition_user.update_score_data!
 end
+
+load Rails.root.join("db/seeds/legacy_2023.rb")

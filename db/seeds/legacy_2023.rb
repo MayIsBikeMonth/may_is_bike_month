@@ -35,13 +35,6 @@ competition.save!
 
 periods = competition.periods
 
-def find_or_create_legacy_user(name)
-  User.where.not(strava_id: nil)
-    .where("LOWER(display_name) LIKE ?", "#{name.downcase}%").first ||
-    User.where("LOWER(display_name) = ?", name.downcase).first ||
-    User.create!(display_name: name, password: SecureRandom.hex(16))
-end
-
 LEGACY_2023_ROWS.each do |row|
   name = row[0]
   weekly_values = row[1, 10]
@@ -66,7 +59,7 @@ LEGACY_2023_ROWS.each do |row|
     periods: period_data
   }.as_json
 
-  user = find_or_create_legacy_user(name)
+  user = LegacyUserFinder.find_or_create(name)
   competition_user = CompetitionUser.find_or_initialize_by(competition:, user:)
   competition_user.included_in_competition = true
   competition_user.display_name = name
