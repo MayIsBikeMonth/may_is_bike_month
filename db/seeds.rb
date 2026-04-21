@@ -69,4 +69,4 @@ USERS_2025.each do |strava_id, attrs|
   competition_user.update_score_data!
 end
 
-load Rails.root.join("db/seeds/legacy_2023.rb")
+Rake::Task["legacy:import_2023"].invoke
