@@ -5,9 +5,9 @@ require "rails_helper"
 RSpec.describe Punchcard::Ridge::Component, type: :component do
   let(:daily_totals) do
     [
-      {date_string: "2025-05-01", distance_meters: 100_000, elevation_meters: 500},
-      {date_string: "2025-05-02", distance_meters: 50_000, elevation_meters: 200},
-      {date_string: "2025-05-03", distance_meters: 0, elevation_meters: 0}
+      {date_string: "2025-05-01", distance_meters: 100_000, elevation_meters: 500, activity_count: 3},
+      {date_string: "2025-05-02", distance_meters: 50_000, elevation_meters: 200, activity_count: 1},
+      {date_string: "2025-05-03", distance_meters: 0, elevation_meters: 0, activity_count: 0}
     ]
   end
   let(:rendered) { render_inline(described_class.new(daily_totals:)) }
@@ -20,14 +20,24 @@ RSpec.describe Punchcard::Ridge::Component, type: :component do
     expect(bars[2].attr("style")).to include "height:0.0px"
   end
 
-  it "renders each button with day number and a title containing the day of week, miles and feet" do
+  it "renders each button with day number and a title containing day-of-week, activity count, miles and feet" do
     buttons = rendered.css("button")
     expect(buttons.count).to eq 3
     expect(buttons[0].text).to include "1"
     title = buttons[0].attr("title")
-    expect(title).to include "Thursday"
-    expect(title).to include "mi"
-    expect(title).to include "ft"
+    expect(title.lines.map(&:chomp)).to eq ["Thursday", "3 activities", "62.1 mi", "1,640 ft"]
+
+    # singular for one activity
+    expect(buttons[1].attr("title").lines.map(&:chomp)).to include "1 activity"
+
+    # plural for zero
+    expect(buttons[2].attr("title").lines.map(&:chomp)).to include "0 activities"
+  end
+
+  it "formats large activity counts with a delimiter" do
+    daily_totals = [{date_string: "2025-05-01", distance_meters: 10_000, elevation_meters: 0, activity_count: 1_234}]
+    title = render_inline(described_class.new(daily_totals:)).css("button").first.attr("title")
+    expect(title).to include "1,234 activities"
   end
 
   context "when all totals are zero" do

@@ -18,7 +18,7 @@ RSpec.describe Punchcard::Wrapper::Component, type: :component do
 
     context "with no activities" do
       it "returns an empty-default hash" do
-        expect(described_class.daily_metrics(competition_user)["2025-05-01"]).to eq(distance_meters: 0.0, elevation_meters: 0.0)
+        expect(described_class.daily_metrics(competition_user)["2025-05-01"]).to eq(distance_meters: 0.0, elevation_meters: 0.0, activity_count: 0)
       end
     end
 
@@ -30,11 +30,19 @@ RSpec.describe Punchcard::Wrapper::Component, type: :component do
           elevation_meters: 300,
           start_at: Time.parse("2025-05-03T15:00:00Z"))
       end
+      let!(:second_activity) do
+        FactoryBot.create(:competition_activity,
+          competition_user:,
+          distance_meters: 1_000,
+          elevation_meters: 50,
+          start_at: Time.parse("2025-05-03T20:00:00Z"))
+      end
 
-      it "sums distance and elevation for each activity date" do
+      it "sums distance, elevation, and ride counts for each activity date" do
         metrics = described_class.daily_metrics(competition_user)
-        expect(metrics["2025-05-03"][:distance_meters]).to be_within(0.01).of(16_093.44)
-        expect(metrics["2025-05-03"][:elevation_meters]).to eq 300.0
+        expect(metrics["2025-05-03"][:distance_meters]).to be_within(0.01).of(17_093.44)
+        expect(metrics["2025-05-03"][:elevation_meters]).to eq 350.0
+        expect(metrics["2025-05-03"][:activity_count]).to eq 2
       end
     end
   end
