@@ -47,6 +47,22 @@ RSpec.describe CompetitionUser, type: :model do
     end
   end
 
+  describe "legacy competition" do
+    let(:competition) { FactoryBot.create(:competition, kind: :legacy) }
+    let(:competition_user) do
+      FactoryBot.create(:competition_user, competition:,
+        score_data: {dates: [], distance: 100_000, elevation: 5_000})
+    end
+    it "scores by total distance and skips activity-based recalc" do
+      expect(competition_user.score).to eq 100_000
+      expect(competition_user.distance_meters).to eq 100_000
+      expect(competition_user.elevation_meters).to eq 5_000
+      expect(competition_user.calculated_score_data).to eq competition_user.score_data
+      competition_user.update_score_data!
+      expect(competition_user.reload.score).to eq 100_000
+    end
+  end
+
   describe "calculated_score_data" do
     let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-5-1")) }
     let(:competition_user) { FactoryBot.create(:competition_user, competition:) }

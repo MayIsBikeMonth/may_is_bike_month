@@ -1,6 +1,22 @@
 require "rails_helper"
 
 RSpec.describe Competition, type: :model do
+  describe "kind" do
+    let(:competition) { FactoryBot.create(:competition) }
+    it "defaults to regular" do
+      expect(competition.kind).to eq "regular"
+      expect(competition.regular?).to be true
+      expect(competition.legacy?).to be false
+    end
+
+    context "when legacy" do
+      let(:competition) { FactoryBot.create(:competition, kind: :legacy) }
+      it "is legacy" do
+        expect(competition.legacy?).to be true
+      end
+    end
+  end
+
   describe "factory" do
     let(:competition) { FactoryBot.create(:competition) }
     it "is valid" do

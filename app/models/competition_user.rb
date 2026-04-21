@@ -124,11 +124,13 @@ class CompetitionUser < ApplicationRecord
   end
 
   def update_score_data!
+    return reload if competition&.legacy?
     update(score_data: calculated_score_data)
     reload
   end
 
   def calculated_score_data
+    return score_data if competition&.legacy?
     self.class.score_hash_for_activities(competition_activities_included, skip_ids: true)
       .merge(periods: competition.periods.map { |period| period.merge(period_score_hash(period)) })
       .as_json
@@ -142,6 +144,7 @@ class CompetitionUser < ApplicationRecord
   end
 
   def score_from_score_data
+    return distance_meters if competition&.legacy?
     return 0 if score_data&.dig("dates").blank?
     self.class.score_for(dates: score_data["dates"], distance: score_data["distance"])
   end

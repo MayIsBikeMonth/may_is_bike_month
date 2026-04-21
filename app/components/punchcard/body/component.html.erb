@@ -9,62 +9,62 @@
 <%= render(Punchcard::Rules::Component.new(competition: @competition)) %>
 
 <%# NOTE: must match wrapper-padding for lg screens %>
-<main class="lg:overflow-x-auto lg:-mx-7">
-  <div class="lg:min-w-[1340px] lg:px-7">
-    <%= render(Punchcard::Ridge::Component.new(daily_totals:)) %>
-
-    <div
-      class="
-        flex items-center gap-4 mb-4 text-[12px]
-        lg:border-b lg:border-purple-100 lg:dark:border-purple-700 lg:pb-2
-      "
-    >
-      <button
-        type="button"
+<main class="<%= @competition.legacy? ? "" : "lg:overflow-x-auto lg:-mx-7" %>">
+  <div class="<%= @competition.legacy? ? "" : "lg:min-w-[1340px] lg:px-7" %>">
+    <% unless @competition.legacy? %>
+      <%= render(Punchcard::Ridge::Component.new(daily_totals:)) %>
+      <div
         class="
-          text-purple-300 dark:text-purple-400 hover:text-purple-500
-          dark:hover:text-purple-200 hover:underline cursor-pointer
-          aria-pressed:text-purple-500 dark:aria-pressed:text-purple-200
-          aria-pressed:underline
+          flex items-center gap-4 mb-4 text-[12px]
+          lg:border-b lg:border-purple-100 lg:dark:border-purple-700 lg:pb-2
         "
-        aria-pressed="false"
-        data-action="click->punch#showAll"
-        data-punch-target="showAllBtn"
       >
-        Show all activities
-      </button>
-
-      <button
-        type="button"
-        class="
-          hidden text-purple-300 dark:text-purple-400 hover:text-purple-500
-          dark:hover:text-purple-200 hover:underline cursor-pointer
-        "
-        data-action="click->punch#hideAll"
-        data-punch-target="hideAllBtn"
-      >
-        Hide all activities
-      </button>
-    </div>
-
-    <div
-      class="
-        hidden max-lg:grid grid-cols-[repeat(7,24px)] gap-0.5 ml-auto mb-2.5
-        pb-1.5 max-w-max border-b border-purple-100 dark:border-purple-700
-      "
-    >
-      <% %w[Mon Tue Wed Thu Fri Sat Sun].each do |day| %>
-        <span
+        <button
+          type="button"
           class="
-            [writing-mode:vertical-rl] rotate-180 font-mono text-[10px]
-            uppercase tracking-[0.1em] text-end h-[30px]
-            text-purple-300 dark:text-purple-400
+            text-purple-300 dark:text-purple-400 hover:text-purple-500
+            dark:hover:text-purple-200 hover:underline cursor-pointer
+            aria-pressed:text-purple-500 dark:aria-pressed:text-purple-200
+            aria-pressed:underline
           "
+          aria-pressed="false"
+          data-action="click->punch#showAll"
+          data-punch-target="showAllBtn"
         >
-          <%= day %>
-        </span>
-      <% end %>
-    </div>
+          Show all activities
+        </button>
+
+        <button
+          type="button"
+          class="
+            hidden text-purple-300 dark:text-purple-400 hover:text-purple-500
+            dark:hover:text-purple-200 hover:underline cursor-pointer
+          "
+          data-action="click->punch#hideAll"
+          data-punch-target="hideAllBtn"
+        >
+          Hide all activities
+        </button>
+      </div>
+      <div
+        class="
+          hidden max-lg:grid grid-cols-[repeat(7,24px)] gap-0.5 ml-auto mb-2.5
+          pb-1.5 max-w-max border-b border-purple-100 dark:border-purple-700
+        "
+      >
+        <% %w[Mon Tue Wed Thu Fri Sat Sun].each do |day| %>
+          <span
+            class="
+              [writing-mode:vertical-rl] rotate-180 font-mono text-[10px]
+              uppercase tracking-[0.1em] text-end h-[30px]
+              text-purple-300 dark:text-purple-400
+            "
+          >
+            <%= day %>
+          </span>
+        <% end %>
+      </div>
+    <% end %>
 
     <% @competition_users.each_with_index do |competition_user, index| %>
       <%= render(Punchcard::UserRow::Component.new(
@@ -72,7 +72,7 @@
         competition: @competition,
         rank: index + 1,
         period_date_strings:,
-        user_daily: user_daily(competition_user)
+        user_daily: @competition.legacy? ? {} : user_daily(competition_user)
       )) %>
     <% end %>
   </div>

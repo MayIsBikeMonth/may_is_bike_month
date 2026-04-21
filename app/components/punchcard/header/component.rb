@@ -27,8 +27,13 @@ module Punchcard::Header
 
     def competition_over? = days_left.zero?
 
+    def legacy? = @competition.legacy?
+
     def metric_grid_class
-      competition_over? ? "grid-cols-[repeat(4,auto)]" : "grid-cols-[repeat(5,auto)]"
+      count = 3
+      count += 1 unless competition_over?
+      count += 1 unless legacy?
+      "grid-cols-[repeat(#{count},auto)]"
     end
 
     def total_miles = meters_to_miles(@distance_meters)

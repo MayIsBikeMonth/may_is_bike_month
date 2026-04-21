@@ -25,7 +25,7 @@ class Admin::CompetitionsController < Admin::BaseController
   private
 
   def permitted_params
-    params.require(:competition).permit(:name, :start_date, :end_date, :current)
+    params.require(:competition).permit(:name, :start_date, :end_date, :current, :kind)
   end
 
   def sortable_columns

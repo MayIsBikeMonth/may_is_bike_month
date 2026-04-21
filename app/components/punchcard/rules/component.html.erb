@@ -14,24 +14,30 @@
       text-[13px] text-purple-400 dark:text-purple-300 m-0 p-0
     "
   >
-    <li>
-      Winner is the person who rides the most days in
-      <%= @competition.period_display %>
-    </li>
-
-    <li>Ties are broken by total distance</li>
-
-    <li>
-      First place chooses what's for dinner, second and last place have to cook
-    </li>
-
-    <li>Activities that count: <%= activity_types_display %></li>
-
-    <li>
-      You have to ride at least
-      <span class="unit-imperial"><%= daily_distance_miles %> miles</span>
-      <span class="unit-metric hidden"><%= daily_distance_km %> km</span> in a
-      day for it to count
-    </li>
+    <% if @competition.legacy? %>
+      <li>
+        Winner rode the most total miles in <%= @competition.period_display %>
+      </li>
+      <li>Ties broken by total elevation</li>
+      <li>First place chose what's for dinner; second and last had to cook</li>
+      <li>Pre-Strava — totals imported from the original spreadsheet</li>
+    <% else %>
+      <li>
+        Winner is the person who rides the most days in
+        <%= @competition.period_display %>
+      </li>
+      <li>Ties are broken by total distance</li>
+      <li>
+        First place chooses what's for dinner, second and last place have to
+        cook
+      </li>
+      <li>Activities that count: <%= activity_types_display %></li>
+      <li>
+        You have to ride at least
+        <span class="unit-imperial"><%= daily_distance_miles %> miles</span>
+        <span class="unit-metric hidden"><%= daily_distance_km %> km</span> in a
+        day for it to count
+      </li>
+    <% end %>
   </ul>
 </section>

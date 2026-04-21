@@ -67,9 +67,11 @@
       </div>
     </div>
 
-    <div>
-      <div class="<%= meta_num_class %>"><%= @everyday_rider_count %></div>
-      <div class="<%= meta_label_class %>">Everyday<br>Riders</div>
-    </div>
+    <% unless legacy? %>
+      <div>
+        <div class="<%= meta_num_class %>"><%= @everyday_rider_count %></div>
+        <div class="<%= meta_label_class %>">Everyday<br>Riders</div>
+      </div>
+    <% end %>
   </div>
 </header>
