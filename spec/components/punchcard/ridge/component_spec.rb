@@ -12,25 +12,19 @@ RSpec.describe Punchcard::Ridge::Component, type: :component do
   end
   let(:rendered) { render_inline(described_class.new(daily_totals:)) }
 
-  it "scales bar heights in pixels up to the max" do
+  it "renders each day's button with scaled bar height, day number, and a title of day-of-week, activity count, miles, feet" do
+    buttons = rendered.css("button")
     bars = rendered.css("button span[style]")
+    expect(buttons.count).to eq 3
     expect(bars.count).to eq 3
+
     expect(bars[0].attr("style")).to include "height:56.0px"
     expect(bars[1].attr("style")).to include "height:28.0px"
     expect(bars[2].attr("style")).to include "height:0.0px"
-  end
 
-  it "renders each button with day number and a title containing day-of-week, activity count, miles and feet" do
-    buttons = rendered.css("button")
-    expect(buttons.count).to eq 3
     expect(buttons[0].text).to include "1"
-    title = buttons[0].attr("title")
-    expect(title.lines.map(&:chomp)).to eq ["Thursday", "3 activities", "62.1 mi", "1,640 ft"]
-
-    # singular for one activity
+    expect(buttons[0].attr("title").lines.map(&:chomp)).to eq ["Thursday", "3 activities", "62.1 mi", "1,640 ft"]
     expect(buttons[1].attr("title").lines.map(&:chomp)).to include "1 activity"
-
-    # plural for zero
     expect(buttons[2].attr("title").lines.map(&:chomp)).to include "0 activities"
   end
 

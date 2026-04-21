@@ -55,7 +55,7 @@ RSpec.describe OtherCompetitionLinks::Component, type: :component do
     end
     let(:current_competition) { competition_2025 }
 
-    it "nests the display name in xs non-bold text inside the link/span for years with multiple competitions" do
+    it "appends the display name in xs non-bold text inside each link for dup years, marks only the current one" do
       fall_link = component.css("a.twlink[href='/competitions/#{competition_2025_fall.slug}']").first
       suffix = fall_link.at_css("span.text-xs")
       expect(suffix.text).to include "(MIBM Fall 2025)"
@@ -69,9 +69,8 @@ RSpec.describe OtherCompetitionLinks::Component, type: :component do
       year_2026 = component.css("a.twlink[href='/competitions/#{competition_2026.slug}']").first
       expect(year_2026.at_css("span.text-xs")).to be_nil
       expect(year_2026.text.strip).to eq "2026"
-    end
 
-    it "marks only the matching current competition, leaving siblings of the same year clickable" do
+      # Only the matching current competition is disabled; the sibling stays clickable.
       expect(component).to have_css("span[title=\"You're looking at it\"]", text: "2025", count: 1)
       expect(component).to have_css("a.twlink[href='/competitions/#{competition_2025_fall.slug}']", text: "2025")
     end
