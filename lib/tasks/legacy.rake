@@ -1,10 +1,11 @@
 # 2023 was run as a spreadsheet (not on this app) - winner was whoever rode
 # the most miles. This imports the archived totals as a legacy competition.
-# Source: https://docs.google.com/spreadsheets/d/1wk8oUY1yx8wFn2GaCd-Yw121fGVkiFf8oJJJJdiS8PU
 
 module RakeLegacy
   METERS_PER_MILE = 1609.344
   METERS_PER_FOOT = 0.3048
+
+  SOURCE_URL_2023 = "https://docs.google.com/spreadsheets/d/1wk8oUY1yx8wFn2GaCd-Yw121fGVkiFf8oJJJJdiS8PU"
 
   # [name, mi_w1, ft_w1, mi_w2, ft_w2, mi_w3, ft_w3, mi_w4, ft_w4, mi_w5, ft_w5, total_mi, total_ft]
   ROWS_2023 = [
@@ -31,10 +32,12 @@ module RakeLegacy
 
   def self.import_2023
     competition = Competition.find_or_initialize_by(start_date: Date.new(2023, 5, 1))
-    competition.end_date = Date.new(2023, 5, 31)
-    competition.display_name = "MIBM 2023"
-    competition.kind = :legacy
-    competition.save!
+    competition.update!(
+      end_date: Date.new(2023, 5, 31),
+      display_name: "MIBM 2023",
+      kind: :legacy,
+      legacy_url: SOURCE_URL_2023
+    )
 
     periods = competition.periods
 
@@ -64,10 +67,11 @@ module RakeLegacy
 
       user = LegacyUserFinder.find_or_create(name)
       competition_user = CompetitionUser.find_or_initialize_by(competition:, user:)
-      competition_user.included_in_competition = true
-      competition_user.display_name = name
-      competition_user.score_data = score_data
-      competition_user.save!
+      competition_user.update!(
+        included_in_competition: true,
+        display_name: name,
+        score_data: score_data
+      )
     end
   end
 

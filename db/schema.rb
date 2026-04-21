@@ -52,6 +52,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_21_071743) do
     t.string "display_name"
     t.date "end_date"
     t.integer "kind", default: 0, null: false
+    t.string "legacy_url"
     t.string "slug"
     t.date "start_date"
     t.datetime "updated_at", null: false

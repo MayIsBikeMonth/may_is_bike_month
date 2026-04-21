@@ -6,7 +6,8 @@
 #  current      :boolean
 #  display_name :string
 #  end_date     :date
-#  kind         :integer          default(0), not null
+#  kind         :integer          default("punchcard"), not null
+#  legacy_url   :string
 #  slug         :string
 #  start_date   :date
 #  created_at   :datetime         not null
