@@ -27,8 +27,10 @@ RSpec.describe StravaIntegration, type: :model do
 
   describe "get_activities narrowed to activity 18111714404" do
     # Activity 18111714404 starts at 2026-04-14T23:03:36Z. Use before/after
-    # query parameters to fetch a window containing exactly that activity so
-    # we can inspect its strava_data payload.
+    # query parameters to fetch a window containing exactly that activity,
+    # then create a CompetitionActivity from the returned strava_data so we
+    # can pin down exactly how the Peloton-→-Strava Central-time ride maps
+    # onto our model.
     let(:access_token) { ENV.fetch("STRAVA_RECORD_TOKEN", "xxxx") }
     let(:activity_id) { 18_111_714_404 }
     let(:parameters) do
@@ -38,18 +40,29 @@ RSpec.describe StravaIntegration, type: :model do
         per_page: 10
       }
     end
-    let(:result) { described_class.get_activities(access_token, parameters:) }
+    let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2026-04-01")) }
+    let(:competition_user) { FactoryBot.create(:competition_user, competition:) }
 
-    it "returns activity 18111714404 with its strava_data payload" do
+    it "creates a CompetitionActivity from the returned strava_data with the expected attributes" do
       VCR.use_cassette("strava_integration-get_activity-18111714404", match_requests_on: [:path]) do
+        result = described_class.get_activities(access_token, parameters:)
         expect(result["status"]).to eq 200
-        activity = result["json"].find { |a| a["id"] == activity_id }
-        expect(activity).not_to be_nil
-        # Surface a handful of fields so `rspec --format documentation` shows
-        # the shape of the payload (useful for debugging timezone quirks).
-        %w[name type trainer timezone start_date_local utc_offset].each do |key|
-          puts "  strava_data[#{key.inspect}] = #{activity[key].inspect}"
-        end
+
+        strava_data = result["json"].find { |a| a["id"] == activity_id }
+        activity = CompetitionActivity.find_or_create_if_valid(competition_user:, strava_data:)
+
+        expect(activity).to be_valid
+        expect(activity).to have_attributes(
+          strava_id: "18111714404",
+          display_name: "20 min HIIT Ride with Emma Lovewell",
+          timezone: "America/Chicago",
+          start_at: Time.parse("2026-04-14T23:03:36Z"),
+          distance_meters: 12_027.3,
+          moving_seconds: 1200,
+          elevation_meters: 0.0,
+          activity_dates_strings: ["2026-04-14"],
+          included_in_competition: true
+        )
       end
     end
   end
