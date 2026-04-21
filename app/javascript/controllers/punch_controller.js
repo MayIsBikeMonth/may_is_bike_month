@@ -2,35 +2,14 @@ import { Controller } from '@hotwired/stimulus'
 import { isPressed, press, unpress, setPressed, allPressed } from 'utils/aria_pressed'
 import { readUrlSelection, writeUrlSelection } from 'utils/punchcard_url'
 
-/*
-Connects to data-controller="punch"
-
-Selection model
----------------
-Every clickable cell — individual punches, per-user rows, per-day ridge bars,
-and the "Show all activities" button — drives off aria-pressed on the DOM
-elements themselves. Punch state lives on <button data-punch-target="punch">
-elements; group buttons reflect whether every punch in their group is pressed.
-A ridge bar for a day that has no punches yet has nothing to derive from, so
-its state lives in the `selectedEmptyDays` Set.
-
-Elements with `data-punch-activities-for="<id>"` are revealed when the
-matching punch is pressed.
-
-URL persistence and serialization live in `utils/punchcard_url.js`.
-aria-pressed read/write helpers live in `utils/aria_pressed.js`.
-
-Turbo morph coordination
-------------------------
-Broadcasts morph the wrapper in place. We:
-  1. capture group intent on turbo:before-morph-element (which users / days /
-     all-punches were fully selected, plus the empty-day set);
-  2. rebuild indexes + re-apply URL + re-apply captured intent on
-     turbo:morph-element (debounced into one rebuild per morph cycle);
-  3. read the DOM directly via querySelectorAll — Stimulus target getters are
-     stale during the synchronous morph event handler because target tracking
-     updates on a MutationObserver microtask that hasn't run yet.
-*/
+// data-controller="punch". Selection state is aria-pressed on the DOM
+// itself (punches drive everything; group buttons reflect their punches;
+// empty-day ridge bars use selectedEmptyDays since they have no punches).
+//
+// Across a turbo morph: capture group intent on turbo:before-morph-element,
+// rebuild + re-apply on turbo:morph-element. Indexing uses querySelectorAll
+// because Stimulus target getters are stale inside the synchronous morph
+// handler (target tracking updates on a later MutationObserver microtask).
 
 // ---- small utilities ---------------------------------------------------
 
