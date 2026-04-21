@@ -27,6 +27,20 @@ document.addEventListener('turbo:load', localizeTime)
 document.addEventListener('turbo:render', localizeTime)
 document.addEventListener('turbo:frame-render', localizeTime)
 
+// Hard reload the page if the document has been loaded for more than 2 days,
+// so long-lived tabs pick up asset and markup updates. performance.timeOrigin
+// is set when the HTML document loaded and is not reset by Turbo visits.
+const STALE_DOCUMENT_MS = 2 * 24 * 60 * 60 * 1000
+const reloadIfStale = () => {
+  if (Date.now() - performance.timeOrigin > STALE_DOCUMENT_MS) {
+    window.location.reload()
+  }
+}
+document.addEventListener('turbo:load', reloadIfStale)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') reloadIfStale()
+})
+
 // const toggleChecks = (event) => {
 //   const checked = event.target.checked
 //   event.target.closest('.toggleChecksWrapper')
