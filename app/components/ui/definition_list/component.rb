@@ -16,17 +16,30 @@ module UI::DefinitionList
     end
 
     class Entry < ApplicationComponent
-      def initialize(label:)
+      def initialize(label:, full_width: false)
         @label = label
+        @full_width = full_width
       end
 
       def call
-        tag.div(class: "px-1 py-1 @md:col-span-2 @md:grid @md:grid-cols-subgrid @md:gap-x-4") do
+        tag.div(class: entry_classes) do
           safe_join([
             tag.dt(@label, class: "text-sm font-medium text-gray-900 dark:text-white"),
-            tag.dd(content, class: "mt-1 @md:mt-0 text-sm text-gray-700 dark:text-gray-400")
+            tag.dd(content, class: dd_classes)
           ])
         end
+      end
+
+      private
+
+      def entry_classes
+        base = "px-1 py-1 @md:col-span-2"
+        @full_width ? base : "#{base} @md:grid @md:grid-cols-subgrid @md:gap-x-4"
+      end
+
+      def dd_classes
+        base = "mt-1 text-sm text-gray-700 dark:text-gray-400"
+        @full_width ? base : "#{base} @md:mt-0"
       end
     end
   end

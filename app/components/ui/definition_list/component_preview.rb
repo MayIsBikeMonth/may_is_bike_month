@@ -13,7 +13,7 @@ module UI::DefinitionList
         list.with_entry(label: "Notes") do
           "Kombucha lumbersexual jawn DSA tumeric kogi cardigan succulents. Chambray farm-to-table chia, sus artisan kogi edison bulb helvetica fixie live-edge tonx lo-fi roof party banjo tote bag. Pork belly vaporware irony, synth typewriter activated charcoal fashion axe banjo cliche blue bottle vinyl beard la croix af flannel."
         end
-        list.with_entry(label: "An exceptionally long label that should be clamped to ten percent of the container width and wrap onto multiple lines") do
+        list.with_entry(label: "An exceptionally long label that always renders full-width regardless of container width, so it doesn't squeeze the label column for other rows", full_width: true) do
           "short"
         end
       end
