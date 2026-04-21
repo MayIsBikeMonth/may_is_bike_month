@@ -4,7 +4,11 @@
 <% show_dev_info = display_dev_info? %>
 
 <%= render(UI::Table::Component.new(records: @users, render_sortable: true, sticky: true)) do |table|
-  table.column(sortable: "display_name", lower_right: (->(u) { u.id } if show_dev_info)) do |user|
+  table.column(sortable: "created_at", lower_right: (->(u) { u.id } if show_dev_info)) do |user|
+    render(UI::Time::Component.new(time: user.created_at))
+  end
+
+  table.column(sortable: "display_name") do |user|
     user.display_name
   end
 
@@ -20,9 +24,5 @@
     link_to(number_display(user.competition_users.size), admin_competition_users_path(user: user.slug), class: "twlink")
   end
 
-  table.column(sortable: "role") { |user| user.role }
-
-  table.column(sortable: "created_at") do |user|
-    render(UI::Time::Component.new(time: user.created_at))
-  end
+  table.column(sortable: "role") { |user| user.role unless user.role == "basic_user" }
 end %>
