@@ -1,7 +1,7 @@
-require "csv"
+require "yaml"
 
 # Historical MIBM years that predated this app were tracked in spreadsheets.
-# These tasks import the archived totals (per name, per week) as a legacy
+# These tasks import the archived totals (per rider, per week) as a legacy
 # competition so they show up alongside recent years on the leaderboard.
 
 module RakeLegacy
@@ -10,49 +10,44 @@ module RakeLegacy
 
   DUMMY_STRAVA_PREFIX = "legacy-dummy-"
 
-  def self.csv_path(year)
-    Rails.root.join("db/seeds/legacy_competition_#{year}.csv")
+  def self.yaml_path(year)
+    Rails.root.join("db/seeds/legacy_competition_#{year}.yml")
   end
 
-  def self.load_rows(year)
-    path = csv_path(year)
-    raise "CSV not found: #{path}" unless File.exist?(path)
-    CSV.read(path, headers: true).map do |row|
-      {name: row["name"], week: row["week"].to_i, miles: row["miles"].to_f, feet: row["feet"].to_f}
-    end
+  def self.load_data(year)
+    path = yaml_path(year)
+    raise "Legacy data not found: #{path}" unless File.exist?(path)
+    YAML.safe_load_file(path, permitted_classes: [Date])
   end
 
-  def self.import(year:, source_url:)
-    rows = load_rows(year)
-    grouped = rows.group_by { |r| r[:name] }
+  def self.import(year:)
+    data = load_data(year)
+    riders = data.fetch("riders")
     competition = Competition.find_or_initialize_by(start_date: Date.new(year, 5, 1), kind: :legacy)
     competition.update!(
       end_date: Date.new(year, 5, 31),
-      legacy_url: source_url
+      legacy_url: data["source_url"]
     )
 
     periods = competition.periods
-    expected_weeks = (1..periods.size).to_a
 
-    grouped.each do |name, entries|
-      by_week = entries.index_by { |e| e[:week] }
-      missing = expected_weeks - by_week.keys
-      extra = by_week.keys - expected_weeks
-      raise "#{csv_path(year)}: #{name} is missing weeks #{missing.inspect}" if missing.any?
-      raise "#{csv_path(year)}: #{name} has unexpected weeks #{extra.inspect} (competition has #{periods.size})" if extra.any?
+    riders.each do |name, weekly|
+      unless weekly.is_a?(Array) && weekly.size == periods.size
+        raise "#{yaml_path(year)}: #{name} has #{weekly&.size.inspect} weeks, expected #{periods.size}"
+      end
 
       period_data = periods.each_with_index.map do |period, index|
-        entry = by_week[index + 1]
+        miles, feet = weekly[index]
         period.merge(
           dates: [],
-          distance: (entry[:miles] * METERS_PER_MILE).round(2),
-          elevation: (entry[:feet] * METERS_PER_FOOT).round(2),
+          distance: (miles * METERS_PER_MILE).round(2),
+          elevation: (feet * METERS_PER_FOOT).round(2),
           ids: []
         )
       end
 
-      total_miles = expected_weeks.sum { |w| by_week[w][:miles] }
-      total_feet = expected_weeks.sum { |w| by_week[w][:feet] }
+      total_miles = weekly.sum { |pair| pair[0] }
+      total_feet = weekly.sum { |pair| pair[1] }
 
       score_data = {
         dates: [],
@@ -75,7 +70,7 @@ module RakeLegacy
       UpdateCompetitionUserJob.perform_async(cu.id)
     end
 
-    grouped.size
+    riders.size
   end
 
   def self.dummy_activities(year:)
@@ -137,7 +132,7 @@ module RakeLegacy
   end
 
   def self.check_matches(year:)
-    names = load_rows(year).map { |r| r[:name] }.uniq
+    names = load_data(year).fetch("riders").keys
     unmatched = names.reject { |name| LegacyUserFinder.find(name) }
     if unmatched.empty?
       puts "All #{names.size} legacy names matched existing users."
@@ -156,10 +151,10 @@ module RakeLegacy
 end
 
 namespace :legacy do
-  desc "Import an archived MIBM year from db/seeds/legacy_competition_<year>.csv (idempotent)"
-  task :import, [:year, :source_url] => :environment do |_, args|
-    count = RakeLegacy.import(year: args[:year].to_i, source_url: args[:source_url])
-    puts "Imported #{count} legacy #{args[:year]} rows"
+  desc "Import an archived MIBM year from db/seeds/legacy_competition_<year>.yml (idempotent)"
+  task :import, [:year] => :environment do |_, args|
+    count = RakeLegacy.import(year: args[:year].to_i)
+    puts "Imported #{count} legacy #{args[:year]} riders"
   end
 
   desc "Dry-run: report legacy names for <year> that wouldn't match an existing user"

@@ -38,7 +38,11 @@ RSpec.describe "Legacy competition show/hide activities", :js, type: :system do
 
   before { visit "/competitions/#{competition.slug}" }
 
-  it "hides activities by default and toggles via Show/Hide all" do
+  def container_for(user)
+    activity_containers.find { |c| c.find(:xpath, "ancestor::*[@data-user-slug][1]")["data-user-slug"] == user.slug }
+  end
+
+  it "hides activities by default and toggles via Show/Hide all and per-user buttons" do
     expect(activity_containers.size).to eq 2
     expect(activity_containers).to all(satisfy { |c| !visible?(c) })
     expect(page).to have_button("Show all activities")
@@ -52,6 +56,17 @@ RSpec.describe "Legacy competition show/hide activities", :js, type: :system do
 
     expect(activity_containers).to all(satisfy { |c| !visible?(c) })
     expect(find_button("Show all activities")["aria-pressed"]).to eq "false"
+
+    click_button("Alice")
+
+    expect(visible?(container_for(alice))).to be true
+    expect(visible?(container_for(bob))).to be false
+    expect(find_button("Alice")["aria-pressed"]).to eq "true"
+
+    click_button("Alice")
+
+    expect(visible?(container_for(alice))).to be false
+    expect(find_button("Alice")["aria-pressed"]).to eq "false"
   end
 
   context "when no user has activities" do
@@ -61,22 +76,5 @@ RSpec.describe "Legacy competition show/hide activities", :js, type: :system do
     it "hides the Show all activities button" do
       expect(page).not_to have_button("Show all activities")
     end
-  end
-
-  it "toggles a single user's activities when the name button is clicked" do
-    click_button("Alice")
-
-    containers = activity_containers
-    alice_container = containers.find { |c| c.find(:xpath, "ancestor::*[@data-user-slug][1]")["data-user-slug"] == alice.slug }
-    bob_container = containers.find { |c| c.find(:xpath, "ancestor::*[@data-user-slug][1]")["data-user-slug"] == bob.slug }
-
-    expect(visible?(alice_container)).to be true
-    expect(visible?(bob_container)).to be false
-    expect(find_button("Alice")["aria-pressed"]).to eq "true"
-
-    click_button("Alice")
-
-    expect(visible?(activity_containers.find { |c| c.find(:xpath, "ancestor::*[@data-user-slug][1]")["data-user-slug"] == alice.slug })).to be false
-    expect(find_button("Alice")["aria-pressed"]).to eq "false"
   end
 end
