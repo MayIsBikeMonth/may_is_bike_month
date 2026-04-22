@@ -19,6 +19,20 @@ RSpec.describe Competition, type: :model do
     end
   end
 
+  describe "kind" do
+    it "defaults to ride_2_miles_every_day" do
+      expect(Competition.new.kind).to eq "ride_2_miles_every_day"
+    end
+
+    context "legacy" do
+      let(:competition) { FactoryBot.create(:competition, kind: :legacy, start_date: Date.parse("2023-05-01")) }
+      it "persists the kind" do
+        expect(competition.reload.legacy?).to be true
+        expect(competition.ride_2_miles_every_day?).to be false
+      end
+    end
+  end
+
   describe "set_current" do
     let(:competition1) { FactoryBot.create(:competition, start_date: Date.parse("2023-5-1"), display_name: nil, current: true) }
     let(:competition2) { FactoryBot.create(:competition, start_date: start_date) }

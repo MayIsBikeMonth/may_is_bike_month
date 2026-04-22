@@ -1,0 +1,308 @@
+---
+source_url: https://docs.google.com/spreadsheets/d/1wk8oUY1yx8wFn2GaCd-Yw121fGVkiFf8oJJJJdiS8PU
+# per rider: weekly miles and feet climbed, in period order
+riders:
+  Noah:
+    week_1:
+      miles: 644.8
+      feet: 32580
+    week_2:
+      miles: 424.4
+      feet: 19656
+    week_3:
+      miles: 246.9
+      feet: 14298
+    week_4:
+      miles: 291.4
+      feet: 23700
+    week_5:
+      miles: 225.5
+      feet: 14390
+  Katya:
+    week_1:
+      miles: 150.1
+      feet: 14400
+    week_2:
+      miles: 286.7
+      feet: 26105
+    week_3:
+      miles: 196.5
+      feet: 17543
+    week_4:
+      miles: 683
+      feet: 32575
+    week_5:
+      miles: 213.8
+      feet: 12129
+  Jackson:
+    week_1:
+      miles: 70.2
+      feet: 8360
+    week_2:
+      miles: 180.9
+      feet: 17854
+    week_3:
+      miles: 207.9
+      feet: 14839
+    week_4:
+      miles: 588.9
+      feet: 29350
+    week_5:
+      miles: 0.0
+      feet: 0
+  Yvonne:
+    week_1:
+      miles: 75
+      feet: 3888
+    week_2:
+      miles: 176.6
+      feet: 12421
+    week_3:
+      miles: 149.1
+      feet: 9422
+    week_4:
+      miles: 76.8
+      feet: 1660
+    week_5:
+      miles: 134.2
+      feet: 5885
+  Seth:
+    week_1:
+      miles: 95.1
+      feet: 6945
+    week_2:
+      miles: 191.2
+      feet: 14939
+    week_3:
+      miles: 192.6
+      feet: 13451
+    week_4:
+      miles: 59.9
+      feet: 2790
+    week_5:
+      miles: 36.8
+      feet: 4124
+  Chris:
+    week_1:
+      miles: 143.1
+      feet: 13793
+    week_2:
+      miles: 68.3
+      feet: 7083
+    week_3:
+      miles: 44.7
+      feet: 4261
+    week_4:
+      miles: 133
+      feet: 5725
+    week_5:
+      miles: 118.5
+      feet: 2503
+  Danny:
+    week_1:
+      miles: 56.17
+      feet: 3694
+    week_2:
+      miles: 135.2
+      feet: 7470
+    week_3:
+      miles: 49.3
+      feet: 3496
+    week_4:
+      miles: 34.6
+      feet: 2776
+    week_5:
+      miles: 141.9
+      feet: 6755
+  Zack:
+    week_1:
+      miles: 107.1
+      feet: 5751
+    week_2:
+      miles: 85.1
+      feet: 5938
+    week_3:
+      miles: 144.5
+      feet: 7237
+    week_4:
+      miles: 54.9
+      feet: 3383
+    week_5:
+      miles: 5.3
+      feet: 148
+  Gabby:
+    week_1:
+      miles: 99.8
+      feet: 0
+    week_2:
+      miles: 110.4
+      feet: 0
+    week_3:
+      miles: 123.5
+      feet: 0
+    week_4:
+      miles: 40.7
+      feet: 0
+    week_5:
+      miles: 0
+      feet: 0
+  Sam:
+    week_1:
+      miles: 194.6
+      feet: 14114
+    week_2:
+      miles: 41.8
+      feet: 1707
+    week_3:
+      miles: 12
+      feet: 447
+    week_4:
+      miles: 79.8
+      feet: 1362
+    week_5:
+      miles: 0.0
+      feet: 0
+  Brittany:
+    week_1:
+      miles: 29.7
+      feet: 505
+    week_2:
+      miles: 0
+      feet: 0
+    week_3:
+      miles: 61.7
+      feet: 1265
+    week_4:
+      miles: 85
+      feet: 1286
+    week_5:
+      miles: 56.8
+      feet: 561
+  Elizabeth:
+    week_1:
+      miles: 128.5
+      feet: 8197
+    week_2:
+      miles: 66.9
+      feet: 3154
+    week_3:
+      miles: 15.2
+      feet: 1332
+    week_4:
+      miles: 0
+      feet: 0
+    week_5:
+      miles: 0.0
+      feet: 0
+  Lily B:
+    week_1:
+      miles: 35.1
+      feet: 0
+    week_2:
+      miles: 3
+      feet: 0
+    week_3:
+      miles: 43
+      feet: 0
+    week_4:
+      miles: 49
+      feet: 0
+    week_5:
+      miles: 7.0
+      feet: 0
+  Ravi:
+    week_1:
+      miles: 0
+      feet: 0
+    week_2:
+      miles: 42
+      feet: 3376
+    week_3:
+      miles: 59
+      feet: 2070
+    week_4:
+      miles: 31.7
+      feet: 1663
+    week_5:
+      miles: 0.0
+      feet: 0
+  Ali:
+    week_1:
+      miles: 24.3
+      feet: 1013
+    week_2:
+      miles: 17.7
+      feet: 875
+    week_3:
+      miles: 10.7
+      feet: 505
+    week_4:
+      miles: 61.1
+      feet: 2876
+    week_5:
+      miles: 4.6
+      feet: 229
+  Maura:
+    week_1:
+      miles: 7.6
+      feet: 456
+    week_2:
+      miles: 29
+      feet: 591
+    week_3:
+      miles: 14.2
+      feet: 665
+    week_4:
+      miles: 10.3
+      feet: 400
+    week_5:
+      miles: 0.0
+      feet: 0
+  Jeremy:
+    week_1:
+      miles: 0
+      feet: 0
+    week_2:
+      miles: 0
+      feet: 0
+    week_3:
+      miles: 2.1
+      feet: 114
+    week_4:
+      miles: 36.2
+      feet: 1675
+    week_5:
+      miles: 0
+      feet: 0
+  Gar:
+    week_1:
+      miles: 36
+      feet: 0
+    week_2:
+      miles: 0
+      feet: 0
+    week_3:
+      miles: 0
+      feet: 0
+    week_4:
+      miles: 0
+      feet: 0
+    week_5:
+      miles: 0
+      feet: 0
+  Steve:
+    week_1:
+      miles: 0
+      feet: 0
+    week_2:
+      miles: 22.7
+      feet: 2284
+    week_3:
+      miles: 0
+      feet: 0
+    week_4:
+      miles: 0
+      feet: 0
+    week_5:
+      miles: 0
+      feet: 0

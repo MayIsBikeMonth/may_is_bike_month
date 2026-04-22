@@ -124,6 +124,7 @@ class CompetitionUser < ApplicationRecord
   end
 
   def update_score_data!
+    return self if competition&.legacy?
     update(score_data: calculated_score_data)
     reload
   end
@@ -142,7 +143,9 @@ class CompetitionUser < ApplicationRecord
   end
 
   def score_from_score_data
-    return 0 if score_data&.dig("dates").blank?
+    return 0 if score_data.blank?
+    return score_data["distance"].to_d if competition&.legacy?
+    return 0 if score_data["dates"].blank?
     self.class.score_for(dates: score_data["dates"], distance: score_data["distance"])
   end
 

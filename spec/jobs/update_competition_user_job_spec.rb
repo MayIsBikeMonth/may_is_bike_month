@@ -38,6 +38,17 @@ RSpec.describe UpdateCompetitionUserJob, type: :job do
       expect { described_class.enqueue_current }.not_to change(described_class.jobs, :count)
     end
 
+    context "user without strava auth" do
+      let(:user) { FactoryBot.create(:user) }
+
+      it "returns early without hitting strava" do
+        competition_user.update!(score_data: {dates: [], distance: 500, elevation: 10})
+        instance.perform(competition_user.id)
+        expect(competition_user.reload.competition_activities.count).to eq 0
+        expect(competition_user.score_data["distance"]).to eq 500
+      end
+    end
+
     context "with a current competition" do
       include ActionCable::TestHelper
 
@@ -64,6 +75,27 @@ RSpec.describe UpdateCompetitionUserJob, type: :job do
           instance.perform(competition_user.id)
         end
         expect(competition_user.reload.updated_at).to be_within(1).of(time)
+      end
+    end
+
+    context "legacy competition" do
+      let(:competition) do
+        FactoryBot.create(:competition, kind: :legacy,
+          start_date: Date.parse("2024-05-01"), end_date: Date.parse("2024-05-31"))
+      end
+      let(:imported_score_data) do
+        {dates: [], distance: 1_000_000, elevation: 5_000,
+         periods: competition.periods.map { |p| p.merge(distance: 200_000, elevation: 1_000) }}.as_json
+      end
+
+      before { competition_user.update!(score_data: imported_score_data) }
+
+      it "imports activities without overwriting the imported score data" do
+        VCR.use_cassette("update_competition_user_job", match_requests_on: [:path]) do
+          instance.perform(competition_user.id)
+        end
+        expect(competition_user.reload.competition_activities.count).to eq 3
+        expect(competition_user.score_data).to eq imported_score_data
       end
     end
 

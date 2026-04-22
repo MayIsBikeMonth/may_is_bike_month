@@ -68,3 +68,5 @@ USERS_2025.each do |strava_id, attrs|
 
   competition_user.update_score_data!
 end
+
+Rake::Task["legacy:import"].invoke("2023")

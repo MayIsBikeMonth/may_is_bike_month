@@ -28,6 +28,8 @@
 
   table.column(label: "Current?") { |c| check_mark if c.current }
 
+  table.column(label: "Kind") { |c| c.kind.humanize }
+
   if show_dev_info
     table.column(sortable: "updated_at") do |competition|
       render(UI::Time::Component.new(time: competition.updated_at))

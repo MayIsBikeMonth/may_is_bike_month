@@ -3,7 +3,7 @@
 module Leaderboard
   module Header
     class Component < ApplicationComponent
-      def initialize(competition:, rider_count:, distance_meters:, elevation_meters:, everyday_rider_count:)
+      def initialize(competition:, rider_count:, distance_meters:, elevation_meters:, everyday_rider_count: nil)
         @competition = competition
         @rider_count = rider_count
         @distance_meters = distance_meters
@@ -28,8 +28,11 @@ module Leaderboard
 
       def competition_over? = days_left.zero?
 
-      def metric_grid_class
-        competition_over? ? "grid-cols-[repeat(4,auto)]" : "grid-cols-[repeat(5,auto)]"
+      def show_everyday_riders? = !@everyday_rider_count.nil?
+
+      def metric_grid_style
+        count = 3 + (competition_over? ? 0 : 1) + (show_everyday_riders? ? 1 : 0)
+        "grid-template-columns: repeat(#{count}, auto);"
       end
 
       def total_miles = meters_to_miles(@distance_meters)

@@ -14,24 +14,34 @@
       text-[13px] text-purple-400 dark:text-purple-300 m-0 p-0
     "
   >
-    <li>
-      Winner is the person who rides the most days in
-      <%= @competition.period_display %>
-    </li>
-
-    <li>Ties are broken by total distance</li>
-
-    <li>
-      First place chooses what's for dinner, second and last place have to cook
-    </li>
-
-    <li>Activities that count: <%= activity_types_display %></li>
-
-    <li>
-      You have to ride at least
-      <span class="unit-imperial"><%= daily_distance_miles %> miles</span>
-      <span class="unit-metric hidden"><%= daily_distance_km %> km</span> in a
-      day for it to count
-    </li>
+    <% if @competition.legacy? %>
+      <li>Winner is the person who rides the most total miles</li>
+      <li>
+        First place chooses what's for dinner, second and last place have to
+        cook
+      </li>
+      <li>Person with the most elevation chooses desert</li>
+      <li>
+        Imported from
+        <%= link_to "the #{@competition.year} competition spreadsheet", @competition.legacy_url, class: "twlink", target: "_blank", rel: "noopener" %>
+      </li>
+    <% else %>
+      <li>
+        Winner is the person who rides the most days in
+        <%= @competition.period_display %>
+      </li>
+      <li>Ties are broken by total distance</li>
+      <li>
+        First place chooses what's for dinner, second and last place have to
+        cook
+      </li>
+      <li>Activities that count: <%= activity_types_display %></li>
+      <li>
+        You have to ride at least
+        <span class="unit-imperial"><%= daily_distance_miles %> miles</span>
+        <span class="unit-metric hidden"><%= daily_distance_km %> km</span> in a
+        day for it to count
+      </li>
+    <% end %>
   </ul>
 </section>
