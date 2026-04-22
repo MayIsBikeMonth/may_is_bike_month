@@ -35,6 +35,7 @@ RSpec.describe base_url, type: :request do
           ids = assigns(:users).pluck(:id)
           expect(ids.index(newer_user.id)).to be < ids.index(older_user.id)
           expect(response.body).to include(admin_competition_users_path(user: newer_user.slug))
+          expect(response.body).to include(edit_admin_user_path(newer_user))
 
           get "#{base_url}?sort=last_sign_in_at&direction=desc"
           expect(response.code).to eq "200"
@@ -42,6 +43,32 @@ RSpec.describe base_url, type: :request do
           ids = assigns(:users).pluck(:id)
           expect(ids.index(older_user.id)).to be < ids.index(newer_user.id)
         end
+      end
+    end
+
+    describe "edit" do
+      let(:other_user) { FactoryBot.create(:user) }
+      let!(:competition_user) { FactoryBot.create(:competition_user, user: other_user) }
+
+      it "renders" do
+        get "#{base_url}/#{other_user.id}/edit"
+        expect(response.code).to eq "200"
+        expect(response).to render_template("admin/users/edit")
+        expect(assigns(:user)).to eq other_user
+        expect(assigns(:competition_users).pluck(:id)).to eq([competition_user.id])
+        expect(response.body).to include(edit_admin_competition_user_path(competition_user))
+      end
+    end
+
+    describe "update" do
+      let(:other_user) { FactoryBot.create(:user, display_name: "Old Name") }
+      let(:valid_params) { {display_name: "New Name"} }
+
+      it "updates display_name" do
+        patch "#{base_url}/#{other_user.id}", params: {user: valid_params}
+        expect(flash[:success]).to be_present
+        expect(response).to redirect_to admin_users_path
+        expect(other_user.reload.display_name).to eq "New Name"
       end
     end
   end
