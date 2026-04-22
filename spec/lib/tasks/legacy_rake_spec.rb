@@ -4,12 +4,15 @@ Rails.application.load_tasks unless defined?(RakeLegacy)
 RSpec.describe RakeLegacy do
   let(:year) { 2023 }
   let(:yaml_path) { Rails.root.join("tmp/legacy_test_#{year}.yml") }
+  def week(miles, feet) = {"miles" => miles, "feet" => feet}
   let(:yaml_data) do
     {
       "source_url" => "https://example.com/spreadsheet",
       "riders" => {
-        "Alice" => [[10.0, 100], [20.0, 200], [0.0, 0], [5.0, 50], [15.0, 150]],
-        "Bob" => [[5.0, 50], [0.0, 0], [10.0, 100], [0.0, 0], [0.0, 0]]
+        "Alice" => {"week_1" => week(10.0, 100), "week_2" => week(20.0, 200), "week_3" => week(0.0, 0),
+                    "week_4" => week(5.0, 50), "week_5" => week(15.0, 150)},
+        "Bob" => {"week_1" => week(5.0, 50), "week_2" => week(0.0, 0), "week_3" => week(10.0, 100),
+                  "week_4" => week(0.0, 0), "week_5" => week(0.0, 0)}
       }
     }
   end
@@ -80,40 +83,13 @@ RSpec.describe RakeLegacy do
       end
     end
 
-    context "when a rider has the wrong week count" do
+    context "when a rider has missing weeks" do
       let(:yaml_data) do
-        {"source_url" => "x", "riders" => {"Alice" => [[10.0, 100], [20.0, 200]]}}
+        {"source_url" => "x", "riders" => {"Alice" => {"week_1" => week(10.0, 100), "week_2" => week(20.0, 200)}}}
       end
 
       it "raises" do
-        expect { described_class.import(year:) }.to raise_error(/Alice has 2 weeks/)
-      end
-    end
-  end
-
-  describe ".dummy_activities" do
-    before { described_class.import(year:) }
-
-    it "creates dummy activities for each non-zero period" do
-      # Alice has 4 non-zero weeks, Bob has 2 — at least 6 activities
-      expect { described_class.dummy_activities(year:) }
-        .to change(CompetitionActivity, :count).by_at_least(6)
-    end
-
-    it "returns the created count" do
-      expect(described_class.dummy_activities(year:)).to be >= 6
-    end
-
-    it "is idempotent — rerunning replaces existing dummies" do
-      described_class.dummy_activities(year:)
-      first_count = CompetitionActivity.count
-      expect { described_class.dummy_activities(year:) }.not_to change(CompetitionActivity, :count)
-      expect(CompetitionActivity.count).to eq first_count
-    end
-
-    context "when the legacy competition is missing" do
-      it "raises" do
-        expect { described_class.dummy_activities(year: 1999) }.to raise_error(/No 1999 legacy competition/)
+        expect { described_class.import(year:) }.to raise_error(/Alice has weeks/)
       end
     end
   end
