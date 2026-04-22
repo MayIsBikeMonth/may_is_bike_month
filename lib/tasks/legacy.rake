@@ -150,6 +150,10 @@ module RakeLegacy
   end
 end
 
+# Invoke from the command line, quoting the bracketed args so the shell doesn't eat them:
+#   bundle exec rake 'legacy:import[2023]'
+#   bundle exec rake 'legacy:check_matches[2023]'
+#   bundle exec rake 'legacy:dummy_activities[2023]'
 namespace :legacy do
   desc "Import an archived MIBM year from db/seeds/legacy_competition_<year>.yml (idempotent)"
   task :import, [:year] => :environment do |_, args|
