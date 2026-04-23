@@ -4,9 +4,11 @@ module Admin
 
     def index
       @matching_competitions = searched_competitions
-      @competitions = @matching_competitions
-        .reorder("competitions.#{sort_column} #{sort_direction}")
-        .includes(:competition_users)
+      @pagy, @competitions = pagy(:countish,
+        @matching_competitions
+          .reorder("competitions.#{sort_column} #{sort_direction}")
+          .includes(:competition_users),
+        limit: per_page, page:)
     end
 
     def new

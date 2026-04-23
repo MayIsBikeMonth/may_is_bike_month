@@ -5,6 +5,8 @@ class ApplicationController < ActionController::Base
 
   self.default_earliest_time = Time.at(1714460400).freeze # 2024-4-30
 
+  rescue_from Pagy::RangeError, with: :redirect_to_last_page
+
   before_action :enable_rack_profiler
 
   before_action do
@@ -101,5 +103,9 @@ class ApplicationController < ActionController::Base
   def permitted_user_redirect_path(path = nil)
     return nil if path.blank? || path.start_with?("/")
     path
+  end
+
+  def redirect_to_last_page(exception)
+    redirect_to url_for(page: exception.pagy.last), allow_other_host: false
   end
 end

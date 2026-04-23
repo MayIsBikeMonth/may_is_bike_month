@@ -3,10 +3,11 @@
 module Admin
   module CurrentHeader
     class Component < ApplicationComponent
-      def initialize(viewing:, searchable_competitions:, s_params:, include_competition_select: false, competition_subject: nil, user_subject: nil, user_param: nil, render_period: false, render_chart: false, chart_collection: nil, time_range: nil, time_range_column: "created_at")
+      def initialize(viewing:, searchable_competitions:, s_params:, pagy:, include_competition_select: false, competition_subject: nil, user_subject: nil, user_param: nil, render_period: false, render_chart: false, chart_collection: nil, time_range: nil, time_range_column: "created_at")
         @viewing = viewing
         @include_competition_select = include_competition_select
         @s_params = s_params
+        @pagy = pagy
         @competition_subject = competition_subject
         @user_subject = user_subject
         @user_param = user_param
@@ -39,7 +40,7 @@ module Admin
       end
 
       def matching_count
-        @matching_count ||= @chart_collection&.size || 0
+        @pagy&.count || 0
       end
 
       def chart_component

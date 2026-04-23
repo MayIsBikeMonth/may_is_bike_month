@@ -6,9 +6,11 @@ module Admin
 
     def index
       @matching_users = searched_users
-      @users = @matching_users
-        .reorder("users.#{sort_column} #{sort_direction}")
-        .includes(:competition_users)
+      @pagy, @users = pagy(:countish,
+        @matching_users
+          .reorder("users.#{sort_column} #{sort_direction}")
+          .includes(:competition_users),
+        limit: per_page, page:)
     end
 
     def edit

@@ -10,7 +10,8 @@ RSpec.describe Admin::CurrentHeader::Component, type: :component do
       competition_subject: nil,
       searchable_competitions: Competition.order(start_date: :desc),
       render_period: false,
-      s_params: {}
+      s_params: {},
+      pagy: Pagy::Offset.new(count: 0, limit: 25, page: 1)
     }
   end
   let(:options) { default_options }
@@ -26,18 +27,16 @@ RSpec.describe Admin::CurrentHeader::Component, type: :component do
     expect(component.css("p").first.text).to match(/0\s+Competition users\s+for all competitions/)
   end
 
-  context "with a chart_collection of two records" do
-    let!(:competition_users) { FactoryBot.create_list(:competition_user, 2) }
-    let(:options) { default_options.merge(chart_collection: CompetitionUser.all) }
+  context "with a pagy count of two" do
+    let(:options) { default_options.merge(pagy: Pagy::Offset.new(count: 2, limit: 25, page: 1)) }
 
     it "renders the count with pluralized viewing" do
       expect(component.css("p").first.text).to match(/2\s+Competition users\s+for all competitions/)
     end
   end
 
-  context "with a chart_collection of one record" do
-    let!(:competition_user) { FactoryBot.create(:competition_user) }
-    let(:options) { default_options.merge(chart_collection: CompetitionUser.all) }
+  context "with a pagy count of one" do
+    let(:options) { default_options.merge(pagy: Pagy::Offset.new(count: 1, limit: 25, page: 1)) }
 
     it "uses the singular form" do
       expect(component.css("p").first.text).to match(/1\s+Competition user\s+for all competitions/)
