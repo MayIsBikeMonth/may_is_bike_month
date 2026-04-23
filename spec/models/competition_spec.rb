@@ -45,7 +45,7 @@ RSpec.describe Competition, type: :model do
     end
 
     context "with future, but set current" do
-      let(:start_date) { Time.current + 1.week }
+      let(:start_date) { Time.current.next_month.beginning_of_month }
       it "sets current, unsets all others" do
         expect(competition1.reload.current).to be_truthy
         expect(competition1.display_name).to eq "MIBM 2023"
