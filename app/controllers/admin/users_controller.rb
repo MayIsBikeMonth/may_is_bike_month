@@ -41,7 +41,7 @@ module Admin
     end
 
     def permitted_params
-      params.require(:user).permit(:display_name)
+      params.require(:user).permit(:display_name, :role)
     end
 
     def find_user

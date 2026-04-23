@@ -38,6 +38,10 @@ module Admin
         @render_chart && @chart_collection.present? && @time_range.present?
       end
 
+      def matching_count
+        @matching_count ||= @chart_collection&.size || 0
+      end
+
       def chart_component
         data = UI::Chart::Component.time_range_counts(collection: @chart_collection, time_range: @time_range, column: @time_range_column)
         UI::Chart::Component.new(series: [{name: @viewing, data:}], time_range: @time_range)

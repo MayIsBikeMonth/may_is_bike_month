@@ -62,13 +62,15 @@ RSpec.describe base_url, type: :request do
 
     describe "update" do
       let(:other_user) { FactoryBot.create(:user, display_name: "Old Name") }
-      let(:valid_params) { {display_name: "New Name"} }
+      let(:valid_params) { {display_name: "New Name", role: "developer"} }
 
-      it "updates display_name" do
+      it "updates display_name and role" do
         patch "#{base_url}/#{other_user.id}", params: {user: valid_params}
         expect(flash[:success]).to be_present
         expect(response).to redirect_to admin_users_path
-        expect(other_user.reload.display_name).to eq "New Name"
+        other_user.reload
+        expect(other_user.display_name).to eq "New Name"
+        expect(other_user.role).to eq "developer"
       end
     end
   end

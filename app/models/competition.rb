@@ -74,6 +74,10 @@ class Competition < ApplicationRecord
     DEFAULT_ACTIVITY_TYPES # NOTE: Can be manually specified on CompetitionParticipant
   end
 
+  def included_competition_user_ids_score_ordered
+    @included_competition_user_ids_score_ordered ||= competition_users_included.score_ordered.pluck(:id)
+  end
+
   def in_period?(passed_dates_or_times)
     return false if passed_dates_or_times.blank?
     activity_dates = dates_array_from(passed_dates_or_times)

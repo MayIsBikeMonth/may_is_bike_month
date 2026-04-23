@@ -9,7 +9,8 @@
   </div>
 
   <p class="mb-2">
-    <%= @viewing %>
+    <%= number_display(matching_count) %>
+    <%= @viewing.singularize.pluralize(matching_count) %>
 
     <% if @competition_subject.present? %>
       for competition:
