@@ -67,6 +67,35 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "from_omniauth" do
+    let(:uid) { 123456 }
+    let(:auth) do
+      {
+        "credentials" => {"token" => "tok", "refresh_token" => "refresh", "expires_at" => (Time.current + 1.hour).to_i},
+        "extra" => {"raw_info" => {"username" => "new-rider", "firstname" => "New", "lastname" => "Rider"}}
+      }
+    end
+
+    it "creates a new user with a password" do
+      expect { User.from_omniauth(uid, auth) }.to change(User, :count).by(1)
+      user = User.find_by(strava_id: uid)
+      expect(user.strava_username).to eq "new-rider"
+      expect(user.encrypted_password).to be_present
+    end
+
+    context "when the user already exists" do
+      let!(:existing) { FactoryBot.create(:user, strava_id: uid) }
+
+      it "updates strava data without rotating encrypted_password" do
+        original_encrypted_password = existing.encrypted_password
+        expect { User.from_omniauth(uid, auth) }.not_to change(User, :count)
+        existing.reload
+        expect(existing.encrypted_password).to eq original_encrypted_password
+        expect(existing.strava_auth["token"]).to eq "tok"
+      end
+    end
+  end
+
   describe "after_commit" do
     let(:user) { FactoryBot.create(:user) }
     let(:start_date) { Time.current.beginning_of_month }

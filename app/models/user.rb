@@ -58,11 +58,13 @@ class User < ApplicationRecord
     end
 
     def from_omniauth(uid, auth)
-      user = where(strava_id: uid.to_i).first || new(strava_id: uid.to_i)
-
-      user.update(password: Devise.friendly_token[0, 20],
+      user = where(strava_id: uid.to_i).first_or_initialize
+      attrs = {
         strava_auth: stored_strava_auth(auth["credentials"]),
-        strava_info: auth.dig("extra", "raw_info"))
+        strava_info: auth.dig("extra", "raw_info")
+      }
+      attrs[:password] = Devise.friendly_token[0, 20] if user.new_record?
+      user.update(attrs)
       user
     end
 
