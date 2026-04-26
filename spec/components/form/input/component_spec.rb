@@ -52,6 +52,35 @@ RSpec.describe Form::Input::Component, type: :component do
     end
   end
 
+  context "date_field" do
+    let(:competition) { Competition.new }
+    let(:form_builder) do
+      MayIsBikeMonthFormBuilder.new(:competition, competition, ActionView::Base.new(ActionView::LookupContext.new([]), {}, nil), {})
+    end
+    let(:attribute) { :start_date }
+    let(:kind) { :date_field }
+
+    it "renders a date input" do
+      expect(component).to have_css("input[type='date']")
+      expect(component.to_html).to include("rounded-lg")
+    end
+  end
+
+  context "check_box" do
+    let(:competition) { Competition.new }
+    let(:form_builder) do
+      MayIsBikeMonthFormBuilder.new(:competition, competition, ActionView::Base.new(ActionView::LookupContext.new([]), {}, nil), {})
+    end
+    let(:attribute) { :current }
+    let(:kind) { :check_box }
+
+    it "renders a checkbox with checkbox classes" do
+      expect(component).to have_css("input[type='checkbox'][name='competition[current]']")
+      expect(component.to_html).to include("h-4 w-4")
+      expect(component.to_html).not_to include("rounded-lg")
+    end
+  end
+
   context "invalid kind" do
     let(:kind) { :password_field }
 

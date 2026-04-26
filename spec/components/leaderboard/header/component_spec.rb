@@ -76,4 +76,17 @@ RSpec.describe Leaderboard::Header::Component, type: :component do
       expect(numbers.first).to eq "15" # 2026-04-16..2026-04-30 inclusive
     end
   end
+
+  context "when the competition has not started yet (May 2026, today 2026-04-26)" do
+    let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2026-05-01")) }
+    around { |ex| travel_to(Date.parse("2026-04-26")) { ex.run } }
+
+    it "shows Days To Start instead of Days Left" do
+      labels = rendered.css("div.text-\\[10px\\]").map(&:text).map(&:squish)
+      expect(labels.first).to eq "DaysTo Start"
+      expect(labels).not_to include "DaysLeft"
+      numbers = rendered.css("div.text-\\[22px\\]").map(&:text).map(&:strip)
+      expect(numbers.first).to eq "5" # 2026-04-26 to 2026-05-01 exclusive
+    end
+  end
 end

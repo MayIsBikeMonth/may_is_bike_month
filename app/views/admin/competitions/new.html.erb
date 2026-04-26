@@ -2,4 +2,6 @@
   New Competition
 </h1>
 
-<%= render partial: "form" %>
+<%= render(UI::Card::Component.new) do %>
+  <%= render partial: "form" %>
+<% end %>
