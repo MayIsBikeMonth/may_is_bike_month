@@ -113,9 +113,7 @@
           </li>
 
           <% if @current_user&.admin_access? %>
-            <li>
-              <%= link_to "Admin", admin_root_path, class: ("active" if helpers.in_admin?) %>
-            </li>
+            <li><%= link_to "Admin", admin_root_path %></li>
           <% end %>
 
           <li>
