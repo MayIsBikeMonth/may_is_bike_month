@@ -56,6 +56,16 @@
     </p>
   <% end %>
 
+  <% if @render_period && @time_range.present? && @period.present? %>
+    <div class="mb-4">
+      <%= render(UI::PeriodSelect::Component.new(
+        period: @period,
+        start_time: @time_range.first,
+        end_time: @time_range.last
+      )) %>
+    </div>
+  <% end %>
+
   <% if render_chart? %>
     <div class="mb-4">
       <%= render(chart_component) %>

@@ -1,12 +1,25 @@
 <%#
-  Pass in total count.
+  Render the period selector buttons for time-range filtering.
 
-  No need to render period select if there aren't a good number -  unless we're viewing a period already
+  Requires the controller to include Binxtils::SetPeriod and call set_period
+  in a before_action — that populates @period, @start_time, @end_time.
+
+  Local options:
+    total_count    - if given, only render when there are enough records to filter (or
+                     when a non-default period is already active)
+    include_future - show next_week / next_month buttons (default false)
+    prepend_text   - leading label, e.g. "Created during:"
 %>
-<% total_count ||= 0 %>
+<% total_count ||= nil %>
+<% include_future ||= false %>
+<% prepend_text ||= nil %>
 
-<% if total_count > 25 || @period != "all" %>
-  <%# = render partial: "/tranzito_utils/period_select" %>
-  <%# Include these classes, required because period-select uses these classes and tailwind doesn't include them %>
-  <div class="hidden mr-2 ml-2 text-right"></div>
+<% if total_count.nil? || total_count > 25 || @period != "all" %>
+  <%= render(UI::PeriodSelect::Component.new(
+    period: @period,
+    start_time: @start_time,
+    end_time: @end_time,
+    include_future:,
+    prepend_text:
+  )) %>
 <% end %>

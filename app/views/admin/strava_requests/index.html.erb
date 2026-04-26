@@ -1,4 +1,4 @@
-<%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, competition_subject: nil, user_subject:, user_param: params[:user], searchable_competitions: nil, render_period: false, s_params: sortable_params, pagy: @pagy, render_chart: @render_chart, chart_collection: @matching_strava_requests, time_range: @time_range)) %>
+<%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, competition_subject: nil, user_subject:, user_param: params[:user], searchable_competitions: nil, render_period: true, period: @period, s_params: sortable_params, pagy: @pagy, render_chart: @render_chart, chart_collection: @matching_strava_requests, time_range: @time_range)) %>
 
 <%# Local var because cell blocks run via instance_exec in the table component context %>
 <% show_dev_info = display_dev_info? %>
