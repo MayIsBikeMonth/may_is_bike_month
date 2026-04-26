@@ -95,8 +95,8 @@ RSpec.describe UI::PeriodSelect::Component, type: :component do
       expect(component).to have_css('a[data-action*="ui--period-select#select"]')
     end
 
-    it "binds the custom button to the toggleCustom action" do
-      expect(component).to have_css('button[data-action*="ui--period-select#toggleCustom"]')
+    it "binds the custom button to the collapse toggle action" do
+      expect(component).to have_css('button[data-action*="click->collapse#toggle"]')
     end
   end
 end

@@ -1,4 +1,4 @@
-<div data-controller="ui--period-select">
+<div data-controller="ui--period-select collapse">
   <div
     id="timeSelectionBtnGroup"
     class="flex flex-wrap justify-end gap-2 <%= "custom-period-selected" if @period == "custom" %>"
@@ -26,14 +26,14 @@
       text: "custom",
       size: :sm,
       active: @period == "custom",
-      data: {period: "custom", action: "click->ui--period-select#toggleCustom"}
+      data: {period: "custom", action: "click->collapse#toggle"}
     ) %>
   </div>
 
   <%= form_with(
     url: "#",
     method: :get,
-    html: {id: "timeSelectionCustom", class: custom_form_classes, "data-ui--period-select-target": "customForm"}
+    html: {id: "timeSelectionCustom", class: custom_form_classes, "data-collapse-target": "content"}
   ) do |f| %>
     <div class="flex flex-wrap items-center justify-end gap-3">
       <div class="flex items-center gap-2">
