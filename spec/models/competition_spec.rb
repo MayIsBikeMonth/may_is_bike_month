@@ -58,6 +58,15 @@ RSpec.describe Competition, type: :model do
     end
   end
 
+  describe ".current" do
+    let!(:competition1) { FactoryBot.create(:competition, start_date: Date.parse("2023-5-1"), current: true) }
+    it "reflects newly created current competition without re-memoization" do
+      expect(Competition.current).to eq competition1
+      competition2 = FactoryBot.create(:competition, start_date: Time.current.next_month.beginning_of_month, current: true)
+      expect(Competition.current).to eq competition2
+    end
+  end
+
   describe "competition_activities" do
     let(:competition_user) { FactoryBot.create(:competition_user) }
     let(:competition) { competition_user.competition }
