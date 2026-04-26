@@ -47,7 +47,6 @@ naming differences**, even when they look substantive at first:
 - Stimulus controller behavior changes (event handlers, lifecycle hooks, new
   interactions like z-index stacking or debounced resize handlers)
 - Test additions that exercise new behavior (adapt to local factories)
-- ViewComponent convention fixes (e.g., `link_to` → `helpers.link_to`)
 - `binxtils` gem version bumps and the matching `@bikeindex/time-localizer`
   npm pin in `config/importmap.rb` (these move in lockstep — see Step 3)
 

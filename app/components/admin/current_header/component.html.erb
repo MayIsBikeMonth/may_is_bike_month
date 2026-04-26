@@ -56,7 +56,7 @@
     </p>
   <% end %>
 
-  <% if @render_period && @time_range.present? && @period.present? %>
+  <% if @time_range.present? && @period.present? %>
     <div class="mb-4">
       <%= render(UI::PeriodSelect::Component.new(
         period: @period,
