@@ -6,9 +6,11 @@ module Admin
 
     def index
       @matching_competition_users = searched_competition_users
-      @competition_users = @matching_competition_users
-        .reorder("competition_users.#{sort_column} #{sort_direction}")
-        .includes(:competition, :competition_activities)
+      @pagy, @competition_users = pagy(:countish,
+        @matching_competition_users
+          .reorder("competition_users.#{sort_column} #{sort_direction}")
+          .includes(:competition, :competition_activities),
+        limit: per_page, page:)
     end
 
     def edit

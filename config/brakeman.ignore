@@ -1,10 +1,10 @@
 {
   "ignored_warnings": [
     {
-      "fingerprint": "4278000db1e81282bca72313c1eb228fe8beb0f1dab825813c443b2eee502302",
-      "note": "Only link_to outputs are joined - all values are already HTML-safe"
+      "fingerprint": "ec7a5213f42e6a5d451998520049d937c1c7a4a448ca4507c59860b76a9146a7",
+      "note": "Admin-only controller (gated by ensure_user_admin!) — role assignment is intentional"
     }
   ],
-  "updated": "2026-04-02",
+  "updated": "2026-04-23",
   "brakeman_version": "8.0.4"
 }

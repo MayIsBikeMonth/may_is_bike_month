@@ -119,6 +119,16 @@ class CompetitionUser < ApplicationRecord
     end
   end
 
+  def rank_in_competition
+    return nil unless included_in_competition
+    index = competition.included_competition_user_ids_score_ordered.index(id)
+    index && index + 1
+  end
+
+  def rider_count_in_competition
+    competition.included_competition_user_ids_score_ordered.size
+  end
+
   def everyday_rider?
     dates_before_current_date.all? { |date| activity_dates.include?(date.to_s) }
   end
