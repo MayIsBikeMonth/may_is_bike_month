@@ -29,16 +29,18 @@ RSpec.describe UI::Chart::Component, type: :component do
     let(:activity_time) { start_time + 1.minute }
     let!(:activity) { FactoryBot.create(:competition_activity, created_at: activity_time) }
     let(:time_range) { start_time..(start_time + 3.minutes) }
-    before { Time.zone = "America/Chicago" }
 
     describe "time_range_counts" do
-      let(:target_counts) { {" 1:16 PM" => 0, " 1:17 PM" => 1, " 1:18 PM" => 0, " 1:19 PM" => 0} }
       it "buckets in the current Time.zone" do
-        expect(described_class.time_range_counts(collection: CompetitionActivity.all, time_range:)).to eq target_counts
+        Time.use_zone("America/Chicago") do
+          expect(described_class.time_range_counts(collection: CompetitionActivity.all, time_range:))
+            .to eq({" 1:16 PM" => 0, " 1:17 PM" => 1, " 1:18 PM" => 0, " 1:19 PM" => 0})
+        end
 
-        Time.zone = "America/Los_Angeles"
-        expect(described_class.time_range_counts(collection: CompetitionActivity.all, time_range:))
-          .to eq({"11:16 AM" => 0, "11:17 AM" => 1, "11:18 AM" => 0, "11:19 AM" => 0})
+        Time.use_zone("America/Los_Angeles") do
+          expect(described_class.time_range_counts(collection: CompetitionActivity.all, time_range:))
+            .to eq({"11:16 AM" => 0, "11:17 AM" => 1, "11:18 AM" => 0, "11:19 AM" => 0})
+        end
       end
     end
   end
