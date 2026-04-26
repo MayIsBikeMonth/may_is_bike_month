@@ -32,6 +32,14 @@ naming differences**, even when they look substantive at first:
   `*_spec.rb` files often reference bike_index models (`Bike`, `Payment`, etc.).
   Keep this app's preview content; substitute factories when porting specs (see
   Step 4).
+- **Local features ahead of upstream** — when applying an upstream diff would
+  *replace* local code with a less-featureful version, that's a regression
+  masquerading as a sync. Before applying, scan the local file for params,
+  keywords, or attributes that aren't in the upstream version — if you find any,
+  the local version is ahead, keep it. Concrete example: this app's
+  `UI::Button::Component` accepts an `aria:` keyword that bike_index lacks; a
+  naive "match upstream" sync would silently drop it. When you spot this,
+  flag it in your commit/PR notes so a future sync doesn't regress it either.
 
 **Do pull in:**
 
@@ -42,6 +50,17 @@ naming differences**, even when they look substantive at first:
 - ViewComponent convention fixes (e.g., `link_to` → `helpers.link_to`)
 - `binxtils` gem version bumps and the matching `@bikeindex/time-localizer`
   npm pin in `config/importmap.rb` (these move in lockstep — see Step 3)
+
+**Partial port — don't take an upstream change whole-or-nothing.** A single
+upstream refactor often bundles a worthwhile logic change with fork-incompatible
+scaffolding (a different form builder, a stimulus controller that doesn't exist
+here, a model dependency this app lacks). Don't reject the whole PR for the
+incompatible piece, and don't drag the incompatible piece in for the worthwhile
+piece — split. Apply the clean slice, skip the rest, and note the partial in
+your commit message. Concrete example: bike_index's `period_select` refactor
+moved button labels to i18n (good — port it) *and* swapped the local
+`toggleCustom` Stimulus action for a generic `collapse` controller that doesn't
+exist here (skip — local `toggleCustom` is self-contained and works).
 
 **When in doubt**, leave the file unchanged and note it for review. Quiet
 divergence is recoverable; an unwanted change isn't until someone notices.
