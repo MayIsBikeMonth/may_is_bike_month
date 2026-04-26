@@ -43,4 +43,33 @@ RSpec.describe Form::Group::Component, type: :component do
       expect(component).to have_css("textarea")
     end
   end
+
+  context "with a Competition" do
+    let(:competition) { Competition.new }
+    let(:form_builder) do
+      MayIsBikeMonthFormBuilder.new(:competition, competition, ActionView::Base.new(ActionView::LookupContext.new([]), {}, nil), {})
+    end
+
+    context "date_field" do
+      let(:attribute) { :start_date }
+      let(:kind) { :date_field }
+
+      it "renders date input with label" do
+        expect(component).to have_css("label", text: "Start date")
+        expect(component).to have_css("input[type='date']")
+      end
+    end
+
+    context "check_box" do
+      let(:attribute) { :current }
+      let(:kind) { :check_box }
+      let(:label_text) { "Current Competition" }
+
+      it "renders checkbox before label in a flex row" do
+        expect(component).to have_css("input[type='checkbox'][name='competition[current]']")
+        expect(component).to have_css("label", text: "Current Competition")
+        expect(component).to have_css("div.flex.items-center > input[type='checkbox']")
+      end
+    end
+  end
 end
