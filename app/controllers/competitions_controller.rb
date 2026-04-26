@@ -6,4 +6,10 @@ class CompetitionsController < ApplicationController
     @competitions = Competition.start_ordered_desc
     @page_title = @competition.display_name
   end
+
+  def history
+    @competitions = Competition.start_ordered_desc
+      .includes(competition_users_included: :user)
+    @page_title = "Competition history"
+  end
 end

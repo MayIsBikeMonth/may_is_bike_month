@@ -1,0 +1,255 @@
+<% num_class = "font-mono text-[13px] font-medium text-purple-900 dark:text-purple-0 tabular-nums" %>
+<% sub_class = "font-mono text-[11px] text-purple-400 dark:text-purple-300 tabular-nums" %>
+<% head_class = "text-purple-300 dark:text-purple-400 text-[10px] uppercase tracking-[0.12em] font-medium whitespace-nowrap" %>
+<% cell_class = "px-3 py-3 align-top border-b border-purple-100 dark:border-purple-700" %>
+<% placing_cell_class = "#{cell_class} min-w-[140px]" %>
+<% numeric_cell_class = "#{cell_class} text-right whitespace-nowrap" %>
+
+<div class="max-w-[1340px] mx-auto pt-8 wrapper-padding pb-20">
+  <header class="pb-5 mb-7 border-b border-purple-100 dark:border-purple-700">
+    <h1 class="font-mono font-medium text-[34px] tracking-[-0.5px] m-0">
+      Competition
+      <b class="text-purple-500 dark:text-purple-400 font-bold">history</b>
+    </h1>
+
+    <p class="text-purple-400 dark:text-purple-300 text-[13px] mt-2">
+      Every May is Bike Month, side by side.
+    </p>
+  </header>
+
+  <div class="wrapper-padding-overflow overflow-x-auto pb-3">
+    <table class="min-w-full text-left border-separate border-spacing-0">
+      <thead>
+        <tr class="bg-purple-100 dark:bg-purple-800">
+          <th class="<%= head_class %> px-3 py-2.5 text-left">Year</th>
+
+          <th class="<%= head_class %> px-3 py-2.5 text-left">
+            <span class="mr-1">🥇</span>1st
+          </th>
+
+          <th class="<%= head_class %> px-3 py-2.5 text-left">
+            <span class="mr-1">🥈</span>2nd
+          </th>
+
+          <th class="<%= head_class %> px-3 py-2.5 text-left">
+            <span class="mr-1">🥉</span>3rd
+          </th>
+
+          <th class="<%= head_class %> px-3 py-2.5 text-left">
+            <span class="mr-1">🏮</span>Last
+          </th>
+
+          <th class="<%= head_class %> px-3 py-2.5 text-right">Riders</th>
+
+          <th class="<%= head_class %> px-3 py-2.5 text-right">
+            <span class="unit-imperial">Miles</span>
+            <span class="unit-metric hidden">Km</span>
+          </th>
+
+          <th class="<%= head_class %> px-3 py-2.5 text-right">
+            <span class="unit-imperial">Feet</span>
+            <span class="unit-metric hidden">Meters</span>
+          </th>
+
+          <th class="<%= head_class %> px-3 py-2.5 text-right">Everyday</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% rows.each do |row| %>
+          <tr
+            class="
+              odd:bg-purple-50/60 dark:odd:bg-purple-900/20
+              hover:bg-purple-100/60 dark:hover:bg-purple-800/40
+              transition-colors
+            "
+          >
+            <td class="<%= cell_class %> whitespace-nowrap">
+              <%= link_to competition_path(row.slug), class: "block no-underline" do %>
+                <div
+                  class="
+                    font-mono font-medium text-[20px] text-purple-900
+                    dark:text-purple-0 leading-none
+                  "
+                >
+                  <%= row.year %>
+                </div>
+
+                <div
+                  class="
+                    text-[11px] text-purple-400 dark:text-purple-300 mt-1
+                    flex items-center gap-1.5
+                  "
+                >
+                  <%= row.display_name %>
+
+                  <% if row.legacy? %>
+                    <span
+                      class="
+                        inline-block px-1 py-px text-[9px] uppercase
+                        tracking-wider bg-purple-200 dark:bg-purple-700
+                        text-purple-700 dark:text-purple-100 rounded
+                      "
+                    >
+                      legacy
+                    </span>
+                  <% end %>
+                </div>
+              <% end %>
+            </td>
+
+            <% [row.first_place, row.second_place, row.third_place, row.last_place].each do |user| %>
+              <td class="<%= placing_cell_class %>">
+                <% if user %>
+                  <div
+                    class="
+                      text-purple-900 dark:text-purple-0 font-medium
+                      text-[13px] truncate max-w-[160px]
+                    "
+                  >
+                    <%= user.display_name %>
+                  </div>
+                  <div class="<%= sub_class %> mt-0.5">
+                    <span class="unit-imperial">
+                      <%= miles_display(user.distance_meters) %> mi
+                    </span>
+
+                    <span class="unit-metric hidden">
+                      <%= number_display(user.distance_meters / 1000.0, round_to: 0) %>
+                      km
+                    </span>
+
+                    <span class="opacity-50 mx-0.5">·</span>
+
+                    <span class="unit-imperial">
+                      <%= feet_display(user.elevation_meters) %> ft
+                    </span>
+
+                    <span class="unit-metric hidden">
+                      <%= number_display(user.elevation_meters, round_to: 0) %>
+                      m
+                    </span>
+                  </div>
+                <% else %>
+                  <span class="text-purple-300 dark:text-purple-400 opacity-50">
+                    —
+                  </span>
+                <% end %>
+              </td>
+            <% end %>
+
+            <td class="<%= numeric_cell_class %>">
+              <div class="flex items-center justify-end gap-2">
+                <div
+                  class="
+                    relative h-1 w-10 bg-purple-100 dark:bg-purple-900/60
+                    rounded-full overflow-hidden
+                  "
+                >
+                  <div
+                    class="
+                      absolute inset-y-0 left-0 bg-purple-400
+                      dark:bg-purple-500 rounded-full
+                    "
+                    style="width: <%= bar_pct(row.rider_count, max_rider_count) %>%"
+                  ></div>
+                </div>
+
+                <span class="<%= num_class %>">
+                  <%= number_display(row.rider_count) %>
+                </span>
+              </div>
+            </td>
+
+            <td class="<%= numeric_cell_class %>">
+              <div class="flex items-center justify-end gap-2">
+                <div
+                  class="
+                    relative h-1 w-10 bg-purple-100 dark:bg-purple-900/60
+                    rounded-full overflow-hidden
+                  "
+                >
+                  <div
+                    class="
+                      absolute inset-y-0 left-0 bg-purple-400
+                      dark:bg-purple-500 rounded-full
+                    "
+                    style="width: <%= bar_pct(row.distance_meters, max_distance_meters) %>%"
+                  ></div>
+                </div>
+
+                <span class="<%= num_class %>">
+                  <span class="unit-imperial">
+                    <%= miles_display(row.distance_meters) %>
+                  </span>
+
+                  <span class="unit-metric hidden">
+                    <%= number_display(row.distance_meters / 1000.0, round_to: 0) %>
+                  </span>
+                </span>
+              </div>
+            </td>
+
+            <td class="<%= numeric_cell_class %>">
+              <div class="flex items-center justify-end gap-2">
+                <div
+                  class="
+                    relative h-1 w-10 bg-purple-100 dark:bg-purple-900/60
+                    rounded-full overflow-hidden
+                  "
+                >
+                  <div
+                    class="
+                      absolute inset-y-0 left-0 bg-purple-400
+                      dark:bg-purple-500 rounded-full
+                    "
+                    style="width: <%= bar_pct(row.elevation_meters, max_elevation_meters) %>%"
+                  ></div>
+                </div>
+
+                <span class="<%= num_class %>">
+                  <span class="unit-imperial">
+                    <%= feet_display(row.elevation_meters) %>
+                  </span>
+
+                  <span class="unit-metric hidden">
+                    <%= number_display(row.elevation_meters, round_to: 0) %>
+                  </span>
+                </span>
+              </div>
+            </td>
+
+            <td class="<%= numeric_cell_class %>">
+              <% if row.everyday_count.nil? %>
+                <span class="text-purple-300 dark:text-purple-400 opacity-50">
+                  —
+                </span>
+              <% else %>
+                <div class="flex items-center justify-end gap-2">
+                  <div
+                    class="
+                      relative h-1 w-10 bg-purple-100 dark:bg-purple-900/60
+                      rounded-full overflow-hidden
+                    "
+                  >
+                    <div
+                      class="
+                        absolute inset-y-0 left-0 bg-purple-400
+                        dark:bg-purple-500 rounded-full
+                      "
+                      style="width: <%= bar_pct(row.everyday_count, max_everyday_count) %>%"
+                    ></div>
+                  </div>
+
+                  <span class="<%= num_class %>">
+                    <%= number_display(row.everyday_count) %>
+                  </span>
+                </div>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

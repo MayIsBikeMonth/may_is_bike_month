@@ -43,3 +43,6 @@
 
 # Ignore local Claude Code settings
 .claude/settings.local.json
+
+# Ignore Playwright MCP scratch output
+/.playwright-mcp/
