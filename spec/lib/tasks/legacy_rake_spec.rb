@@ -30,7 +30,7 @@ RSpec.describe RakeLegacy do
         .to change(Competition, :count).by(1)
         .and change(CompetitionUser, :count).by(2)
         .and change(User, :count).by(2)
-        .and change(UpdateCompetitionUserJob.jobs, :count).by(2)
+        .and change(UpdateCompetitionUserJob.jobs, :count).by(3)
 
       competition = Competition.last
       expect(competition).to be_legacy

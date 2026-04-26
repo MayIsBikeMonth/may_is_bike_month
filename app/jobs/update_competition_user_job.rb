@@ -15,7 +15,9 @@ class UpdateCompetitionUserJob < ApplicationJob
       .each { |id| UpdateCompetitionUserJob.perform_async(id) }
   end
 
-  def perform(id)
+  def perform(id = nil)
+    return self.class.enqueue_current if id.nil?
+
     competition_user = CompetitionUser.find(id)
     if competition_user.excluded_from_competition?
       # Added this constraint, because if "included_in_competition" changes,
