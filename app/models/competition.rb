@@ -34,7 +34,7 @@ class Competition < ApplicationRecord
   validates :end_date, comparison: {greater_than: :start_date}
 
   before_validation :set_calculated_attributes
-  after_create_commit -> { CreateCompetitionUsersJob.perform_async(id) }
+  after_create_commit -> { UpdateCompetitionUserJob.perform_async }
   scope :start_ordered_desc, -> { reorder(start_date: :desc) }
 
   def self.current

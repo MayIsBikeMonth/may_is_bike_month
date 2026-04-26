@@ -14,10 +14,11 @@ RSpec.describe Competition, type: :model do
   describe "after_create_commit" do
     before { Sidekiq::Job.clear_all }
 
-    it "enqueues CreateCompetitionUsersJob" do
+    it "enqueues UpdateCompetitionUserJob" do
       expect {
         FactoryBot.create(:competition)
-      }.to change(CreateCompetitionUsersJob.jobs, :count).by(1)
+      }.to change(UpdateCompetitionUserJob.jobs, :count).by(1)
+      expect(UpdateCompetitionUserJob.jobs.last["args"]).to eq([])
     end
 
     it "does not enqueue on update" do
@@ -25,7 +26,7 @@ RSpec.describe Competition, type: :model do
       Sidekiq::Job.clear_all
       expect {
         competition.update!(display_name: "Renamed")
-      }.not_to change(CreateCompetitionUsersJob.jobs, :count)
+      }.not_to change(UpdateCompetitionUserJob.jobs, :count)
     end
   end
 
