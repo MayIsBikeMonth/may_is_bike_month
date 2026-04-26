@@ -4,10 +4,11 @@ module Admin
 
     def index
       @matching_strava_requests = searched_strava_requests
-      @strava_requests = @matching_strava_requests
-        .reorder("strava_requests.#{sort_column} #{sort_direction}")
-        .includes(:user)
-        .limit(100)
+      @pagy, @strava_requests = pagy(:countish,
+        @matching_strava_requests
+          .reorder("strava_requests.#{sort_column} #{sort_direction}")
+          .includes(:user),
+        limit: per_page, page:)
     end
 
     private

@@ -24,5 +24,9 @@
 
   table.column(label: "Activities") { |cu| number_display(cu.competition_activities.count) }
 
+  table.column(label: "Rank") do |cu|
+    "#{cu.rank_in_competition}/#{cu.rider_count_in_competition}" if cu.included_in_competition
+  end
+
   table.column(label: "Included?") { |cu| check_mark if cu.included_in_competition }
 end %>

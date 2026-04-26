@@ -1,21 +1,18 @@
 ---
 name: github-upload-image-to-pr
 description: >-
-  Upload local images to a GitHub PR and embed them in the description or comments.
-  Use when asked to "attach screenshots to PR", "add images to PR", "upload test results to PR",
-  "embed screenshots in PR description", "add before/after images to PR", "attach UI screenshots",
-  "show test results in PR", "add visual evidence to PR", or any request involving images and PRs.
-  Always use this skill when the user wants to visually document changes in a pull request,
-  even if they don't use the word "upload" — phrases like "put the screenshot in the PR" or
-  "show the image in the PR" should trigger this skill.
-allowed-tools: Bash(agent-browser:*), Bash(gh:*), Bash(cp:*), ToolSearch, Read
+  Embed a local image file into an existing GitHub PR — either in the PR body or as a comment.
+  Trigger when a request pairs a local image (screenshot, .png/.jpg, CleanShot capture, before/after)
+  with an existing PR (by #number, URL, branch name, or "the open PR"), regardless of verb —
+  attach, embed, add, put, post, drop, show, document. Also covers visually documenting test runs,
+  bug repros, UI states, or CI failures on an existing PR. The `gh` CLI cannot upload images;
+  this skill drives a real browser to GitHub's user-attachments uploader.
+allowed-tools: Bash(gh:*), Bash(cp:*), ToolSearch, Read
 ---
 
 # Upload Image to PR
 
-Upload local images to a GitHub PR and embed them in the description or comments using browser automation tools.
-
-Supported backends: Playwright MCP (preferred), Chrome DevTools MCP, agent-browser (CLI).
+Browser-driven workflow for embedding local images in a GitHub PR — the GitHub API does not support image uploads, so this drives Playwright MCP to GitHub's user-attachments uploader instead.
 
 ## How It Works
 
@@ -39,79 +36,38 @@ Also, normalize the image paths to absolute paths. If a path contains special ch
 cp /path/to/CleanShot*keyword*.png /tmp/screenshot.png
 ```
 
-## Step 2: Pick a browser tool
+## Step 2: Verify Playwright MCP is available
 
-### Priority Order
+Use `ToolSearch` with a query like `"browser navigate upload"` to confirm `mcp__playwright__*` tools are registered.
 
-1. **Playwright MCP** (MCP connection, `mcp__playwright__*`) — preferred; cross-browser automation with stable APIs
-2. **Chrome DevTools MCP** (MCP connection, `mcp__chrome-devtools__*`) — fallback MCP option if already installed
-3. **agent-browser** (CLI via Bash — last-resort fallback, login state preserved with `--profile`)
+Playwright MCP attaches to or spawns a browser with a fresh profile, so **the user will need to sign into github.com the first time** in the spawned window. The session then persists across reuse.
 
-MCP-based tools spawn or attach to a browser instance. By default they launch a fresh profile, so **you will need to sign into github.com the first time** in the spawned window (the session then persists across reuse). agent-browser can persist login state using `--profile ~/.agent-browser-github`.
+### If Playwright MCP is not installed
 
-### Detection
-
-First, use `ToolSearch` with a query like `"browser navigate upload"` to find MCP-based browser tools. If none are registered, fall back to `agent-browser --version` via Bash to confirm the CLI is installed.
-
-### If no browser tool is installed
-
-Recommend the user install **Playwright MCP only** — it's sufficient for this skill and avoids prompting them to choose between backends:
+Recommend the user install it:
 
 ```bash
 claude mcp add playwright -- npx -y @playwright/mcp@latest
 ```
 
-After install, the Claude Code session must be restarted for `mcp__playwright__*` tools to register. Do not suggest Chrome DevTools MCP or agent-browser unless the user explicitly asks for an alternative.
-
-### Tool Compatibility Matrix
-
-| Operation | Playwright MCP | Chrome DevTools MCP | agent-browser (CLI/Bash) |
-|-----------|----------------|---------------------|--------------------------|
-| **Navigate** | `browser_navigate` | `navigate_page` | `agent-browser --headed open {url}` |
-| **Snapshot** | `browser_snapshot` | `take_snapshot` | `agent-browser snapshot` |
-| **Screenshot** | `browser_take_screenshot` | `take_screenshot` | `agent-browser screenshot {path}` |
-| **Click** | `browser_click` (ref) | `click` (uid) | `agent-browser click {ref}` |
-| **File Upload** | `browser_file_upload` (paths) | `upload_file` (uid, filePath) | `agent-browser upload {ref} {path}` |
-| **JS Eval** | `browser_evaluate` (function) | `evaluate_script` (function) | `agent-browser eval '{js}'` |
-| **Login State** | Persists across calls; sign in once | Persists across calls; sign in once | Preserved with `--profile` |
+After install, the Claude Code session must be restarted for `mcp__playwright__*` tools to register.
 
 ## Step 3: Navigate to PR page and check login state
 
-Navigate to the PR page and immediately take a snapshot to verify login state.
-
-Playwright MCP (preferred):
+Navigate and immediately take a snapshot to verify login state:
 
 ```js
 browser_navigate({ url: "https://github.com/{owner}/{repo}/pull/{number}" })
+browser_snapshot()
 ```
 
-Chrome DevTools MCP (fallback):
-
-```js
-navigate_page({ url: "https://github.com/{owner}/{repo}/pull/{number}", type: "url" })
-```
-
-agent-browser — use `--profile` to persist login state:
-
-```bash
-agent-browser --headed --profile ~/.agent-browser-github open "https://github.com/{owner}/{repo}/pull/{number}"
-```
-
-**If SSO authentication screen appears:** Take a snapshot, locate the "Continue" button, and click it.
-
-**If NOT logged in (agent-browser only):**
-1. Navigate to `https://github.com/login`
-2. Ask the user to log in manually in the headed browser window.
-3. Wait for user confirmation, then navigate back to the PR page.
+**If an SSO authentication screen appears:** locate the "Continue" button in the snapshot and click it.
 
 ## Step 4: Locate the file upload input
 
-Take a snapshot/screenshot and scroll to the bottom to find the comment area.
-
-GitHub renders a file upload input in the comment form. Try these selectors in order (GitHub's UI can change — if one fails, try the next):
+Take a snapshot and scroll to the bottom to find the comment area. GitHub renders a file upload input in the comment form. Either find the `ref` directly from the snapshot, or run JS to detect it (GitHub's UI can change — try selectors in order):
 
 ```javascript
-// Shared JS for MCP-based tools — tries multiple known selectors
 () => {
   const selectors = [
     'input[type="file"][id*="comment"]',
@@ -127,28 +83,23 @@ GitHub renders a file upload input in the comment form. Try these selectors in o
 }
 ```
 
-For Playwright MCP and Chrome DevTools MCP, you can also take a snapshot to find the `ref`/`uid` of the file upload element directly.
-
 ## Step 5: Upload images one by one
 
-Upload each image file using the detected tool. Wait **2–3 seconds between uploads** so GitHub can process each file, then **3–5 seconds after the last upload** before reading URLs in step 6 — GitHub injects the markdown asynchronously after each file finishes processing.
+The `<input type="file">` from step 4 is **CSS-hidden** — calling `browser_file_upload` against its ref directly fails with "can only be used when there is related modal state present." First click the visible **"Paste, drop, or click to add files"** button (or "Attach files" toolbar icon) on the comment form to open the native file chooser, then `browser_file_upload` will satisfy that chooser.
+
+Upload each image with `browser_file_upload` (takes the element ref and a file paths array). Wait **2–3 seconds between uploads** so GitHub can process each file, then **3–5 seconds after the last upload** before reading URLs in step 6 — GitHub injects the image markup asynchronously after each file finishes processing.
 
 For multiple images, upload them all to the same comment textarea before extracting URLs — this is more efficient than navigating between uploads.
-
-- **Playwright MCP**: `browser_file_upload` takes the element ref and a file paths array.
-- **Chrome DevTools MCP**: `upload_file` requires the `uid` of the input element.
-- **agent-browser**: `agent-browser upload {ref} {absolute_path}`.
 
 **Important:** Always use absolute file paths.
 
 ## Step 6: Retrieve uploaded image URLs
 
-Read the textarea value — GitHub injects markdown image syntax like `![description](https://github.com/user-attachments/assets/...)` after each upload finishes processing.
+Read the textarea value via `browser_evaluate` — GitHub injects either markdown or HTML referencing the upload after each file finishes processing.
 
 The **standard textarea selector** (referenced again in step 7) prefers the known ID and falls back to a substring match in case GitHub renames it:
 
 ```javascript
-// MCP-based tools
 () => {
   const ta = document.getElementById('new_comment_field')
           || document.querySelector('textarea[id*="comment"]');
@@ -156,24 +107,21 @@ The **standard textarea selector** (referenced again in step 7) prefers the know
 }
 ```
 
-```bash
-# agent-browser
-agent-browser eval 'document.getElementById("new_comment_field")?.value || document.querySelector("textarea[id*=comment]")?.value || "not found"'
-```
-
-The response contains URLs in the format:
+GitHub may inject **either form** depending on image dimensions / file type:
 ```
 ![image](https://github.com/user-attachments/assets/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+<img width="..." height="..." alt="..." src="https://github.com/user-attachments/assets/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
 ```
 
-Extract all image URLs/markdown from the textarea value before clearing it.
+Both render the image in the PR — preserve whichever form GitHub used. If you need to extract just the URL (e.g., to rewrap), match the asset path with a regex that ignores wrapper syntax: `https://github\.com/user-attachments/assets/[0-9a-f-]+`.
 
 ## Step 7: Clear the textarea (do not submit the comment)
+
+Submitting via the UI's "Comment" button would post a public comment as a side effect of the upload. The only thing that should determine where the image lands (PR body vs. a new comment) is step 8 — so the textarea here is purely an upload-staging surface, never a submission surface. Clear it, then let `gh pr edit` / `gh pr comment` decide the destination.
 
 Use the **standard textarea selector** from step 6, then assign `ta.value = ""`:
 
 ```javascript
-// MCP-based tools
 () => {
   const ta = document.getElementById('new_comment_field')
            || document.querySelector('textarea[id*="comment"]');
@@ -182,18 +130,15 @@ Use the **standard textarea selector** from step 6, then assign `ta.value = ""`:
 }
 ```
 
-```bash
-# agent-browser
-agent-browser eval 'const ta = document.getElementById("new_comment_field") || document.querySelector("textarea[id*=comment]"); if(ta){ta.value=""} "cleared"'
-```
-
 ## Step 8: Embed images in the PR
+
+In both options below, substitute whichever form (markdown `![](...)` or HTML `<img ...>`) GitHub returned in step 6 — preserve it verbatim instead of rewrapping.
 
 **Option A — Update PR description** (append images to existing body):
 ```bash
 EXISTING_BODY=$(gh pr view {PR_NUMBER} --json body -q .body)
 
-gh pr edit {PR_NUMBER} --body "$(printf '%s\n\n## Screenshots\n\n%s' "$EXISTING_BODY" "![screenshot](https://github.com/user-attachments/assets/...)")"
+gh pr edit {PR_NUMBER} --body "$(printf '%s\n\n## Screenshots\n\n%s' "$EXISTING_BODY" "<image markup from step 6>")"
 ```
 
 If `$EXISTING_BODY` already contains a `## Screenshots` heading (e.g., on re-runs), this will create a duplicate section. Check first with `grep -q "^## Screenshots" <<< "$EXISTING_BODY"` and either replace the existing section or post as a comment (Option B) instead.
@@ -202,35 +147,30 @@ If `$EXISTING_BODY` already contains a `## Screenshots` heading (e.g., on re-run
 ```bash
 gh pr comment {PR_NUMBER} --body "## Screenshots
 
-![screenshot](https://github.com/user-attachments/assets/...)"
+<image markup from step 6>"
 ```
 
 Use Option A by default unless the user explicitly asks for a comment, or if the PR description is already long and a comment would be cleaner.
 
 ## Step 9: Verify the result
 
-Reload the page and take a screenshot to confirm the images are displayed correctly.
+Reload the page in the Playwright browser and take a screenshot to confirm the images render correctly. **Do not** verify with `curl` — `user-attachments/assets/` URLs return HTTP 302 to a session-signed S3 URL that 403s for unauthenticated clients. The 302 alone confirms the asset exists; the browser-rendered check is the only authoritative "did it display" signal.
 
 ## Tips
 
 - **Image sizing**: Control display size via HTML `<img>` tags: `<img width="800" alt="description" src="..." />`
 - **Multiple images**: Upload all images in one session to the same textarea; extract all URLs before clearing
-- **agent-browser login persistence**: Use `--profile ~/.agent-browser-github` to persist GitHub login across sessions
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| Not logged in (MCP tools) | SSO screen may appear — take snapshot, find "Continue" button, click it |
-| Not logged in (agent-browser) | Use `--headed` mode, navigate to login page, ask user to log in manually |
-| Browser window not visible | For agent-browser, ensure `--headed` flag is used |
+| Not logged in | SSO screen may appear — take snapshot, find "Continue" button, click it |
 | File path with special characters (e.g., Unicode narrow spaces from CleanShot) | Copy file to `/tmp/` with a simple name: `cp /path/CleanShot*keyword*.png /tmp/screenshot.png` |
 | File upload fails | Ensure the file path is absolute |
 | Textarea doesn't contain URLs yet | Wait 3–5 seconds after upload before running JS eval; retry once if needed |
 | Textarea selector not found | GitHub UI changes occasionally — use the multi-selector JS in Step 4 to find the current element |
-| Chrome DevTools MCP disconnected | Reconnect via `/mcp` command |
-| agent-browser not found | `npm install -g agent-browser && agent-browser install` |
-| No browser tools found | Use `ToolSearch` to search for available browser tools |
+| Playwright MCP not registered | `claude mcp add playwright -- npx -y @playwright/mcp@latest`, then restart the Claude Code session |
 | PR not found / 404 | Private repos return 404 for unauthenticated users — check login state |
 
 ## Notes
@@ -238,4 +178,4 @@ Reload the page and take a screenshot to confirm the images are displayed correc
 - GitHub `user-attachments/assets/` URLs are **persistent** — images remain accessible even without submitting the comment
 - Editing the description directly in the browser UI is fragile due to GitHub UI structure changes — updating via `gh pr edit` is strongly preferred
 - Multiple images can be uploaded in a single session before extracting URLs
-- MCP-based tools connect to existing browser instances, preserving cookies and login sessions
+- Playwright MCP attaches to a browser instance and preserves cookies/login state across calls

@@ -209,6 +209,21 @@ RSpec.describe CompetitionUser, type: :model do
     end
   end
 
+  describe "rank_in_competition" do
+    let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-05-01")) }
+    let!(:competition_user1) { FactoryBot.create(:competition_user, competition:, score_data: {dates: ["2024-05-01"], distance: 10_000, elevation: 0}) }
+    let!(:competition_user2) { FactoryBot.create(:competition_user, competition:, score_data: {dates: ["2024-05-01", "2024-05-02"], distance: 20_000, elevation: 0}) }
+    let!(:competition_user3) { FactoryBot.create(:competition_user, competition:, included_in_competition: false, score_data: {dates: ["2024-05-01", "2024-05-02", "2024-05-03"], distance: 50_000, elevation: 0}) }
+
+    it "returns the score-ordered rank among included users and nil for excluded" do
+      expect(competition_user2.rank_in_competition).to eq 1
+      expect(competition_user1.rank_in_competition).to eq 2
+      expect(competition_user3.rank_in_competition).to be_nil
+      expect(competition_user2.rider_count_in_competition).to eq 2
+      expect(competition_user3.rider_count_in_competition).to eq 2
+    end
+  end
+
   describe "scoring" do
     let(:competition) { FactoryBot.create(:competition, start_date: Time.parse("2024-05-01")) }
     let(:competition_user1) { FactoryBot.create(:competition_user, competition:) }

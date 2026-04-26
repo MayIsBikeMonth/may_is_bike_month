@@ -5,12 +5,13 @@ require "rails_helper"
 RSpec.describe Admin::CurrentHeader::Component, type: :component do
   let(:default_options) do
     {
-      viewing: "competition_users",
+      viewing: "Competition users",
       include_competition_select: true,
       competition_subject: nil,
       searchable_competitions: Competition.order(start_date: :desc),
       render_period: false,
-      s_params: {}
+      s_params: {},
+      pagy: Pagy::Offset.new(count: 0, limit: 25, page: 1)
     }
   end
   let(:options) { default_options }
@@ -23,6 +24,23 @@ RSpec.describe Admin::CurrentHeader::Component, type: :component do
     expect(component.css("h1").text.strip).to eq "Admin Competition Users"
     expect(component.css("a").map(&:text)).to include("graph")
     expect(component.css("a[href*='render_chart=true']")).to be_present
+    expect(component.css("p").first.text).to match(/0\s+Competition users\s+for all competitions/)
+  end
+
+  context "with a pagy count of two" do
+    let(:options) { default_options.merge(pagy: Pagy::Offset.new(count: 2, limit: 25, page: 1)) }
+
+    it "renders the count with pluralized viewing" do
+      expect(component.css("p").first.text).to match(/2\s+Competition users\s+for all competitions/)
+    end
+  end
+
+  context "with a pagy count of one" do
+    let(:options) { default_options.merge(pagy: Pagy::Offset.new(count: 1, limit: 25, page: 1)) }
+
+    it "uses the singular form" do
+      expect(component.css("p").first.text).to match(/1\s+Competition user\s+for all competitions/)
+    end
   end
 
   context "with a content block" do
