@@ -38,7 +38,8 @@ RSpec.describe base_url, type: :request do
     end
 
     describe "create" do
-      let(:competition_params) { {start_date: "2026-04-01", current: "1"} }
+      let(:competition_params) { {start_date: "2026-04-01", current: "1", display_name:} }
+      let(:display_name) { "" }
       it "creates a competition" do
         expect do
           post admin_competitions_path, params: {competition: competition_params}
@@ -49,6 +50,15 @@ RSpec.describe base_url, type: :request do
         expect(competition.end_date.to_s).to eq "2026-04-30"
         expect(competition.current).to be_truthy
         expect(competition.display_name).to eq "MIBM 2026"
+      end
+
+      context "with display_name" do
+        let(:display_name) { "Custom Competition Name" }
+        it "uses the provided display_name" do
+          post admin_competitions_path, params: {competition: competition_params}
+          expect(flash[:success]).to be_present
+          expect(Competition.order(:id).last.display_name).to eq "Custom Competition Name"
+        end
       end
     end
   end

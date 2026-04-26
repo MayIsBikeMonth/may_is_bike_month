@@ -106,7 +106,6 @@ RSpec.describe User, type: :model do
     let!(:competition_user_current) { FactoryBot.create(:competition_user, user:, competition: competition_current, updated_at:) }
     it "touches current_competition_user" do
       expect(CompetitionUser.included_in_current_competition.pluck(:id)).to eq([competition_user_current.id])
-      Competition.current(re_memoize: true)
       user.update(display_name: "New name")
       expect(competition_user.reload.updated_at).to be_within(1).of updated_at
       expect(competition_user_current.reload.updated_at).to be_within(1).of Time.current

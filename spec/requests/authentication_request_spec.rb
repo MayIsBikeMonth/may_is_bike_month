@@ -92,7 +92,6 @@ RSpec.describe "Authentication", type: :request do
     let!(:competition) { FactoryBot.create(:competition, current: true) }
 
     define_method(:signup_and_get_user) do |signup_cookies = {}|
-      Competition.current(re_memoize: true)
       signup_cookies.each { |k, v| cookies[k] = v }
       expect { post path }.to change(User, :count).by 1
       User.last
