@@ -1,4 +1,11 @@
-<div class="mb-4">
-  <%= @form_builder.label @attribute, @label_text, class: label_classes %>
-  <%= render(Form::Input::Component.new(form_builder: @form_builder, attribute: @attribute, kind: @kind, html_options: @html_options)) %>
-</div>
+<% if checkbox? %>
+  <div class="mb-4 flex items-center">
+    <%= render(input_component) %>
+    <%= @form_builder.label @attribute, @label_text, class: label_classes %>
+  </div>
+<% else %>
+  <div class="mb-4">
+    <%= @form_builder.label @attribute, @label_text, class: label_classes %>
+    <%= render(input_component) %>
+  </div>
+<% end %>
