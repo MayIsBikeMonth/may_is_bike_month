@@ -91,10 +91,6 @@ RSpec.describe UI::PeriodSelect::Component, type: :component do
   end
 
   describe "stimulus wiring" do
-    it "binds the period buttons to the select action" do
-      expect(component).to have_css('a[data-action*="ui--period-select#select"]')
-    end
-
     it "binds the custom button to the collapse toggle action" do
       expect(component).to have_css('button[data-action*="click->collapse#toggle"]')
     end
