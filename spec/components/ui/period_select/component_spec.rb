@@ -68,7 +68,7 @@ RSpec.describe UI::PeriodSelect::Component, type: :component do
       let(:period) { "week" }
 
       it "renders the custom form with hidden class" do
-        form = component.css("#timeSelectionCustom").first
+        form = component.css("form[data-collapse-target='content']").first
         expect(form).to be_present
         expect(form["class"]).to include("hidden")
       end
@@ -78,7 +78,7 @@ RSpec.describe UI::PeriodSelect::Component, type: :component do
       let(:period) { "custom" }
 
       it "renders the custom form without hidden class" do
-        form = component.css("#timeSelectionCustom").first
+        form = component.css("form[data-collapse-target='content']").first
         expect(form).to be_present
         expect(form["class"]).not_to include("hidden")
       end
@@ -93,6 +93,10 @@ RSpec.describe UI::PeriodSelect::Component, type: :component do
   describe "stimulus wiring" do
     it "binds the custom button to the collapse toggle action" do
       expect(component).to have_css('button[data-action*="click->collapse#toggle"]')
+    end
+
+    it "binds the custom form submit to the period-select submit action" do
+      expect(component).to have_css('form[data-action*="submit->ui--period-select#submit"]')
     end
   end
 end
