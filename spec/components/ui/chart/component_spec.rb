@@ -7,8 +7,7 @@ RSpec.describe UI::Chart::Component, type: :component do
   let(:instance) { described_class.new(series: [{name: "Test", data: {}}], time_range:) }
 
   it "renders with default colors" do
-    component = render_inline(instance)
-    script_content = component.css("script").text
+    script_content = render_inline(instance).css("script").text
     expect(script_content).to be_present
     described_class::COLORS.each do |color|
       expect(script_content).to include(color)
@@ -22,6 +21,25 @@ RSpec.describe UI::Chart::Component, type: :component do
       script_content = render_inline(instance).css("script").text
       custom_colors.each { |color| expect(script_content).to include(color) }
       expect(script_content).not_to include(described_class::COLORS.last)
+    end
+  end
+
+  context "with competition_activity" do
+    let(:start_time) { Time.at(1568052985) }
+    let(:activity_time) { start_time + 1.minute }
+    let!(:activity) { FactoryBot.create(:competition_activity, created_at: activity_time) }
+    let(:time_range) { start_time..(start_time + 3.minutes) }
+    before { Time.zone = "America/Chicago" }
+
+    describe "time_range_counts" do
+      let(:target_counts) { {" 1:16 PM" => 0, " 1:17 PM" => 1, " 1:18 PM" => 0, " 1:19 PM" => 0} }
+      it "buckets in the current Time.zone" do
+        expect(described_class.time_range_counts(collection: CompetitionActivity.all, time_range:)).to eq target_counts
+
+        Time.zone = "America/Los_Angeles"
+        expect(described_class.time_range_counts(collection: CompetitionActivity.all, time_range:))
+          .to eq({"11:16 AM" => 0, "11:17 AM" => 1, "11:18 AM" => 0, "11:19 AM" => 0})
+      end
     end
   end
 

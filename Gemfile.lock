@@ -97,11 +97,10 @@ GEM
     bcrypt_pbkdf (1.1.2)
     bigdecimal (4.1.2)
     bindex (0.8.1)
-    binxtils (0.3.2)
-      activerecord
-      activesupport
+    binxtils (0.4.1)
       functionable
       loofah
+      rails
       rails-html-sanitizer
     bootsnap (1.18.3)
       msgpack (~> 1.2)

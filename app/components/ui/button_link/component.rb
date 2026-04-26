@@ -13,7 +13,7 @@ module UI
       end
 
       def call
-        link_to(@text || content, @href, **@html_options.merge(class: link_classes))
+        helpers.link_to(@text || content, @href, **@html_options.merge(class: link_classes))
       end
 
       private
