@@ -34,7 +34,7 @@ module Leaderboard
 
       def competition_over? = days_left.zero?
 
-      def show_everyday_riders? = !@everyday_rider_count.nil?
+      def show_everyday_riders? = !not_started?
 
       def metric_grid_style
         count = 3 + (competition_over? ? 0 : 1) + (show_everyday_riders? ? 1 : 0)
