@@ -23,20 +23,17 @@ This project uses RSpec. All business logic should be tested.
 
 ## Always fix failing tests
 
-If `rspec` reports failures — even ones that look unrelated to your change, even ones you can show were already failing on `main` via `git stash` — **fix them before shipping**. A red suite is broken whether or not you broke it. Do not write off failures as "pre-existing", "flaky", "chromedriver-related", or "not from this PR" and move on.
+Fix every failing test, even ones that were already failing on `main`. Confirming a failure pre-dates your branch (via `git stash` or checking out `main`) explains *what* broke — not whether you fix it. You fix it.
 
-The expected order of operations when a failure surfaces:
+## Don't weaken assertions to make a failing test pass
 
-1. Reproduce it deterministically (rerun the single spec file; check `tmp/capybara/*.png` for system specs).
-2. Diagnose the actual cause — is the test wrong, the code wrong, or is infrastructure (chromedriver, fixtures, time-zone, asset pipeline) misconfigured?
-3. Fix it. If it's outside the scope of the current PR, fix it in a separate PR *first* and rebase, rather than landing on top of red.
-4. Only if the fix is genuinely blocked (needs a credential you don't have, needs a product decision) surface it to the user with what you tried and what you need to unblock — don't just note it and ship.
+When a test goes red, the default move is **investigate why**, not edit the assertion to match the new output. Watch for these tempting "fixes" that are actually erasing signal:
 
-Reporting "the failures pre-date this branch" is not a resolution. If you find yourself writing that sentence, stop and fix the tests instead.
+- Changing an expected value to whatever the page/chart/response now happens to render (e.g. `0` → `null`, an exact count → a range, a specific string → a substring/regex).
+- Loosening `eq` to `include`, dropping `count:` constraints, or replacing `expect(...).to ...` with `expect(...).not_to be_nil`.
+- Deleting the assertion entirely with a "looks unrelated" handwave.
 
-### Watch out for misleading stack traces in system specs
-
-System specs (`type: :system`, `:js`) need the asset pipeline built. If `app/assets/builds/tailwind.css` is missing, every Tailwind utility (`.hidden`, `.opacity-0`, etc.) silently no-ops — elements that should be hidden render visible, Capybara's `expect(x).not_to be_visible` fails, and subsequent `.click`/`.hover` calls on the unexpectedly-laid-out page can produce chromedriver crash dumps that *look* like a driver/browser problem. Before blaming chromedriver, run `bin/rails tailwindcss:build` (or start `bin/dev`) and rerun.
+The right loop: reproduce the failure, figure out *what* changed and *why*, then decide intentionally — fix the code if the original assertion captured the right behavior, or update the assertion (with a comment) if the behavior intentionally changed. If you're about to change a test "to make it easier", stop and explain why the new expectation is correct, not just convenient.
 
 ## Structuring with `context` and `let`
 
