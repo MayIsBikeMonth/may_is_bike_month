@@ -55,7 +55,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def per_page
-    (params[:per_page].presence || 20).to_i.clamp(1, 100)
+    (params[:per_page].presence || 25).to_i.clamp(1, 100)
   end
 
   def page
