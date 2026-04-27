@@ -6,12 +6,4 @@ class LandingController < ApplicationController
     @page_title = "May is Bike Month"
     @competitions = Competition.start_ordered_desc
   end
-
-  def update_strava
-    if UpdateCompetitionUserJob.enqueue_current
-      render json: {message: "success"}
-    else
-      render json: {message: "No current competition!"}
-    end
-  end
 end

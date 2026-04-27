@@ -48,7 +48,6 @@ Create a new competition with:
 
 ```ruby
 competition = Competition.create(start_date: "2025-05-01", display_name: "2025")
-competition.create_competition_users
 ```
 
 **NOTE** `competition_user`s are `included_in_competition: false` by default - you have to manually turn each one to true to be included

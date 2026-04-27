@@ -11,6 +11,25 @@ RSpec.describe Competition, type: :model do
     end
   end
 
+  describe "after_create_commit" do
+    before { Sidekiq::Job.clear_all }
+
+    it "enqueues UpdateCompetitionUserJob" do
+      expect {
+        FactoryBot.create(:competition)
+      }.to change(UpdateCompetitionUserJob.jobs, :count).by(1)
+      expect(UpdateCompetitionUserJob.jobs.last["args"]).to eq([])
+    end
+
+    it "does not enqueue on update" do
+      competition = FactoryBot.create(:competition)
+      Sidekiq::Job.clear_all
+      expect {
+        competition.update!(display_name: "Renamed")
+      }.not_to change(UpdateCompetitionUserJob.jobs, :count)
+    end
+  end
+
   describe "start_date" do
     it "accepts a string" do
       competition = Competition.new(start_date: "2024-5-1")
