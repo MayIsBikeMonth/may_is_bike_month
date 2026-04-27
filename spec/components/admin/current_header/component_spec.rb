@@ -9,7 +9,6 @@ RSpec.describe Admin::CurrentHeader::Component, type: :component do
       include_competition_select: true,
       competition_subject: nil,
       searchable_competitions: Competition.order(start_date: :desc),
-      render_period: false,
       s_params: {},
       pagy: Pagy::Offset.new(count: 0, limit: 25, page: 1)
     }

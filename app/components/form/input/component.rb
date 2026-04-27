@@ -3,7 +3,7 @@
 module Form
   module Input
     class Component < ApplicationComponent
-      KINDS = %i[text_field text_area email_field number_field date_field check_box].freeze
+      KINDS = %i[text_field text_area email_field number_field datetime_local_field date_field check_box].freeze
 
       INPUT_CLASSES = "block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm " \
         "text-gray-900 placeholder:text-gray-400 " \
