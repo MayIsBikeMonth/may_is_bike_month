@@ -43,6 +43,15 @@ RSpec.describe Form::Input::Component, type: :component do
     end
   end
 
+  context "datetime_local_field" do
+    let(:kind) { :datetime_local_field }
+    let(:attribute) { :last_sign_in_at }
+
+    it "renders a datetime-local input" do
+      expect(component).to have_css("input[type='datetime-local']")
+    end
+  end
+
   context "date_field" do
     let(:competition) { Competition.new }
     let(:form_builder) do
