@@ -3,7 +3,7 @@
 module Form
   module Input
     class Component < ApplicationComponent
-      KINDS = %i[text_field text_area email_field number_field datetime_local_field date_field check_box].freeze
+      KINDS = %i[text_field text_area email_field number_field datetime_local_field date_field].freeze
 
       INPUT_CLASSES = "block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm " \
         "text-gray-900 placeholder:text-gray-400 " \
@@ -11,16 +11,11 @@ module Form
         "dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 " \
         "dark:focus:border-purple-300 dark:focus:ring-purple-300/40"
 
-      CHECKBOX_CLASSES = "h-4 w-4 rounded border-gray-300 text-purple-500 " \
-        "focus:ring-2 focus:ring-purple-400/40 cursor-pointer " \
-        "dark:border-gray-600 dark:bg-gray-800"
-
       def initialize(form_builder:, attribute:, kind: :text_field, html_options: {})
         @form_builder = form_builder
         @attribute = attribute
         @kind = KINDS.include?(kind&.to_sym) ? kind.to_sym : :text_field
-        default_class = (@kind == :check_box) ? CHECKBOX_CLASSES : INPUT_CLASSES
-        @html_options = {class: default_class}.merge(html_options)
+        @html_options = {class: INPUT_CLASSES}.merge(html_options)
       end
 
       def call

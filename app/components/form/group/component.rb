@@ -15,14 +15,8 @@ module Form
 
       private
 
-      def checkbox? = @kind&.to_sym == :check_box
-
-      def label_classes
-        checkbox? ? "ml-2 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer" : LABEL_CLASSES
-      end
-
-      def input_component
-        Form::Input::Component.new(form_builder: @form_builder, attribute: @attribute, kind: @kind, html_options: @html_options)
+      def check_box?
+        @kind.to_sym == :check_box
       end
     end
   end
