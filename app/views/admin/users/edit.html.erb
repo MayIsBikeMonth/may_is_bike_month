@@ -42,8 +42,8 @@
 
     <div class="col">
       <div class="mb-4">
-        <%= f.label :role, class: Form::Group::Component::LABEL_CLASSES %>
-        <%= f.select :role, User.roles.keys.map { |r| [r.humanize, r] }, {}, class: Form::Input::Component::INPUT_CLASSES %>
+        <%= f.label :role, class: "twlabel" %>
+        <%= f.select :role, User.roles.keys.map { |r| [r.humanize, r] }, {}, class: "twinput" %>
       </div>
     </div>
   </div>

@@ -14,7 +14,7 @@ RSpec.describe Form::Input::Component, type: :component do
 
   it "renders a text field" do
     expect(component).to have_css("input[type='text'][name='user[display_name]']")
-    expect(component.to_html).to include("rounded-lg")
+    expect(component.to_html).to include("twinput")
   end
 
   context "text_area" do
@@ -62,7 +62,7 @@ RSpec.describe Form::Input::Component, type: :component do
 
     it "renders a date input" do
       expect(component).to have_css("input[type='date']")
-      expect(component.to_html).to include("rounded-lg")
+      expect(component.to_html).to include("twinput")
     end
   end
 
