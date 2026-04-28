@@ -65,10 +65,9 @@ RSpec.describe Form::Group::Component, type: :component do
       let(:kind) { :check_box }
       let(:label_text) { "Current Competition" }
 
-      it "renders checkbox before label in a flex row" do
-        expect(component).to have_css("input[type='checkbox'][name='competition[current]']")
+      it "nests the checkbox inside the label" do
+        expect(component).to have_css("label > input[type='checkbox'][name='competition[current]']")
         expect(component).to have_css("label", text: "Current Competition")
-        expect(component).to have_css("div.flex.items-center > input[type='checkbox']")
       end
     end
   end
