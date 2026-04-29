@@ -28,10 +28,8 @@
   <%= render(UI::DefinitionList::Component.new) do |list| %>
     <% list.with_entry(label: "User") { user.display_name } %>
 
-    <% if user.strava_username.present? %>
-      <% list.with_entry(label: "Strava") do %>
-        <%= link_to user.strava_username, user.strava_user_url, target: "_blank", class: "twlink" %>
-      <% end %>
+    <% if user.strava_id.present? %>
+      <% list.with_entry(label: "Strava") { strava_link(user) } %>
     <% end %>
 
     <% list.with_entry(label: "Role") { user.role } %>

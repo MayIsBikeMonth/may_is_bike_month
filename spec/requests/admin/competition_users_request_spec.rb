@@ -41,29 +41,46 @@ RSpec.describe base_url, type: :request do
         end
       end
       context "with things" do
-        let!(:competition_user1) { FactoryBot.create(:competition_user) }
-        let!(:competition_user2) { FactoryBot.create(:competition_user) }
-        let(:competition1) { competition_user1.competition }
-        it "renders" do
+        let!(:competition_user1) { FactoryBot.create(:competition_user, competition: competition1) }
+        let!(:competition_user2) { FactoryBot.create(:competition_user, competition: competition2) }
+        let(:competition1) { FactoryBot.create(:competition, start_date: Date.parse("2024-05-01")) }
+        let(:competition2) { FactoryBot.create(:competition) }
+
+        it "defaults to the current competition" do
           expect(Competition.count).to eq 2
+          expect(Competition.current).to eq competition2
+
           get base_url
           expect(response.code).to eq "200"
           expect(response).to render_template("admin/competition_users/index")
-          expect(assigns(:competition_users).pluck(:id)).to match_array([competition_user1.id, competition_user2.id])
+          expect(assigns(:competition_subject)).to eq competition2
+          expect(assigns(:competition_users).pluck(:id)).to eq([competition_user2.id])
+        end
 
+        it "filters by search_competition_id when provided" do
           get "#{base_url}?search_competition_id=#{competition1.id}"
           expect(response.code).to eq "200"
-          expect(response).to render_template("admin/competition_users/index")
-          expect(assigns(:competition_subject).id).to eq competition1.id
+          expect(assigns(:competition_subject)).to eq competition1
           expect(assigns(:competition_users).pluck(:id)).to eq([competition_user1.id])
+        end
 
+        it "shows all competitions when search_competition_id=all" do
+          get "#{base_url}?search_competition_id=all"
+          expect(response.code).to eq "200"
+          expect(assigns(:competition_subject)).to be_nil
+          expect(assigns(:competition_users).pluck(:id)).to match_array([competition_user1.id, competition_user2.id])
+        end
+
+        it "filters by user within the default current competition" do
           get "#{base_url}?user=#{competition_user2.user.slug}"
           expect(response.code).to eq "200"
           expect(assigns(:user_subject).id).to eq competition_user2.user_id
           expect(assigns(:competition_users).pluck(:id)).to eq([competition_user2.id])
           expect(response.body).to include("for user:")
           expect(response.body).to include(competition_user2.user.display_name)
+        end
 
+        it "renders missing-user message for unknown slugs" do
           get "#{base_url}?user=unknown-slug"
           expect(response.code).to eq "200"
           expect(assigns(:user_subject)).to be_nil

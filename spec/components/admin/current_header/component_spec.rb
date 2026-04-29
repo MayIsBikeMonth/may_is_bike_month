@@ -61,6 +61,11 @@ RSpec.describe Admin::CurrentHeader::Component, type: :component do
     it "still renders the graph toggle" do
       expect(component.css("a").map(&:text)).to include("graph")
     end
+
+    it "does not render the competition filter line" do
+      expect(component.css("p").first.text).not_to include("for all competitions")
+      expect(component.css("p").first.text).not_to include("view for")
+    end
   end
 
   context "with render_chart: true and chart_collection" do
