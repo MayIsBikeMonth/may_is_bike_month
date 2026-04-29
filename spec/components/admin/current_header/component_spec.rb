@@ -9,7 +9,6 @@ RSpec.describe Admin::CurrentHeader::Component, type: :component do
       include_competition_select: true,
       competition_subject: nil,
       searchable_competitions: Competition.order(start_date: :desc),
-      render_period: false,
       s_params: {},
       pagy: Pagy::Offset.new(count: 0, limit: 25, page: 1)
     }
@@ -61,6 +60,11 @@ RSpec.describe Admin::CurrentHeader::Component, type: :component do
 
     it "still renders the graph toggle" do
       expect(component.css("a").map(&:text)).to include("graph")
+    end
+
+    it "does not render the competition filter line" do
+      expect(component.css("p").first.text).not_to include("for all competitions")
+      expect(component.css("p").first.text).not_to include("view for")
     end
   end
 

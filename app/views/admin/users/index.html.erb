@@ -1,4 +1,4 @@
-<%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, competition_subject: nil, searchable_competitions: nil, render_period: false, s_params: sortable_params, pagy: @pagy, render_chart: @render_chart, chart_collection: @matching_users, time_range: @time_range, time_range_column: @time_range_column)) %>
+<%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, competition_subject: nil, searchable_competitions: nil, period: @period, s_params: sortable_params, pagy: @pagy, render_chart: @render_chart, chart_collection: @matching_users, time_range: @time_range, time_range_column: @time_range_column)) %>
 
 <%# Local var because cell blocks run via instance_exec in the table component context %>
 <% show_dev_info = display_dev_info? %>
@@ -11,6 +11,8 @@
   table.column(sortable: "display_name") do |user|
     link_to(user.display_name, edit_admin_user_path(user), class: "twlink")
   end
+
+  table.column(sortable: "strava_username", label: "Strava") { |user| strava_link(user) }
 
   table.column(sortable: "last_sign_in_at", label: "Last sign in") do |user|
     if user.last_sign_in_at.present?

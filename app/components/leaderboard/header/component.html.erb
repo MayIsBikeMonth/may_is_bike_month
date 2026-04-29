@@ -20,7 +20,12 @@
     "
     style="<%= metric_grid_style %>"
   >
-    <% unless competition_over? %>
+    <% if not_started? %>
+      <div>
+        <div class="<%= meta_num_class %>"><%= days_to_start %></div>
+        <div class="<%= meta_label_class %>">Days<br>To Start</div>
+      </div>
+    <% elsif !competition_over? %>
       <div>
         <div class="<%= meta_num_class %>"><%= days_left %></div>
         <div class="<%= meta_label_class %>">Days<br>Left</div>

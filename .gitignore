@@ -4,6 +4,9 @@
 # belong in git's global ignore instead:
 # `$XDG_CONFIG_HOME/git/ignore` or `~/.config/git/ignore`
 
+# Skill eval workspaces (transient outputs, not tracked).
+.claude/skills/*-workspace/
+
 # Ignore bundler config.
 /.bundle
 
@@ -44,5 +47,5 @@
 # Ignore local Claude Code settings
 .claude/settings.local.json
 
-# Ignore Playwright MCP scratch output
-/.playwright-mcp/
+# Ignore Playwright MCP session cache (snapshots, console logs)
+.playwright-mcp/

@@ -92,7 +92,6 @@ RSpec.describe "Authentication", type: :request do
     let!(:competition) { FactoryBot.create(:competition, current: true) }
 
     define_method(:signup_and_get_user) do |signup_cookies = {}|
-      Competition.current(re_memoize: true)
       signup_cookies.each { |k, v| cookies[k] = v }
       expect { post path }.to change(User, :count).by 1
       User.last
@@ -152,6 +151,20 @@ RSpec.describe "Authentication", type: :request do
     context "with signup_unit cookie set to imperial" do
       it "sets user unit to imperial" do
         expect(signup_and_get_user(signup_unit: "imperial").unit).to eq "imperial"
+      end
+    end
+
+    context "with an existing user that has no encrypted_password" do
+      let!(:user) do
+        FactoryBot.create(:user, strava_id: "2430215").tap do |u|
+          u.update_columns(encrypted_password: "")
+        end
+      end
+
+      it "sets a password and signs the user in without raising" do
+        expect { post path }.not_to change(User, :count)
+        expect(user.reload.encrypted_password).to be_present
+        expect(user.last_sign_in_at).to be_present
       end
     end
   end

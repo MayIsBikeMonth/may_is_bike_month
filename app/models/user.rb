@@ -63,7 +63,7 @@ class User < ApplicationRecord
         strava_auth: stored_strava_auth(auth["credentials"]),
         strava_info: auth.dig("extra", "raw_info")
       }
-      attrs[:password] = Devise.friendly_token[0, 20] if user.new_record?
+      attrs[:password] = Devise.friendly_token[0, 20] if user.encrypted_password.blank?
       user.update(attrs)
       user
     end

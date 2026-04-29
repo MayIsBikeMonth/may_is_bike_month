@@ -34,11 +34,11 @@ class Competition < ApplicationRecord
   validates :end_date, comparison: {greater_than: :start_date}
 
   before_validation :set_calculated_attributes
+  after_create_commit -> { UpdateCompetitionUserJob.perform_async }
   scope :start_ordered_desc, -> { reorder(start_date: :desc) }
 
-  def self.current(re_memoize: false)
-    @current = nil if re_memoize # Primarily for testing
-    @current ||= where(current: true).last
+  def self.current
+    where(current: true).last
   end
 
   def self.period_sundays(start_date, end_date)
@@ -119,7 +119,7 @@ class Competition < ApplicationRecord
   def set_calculated_attributes
     self.end_date ||= start_date&.end_of_month
     self.start_date ||= end_date&.beginning_of_month
-    self.display_name ||= "MIBM #{year}"
+    self.display_name = display_name.presence || "MIBM #{year}"
     self.slug = Slugifyer.slugify(display_name)
 
     # Set current if it's in the period or of it was updated to be current

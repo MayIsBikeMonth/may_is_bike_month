@@ -51,6 +51,15 @@ RSpec.describe Alerts::FlashMessages::Component, type: :component do
     end
   end
 
+  context "alert (Devise-style)" do
+    let(:flash) { {alert: "Sign-in failed"} }
+
+    it "renders as an error alert" do
+      expect(component).to have_content("Sign-in failed")
+      expect(component).to have_css('[role="alert"].text-red-800')
+    end
+  end
+
   context "unknown flash type" do
     let(:flash) { {bogus: "wat"} }
 

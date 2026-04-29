@@ -26,9 +26,17 @@ module Leaderboard
         @days_left ||= (Date.current..@competition.end_date).count
       end
 
+      def days_to_start
+        @days_to_start ||= (Date.current...@competition.start_date).count
+      end
+
+      def not_started? = days_to_start.positive?
+
       def competition_over? = days_left.zero?
 
-      def show_everyday_riders? = !@everyday_rider_count.nil?
+      def show_everyday_riders?
+        !not_started? && @competition.ride_2_miles_every_day?
+      end
 
       def metric_grid_style
         count = 3 + (competition_over? ? 0 : 1) + (show_everyday_riders? ? 1 : 0)

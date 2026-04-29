@@ -28,7 +28,7 @@ module Admin
     private
 
     def permitted_params
-      params.require(:competition).permit(:name, :start_date, :end_date, :current)
+      params.require(:competition).permit(:display_name, :start_date, :end_date, :current)
     end
 
     def sortable_columns

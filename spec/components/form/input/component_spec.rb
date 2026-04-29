@@ -14,7 +14,7 @@ RSpec.describe Form::Input::Component, type: :component do
 
   it "renders a text field" do
     expect(component).to have_css("input[type='text'][name='user[display_name]']")
-    expect(component.to_html).to include("rounded-lg")
+    expect(component.to_html).to include("twinput")
   end
 
   context "text_area" do
@@ -40,6 +40,29 @@ RSpec.describe Form::Input::Component, type: :component do
 
     it "renders a number input" do
       expect(component).to have_css("input[type='number']")
+    end
+  end
+
+  context "datetime_local_field" do
+    let(:kind) { :datetime_local_field }
+    let(:attribute) { :last_sign_in_at }
+
+    it "renders a datetime-local input" do
+      expect(component).to have_css("input[type='datetime-local']")
+    end
+  end
+
+  context "date_field" do
+    let(:competition) { Competition.new }
+    let(:form_builder) do
+      MayIsBikeMonthFormBuilder.new(:competition, competition, ActionView::Base.new(ActionView::LookupContext.new([]), {}, nil), {})
+    end
+    let(:attribute) { :start_date }
+    let(:kind) { :date_field }
+
+    it "renders a date input" do
+      expect(component).to have_css("input[type='date']")
+      expect(component.to_html).to include("twinput")
     end
   end
 

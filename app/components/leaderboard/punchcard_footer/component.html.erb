@@ -24,7 +24,7 @@
   </div>
 
   <% if @updated_at %>
-    <div>
+    <div class="text-right">
       updated <%= render(UI::Time::Component.new(time: @updated_at)) %>
     </div>
   <% end %>

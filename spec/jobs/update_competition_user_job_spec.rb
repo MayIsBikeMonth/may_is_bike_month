@@ -23,6 +23,18 @@ RSpec.describe UpdateCompetitionUserJob, type: :job do
     let(:competition) { FactoryBot.create(:competition, start_date: Time.parse("2024-05-01")) }
     let(:competition_user) { FactoryBot.create(:competition_user, user:, competition:) }
 
+    context "without an id" do
+      let!(:current_competition) { FactoryBot.create(:competition, current: true) }
+      let!(:other_user) { FactoryBot.create(:user) }
+
+      it "creates competition_users for the current competition" do
+        expect {
+          instance.perform
+        }.to change(CompetitionUser, :count).by(1)
+        expect(current_competition.competition_users.pluck(:user_id)).to eq([other_user.id])
+      end
+    end
+
     it "updates user score" do
       expect(competition.start_date).to eq Date.parse("2024-5-1")
       expect(competition_user.score_data).to be_blank

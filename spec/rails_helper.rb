@@ -50,8 +50,6 @@ RSpec.configure do |config|
   # Use headless Chrome for system specs
   config.before(:each, type: :system) { driven_by :selenium, using: :headless_chrome }
 
-  config.before(:each) { Competition.current(re_memoize: true) }
-
   config.use_transactional_fixtures = true
   config.render_views = true
   config.infer_spec_type_from_file_location!

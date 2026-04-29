@@ -9,7 +9,10 @@ module UserDropdown
 
     private
 
-    def avatar_url = @current_user.strava_info&.dig("profile_medium")
+    def avatar_url
+      url = @current_user.strava_info&.dig("profile_medium")
+      url if url&.start_with?("http")
+    end
 
     def avatar_content
       if avatar_url.present?
