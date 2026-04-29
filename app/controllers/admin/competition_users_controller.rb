@@ -31,6 +31,20 @@ module Admin
       %w[updated_at created_at email username]
     end
 
+    def competition_subject
+      return @competition_subject if defined?(@competition_subject)
+
+      competition_params = params.permit(:competition_id, :search_competition_id)
+      competition_id = competition_params[:competition_id].presence || competition_params[:search_competition_id].presence
+      @competition_subject = if competition_id == "all"
+        nil
+      elsif competition_id.present?
+        Competition.friendly_find(competition_id)
+      else
+        Competition.current
+      end
+    end
+
     def searched_competition_users
       competition_users = CompetitionUser
       if competition_subject.present?
