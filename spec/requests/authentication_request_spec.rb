@@ -153,5 +153,19 @@ RSpec.describe "Authentication", type: :request do
         expect(signup_and_get_user(signup_unit: "imperial").unit).to eq "imperial"
       end
     end
+
+    context "with an existing user that has no encrypted_password" do
+      let!(:user) do
+        FactoryBot.create(:user, strava_id: "2430215").tap do |u|
+          u.update_columns(encrypted_password: "")
+        end
+      end
+
+      it "sets a password and signs the user in without raising" do
+        expect { post path }.not_to change(User, :count)
+        expect(user.reload.encrypted_password).to be_present
+        expect(user.last_sign_in_at).to be_present
+      end
+    end
   end
 end
