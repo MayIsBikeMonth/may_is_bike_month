@@ -29,13 +29,10 @@ gh pr view --json number,url -q '"\(.number) \(.url)"'
 
 If multiple repos or branches are involved, confirm with the user which PR to target.
 
-Also, normalize the image paths to absolute paths. **Prefer `/tmp/` for any screenshots you generate yourself** (e.g., via Playwright `browser_take_screenshot`) — saving them in the repo working directory pollutes `git status` and risks accidentally committing them. For user-supplied paths with special characters (e.g., Unicode narrow spaces from CleanShot X), also copy to `/tmp/` first:
+Also, normalize the image paths to absolute paths. If a path contains special characters (e.g., Unicode narrow spaces from CleanShot X), copy the file to `/tmp/` first:
 
 ```bash
-# Default destination for screenshots you generate
-browser_take_screenshot({ filename: "/tmp/foo_desktop.png", ... })
-
-# To handle glob-matched user paths with special chars
+# e.g., to handle glob-matched paths with special chars
 cp /path/to/CleanShot*keyword*.png /tmp/screenshot.png
 ```
 
@@ -135,51 +132,25 @@ Use the **standard textarea selector** from step 6, then assign `ta.value = ""`:
 
 ## Step 8: Embed images in the PR
 
-In both options below, substitute whichever form (markdown `![](...)` or HTML `<img ...>`) GitHub returned in step 6 — preserve it verbatim instead of rewrapping. Strip any `width="..." height="..."` attributes if you're putting images in a table (step 8a) so they can flex to the column width.
+In both options below, substitute whichever form (markdown `![](...)` or HTML `<img ...>`) GitHub returned in step 6 — preserve it verbatim instead of rewrapping.
 
-### Step 8a: Choose a layout
-
-- **Single image** — use the markup as-is.
-- **Multiple unrelated images** — stack them vertically with bold captions or `### Subheading`s above each.
-- **Paired desktop + mobile (or before/after) screenshots — use a side-by-side table** so reviewers can compare without scrolling. This is the default when you have exactly two related images:
-
-  ```markdown
-  ## Screenshots
-
-  | Desktop | Mobile |
-  | --- | --- |
-  | <img alt="..." src="https://github.com/user-attachments/assets/AAA" /> | <img alt="..." src="https://github.com/user-attachments/assets/BBB" /> |
-  ```
-
-### Step 8b: Write the body
-
-The previous `printf '%s\n\n## Screenshots\n\n%s' "$EXISTING_BODY" "$IMAGES"` round-trip is **fragile** — embedded `%`, backticks, or shell-special chars in the existing body can mangle the result (one observed failure silently dropped `## Summary` and `## Test plan` headings). Prefer `--body-file` instead.
-
-**Option A — Update PR description** (append a Screenshots section to the existing body):
-
+**Option A — Update PR description** (append images to existing body):
 ```bash
-# Capture existing body, append screenshots block, write via --body-file
-gh pr view {PR_NUMBER} --json body -q .body > /tmp/pr_body.md
-cat >> /tmp/pr_body.md <<'EOF'
+EXISTING_BODY=$(gh pr view {PR_NUMBER} --json body -q .body)
 
-## Screenshots
-
-| Desktop | Mobile |
-| --- | --- |
-| <img alt="desktop" src="https://github.com/user-attachments/assets/AAA" /> | <img alt="mobile" src="https://github.com/user-attachments/assets/BBB" /> |
-EOF
-gh pr edit {PR_NUMBER} --body-file /tmp/pr_body.md
-rm /tmp/pr_body.md
+gh pr edit {PR_NUMBER} --body "$(printf '%s\n\n## Screenshots\n\n%s' "$EXISTING_BODY" "<image markup from step 6>")"
 ```
 
-If the existing body already contains a `## Screenshots` heading (e.g., on re-runs), appending creates a duplicate section. Check with `grep -q '^## Screenshots' /tmp/pr_body.md` and either edit the file in place to replace the existing section, or use Option B.
+If `$EXISTING_BODY` already contains a `## Screenshots` heading (e.g., on re-runs), this will create a duplicate section. Check first with `grep -q "^## Screenshots" <<< "$EXISTING_BODY"` and either replace the existing section or post as a comment (Option B) instead.
 
 **Option B — Post as a new comment**:
 ```bash
-gh pr comment {PR_NUMBER} --body-file /tmp/comment.md
+gh pr comment {PR_NUMBER} --body "## Screenshots
+
+<image markup from step 6>"
 ```
 
-Use Option A by default unless the user explicitly asks for a comment, or the PR description is already long and a comment would be cleaner.
+Use Option A by default unless the user explicitly asks for a comment, or if the PR description is already long and a comment would be cleaner.
 
 ## Step 9: Verify the result
 
@@ -187,10 +158,8 @@ Reload the page in the Playwright browser and take a screenshot to confirm the i
 
 ## Tips
 
-- **Image sizing**: Control display size via HTML `<img>` tags: `<img width="800" alt="description" src="..." />`. Drop the `width`/`height` attributes when placing images in a table — let them flex to the column width.
-- **Paired screenshots side-by-side**: For desktop+mobile or before/after pairs, always use the 2-column markdown table from step 8a — vertical stacking forces reviewers to scroll back and forth to compare.
-- **Multiple images**: Upload all images in one session to the same textarea; extract all URLs before clearing.
-- **Local screenshot files**: Save Playwright screenshots to `/tmp/` (not the repo working dir). Also gitignore `/.playwright-mcp/` in any repo where the browser tool runs — it dumps console/snapshot files there.
+- **Image sizing**: Control display size via HTML `<img>` tags: `<img width="800" alt="description" src="..." />`
+- **Multiple images**: Upload all images in one session to the same textarea; extract all URLs before clearing
 
 ## Troubleshooting
 
