@@ -21,9 +21,7 @@
 
   <%= render(UI::DefinitionList::Component.new) do |list| %>
     <% if @user.strava_id.present? %>
-      <% list.with_entry(label: "Strava") do %>
-        <%= link_to @user.strava_username.presence || @user.strava_id, @user.strava_user_url, target: "_blank", class: "twlink" %>
-      <% end %>
+      <% list.with_entry(label: "Strava") { strava_link(@user) } %>
     <% end %>
 
     <% list.with_entry(label: "Competitions") do %>

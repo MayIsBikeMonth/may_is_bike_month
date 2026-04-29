@@ -15,4 +15,9 @@ module ApplicationComponentHelper
   def cross_mark
     "&#x274C;".html_safe
   end
+
+  def strava_link(user)
+    return nil if user.strava_id.blank?
+    link_to(user.strava_username.presence || user.strava_id, user.strava_user_url, target: "_blank", class: "twlink")
+  end
 end

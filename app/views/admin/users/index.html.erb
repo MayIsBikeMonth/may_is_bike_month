@@ -12,11 +12,7 @@
     link_to(user.display_name, edit_admin_user_path(user), class: "twlink")
   end
 
-  table.column(sortable: "strava_username", label: "Strava") do |user|
-    if user.strava_id.present?
-      link_to(user.strava_username.presence || user.strava_id, user.strava_user_url, target: "_blank", class: "twlink")
-    end
-  end
+  table.column(sortable: "strava_username", label: "Strava") { |user| strava_link(user) }
 
   table.column(sortable: "last_sign_in_at", label: "Last sign in") do |user|
     if user.last_sign_in_at.present?

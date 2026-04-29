@@ -3,13 +3,13 @@
 module Alerts
   module FlashMessages
     class Component < ApplicationComponent
+      KIND_ALIASES = {alert: :error}.freeze
+
       def initialize(flash: {})
         @flash = flash
       end
 
       private
-
-      KIND_ALIASES = {alert: :error}.freeze
 
       def messages
         @flash.filter_map do |type, message|
