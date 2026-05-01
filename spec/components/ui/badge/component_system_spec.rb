@@ -3,11 +3,15 @@
 require "rails_helper"
 
 RSpec.describe UI::Badge::Component, :js, type: :system do
-  let(:preview_url) { "/lookbook/preview/ui/badge/colors" }
+  it "wraps a tooltip when title differs and renders plain badges otherwise" do
+    visit "/lookbook/preview/ui/badge/colors"
 
-  it "wraps the badge in a UI::Tooltip when title differs from text" do
-    visit preview_url
+    # Plain badge (no custom title) renders without a tooltip wrapper.
+    expect(page).to have_css("span.cursor-default")
+    expect(page).to have_text "Donor"
 
+    # Badge with a distinct title is wrapped in a hidden tooltip that
+    # reveals on hover.
     tooltip = find("[role='tooltip']", visible: :all)
     expect(tooltip.text(:all)).to eq "Notice"
     expect(tooltip).not_to be_visible
@@ -18,14 +22,6 @@ RSpec.describe UI::Badge::Component, :js, type: :system do
     expect(trigger.find("span.cursor-help")).to be_present
 
     trigger.hover
-
     expect(tooltip).to be_visible
-  end
-
-  it "renders badges without a tooltip when no custom title is provided" do
-    visit preview_url
-
-    expect(page).to have_css("span.cursor-default")
-    expect(page).to have_text "Donor"
   end
 end

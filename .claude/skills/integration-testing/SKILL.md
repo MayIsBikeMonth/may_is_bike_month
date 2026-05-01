@@ -1,14 +1,17 @@
 ---
 name: integration-testing
 description: >-
-  May is Bike Month integration spec conventions — these are full
-  browser specs (`type: :system, :js`) under `spec/integration/`, and
-  every example pays a Selenium boot cost. Bias toward fewer, denser
-  examples that walk through state via clicks; prefer named-button
-  matchers over CSS selectors or `execute_script`. Trigger when writing
-  or modifying any spec under `spec/integration/`, or any `*_spec.rb`
-  with `:js` or `type: :system`. Read alongside the `rspec-testing`
-  skill, which covers the project's general `context`/`let` style.
+  May is Bike Month conventions for browser specs (`type: :system, :js`)
+  — every example pays a Selenium boot cost, so bias hard toward fewer,
+  denser examples that walk through state via clicks, prefer
+  named-element matchers over CSS selectors or `execute_script`, and
+  combine same-setup work into one `it` even when scenarios feel
+  independent. **Consult this skill any time you create or modify a
+  `:js, type: :system` spec** — that includes everything under
+  `spec/integration/` AND component system specs at
+  `spec/components/**/*_system_spec.rb`; the rules apply equally to
+  both. Read alongside the `rspec-testing` skill for the project's
+  general `context`/`let` style.
 ---
 
 # Integration testing in May is Bike Month
@@ -23,9 +26,7 @@ Unit specs prefer one assertion per example. **Integration specs prefer the oppo
 
 Use `context` only when the *setup* differs — a different `let!`, a different page, a different feature flag. Don't split a single user flow across sibling `it` blocks just because each step has its own assertion.
 
-**Combine even "independent scenarios" if their setup matches.** It is tempting to leave separate `it`s for things that feel like different concerns ("button-state test", "morph-capture test", "URL persistence test", "footer localization test"). Don't. If they share fixtures and the same initial `visit`, fold them all into one example and use a known reset action (`click_button("Hide all activities")`, navigating away, etc.) between phases. A long, sectioned-with-comments example pays one Selenium boot; four short examples pay four. Failure attribution is fine — the failed line number tells you exactly which phase broke.
-
-**Before writing a new `describe`/`context`/`it`, read the existing file.** When adding coverage to a spec, look for a block whose setup already gets you most of the way there and append clicks/assertions to it. Only add a new block when the setup genuinely differs — otherwise you're paying a fresh Selenium boot for something a few extra lines in an existing example would have covered.
+**Combine same-setup work, even when scenarios feel independent.** Before writing a new `describe`/`context`/`it`, read the existing file and find an example whose fixtures and initial `visit` match what you need — then append your clicks/assertions to it. It's tempting to leave a separate `it` for things that feel like different concerns ("button-state test", "morph-capture test", "URL persistence test", "footer localization test"). Don't. A long, sectioned-with-comments example pays one Selenium boot; four short examples pay four. Failure attribution is fine — the failed line number tells you exactly which phase broke. Only add a new block when the setup genuinely differs.
 
 ### Good
 
@@ -70,6 +71,22 @@ it "toggles per-user when a user button is clicked" do
   expect(visible?(container_for(alice))).to be true
 end
 ```
+
+## Choose a clean reset between phases
+
+When you fold multiple scenarios into one example, you need a way to return to a known state between phases — otherwise state from phase A leaks into phase B and assertions become brittle. Pick the lightest action that restores the precondition the next phase expects.
+
+**Good resets** are idempotent user actions that clear in-memory state without mutating fixtures:
+- `click_button("Hide all activities")` — clears every press and resets selectedDays in one click.
+- `click_button("Close")` / pressing Escape — closes a modal back to the closed state.
+- `visit page.current_url` — full reload, when you specifically need to verify URL persistence (state survives the reload, not just the test).
+
+**Bad resets** silently rewrite the world the rest of the test depends on:
+- Creating or destroying fixture records mid-test. The next phase's assertions (and your mental model) assumed the original `let!` data; mutating it makes failures hard to diagnose.
+- Navigating away and back to clear UI state when a button click would do — a navigation also tears down ActionCable subscriptions and any in-memory captured intent your spec might have set up.
+- Direct DOM manipulation via `execute_script` to "undo" a click — not something a real user could do, so any cleanup you skip will surface as flakes once the test runs in slightly different conditions.
+
+If the only reset that works requires touching fixtures, that's a signal the next phase belongs in its own example with its own setup.
 
 ## Navigate by clicking, not re-visiting
 
@@ -122,36 +139,19 @@ page.execute_script("document.querySelector('.show-all-btn').click()")
 
 ## ActionCable broadcasts: do the real thing
 
-The project's `:test` cable adapter inherits from `:async`, so broadcasts in the test process do round-trip to the browser. **Don't synthesize `turbo:morph-element` events with `execute_script` to fake an ActionCable refresh** — call the real broadcaster (`Component.broadcast_replace_to`, `broadcast_refresh_current!`, etc.) and let Capybara wait for the morphed DOM.
+The project's `:test` cable adapter inherits from `:async`, so broadcasts in the test process do round-trip to the browser. **Don't synthesize `turbo:morph-element` events with `execute_script` to fake an ActionCable refresh** — call the real broadcaster (`Component.broadcast_replace_to`, `broadcast_refresh_current!`, etc.) and let Capybara's wait do the synchronization.
 
-Make a small helper that prepares the data, broadcasts, and waits for an unambiguous post-morph element:
+The pattern is: prepare the data the broadcast will render → call the real broadcaster → assert on an unambiguous post-morph element with a `wait:` (e.g. `expect(page).to have_css(some_new_selector, wait: 5)`). The trailing wait is the synchronization barrier — the test proceeds only once the morph has actually rendered.
 
-```ruby
-def morph_in_punch(user:, date_string:)
-  competition_user = CompetitionUser.find_by!(user:, competition:)
-  FactoryBot.create(:competition_activity, competition_user:,
-    distance_meters: 16_093, start_at: Time.parse("#{date_string}T15:00:00Z"))
-  Leaderboard::PunchcardWrapper::Component.broadcast_refresh_current!
-  expect(page).to have_css(punch_selector(user_slug: user.slug, date_string:), wait: 5)
-end
-```
+## Build Tailwind before running system specs
 
-The trailing `expect(...).to have_css(..., wait: 5)` is the synchronization barrier — the test only proceeds once the morph has actually rendered.
+CI builds `app/assets/builds/tailwind.css` automatically; your local sandbox does not. Without it, Tailwind utility classes (most importantly `hidden` → `display: none`) silently don't apply, and assertions like `expect(tooltip).not_to be_visible` fail in confusing ways that look like flakes but aren't.
 
-## When `execute_script` is genuinely needed
-
-Some browser events can't be produced by a real user action — `popstate`, certain keyboard events, etc. In those cases:
-
-- Keep the script as small as possible.
-- Add a comment explaining *why* JS is needed instead of a click.
-- Pass values via `arguments[N]` rather than interpolating them into the script string.
-
-If you find yourself reaching for `execute_script`, double-check whether a real user action (real broadcast, real button click, real `visit page.current_url` for reload) would do the same thing — most of the time it will.
+**Before running any `:js, type: :system` spec locally, run `bin/rails tailwindcss:build`** (or have `bin/dev` running, which watches and rebuilds). If a system spec is failing on visibility/styling assertions, check `app/assets/builds/tailwind.css` exists and is recent before assuming the test or component is broken.
 
 ## Other conventions
 
 - File the spec at `spec/integration/<feature>/<scenario>_spec.rb`.
-- Top-level description is a string (`describe "Landing page"`), not a class.
 - Always include `:js, type: :system`.
 - When the spec depends on the current date/time, freeze it with `around { |ex| travel_to(Time.parse("...")) { ex.run } }`.
 - Define a few small DSL-style helpers in the file (`def container_for(user)`, `def punch_selector(...)`) when they make assertions readable. Don't reach for `page.execute_script` to replace what a helper method could do in Ruby.
