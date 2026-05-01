@@ -9,7 +9,7 @@ RSpec.describe UI::ButtonLink::Component, type: :component do
   it "renders a link with secondary style" do
     expect(component).to have_link("Click me", href: "/test")
     html = component.to_html
-    expect(html).to include("bg-white")
+    expect(html).to include("bg-gray-50")
     expect(html).to include("cursor-pointer")
   end
 
