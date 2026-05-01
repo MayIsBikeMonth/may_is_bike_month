@@ -191,6 +191,70 @@ RSpec.describe "Punchcard live update", :js, type: :system do
     end
   end
 
+  describe "URL: ?days= reflects explicit day-group intent only" do
+    # bob_day5 makes day 5 have two punches so we can distinguish
+    # "ridge-bar click" from "every individual punch clicked".
+    let!(:bob_day5) do
+      FactoryBot.create(:competition_activity, competition_user: bob_cu,
+        distance_meters: 16_093, start_at: Time.parse("2026-05-05T15:00:00Z"))
+    end
+
+    # Re-visit after bob_day5 is created so the rendered page has both
+    # day-5 punches (the outer `before` runs visit before the inner let!).
+    before { visit root_path }
+
+    let(:day5_ridge) { find(%([data-punch-target="ridgeBar"][data-date="2026-05-05"])) }
+
+    context "when the day's ridge bar is clicked" do
+      it "writes ?days= and re-presses both punches on reload" do
+        day5_ridge.click
+
+        expect(page.current_url).to include "days=5"
+        expect(page.current_url).not_to include "selected="
+
+        visit page.current_url
+        expect(pressed?(find(punch_selector(user_slug: alice.slug, date_string: "2026-05-05")))).to be true
+        expect(pressed?(find(punch_selector(user_slug: bob.slug, date_string: "2026-05-05")))).to be true
+      end
+
+      context "and a punch on that day is then unpressed" do
+        it "drops ?days= and writes the remaining press to ?selected=" do
+          day5_ridge.click
+
+          find(punch_selector(user_slug: alice.slug, date_string: "2026-05-05")).click
+
+          expect(page.current_url).not_to include "days=5"
+          expect(page.current_url).to include "selected=#{bob.slug}%3A5"
+          expect(page.current_url).not_to include "#{alice.slug}%3A5"
+        end
+      end
+    end
+
+    context "when every individual punch on a day is pressed (without clicking the day)" do
+      it "writes ?selected= per-user, never ?days=" do
+        find(punch_selector(user_slug: alice.slug, date_string: "2026-05-05")).click
+        find(punch_selector(user_slug: bob.slug, date_string: "2026-05-05")).click
+
+        expect(page.current_url).not_to include "days=5"
+        expect(page.current_url).to include "selected="
+        expect(page.current_url).to include "#{alice.slug}%3A5"
+        expect(page.current_url).to include "#{bob.slug}%3A5"
+      end
+    end
+
+    context "when 'Show all activities' is clicked" do
+      it "writes every available day to ?days= and not ?selected=" do
+        click_button("Show all activities")
+
+        # All ridge bar dates (May 1–20, since the test runs at 2026-05-20)
+        # land in days=, comma-encoded as %2C.
+        expected_days = (1..20).to_a.join("%2C")
+        expect(page.current_url).to include "days=#{expected_days}"
+        expect(page.current_url).not_to include "selected="
+      end
+    end
+  end
+
   describe "localizeTime spans morphed in by ActionCable" do
     # Regression: turbo stream broadcasts use morph and fire
     # `turbo:morph-element` (not `turbo:morph`). New `.localizeTime` spans
