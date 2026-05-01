@@ -190,4 +190,22 @@ RSpec.describe "Punchcard live update", :js, type: :system do
       expect(find(%([data-punch-target="ridgeBar"][data-date="2026-05-03"]))["aria-pressed"]).to eq "true"
     end
   end
+
+  describe "localizeTime spans morphed in by ActionCable" do
+    # Regression: turbo stream broadcasts use morph and fire
+    # `turbo:morph-element` (not `turbo:morph`). New `.localizeTime` spans
+    # (e.g. the footer's "updated" time) must still get localized.
+    it "localizes them on turbo:morph-element" do
+      page.execute_script(<<~JS, wrapper_id)
+        const wrapper = document.getElementById(arguments[0])
+        const span = document.createElement('span')
+        span.className = 'localizeTime'
+        span.textContent = '2026-05-20T11:00:00+0000'
+        wrapper.appendChild(span)
+        wrapper.dispatchEvent(new CustomEvent('turbo:morph-element', { bubbles: true }))
+      JS
+
+      expect(page).to have_css("##{wrapper_id} > span.localizedTime", wait: 2)
+    end
+  end
 end
