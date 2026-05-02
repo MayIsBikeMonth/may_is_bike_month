@@ -22,7 +22,9 @@
     end
   end
 
-  table.column(label: "Activities") { |cu| number_display(cu.competition_activities.count) }
+  table.column(label: "Activities") do |cu|
+    link_to(number_display(cu.competition_activities.count), admin_competition_activities_path(search_competition_user_id: cu.id), class: "twlink")
+  end
 
   table.column(label: "Rank") do |cu|
     "#{cu.rank_in_competition}/#{cu.rider_count_in_competition}" if cu.included_in_competition
