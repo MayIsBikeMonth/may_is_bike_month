@@ -3,8 +3,10 @@ import { isPressed, press, unpress, setPressed, allPressed } from 'utils/aria_pr
 import { readUrlSelection, writeUrlSelection } from 'utils/punchcard_url'
 
 // data-controller="punch". Selection state is aria-pressed on the DOM
-// itself (punches drive everything; group buttons reflect their punches;
-// empty-day ridge bars use selectedEmptyDays since they have no punches).
+// itself; selectedDays records explicit day-group intent (ridge-bar clicks
+// and Show all activities). Day intent is what differentiates ?days= from
+// ?selected=user:day in the URL: clicking individual punches never adds to
+// selectedDays, even if every punch on that day happens to be pressed.
 //
 // Across a turbo morph: capture group intent on turbo:before-morph-element,
 // rebuild + re-apply on turbo:morph-element. Indexing uses querySelectorAll
@@ -18,11 +20,7 @@ const appendToMapKey = (map, key, value) => {
   map.get(key).push(value)
 }
 
-const toggleSetMember = (set, value) => {
-  if (set.has(value)) set.delete(value); else set.add(value)
-}
-
-const emptyIntent = () => ({ allActive: false, users: new Set(), days: new Set() })
+const emptyIntent = () => ({ allActive: false, users: new Set() })
 
 // ---- Stimulus controller ----------------------------------------------
 
@@ -32,7 +30,7 @@ export default class extends Controller {
   // === Lifecycle =========================================================
 
   connect () {
-    this.selectedEmptyDays = new Set()
+    this.selectedDays = new Set()
     this.capturedIntent = emptyIntent()
     this.beforeMorphHandler = (event) => {
       if (event.target === this.element) this.captureActiveGroups()
@@ -63,9 +61,8 @@ export default class extends Controller {
 
   rebuild () {
     this.indexDom()
-    this.selectedEmptyDays = new Set()
+    this.selectedDays = new Set()
     this.applyUrlSelection()
-    this.pruneSelectedEmptyDays()
     this.applyCapturedGroups()
     this.sync()
     this.syncUrl()
@@ -114,51 +111,42 @@ export default class extends Controller {
     })
     days.forEach(day => {
       const date = this.dateStringForDay(day)
-      if (date) this.selectedEmptyDays.add(date)
+      if (!date) return
+      this.selectedDays.add(date)
+      ;(this.punchesByDate.get(date) || []).forEach(press)
     })
   }
 
   syncUrl () {
     const byUser = new Map()
     this.punches.filter(isPressed).forEach(el => {
+      if (this.selectedDays.has(el.dataset.date)) return
       appendToMapKey(byUser, el.dataset.userSlug, el._punchDay)
     })
-    const days = Array.from(this.selectedEmptyDays).map(d => parseInt(d.slice(-2), 10))
+    const days = Array.from(this.selectedDays).map(d => parseInt(d.slice(-2), 10))
     writeUrlSelection({ byUser, days })
-  }
-
-  // Dates with punches now have their state derived from those punches, so
-  // drop them from selectedEmptyDays (which is only meaningful for dates
-  // that have zero punches).
-  pruneSelectedEmptyDays () {
-    for (const date of [...this.selectedEmptyDays]) {
-      if (this.punchesByDate.has(date)) this.selectedEmptyDays.delete(date)
-    }
   }
 
   // === Group intent captured / replayed across morph =====================
 
   captureActiveGroups () {
     if (allPressed(this.punches)) {
-      this.capturedIntent = { allActive: true, users: new Set(), days: new Set() }
+      this.capturedIntent = { allActive: true, users: new Set() }
       return
     }
     const users = new Set()
-    const days = new Set()
     this.punchesByUser.forEach((els, slug) => { if (allPressed(els)) users.add(slug) })
-    this.punchesByDate.forEach((els, date) => { if (allPressed(els)) days.add(date) })
-    this.selectedEmptyDays.forEach(date => days.add(date))
-    this.capturedIntent = { allActive: false, users, days }
+    this.capturedIntent = { allActive: false, users }
   }
 
   applyCapturedGroups () {
-    const { allActive, users, days } = this.capturedIntent
+    const { allActive, users } = this.capturedIntent
     if (allActive) {
       this.punches.forEach(press)
       return
     }
     users.forEach(slug => (this.punchesByUser.get(slug) || []).forEach(press))
-    days.forEach(date => (this.punchesByDate.get(date) || []).forEach(press))
+    this.selectedDays.forEach(date => (this.punchesByDate.get(date) || []).forEach(press))
   }
 
   // === User actions ======================================================
@@ -171,13 +159,14 @@ export default class extends Controller {
 
   toggleDay (event) {
     const date = event.currentTarget.dataset.date
-    const punches = this.punchesByDate.get(date)
-    if (punches && punches.length > 0) {
-      this.toggleGroup(punches)
+    if (this.selectedDays.has(date)) {
+      this.selectedDays.delete(date)
+      ;(this.punchesByDate.get(date) || []).forEach(unpress)
     } else {
-      toggleSetMember(this.selectedEmptyDays, date)
-      this.afterToggle()
+      this.selectedDays.add(date)
+      ;(this.punchesByDate.get(date) || []).forEach(press)
     }
+    this.afterToggle()
   }
 
   toggleUser (event) {
@@ -191,10 +180,32 @@ export default class extends Controller {
     this.afterToggle()
   }
 
-  showAll () { this.punches.forEach(press); this.afterToggle() }
-  hideAll () { this.punches.forEach(unpress); this.afterToggle() }
+  showAll () {
+    this.punches.forEach(press)
+    this.ridgeBars.forEach(bar => this.selectedDays.add(bar.dataset.date))
+    this.afterToggle()
+  }
+
+  hideAll () {
+    this.punches.forEach(unpress)
+    this.selectedDays.clear()
+    this.afterToggle()
+  }
+
+  // Drop selectedDays entries whose punches are no longer all pressed —
+  // unpressing any individual punch on a day breaks the day-group intent
+  // and the URL switches from days= back to selected=.
+  pruneSelectedDays () {
+    for (const date of [...this.selectedDays]) {
+      const punches = this.punchesByDate.get(date) || []
+      if (punches.length > 0 && punches.some(el => !isPressed(el))) {
+        this.selectedDays.delete(date)
+      }
+    }
+  }
 
   afterToggle () {
+    this.pruneSelectedDays()
     this.sync()
     this.syncUrl()
   }
@@ -212,7 +223,7 @@ export default class extends Controller {
     this.ridgeBars.forEach(bar => {
       const date = bar.dataset.date
       const punches = this.punchesByDate.get(date) || []
-      const on = punches.length > 0 ? allPressed(punches) : this.selectedEmptyDays.has(date)
+      const on = punches.length > 0 ? allPressed(punches) : this.selectedDays.has(date)
       setPressed(bar, on)
     })
   }

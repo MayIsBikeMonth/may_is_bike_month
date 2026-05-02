@@ -9,7 +9,7 @@ RSpec.describe UI::Button::Component, type: :component do
   it "renders with default secondary style" do
     expect(component).to have_text("Click me")
     html = component.to_html
-    expect(html).to include("bg-white")
+    expect(html).to include("bg-gray-50")
     expect(html).to include("border-gray-300")
   end
 
@@ -54,7 +54,7 @@ RSpec.describe UI::Button::Component, type: :component do
   context "invalid color" do
     let(:options) { {color: :nope} }
     it "falls back to secondary" do
-      expect(component.to_html).to include("bg-white")
+      expect(component.to_html).to include("bg-gray-50")
     end
   end
 end
