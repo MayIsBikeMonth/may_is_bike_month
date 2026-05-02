@@ -2,16 +2,15 @@
 
 require "rails_helper"
 
-# Walks the punchcard's full client-side state machine in one example:
-# user/day/all-active intent capture across a real ActionCable morph,
-# DOM indexing of newly-arrived punches, ?days= vs ?selected= URL
-# semantics, URL persistence across reload, and footer time
-# localization after a broadcast.
+# Walks the punchcard's full client-side state machine in one example,
+# state advancing from click to click — never resetting back to a clean
+# slate. Each phase's starting state is the previous phase's end state;
+# phase order is chosen so the carried state is exactly what the next
+# claim wants to demonstrate.
 #
 # Morphs are produced by real ActionCable broadcasts — the `:test` cable
 # adapter inherits from `:async`, so broadcasts in-process do round-trip
-# to the browser. `click_button("Hide all activities")` is the reset
-# between phases (it clears every press AND in-memory selectedDays).
+# to the browser.
 RSpec.describe "Punchcard live update", :js, type: :system do
   around { |ex| travel_to(Time.parse("2026-05-20T12:00:00Z")) { ex.run } }
 
@@ -62,138 +61,122 @@ RSpec.describe "Punchcard live update", :js, type: :system do
     find("button", text: "Show all activities")
   end
 
+  def url_params
+    URI.decode_www_form(URI.parse(page.current_url).query || "").to_h
+  end
+
+  def url_days
+    url_params["days"]&.split(",") || []
+  end
+
+  def url_selected
+    url_params["selected"] || ""
+  end
+
   before do
     visit root_path
     expect(page).to have_css('[data-controller="punch"] [data-punch-target="punch"]')
   end
 
   it "captures intents, indexes morphed punches, persists URL state, and localizes broadcast footers" do
-    # ----- Show-all button reflects aria-pressed across toggles ---------
-    expect(show_all_button["aria-pressed"]).to eq "false"
-
-    click_button("Show all activities")
-    expect(show_all_button["aria-pressed"]).to eq "true"
-
-    punch_for(alice, "2026-05-05").click
-    expect(show_all_button["aria-pressed"]).to eq "false"
-
-    click_button("Hide all activities")
-
-    # ----- User-row capture: Alice's row stays full across morph -------
-    # Clicking Alice presses her two punches. Morph adds alice:15; the
-    # URL has no day 15 entry and day 15 isn't fully active, so only
-    # user-capture can press the new punch.
-    click_button("Alice")
-    expect(pressed?(punch_for(alice, "2026-05-05"))).to be true
-    expect(pressed?(punch_for(alice, "2026-05-10"))).to be true
-
-    morph_in_punch(user: alice, date_string: "2026-05-15")
-    expect(pressed?(punch_for(alice, "2026-05-15"))).to be true
-
-    click_button("Hide all activities")
-
-    # ----- Day-ridge capture: day 5 stays full across morph ------------
-    # Clicking the day-5 ridge presses just alice:5 (her row is partial,
-    # so user-capture won't fire). Morph adds bob:5 — only day-capture
-    # can press it.
-    ridge_for("2026-05-05").click
-    expect(pressed?(punch_for(alice, "2026-05-05"))).to be true
-    expect(pressed?(punch_for(alice, "2026-05-10"))).to be false
-
-    morph_in_punch(user: bob, date_string: "2026-05-05")
-    expect(pressed?(punch_for(bob, "2026-05-05"))).to be true
-
-    click_button("Hide all activities")
-
-    # ----- All-active capture: Show-all stays pressed across morph -----
-    # bob has no prior punches before phase D, so user-capture can't
-    # cover bob:7; allActive does.
-    click_button("Show all activities")
-    expect(show_all_button["aria-pressed"]).to eq "true"
-
-    morph_in_punch(user: bob, date_string: "2026-05-07")
-    expect(pressed?(punch_for(bob, "2026-05-07"))).to be true
-    expect(show_all_button["aria-pressed"]).to eq "true"
-
-    click_button("Hide all activities")
-
-    # ----- Indexing regression: morph-added punches are queryable -----
-    # The controller previously read `this.punchTargets` from Stimulus
-    # inside the synchronous morph handler, which was stale because
-    # Stimulus updates targets via MutationObserver on the next
-    # microtask. Without prior intent, alice:17 must still be indexed
-    # so clicking the day-17 ridge presses it.
-    morph_in_punch(user: alice, date_string: "2026-05-17")
-    ridge_for("2026-05-17").click
-    expect(pressed?(punch_for(alice, "2026-05-17"))).to be true
-    expect(ridge_for("2026-05-17")["aria-pressed"]).to eq "true"
-
-    click_button("Hide all activities")
-
-    # ----- Empty-day ridge: toggle, persistence, reload, then morph ---
-    # Day 1 has no activity from anyone; its ridge bar is a button but
-    # has no punches to toggle. Selection is tracked in selectedDays,
-    # serialized to ?days=, and survives reload — at which point a
-    # morph-added punch for that day is auto-pressed via day-capture.
+    # ----- Empty-day ridge: toggle, ?days= persistence, reload, then morph ----
+    # Day 1 has no activity from anyone; its ridge bar is a button with no
+    # punches to toggle. Selection lives in selectedDays, serialized to
+    # `?days=1`, and survives reload — a morph-added punch on that day is
+    # auto-pressed via day-capture.
     expect(ridge_for("2026-05-01")["aria-pressed"]).to eq "false"
 
     ridge_for("2026-05-01").click
     expect(ridge_for("2026-05-01")["aria-pressed"]).to eq "true"
-    expect(page.current_url).to include "days=1"
+    expect(url_days).to eq ["1"]
 
     ridge_for("2026-05-01").click
     expect(ridge_for("2026-05-01")["aria-pressed"]).to eq "false"
-    expect(page.current_url).not_to include "days=1"
+    expect(url_days).to be_empty
 
     ridge_for("2026-05-01").click
     visit page.current_url
+
     expect(ridge_for("2026-05-01")["aria-pressed"]).to eq "true"
 
     morph_in_punch(user: alice, date_string: "2026-05-01")
     expect(pressed?(punch_for(alice, "2026-05-01"))).to be true
     expect(ridge_for("2026-05-01")["aria-pressed"]).to eq "true"
 
-    click_button("Hide all activities")
+    # ----- Indexing regression: morph-added punches are queryable -----
+    # The controller previously read `this.punchTargets` from Stimulus
+    # inside the synchronous morph handler, which was stale because
+    # Stimulus updates targets via MutationObserver on the next
+    # microtask. Carry-state-wise, day 17 has no prior intent — the new
+    # punch must still be indexed so clicking the day-17 ridge presses it.
+    morph_in_punch(user: alice, date_string: "2026-05-17")
+    ridge_for("2026-05-17").click
+    expect(pressed?(punch_for(alice, "2026-05-17"))).to be true
 
-    # ----- ?days= reflects explicit day-group intent only --------------
-    # Day 5 now has two punches (alice:5 from fixtures + bob:5 from the
-    # earlier morph), so we can distinguish "ridge-bar click" from
-    # "every individual punch clicked" on the same day.
+    # ----- Day-ridge capture across morph + ?days= URL semantics -----
+    # Click day 5 ridge bar with day 5 not yet in selectedDays. The click
+    # adds it (URL gains `days=5`) and presses alice:5. Day 10 — also
+    # alice's, but on a different day — stays unpressed: ridge clicks are
+    # scoped to their own date.
     ridge_for("2026-05-05").click
-    expect(page.current_url).to include "days=5"
-    expect(page.current_url).not_to include "selected="
-
-    visit page.current_url
     expect(pressed?(punch_for(alice, "2026-05-05"))).to be true
+    expect(pressed?(punch_for(alice, "2026-05-10"))).to be false
+    expect(url_days).to include "5"
+
+    # Morph adds bob:5 — day 5 is in selectedDays, so the new punch is
+    # pressed via day-capture even though bob has no other punches.
+    morph_in_punch(user: bob, date_string: "2026-05-05")
     expect(pressed?(punch_for(bob, "2026-05-05"))).to be true
 
-    # Unpressing any punch on a "selected day" drops the day and the
-    # remaining press is written to ?selected=.
+    # ----- Unpressing a punch on a "selected day" drops the day ----------
+    # alice:5 unpressed → day 5 no longer fully active → drops from
+    # selectedDays; the remaining bob:5 is written individually.
     punch_for(alice, "2026-05-05").click
-    expect(page.current_url).not_to include "days=5"
-    expect(page.current_url).to include "selected=#{bob.slug}%3A5"
-    expect(page.current_url).not_to include "#{alice.slug}%3A5"
+    expect(url_days).not_to include "5"
+    expect(url_selected).to include "#{bob.slug}:5"
+    expect(url_selected).not_to include "#{alice.slug}:5"
 
-    click_button("Hide all activities")
-    expect(page.current_url).not_to include "days="
-    expect(page.current_url).not_to include "selected="
-
-    # Pressing every individual punch on a day never adds to ?days=.
+    # Pressing alice:5 again, individually, never re-adds day 5 to days=.
     punch_for(alice, "2026-05-05").click
-    punch_for(bob, "2026-05-05").click
-    expect(page.current_url).not_to include "days=5"
-    expect(page.current_url).to include "#{alice.slug}%3A5"
-    expect(page.current_url).to include "#{bob.slug}%3A5"
+    expect(url_days).not_to include "5"
+    expect(url_selected).to include "#{alice.slug}:5"
+    expect(url_selected).to include "#{bob.slug}:5"
 
-    click_button("Hide all activities")
+    # ----- User-row capture across morph -----
+    # Clicking Alice toggles every alice punch as a group. Some are
+    # pressed and some aren't (alice:10 has been unpressed since fixture
+    # setup), so the toggle presses all of them. Morph adds alice:15 —
+    # alice's row was fully active before the morph, so user-capture
+    # presses the new punch.
+    click_button("Alice")
+    expect(pressed?(punch_for(alice, "2026-05-10"))).to be true
 
-    # 'Show all activities' adds every available day to ?days=.
+    morph_in_punch(user: alice, date_string: "2026-05-15")
+    expect(pressed?(punch_for(alice, "2026-05-15"))).to be true
+
+    # ----- All-active capture + 'Show all activities' → ?days=all -----
+    # Show all presses every punch and adds every available day to
+    # selectedDays, so the URL collapses to `days=1,2,…,20` with no
+    # `selected=`.
     click_button("Show all activities")
-    expected_days = (1..20).to_a.join("%2C")
-    expect(page.current_url).to include "days=#{expected_days}"
-    expect(page.current_url).not_to include "selected="
+    expect(show_all_button["aria-pressed"]).to eq "true"
+    expect(url_days).to eq (1..20).map(&:to_s)
+    expect(url_selected).to be_empty
 
-    click_button("Hide all activities")
+    # Bob has no punch on day 7. Morph adds it; allActive captured before
+    # the morph presses everything, so bob:7 arrives pressed and Show-all
+    # stays aria-pressed.
+    morph_in_punch(user: bob, date_string: "2026-05-07")
+    expect(pressed?(punch_for(bob, "2026-05-07"))).to be true
+    expect(show_all_button["aria-pressed"]).to eq "true"
+
+    # ----- Show-all button reflects aria-pressed across toggles ----
+    # Unpressing any punch breaks the all-active state.
+    punch_for(alice, "2026-05-05").click
+    expect(show_all_button["aria-pressed"]).to eq "false"
+
+    click_button("Show all activities")
+    expect(show_all_button["aria-pressed"]).to eq "true"
 
     # ----- Footer 'updated' time gets localized after broadcast --------
     # Regression: turbo stream broadcasts use morph and fire

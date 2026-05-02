@@ -5,6 +5,7 @@ require "rails_helper"
 RSpec.describe UI::Dropdown::Component, :js, type: :system do
   it "opens on click, is accessible, and closes on escape" do
     visit "/lookbook/preview/ui/dropdown/variants"
+
     expect(page).to have_css('[aria-expanded="false"]')
 
     click_button("Menu")

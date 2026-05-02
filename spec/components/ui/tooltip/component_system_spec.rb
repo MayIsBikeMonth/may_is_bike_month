@@ -70,7 +70,10 @@ RSpec.describe UI::Tooltip::Component, :js, type: :system do
     expect(first_tooltip).not_to be_visible
 
     # ----- Layering: clicking each trigger in order raises z-index ----
-    find("body").click # clear any focused tooltip from the previous phase
+    # The trailing tooltip from the previous phase is closed by the first
+    # iteration's focus shift, then reopens on its own iteration with a
+    # freshly bumped z-index, so we can run the loop directly against the
+    # carried state.
     tooltips.each { |t| find("[aria-describedby='#{t[:id]}']").click }
     z_indexes = tooltips.map { |t| tooltip_z_index(t[:id]).to_i }
     expect(z_indexes).to eq z_indexes.sort
@@ -78,6 +81,7 @@ RSpec.describe UI::Tooltip::Component, :js, type: :system do
 
     # ----- Dark mode renders and is accessible ------------------------
     visit "#{preview_url}?lookbook[display][theme]=dark"
+
     expect(page).to have_css("[role='tooltip']", visible: :all)
     expect(page).to be_axe_clean.skipping(SKIPPABLE_AXE_RULES)
   end

@@ -5,6 +5,7 @@ require "rails_helper"
 RSpec.describe UI::Modal::Component, :js, type: :system do
   it "opens, closes via the close button, and dismisses on escape" do
     visit "/lookbook/preview/ui/modal/default"
+
     expect(page).to have_no_css("dialog[open]")
 
     click_button("Open Settings")

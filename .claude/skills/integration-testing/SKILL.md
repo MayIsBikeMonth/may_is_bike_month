@@ -16,7 +16,7 @@ description: >-
 
 # Integration testing in May is Bike Month
 
-Integration specs live under `spec/integration/` and run as full browser specs (`type: :system, :js`), driven by Capybara/Selenium. They boot a real Chrome session per example, so they are **expensive**. Optimize for fewer, denser examples and high-level Capybara helpers.
+Browser specs (`type: :system, :js`) live in two places: feature flows under `spec/integration/` and component-level interaction specs at `spec/components/**/*_system_spec.rb`. Both run full Chrome sessions via Capybara/Selenium and pay a real Selenium boot cost per example, so the same conventions apply to both: optimize for fewer, denser examples and high-level Capybara helpers.
 
 The general `context`/`let` style and "what to test" rules are in the [`rspec-testing`](../rspec-testing/SKILL.md) skill — the rules below extend it for the system-spec case.
 
@@ -72,21 +72,13 @@ it "toggles per-user when a user button is clicked" do
 end
 ```
 
-## Choose a clean reset between phases
+## Carry state forward, don't reset between phases
 
-When you fold multiple scenarios into one example, you need a way to return to a known state between phases — otherwise state from phase A leaks into phase B and assertions become brittle. Pick the lightest action that restores the precondition the next phase expects.
+You know what state the page is in after each click — write the next assertion against that state. Don't `click_button("Hide all activities")` between phases just to get a clean slate; resets cost a click (often two — clear, then re-establish), obscure what's actually happening, and tempt you to think of each phase as an isolated scenario rather than as one continuous user flow.
 
-**Good resets** are idempotent user actions that clear in-memory state without mutating fixtures:
-- `click_button("Hide all activities")` — clears every press and resets selectedDays in one click.
-- `click_button("Close")` / pressing Escape — closes a modal back to the closed state.
-- `visit page.current_url` — full reload, when you specifically need to verify URL persistence (state survives the reload, not just the test).
+If a carried-over state makes the next assertion awkward, that's information: usually you can reorder or rephrase phases so the previous phase's end state is exactly what the next phase needs to start from. Treat the example as a flow with state advancing through it, not a sequence of independent scenarios each demanding a pristine baseline.
 
-**Bad resets** silently rewrite the world the rest of the test depends on:
-- Creating or destroying fixture records mid-test. The next phase's assertions (and your mental model) assumed the original `let!` data; mutating it makes failures hard to diagnose.
-- Navigating away and back to clear UI state when a button click would do — a navigation also tears down ActionCable subscriptions and any in-memory captured intent your spec might have set up.
-- Direct DOM manipulation via `execute_script` to "undo" a click — not something a real user could do, so any cleanup you skip will surface as flakes once the test runs in slightly different conditions.
-
-If the only reset that works requires touching fixtures, that's a signal the next phase belongs in its own example with its own setup.
+`visit page.current_url` is a reload, not a reset — use it specifically to verify URL persistence across a fresh page load. Otherwise, prefer letting state flow.
 
 ## Navigate by clicking, not re-visiting
 
@@ -151,7 +143,5 @@ CI builds `app/assets/builds/tailwind.css` automatically; your local sandbox doe
 
 ## Other conventions
 
-- File the spec at `spec/integration/<feature>/<scenario>_spec.rb`.
 - Always include `:js, type: :system`.
-- When the spec depends on the current date/time, freeze it with `around { |ex| travel_to(Time.parse("...")) { ex.run } }`.
 - Define a few small DSL-style helpers in the file (`def container_for(user)`, `def punch_selector(...)`) when they make assertions readable. Don't reach for `page.execute_script` to replace what a helper method could do in Ruby.

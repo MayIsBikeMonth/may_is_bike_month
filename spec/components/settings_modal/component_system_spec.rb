@@ -5,6 +5,7 @@ require "rails_helper"
 RSpec.describe SettingsModal::Component, :js, type: :system do
   it "opens, shows the theme/units sections, and closes" do
     visit "/lookbook/preview/settings_modal/default"
+
     expect(page).to have_no_css("dialog[open]")
 
     click_button("Open Settings")
