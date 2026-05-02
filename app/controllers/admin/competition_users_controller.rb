@@ -2,7 +2,7 @@ module Admin
   class CompetitionUsersController < Admin::BaseController
     include Binxtils::SortableTable
 
-    before_action :find_competition_user, except: [:index]
+    before_action :find_competition_user, except: %i[index enqueue_update_job]
 
     def index
       @matching_competition_users = searched_competition_users
@@ -23,6 +23,15 @@ module Admin
       else
         render :edit, status: :see_other
       end
+    end
+
+    def enqueue_update_job
+      if UpdateCompetitionUserJob.enqueue_current
+        flash[:success] = "UpdateCompetitionUserJob enqueued"
+      else
+        flash[:error] = "No current competition"
+      end
+      redirect_back(fallback_location: admin_competition_users_path, status: :see_other)
     end
 
     private
