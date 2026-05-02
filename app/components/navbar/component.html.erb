@@ -1,6 +1,6 @@
-<ul
+<div
   class="
-    relative flex items-center gap-4 wrapper-padding justify-end mb-2
+    relative flex items-center gap-4 wrapper-padding mb-2
     bg-purple-100 dark:bg-purple-800 py-2
   "
 >
@@ -8,10 +8,33 @@
     May Is Bike Month Admin
   </span>
 
-  <%= helpers.active_link "Competitions", admin_competitions_path, class: "twlink ml-2", match_controller: true %>
-  <%= helpers.active_link "Competition Users", admin_competition_users_path, class: "twlink ml-2", match_controller: true %>
-  <%= helpers.active_link "Competition Activities", admin_competition_activities_path, class: "twlink ml-2", match_controller: true %>
-  <%= helpers.active_link "Users", admin_users_path, class: "twlink ml-2", match_controller: true %>
-  <%= helpers.active_link "Strava Requests", admin_strava_requests_path, class: "twlink ml-2", match_controller: true %>
-  <%= link_to "Exit", root_url, class: "twlink ml-auto less-strong" %>
-</ul>
+  <div class="md:hidden">
+    <%= render(UI::Dropdown::Component.new(
+      name: current_nav_item&.label || "Menu",
+      button_color: :link,
+      active: current_nav_item.present?
+    )) do |d| %>
+      <% nav_items.each do |item| %>
+        <% d.with_entry_item do %>
+          <%= helpers.active_link(item.label, item.path, class: "twlink", match_controller: true) %>
+        <% end %>
+      <% end %>
+
+      <% d.with_entry_divider %>
+
+      <% d.with_entry_item do %>
+        <%= button_to "Update Competition", enqueue_update_job_admin_competition_users_path, method: :post %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="hidden md:flex items-center gap-4">
+    <% nav_items.each do |item| %>
+      <%= helpers.active_link(item.label, item.path, class: "twlink", match_controller: true) %>
+    <% end %>
+
+    <%= button_to "Update Competition", enqueue_update_job_admin_competition_users_path, method: :post, class: "twlink" %>
+  </div>
+
+  <%= link_to "Exit", root_url, class: "twlink less-strong ml-auto" %>
+</div>

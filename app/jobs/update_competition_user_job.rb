@@ -7,8 +7,8 @@ class UpdateCompetitionUserJob < ApplicationJob
 
     competition.create_competition_users
 
-    # If an update isn't due, don't enqueue more jobs
-    return true unless StravaRequest.update_due?
+    # If we're over the rate limit, don't enqueue more jobs
+    return true if StravaRequest.over_rate_limit?
 
     # Maybe this should enqueue any without a recent request?
     CompetitionUser.included_in_current_competition.pluck(:id)
