@@ -13,6 +13,6 @@
   <%= helpers.active_link "Competition Activities", admin_competition_activities_path, class: "twlink ml-2", match_controller: true %>
   <%= helpers.active_link "Users", admin_users_path, class: "twlink ml-2", match_controller: true %>
   <%= helpers.active_link "Strava Requests", admin_strava_requests_path, class: "twlink ml-2", match_controller: true %>
-  <%= button_to "Run UpdateCompetitionUserJob", enqueue_update_job_admin_competition_users_path, method: :post, class: "twlink ml-auto", form: { class: "inline-block" } %>
+  <%= button_to "Update Competition", enqueue_update_job_admin_competition_users_path, method: :post, class: "twlink ml-auto", form: { class: "inline-block" } %>
   <%= link_to "Exit", root_url, class: "twlink less-strong" %>
 </ul>
