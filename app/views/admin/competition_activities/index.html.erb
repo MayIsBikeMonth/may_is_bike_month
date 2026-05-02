@@ -33,9 +33,23 @@
     table.column(label: "Competition") { |ca| ca.competition&.display_name }
   end
 
-  table.column(sortable: "distance_meters", label: "Distance (m)") { |ca| number_display(ca.distance_meters&.round) }
+  table.column(sortable: "distance_meters", label: "Distance") do |ca|
+    if ca.distance_meters
+      safe_join([
+        tag.span(safe_join([number_display(meters_to_miles(ca.distance_meters), round_to: 1), " mi"]), class: "unit-imperial"),
+        tag.span(safe_join([number_display(ca.distance_meters / 1000.0, round_to: 1), " km"]), class: "unit-metric hidden")
+      ])
+    end
+  end
 
-  table.column(label: "Elevation (m)") { |ca| number_display(ca.elevation_meters&.round) }
+  table.column(label: "Elevation") do |ca|
+    if ca.elevation_meters
+      safe_join([
+        tag.span(safe_join([number_display(meters_to_feet(ca.elevation_meters)), " ft"]), class: "unit-imperial"),
+        tag.span(safe_join([number_display(ca.elevation_meters), " m"]), class: "unit-metric hidden")
+      ])
+    end
+  end
 
   table.column(label: "Type") { |ca| ca.strava_type }
 
