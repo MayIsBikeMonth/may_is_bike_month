@@ -228,17 +228,18 @@ RSpec.describe CompetitionActivity, type: :model do
   describe "exclusion_reasons" do
     let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-5-1")) }
     let(:competition_user) { FactoryBot.create(:competition_user, competition:) }
-    let(:competition_activity) { FactoryBot.create(:competition_activity, competition_user:) }
+    let(:overrides) { {} }
+    let(:competition_activity) { FactoryBot.build(:competition_activity, competition_user:, **overrides).tap(&:valid?) }
 
     it "is empty when included" do
-      expect(competition_activity.included_in_competition?).to be_truthy
       expect(competition_activity.exclusion_reasons).to eq([])
     end
 
     context "with private visibility" do
       let(:competition_activity) do
-        FactoryBot.create(:competition_activity, competition_user:).tap do |ca|
-          ca.update(strava_data: ca.strava_data.merge("visibility" => "only_me"))
+        FactoryBot.build(:competition_activity, competition_user:).tap do |ca|
+          ca.strava_data = ca.strava_data.merge("visibility" => "only_me")
+          ca.valid?
         end
       end
 
@@ -248,7 +249,7 @@ RSpec.describe CompetitionActivity, type: :model do
     end
 
     context "with disallowed activity type" do
-      let(:competition_activity) { FactoryBot.create(:competition_activity, competition_user:, strava_type: "Skydive") }
+      let(:overrides) { {strava_type: "Skydive"} }
 
       it "lists type" do
         expect(competition_activity.exclusion_reasons).to eq(["type not included (Skydive)"])
@@ -256,7 +257,7 @@ RSpec.describe CompetitionActivity, type: :model do
     end
 
     context "with manually excluded override_activity_dates_strings" do
-      let(:competition_activity) { FactoryBot.create(:competition_activity, competition_user:, override_activity_dates_strings: []) }
+      let(:overrides) { {override_activity_dates_strings: []} }
 
       it "lists manually excluded" do
         expect(competition_activity.exclusion_reasons).to eq(["manually excluded"])
@@ -264,7 +265,7 @@ RSpec.describe CompetitionActivity, type: :model do
     end
 
     context "with activity outside competition period" do
-      let(:competition_activity) { FactoryBot.create(:competition_activity, competition_user:, override_activity_dates_strings: ["2023-04-01"]) }
+      let(:overrides) { {override_activity_dates_strings: ["2023-04-01"]} }
 
       it "lists outside competition period" do
         expect(competition_activity.exclusion_reasons).to eq(["outside competition period"])

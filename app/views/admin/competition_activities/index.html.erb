@@ -1,5 +1,7 @@
-<%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, include_competition_select: competition_user_subject.blank?, competition_subject:, user_subject:, user_param: params[:user], searchable_competitions:, period: @period, s_params: sortable_params, pagy: @pagy, render_chart: @render_chart, chart_collection: @matching_competition_activities, time_range: @time_range, time_range_column: @time_range_column)) do %>
-  <%= link_to "exclusion reason", url_for(sortable_params.merge(search_show_exclusion_reason: !show_exclusion_reason?)), class: "twlink #{"active" if show_exclusion_reason?}" %>
+<%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, include_competition_select: competition_user_subject.blank?, competition_subject:, user_subject:, user_param: params[:user], searchable_competitions:, period: @period, s_params: sortable_params, pagy: @pagy, render_chart: @render_chart, chart_collection: @matching_competition_activities, time_range: @time_range, time_range_column: @time_range_column)) do |c| %>
+  <% c.with_extra_action do %>
+    <%= link_to "exclusion reason", url_for(sortable_params.merge(search_show_exclusion_reason: !@show_exclusion_reason)), class: "twlink #{"active" if @show_exclusion_reason}" %>
+  <% end %>
 <% end %>
 
 <% if competition_user_subject.present? %>
@@ -13,14 +15,10 @@
 
 <%# Local vars because cell blocks run via instance_exec in the table component context %>
 <% show_dev_info = display_dev_info? %>
-<% show_exclusion_reason = show_exclusion_reason? %>
+<% show_exclusion_reason = @show_exclusion_reason %>
 
 <%= render(UI::Table::Component.new(records: @competition_activities, render_sortable: true, sticky: true)) do |table|
-  table.column(sortable: "created_at", lower_right: (->(ca) { ca.id } if show_dev_info)) do |ca|
-    render(UI::Time::Component.new(time: ca.created_at))
-  end
-
-  table.column(sortable: "start_at", label: "Start") do |ca|
+  table.column(sortable: "start_at", label: "Start", lower_right: (->(ca) { ca.id } if show_dev_info)) do |ca|
     render(UI::Time::Component.new(time: ca.start_at))
   end
 
@@ -31,8 +29,8 @@
   table.column(sortable: "competition_user_id", label: "User") do |ca|
     safe_join([
       link_to(ca.competition_user.display_name, edit_admin_competition_user_path(ca.competition_user), class: "twlink"),
-      link_to("🔍", admin_competition_activities_path(search_competition_user_id: ca.competition_user_id), class: "ml-1", title: "Filter activities by this user")
-    ], " ")
+      link_to("🔍", admin_competition_activities_path(search_competition_user_id: ca.competition_user_id), title: "Filter activities by this user")
+    ], "&nbsp;".html_safe)
   end
 
   if competition_subject.blank?
@@ -65,6 +63,10 @@
     elsif show_exclusion_reason
       tag.ul(class: "list-disc list-inside") { safe_join(ca.exclusion_reasons.map { |r| tag.li(r) }) }
     end
+  end
+
+  table.column(sortable: "created_at", label: "Created") do |ca|
+    render(UI::Time::Component.new(time: ca.created_at))
   end
 
   if show_dev_info
