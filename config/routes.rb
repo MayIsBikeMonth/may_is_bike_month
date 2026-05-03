@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     end
   end
 
+  get "history", to: "competitions#history", as: :history
   resources :competitions, only: %i[show]
   resources :competitions_original, only: %i[show]
 

@@ -20,7 +20,8 @@
         <% end %>
       <% end %>
 
-      <% d.with_entry_divider %>
+      <% d.with_entry_divider do %>
+      <% end %>
 
       <% d.with_entry_item do %>
         <%= button_to "Update Competition", enqueue_update_job_admin_competition_users_path, method: :post %>
