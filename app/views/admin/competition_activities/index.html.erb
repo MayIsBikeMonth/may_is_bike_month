@@ -63,7 +63,7 @@
     if ca.included_in_competition
       check_mark
     elsif show_exclusion_reason
-      ca.exclusion_reasons.to_sentence
+      tag.ul(class: "list-disc list-inside") { safe_join(ca.exclusion_reasons.map { |r| tag.li(r) }) }
     end
   end
 
