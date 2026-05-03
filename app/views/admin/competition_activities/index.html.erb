@@ -11,8 +11,9 @@
   </p>
 <% end %>
 
-<%# Local var because cell blocks run via instance_exec in the table component context %>
+<%# Local vars because cell blocks run via instance_exec in the table component context %>
 <% show_dev_info = display_dev_info? %>
+<% show_exclusion_reason = show_exclusion_reason? %>
 
 <%= render(UI::Table::Component.new(records: @competition_activities, render_sortable: true, sticky: true)) do |table|
   table.column(sortable: "created_at", lower_right: (->(ca) { ca.id } if show_dev_info)) do |ca|
@@ -58,10 +59,12 @@
 
   table.column(label: "Type") { |ca| ca.strava_type }
 
-  table.column(sortable: "included_in_competition", label: "Included?") { |ca| check_mark if ca.included_in_competition }
-
-  if show_exclusion_reason?
-    table.column(label: "Exclusion reason") { |ca| ca.exclusion_reasons.to_sentence }
+  table.column(sortable: "included_in_competition", label: "Included?") do |ca|
+    if ca.included_in_competition
+      check_mark
+    elsif show_exclusion_reason
+      ca.exclusion_reasons.to_sentence
+    end
   end
 
   if show_dev_info

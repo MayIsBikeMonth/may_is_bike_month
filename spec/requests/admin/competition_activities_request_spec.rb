@@ -77,16 +77,20 @@ RSpec.describe base_url, type: :request do
       end
 
       describe "show_exclusion_reason toggle" do
+        let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-05-01")) }
+        let(:competition_user) { FactoryBot.create(:competition_user, competition:) }
+        let!(:excluded_activity) { FactoryBot.create(:competition_activity, competition_user:, strava_type: "Skydive") }
+
         it "is off by default and toggle link points to true" do
-          get base_url
+          get "#{base_url}?search_competition_id=#{competition.id}"
           expect(response.body).to include("search_show_exclusion_reason=true")
-          expect(response.body).not_to include("Exclusion reason")
+          expect(response.body).not_to include("type not included")
         end
 
         it "is on with search_show_exclusion_reason=true" do
-          get "#{base_url}?search_show_exclusion_reason=true"
+          get "#{base_url}?search_competition_id=#{competition.id}&search_show_exclusion_reason=true"
           expect(response.body).to include("search_show_exclusion_reason=false")
-          expect(response.body).to include("Exclusion reason")
+          expect(response.body).to include("type not included (Skydive)")
         end
       end
     end
