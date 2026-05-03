@@ -34,7 +34,7 @@ RSpec.describe "/competitions", type: :request do
     end
   end
 
-  describe "GET /competitions_history" do
+  describe "GET /history" do
     let(:modern_competition) do
       FactoryBot.create(:competition, display_name: "MIBM 2024",
         start_date: Date.parse("2024-05-01"), end_date: Date.parse("2024-05-31"))
@@ -70,7 +70,7 @@ RSpec.describe "/competitions", type: :request do
     end
 
     it "renders history with placings, totals and legacy everyday dash" do
-      get "/competitions_history"
+      get "/history"
       expect(response.code).to eq "200"
       expect(response).to render_template("history")
 
