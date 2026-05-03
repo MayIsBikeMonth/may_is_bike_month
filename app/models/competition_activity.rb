@@ -56,7 +56,7 @@ class CompetitionActivity < ApplicationRecord
     def find_or_create_if_valid(competition_user:, strava_data:)
       competition_activity = find_by_strava_data(strava_data)
       if competition_activity.present?
-        where(strava_id: competition_activity.strava_id).where.not(id: competition_activity.id).destroy_all
+        where(strava_id: competition_activity.strava_id).where("id > ?", competition_activity.id).destroy_all
         update_competition_activity_if_changed(strava_data:, competition_activity:)
       else
         create(competition_user:, strava_data:)
