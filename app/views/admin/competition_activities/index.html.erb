@@ -1,4 +1,6 @@
-<%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, include_competition_select: competition_user_subject.blank?, competition_subject:, user_subject:, user_param: params[:user], searchable_competitions:, period: @period, s_params: sortable_params, pagy: @pagy, render_chart: @render_chart, chart_collection: @matching_competition_activities, time_range: @time_range, time_range_column: @time_range_column)) %>
+<%= render(Admin::CurrentHeader::Component.new(viewing: controller_name.humanize, include_competition_select: competition_user_subject.blank?, competition_subject:, user_subject:, user_param: params[:user], searchable_competitions:, period: @period, s_params: sortable_params, pagy: @pagy, render_chart: @render_chart, chart_collection: @matching_competition_activities, time_range: @time_range, time_range_column: @time_range_column)) do %>
+  <%= link_to "exclusion reason", url_for(sortable_params.merge(search_show_exclusion_reason: !show_exclusion_reason?)), class: "twlink #{"active" if show_exclusion_reason?}" %>
+<% end %>
 
 <% if competition_user_subject.present? %>
   <p class="mb-2">
@@ -57,6 +59,10 @@
   table.column(label: "Type") { |ca| ca.strava_type }
 
   table.column(sortable: "included_in_competition", label: "Included?") { |ca| check_mark if ca.included_in_competition }
+
+  if show_exclusion_reason?
+    table.column(label: "Exclusion reason") { |ca| ca.exclusion_reasons.to_sentence }
+  end
 
   if show_dev_info
     table.column(sortable: "updated_at") do |ca|

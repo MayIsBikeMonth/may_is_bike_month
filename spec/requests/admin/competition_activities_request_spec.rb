@@ -75,6 +75,20 @@ RSpec.describe base_url, type: :request do
           expect(assigns(:competition_activities).pluck(:id)).to eq([activity1.id])
         end
       end
+
+      describe "show_exclusion_reason toggle" do
+        it "is off by default and toggle link points to true" do
+          get base_url
+          expect(response.body).to include("search_show_exclusion_reason=true")
+          expect(response.body).not_to include("Exclusion reason")
+        end
+
+        it "is on with search_show_exclusion_reason=true" do
+          get "#{base_url}?search_show_exclusion_reason=true"
+          expect(response.body).to include("search_show_exclusion_reason=false")
+          expect(response.body).to include("Exclusion reason")
+        end
+      end
     end
   end
 end

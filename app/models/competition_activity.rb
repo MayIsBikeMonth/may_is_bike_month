@@ -132,6 +132,20 @@ class CompetitionActivity < ApplicationRecord
     !included_in_competition?
   end
 
+  def exclusion_reasons
+    return [] if included_in_competition?
+    [].tap do |reasons|
+      reasons << "private on Strava" unless INCLUDED_STRAVA_VISIBILITIES.include?(strava_data["visibility"])
+      reasons << "user excluded" unless competition_user.included_in_competition?
+      reasons << "type not included (#{strava_type})" unless competition_user.included_activity_type?(strava_type)
+      if override_activity_dates_strings.is_a?(Array) && override_activity_dates_strings.empty?
+        reasons << "manually excluded"
+      elsif !competition.in_period?(activity_dates)
+        reasons << "outside competition period"
+      end
+    end
+  end
+
   def strava_type
     strava_data["type"]
   end
