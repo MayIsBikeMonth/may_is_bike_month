@@ -76,7 +76,7 @@ RSpec.describe "/competitions", type: :request do
 
       expect(response.body).to include("MIBM 2024")
       expect(response.body).to include("MIBM 2023")
-      expect(response.body).to include("legacy")
+      expect(response.body).to include("No daily requirement")
 
       # Modern podium + last (4 users, so last ≠ 3rd)
       expect(response.body).to include("Alice Modern")

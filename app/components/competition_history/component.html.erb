@@ -75,26 +75,15 @@
                   <%= row.year %>
                 </div>
 
-                <div
-                  class="
-                    text-[11px] text-purple-400 dark:text-purple-300 mt-1
-                    flex items-center gap-1.5
-                  "
-                >
+                <div class="text-[11px] text-purple-400 dark:text-purple-300 mt-1">
                   <%= row.display_name %>
-
-                  <% if row.legacy? %>
-                    <span
-                      class="
-                        inline-block px-1 py-px text-[9px] uppercase
-                        tracking-wider bg-purple-200 dark:bg-purple-700
-                        text-purple-700 dark:text-purple-100 rounded
-                      "
-                    >
-                      legacy
-                    </span>
-                  <% end %>
                 </div>
+
+                <% if row.legacy? %>
+                  <div class="text-[10px] text-purple-300 dark:text-purple-400 italic mt-0.5">
+                    No daily requirement
+                  </div>
+                <% end %>
               <% end %>
             </td>
 
@@ -220,11 +209,7 @@
             </td>
 
             <td class="<%= numeric_cell_class %>">
-              <% if row.everyday_count.nil? %>
-                <span class="text-purple-300 dark:text-purple-400 opacity-50">
-                  —
-                </span>
-              <% else %>
+              <% unless row.everyday_count.nil? %>
                 <div class="flex items-center justify-end gap-2">
                   <div
                     class="
