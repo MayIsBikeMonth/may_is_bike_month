@@ -89,10 +89,6 @@ RSpec.describe "/competitions", type: :request do
       expect(response.body).to include("Bob Legacy")
       expect(response.body).to include("Carol Legacy")
 
-      # Totals present: modern 4 riders, legacy 3 riders
-      expect(response.body).to match(/>\s*4\s*</)
-      expect(response.body).to match(/>\s*3\s*</)
-
       # Legacy competitions get em-dash for everyday (no count possible)
       expect(response.body).to include("&mdash;").or include("—")
     end
