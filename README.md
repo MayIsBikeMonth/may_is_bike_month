@@ -4,7 +4,7 @@ This is a Rails app to track the score and generate the leaderboard for the May 
 
 ### Dependencies
 
-_We recommend [asdf-vm](https://asdf-vm.com/#/) for managing versions of Ruby and Node. Check the [.tool-versions](.tool-versions) file to see the versions of the following dependencies that Convus uses._
+_We recommend [mise](https://mise.jdx.dev/) for managing versions of Ruby and Node. Check the [.tool-versions](.tool-versions) file to see the versions of the following dependencies that Convus uses._
 
 - [Ruby](http://www.ruby-lang.org/en/)
 - [Node](https://nodejs.org/en/) & [yarn](https://yarnpkg.com/en/)
