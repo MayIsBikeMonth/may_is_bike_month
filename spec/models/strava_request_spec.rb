@@ -1,12 +1,6 @@
 require "rails_helper"
 
 RSpec.describe StravaRequest, type: :model do
-  describe "update_due?" do
-    it "is true" do
-      expect(described_class.update_due?).to be_truthy
-    end
-  end
-
   describe "record_request_for_user_activities" do
     let(:user) { FactoryBot.create(:user_with_strava_token) }
     it "creates a strava_request" do

@@ -109,5 +109,25 @@ RSpec.describe base_url, type: :request do
         expect(competition_user.included_in_competition).to be_falsey
       end
     end
+
+    describe "enqueue_update_job" do
+      context "with a current competition" do
+        let!(:competition) { FactoryBot.create(:competition, current: true) }
+        it "enqueues and flashes success" do
+          post "#{base_url}/enqueue_update_job"
+          expect(flash[:success]).to be_present
+          expect(response).to redirect_to admin_competition_users_path
+        end
+      end
+
+      context "without a current competition" do
+        it "flashes an error" do
+          expect(Competition.current).to be_nil
+          post "#{base_url}/enqueue_update_job"
+          expect(flash[:error]).to be_present
+          expect(response).to redirect_to admin_competition_users_path
+        end
+      end
+    end
   end
 end

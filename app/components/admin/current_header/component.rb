@@ -3,6 +3,8 @@
 module Admin
   module CurrentHeader
     class Component < ApplicationComponent
+      renders_one :extra_action
+
       def initialize(viewing:, searchable_competitions:, s_params:, pagy:, include_competition_select: false, competition_subject: nil, user_subject: nil, user_param: nil, period: nil, render_chart: false, chart_collection: nil, time_range: nil, time_range_column: "created_at")
         @viewing = viewing
         @include_competition_select = include_competition_select

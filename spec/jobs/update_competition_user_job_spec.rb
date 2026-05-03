@@ -111,6 +111,27 @@ RSpec.describe UpdateCompetitionUserJob, type: :job do
       end
     end
 
+    context "with a duplicate competition_activity" do
+      let!(:original) do
+        FactoryBot.create(:competition_activity, competition_user:, strava_id: "11319708328",
+          start_at: Time.parse("2024-05-03T02:59:12Z"))
+      end
+      let!(:duplicate) do
+        FactoryBot.create(:competition_activity, competition_user:, strava_id: "11319708328",
+          start_at: Time.parse("2024-05-03T02:59:12Z"))
+      end
+
+      it "deletes the duplicate with the higher id" do
+        expect(duplicate.id).to be > original.id
+        VCR.use_cassette("update_competition_user_job", match_requests_on: [:path]) do
+          instance.perform(competition_user.id)
+        end
+        expect(CompetitionActivity.where(id: duplicate.id)).to be_empty
+        expect(CompetitionActivity.where(id: original.id)).to be_present
+        expect(competition_user.reload.competition_activities.count).to eq 3
+      end
+    end
+
     context "data changes slightly" do
       let(:time) { Time.current - 5.minutes }
       it "doesn't update" do

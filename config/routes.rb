@@ -25,8 +25,13 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root to: "competition_users#index"
+    resources :competition_activities, only: %i[index]
     resources :competitions, only: %i[index new create]
-    resources :competition_users, only: %i[index edit update]
+    resources :competition_users, only: %i[index edit update] do
+      collection do
+        post :enqueue_update_job
+      end
+    end
     resources :strava_requests, only: %i[index]
     resources :users, only: %i[index edit update]
   end

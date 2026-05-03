@@ -27,6 +27,7 @@ document.addEventListener('turbo:load', localizeTime)
 document.addEventListener('turbo:render', localizeTime)
 document.addEventListener('turbo:frame-render', localizeTime)
 document.addEventListener('turbo:morph', localizeTime)
+document.addEventListener('turbo:morph-element', localizeTime)
 
 // const toggleChecks = (event) => {
 //   const checked = event.target.checked

@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe UI::Alert::Component, :js, type: :system do
-  it "is dismissable" do
+  it "is dismissable and accessible in light and dark themes" do
     visit "/lookbook/preview/ui/alert/dismissable_variants"
 
     expect(page).to have_content "Dismissable"
@@ -11,9 +11,7 @@ RSpec.describe UI::Alert::Component, :js, type: :system do
 
     first('button[aria-label="Close"]').click
     expect(page).to have_css('[role="alert"]') # at least one alert remains (the other variant)
-  end
 
-  it "is accessible in dark mode" do
     visit "/lookbook/preview/ui/alert/dismissable_variants?lookbook[display][theme]=dark"
 
     expect(page).to have_content "Dismissable"

@@ -67,7 +67,7 @@
 
   .dropdown-menu a,
   .dropdown-menu button {
-    @apply block px-4 py-2 text-sm text-gray-700 hover:bg-purple-100 dark:text-gray-100 dark:hover:bg-purple-700 dark:hover:text-white w-full text-left;
+    @apply block px-4 py-2 text-sm text-gray-700 no-underline hover:bg-purple-100 dark:text-gray-100 dark:hover:bg-purple-700 dark:hover:text-white w-full text-left;
   }
 
   /* Selected/unselected state for settings option buttons (theme, unit preference, etc.) */

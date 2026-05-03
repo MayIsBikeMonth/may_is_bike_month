@@ -42,14 +42,16 @@ RSpec.describe Admin::CurrentHeader::Component, type: :component do
     end
   end
 
-  context "with a content block" do
+  context "with an extra_action slot" do
     let(:component) do
       with_request_url("/admin/competition_users") do
-        render_inline(instance) { "New Competition".html_safe }
+        render_inline(instance) do |c|
+          c.with_extra_action { "New Competition".html_safe }
+        end
       end
     end
 
-    it "renders the block alongside the graph toggle" do
+    it "renders the slot alongside the graph toggle" do
       expect(component.to_html).to include("New Competition")
       expect(component.css("a").map(&:text)).to include("graph")
     end
