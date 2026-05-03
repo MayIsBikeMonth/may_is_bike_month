@@ -26,7 +26,10 @@
   end
 
   table.column(sortable: "competition_user_id", label: "User") do |ca|
-    link_to(ca.competition_user.display_name, admin_competition_activities_path(search_competition_user_id: ca.competition_user_id), class: "twlink")
+    safe_join([
+      link_to(ca.competition_user.display_name, edit_admin_competition_user_path(ca.competition_user), class: "twlink"),
+      link_to("🔍", admin_competition_activities_path(search_competition_user_id: ca.competition_user_id), class: "ml-1", title: "Filter activities by this user")
+    ], " ")
   end
 
   if competition_subject.blank?
