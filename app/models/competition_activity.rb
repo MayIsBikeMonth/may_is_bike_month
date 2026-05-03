@@ -133,6 +133,17 @@ class CompetitionActivity < ApplicationRecord
     !included_in_competition?
   end
 
+  def exclusion_reasons
+    reasons = []
+    reasons << "private on Strava" unless INCLUDED_STRAVA_VISIBILITIES.include?(strava_data["visibility"])
+    reasons << "user excluded" unless competition_user.included_in_competition?
+    reasons << "type not included (#{strava_type})" unless competition_user.included_activity_type?(strava_type)
+    unless competition.in_period?(activity_dates)
+      reasons << (manually_excluded? ? "manually excluded" : "outside competition period")
+    end
+    reasons
+  end
+
   def strava_type
     strava_data["type"]
   end
@@ -174,13 +185,14 @@ class CompetitionActivity < ApplicationRecord
   end
 
   def calculated_included_in_competition
-    INCLUDED_STRAVA_VISIBILITIES.include?(strava_data["visibility"]) &&
-      competition_user.included_in_competition? &&
-      competition_user.included_activity_type?(strava_type) &&
-      competition.in_period?(activity_dates)
+    exclusion_reasons.empty?
   end
 
   private
+
+  def manually_excluded?
+    override_activity_dates_strings.is_a?(Array) && override_activity_dates_strings.empty?
+  end
 
   def calculated_activity_dates_in_period
     competition.dates_in_period(calculated_activity_dates)

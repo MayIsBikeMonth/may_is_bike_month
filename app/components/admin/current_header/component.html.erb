@@ -1,9 +1,14 @@
 <div class="mb-6" data-controller="admin--current-header">
-  <div class="flex justify-between items-baseline mb-4 gap-4">
+  <div
+    class="
+      flex flex-col lg:flex-row lg:justify-between lg:items-baseline mb-4
+      gap-4
+    "
+  >
     <h1><%= title %></h1>
 
     <div class="flex items-baseline gap-4">
-      <%= content if content.present? %>
+      <%= extra_action %>
       <%= link_to "graph", chart_toggle_url, class: chart_toggle_class %>
     </div>
   </div>

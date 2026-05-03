@@ -5,6 +5,7 @@ module Admin
     helper_method :competition_user_subject
 
     def index
+      @show_exclusion_reason = Binxtils::InputNormalizer.boolean(params[:search_show_exclusion_reason])
       @matching_competition_activities = searched_competition_activities
       @pagy, @competition_activities = pagy(:countish,
         @matching_competition_activities
@@ -16,7 +17,7 @@ module Admin
     private
 
     def sortable_columns
-      %w[created_at updated_at start_at distance_meters competition_user_id included_in_competition]
+      %w[start_at created_at updated_at distance_meters competition_user_id included_in_competition]
     end
 
     def competition_user_subject
