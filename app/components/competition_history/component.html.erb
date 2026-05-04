@@ -1,14 +1,14 @@
 <% num_class = "font-mono text-[13px] font-medium text-purple-900 dark:text-purple-0 tabular-nums" %>
 <% sub_class = "font-mono text-[11px] text-purple-400 dark:text-purple-300 tabular-nums" %>
-<% head_class = "text-purple-300 dark:text-purple-400 text-[10px] uppercase tracking-[0.12em] font-medium whitespace-nowrap border-x border-purple-200 dark:border-purple-600" %>
-<% cell_class = "px-3 py-3 align-top border-b border-purple-100 dark:border-purple-700" %>
-<% placing_cell_class = "#{cell_class} min-w-[140px]" %>
-<% selected_cell_class = "#{cell_class} min-w-[140px] bg-purple-50/40 dark:bg-purple-900/30" %>
+<% head_class = "w-36 min-w-36 text-purple-300 dark:text-purple-400 text-[10px] uppercase tracking-[0.12em] font-medium whitespace-nowrap border-x border-purple-200 dark:border-purple-600" %>
 <% selected_head_class = "#{head_class} bg-purple-200/70 dark:bg-purple-700" %>
+<% cell_class = "w-36 min-w-36 px-3 py-3 align-top border-b border-purple-100 dark:border-purple-700" %>
+<% selected_cell_class = "#{cell_class} bg-purple-50/40 dark:bg-purple-900/30" %>
+<% placing_cell_class = cell_class %>
 <% numeric_cell_class = "#{cell_class} text-right whitespace-nowrap" %>
 
-<div class="wrapper-padding-overflow overflow-x-auto pb-3">
-  <table class="min-w-full text-left border-separate border-spacing-0">
+<div class="wrapper-padding overflow-x-auto pb-3">
+  <table class="mx-auto text-left border-separate border-spacing-0">
     <thead>
       <tr class="bg-purple-100 dark:bg-purple-800">
         <th class="<%= head_class %> px-3 py-2.5 text-left">Year</th>
@@ -29,7 +29,7 @@
 
         <% selected_users.each do |user| %>
           <th class="<%= selected_head_class %> px-3 py-2.5 text-left">
-            <span class="truncate max-w-[140px] inline-block align-bottom">
+            <span class="truncate max-w-36 inline-block align-bottom">
               <%= user.display_name %>
             </span>
           </th>
@@ -83,7 +83,7 @@
                 <div
                   class="
                     text-purple-900 dark:text-purple-0 font-medium
-                    text-[13px] truncate max-w-[160px]
+                    text-[13px] truncate max-w-36
                   "
                 >
                   <%= competition_user.display_name %>
@@ -185,7 +185,7 @@
               <div
                 class="
                   text-purple-900 dark:text-purple-0 font-medium
-                  text-[13px] truncate max-w-[160px]
+                  text-[13px] truncate max-w-36
                 "
               >
                 <%= row.last_place.display_name %>
