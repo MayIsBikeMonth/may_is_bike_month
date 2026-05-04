@@ -209,6 +209,11 @@ GEM
       actioncable (>= 6.0.0)
       listen (>= 3.0.0)
       railties (>= 6.0.0)
+    hotwire_combobox (0.4.1)
+      platform_agent (>= 1.0.1)
+      rails (>= 7.0.7.2)
+      stimulus-rails (>= 1.2)
+      turbo-rails (>= 1.2)
     htmlbeautifier (1.4.3)
     htmlentities (4.3.4)
     i18n (1.14.8)
@@ -354,6 +359,9 @@ GEM
     pg (1.6.3-aarch64-linux)
     pg (1.6.3-arm64-darwin)
     pg (1.6.3-x86_64-linux)
+    platform_agent (1.0.1)
+      activesupport (>= 5.2.0)
+      useragent (~> 0.16.3)
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
@@ -627,6 +635,7 @@ DEPENDENCIES
   guard-rspec
   honeybadger
   hotwire-livereload
+  hotwire_combobox
   htmlbeautifier
   image_processing (~> 1.2)
   importmap-rails

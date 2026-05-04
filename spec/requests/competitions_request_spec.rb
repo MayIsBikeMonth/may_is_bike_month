@@ -46,14 +46,14 @@ RSpec.describe "/competitions", type: :request do
     let(:modern_dates) { Competition.dates_strings(modern_competition.start_date, modern_competition.end_date) }
 
     def create_modern_user(name:, distance:, elevation:, dates:)
-      user = FactoryBot.create(:user, display_name: name)
+      user = FactoryBot.create(:user, display_name: name, strava_username: nil)
       FactoryBot.create(:competition_user, competition: modern_competition, user:,
         score_data: {dates:, distance:, elevation:,
                      periods: modern_competition.periods.map { |p| p.merge(distance: 0, elevation: 0) }})
     end
 
     def create_legacy_user(name:, distance:, elevation:)
-      user = FactoryBot.create(:user, display_name: name)
+      user = FactoryBot.create(:user, display_name: name, strava_username: nil)
       FactoryBot.create(:competition_user, competition: legacy_competition, user:,
         score_data: {dates: [], distance:, elevation:,
                      periods: legacy_competition.periods.map { |p| p.merge(distance: 0, elevation: 0) }})
@@ -91,6 +91,34 @@ RSpec.describe "/competitions", type: :request do
 
       # Legacy competitions get em-dash for everyday (no count possible)
       expect(response.body).to include("&mdash;").or include("—")
+    end
+
+    context "with selected users via ?users=" do
+      it "renders selected user columns with rank-of-N" do
+        get "/history?users=alice-modern,bob-legacy"
+        expect(response.code).to eq "200"
+        # Slug-derived column header (display_name)
+        expect(response.body).to include("Alice Modern")
+        expect(response.body).to include("Bob Legacy")
+        # Rank label appears in selected cell, e.g. "#1"
+        expect(response.body).to match(/#<span>1<\/span>/)
+      end
+
+      it "ignores unknown slugs without erroring" do
+        get "/history?users=nope-nobody,alice-modern"
+        expect(response.code).to eq "200"
+      end
+    end
+
+    describe "POST /history/users" do
+      it "returns turbo_stream chips for the requested slugs" do
+        post "/history/users", params: {combobox_values: "alice-modern,bob-legacy"},
+          headers: {"Accept" => "text/vnd.turbo-stream.html"}
+        expect(response.code).to eq "200"
+        expect(response.media_type).to eq "text/vnd.turbo-stream.html"
+        expect(response.body).to include("Alice Modern")
+        expect(response.body).to include("Bob Legacy")
+      end
     end
   end
 end

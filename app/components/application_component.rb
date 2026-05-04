@@ -24,4 +24,9 @@ class ApplicationComponent < ViewComponent::Base
   def meters_to_feet(number) = self.class.meters_to_feet(number)
 
   def meters_to_miles(number) = self.class.meters_to_miles(number)
+
+  def thousands_display(value)
+    rounded = value.to_i.round(-3) / 1_000
+    safe_join([number_display(rounded), tag.span("k", class: "opacity-40")])
+  end
 end

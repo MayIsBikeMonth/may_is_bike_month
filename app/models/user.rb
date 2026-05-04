@@ -81,6 +81,14 @@ class User < ApplicationRecord
       return nil if str.blank?
       find_by_display_name(str) || find_by_strava_username(str)
     end
+
+    def find_all_by_slugs(slugs)
+      slugs = Array(slugs).map(&:to_s).map(&:strip).reject(&:blank?).uniq
+      return [] if slugs.empty?
+      candidates = where(strava_username: slugs).or(where(strava_username: nil)).to_a
+      by_slug = candidates.index_by(&:slug)
+      slugs.filter_map { |slug| by_slug[slug] }
+    end
   end
 
   def current_competition_user
