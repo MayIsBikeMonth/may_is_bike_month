@@ -11,7 +11,8 @@ class CompetitionsController < ApplicationController
     @competitions = Competition.start_ordered_desc
       .includes(competition_users_included: :user)
     @selected_users = User.find_all_by_slugs(params[:users].to_s.split(","))
-    @selectable_users = User.joins(:competition_users).distinct.order(:display_name)
+    @selectable_users = User.joins(:competition_users)
+      .merge(CompetitionUser.included_in_competition).distinct.order(:display_name)
     @page_title = "Competition history"
   end
 

@@ -66,6 +66,17 @@ module CompetitionHistory
         @selected_users.map { |user| competition_user_for(user) }
       end
 
+      # :first / :second → cell is to the LEFT, :last → cell is to the RIGHT.
+      # 3rd is special-cased: when any users are selected the 3rd column is
+      # hidden, so a 3rd-place selected user falls through to a normal
+      # rank+stats render.
+      def position_in_table(competition_user)
+        return :first if competition_user == first_place
+        return :second if competition_user == second_place
+        return :last if competition_user == last_place
+        nil
+      end
+
       def rider_count = sorted_users.size
 
       def distance_meters

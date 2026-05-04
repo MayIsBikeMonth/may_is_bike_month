@@ -147,6 +147,8 @@
   --hw-border-color: var(--color-purple-200);
   --hw-active-bg-color: var(--color-purple-100);
   --hw-component-bg-color: white;
+  --hw-option-bg-color: white;
+  --hw-group-bg-color: white;
   --hw-focus-color: var(--color-purple-400);
   --hw-border-radius: 0.5rem;
   --hw-font-size: 13px;
@@ -154,9 +156,11 @@
 }
 .dark {
   --hw-text-color: var(--color-purple-0);
-  --hw-border-color: var(--color-purple-700);
+  --hw-border-color: var(--color-purple-600);
   --hw-active-bg-color: var(--color-purple-800);
   --hw-component-bg-color: var(--color-purple-900);
+  --hw-option-bg-color: var(--color-purple-900);
+  --hw-group-bg-color: var(--color-purple-900);
   --hw-focus-color: var(--color-purple-300);
 }
 .hw-combobox__label {

@@ -1,6 +1,6 @@
 <% num_class = "font-mono text-[13px] font-medium text-purple-900 dark:text-purple-0 tabular-nums" %>
 <% sub_class = "font-mono text-[11px] text-purple-400 dark:text-purple-300 tabular-nums" %>
-<% head_class = "text-purple-300 dark:text-purple-400 text-[10px] uppercase tracking-[0.12em] font-medium whitespace-nowrap" %>
+<% head_class = "text-purple-300 dark:text-purple-400 text-[10px] uppercase tracking-[0.12em] font-medium whitespace-nowrap border-x border-purple-200 dark:border-purple-600" %>
 <% cell_class = "px-3 py-3 align-top border-b border-purple-100 dark:border-purple-700" %>
 <% placing_cell_class = "#{cell_class} min-w-[140px]" %>
 <% selected_cell_class = "#{cell_class} min-w-[140px] bg-purple-50/40 dark:bg-purple-900/30" %>
@@ -21,9 +21,11 @@
           <span class="mr-1">🥈</span>2nd
         </th>
 
-        <th class="<%= head_class %> px-3 py-2.5 text-left">
-          <span class="mr-1">🥉</span>3rd
-        </th>
+        <% if selected_users.empty? %>
+          <th class="<%= head_class %> px-3 py-2.5 text-left">
+            <span class="mr-1">🥉</span>3rd
+          </th>
+        <% end %>
 
         <% selected_users.each do |user| %>
           <th class="<%= selected_head_class %> px-3 py-2.5 text-left">
@@ -73,7 +75,9 @@
             <% end %>
           </td>
 
-          <% [row.first_place, row.second_place, row.third_place].each do |competition_user| %>
+          <% top_placings = [row.first_place, row.second_place] %>
+          <% top_placings << row.third_place if selected_users.empty? %>
+          <% top_placings.each do |competition_user| %>
             <td class="<%= placing_cell_class %>">
               <% if competition_user %>
                 <div
@@ -116,6 +120,7 @@
           <% row.selected_competition_users.each do |competition_user| %>
             <td class="<%= selected_cell_class %>">
               <% if competition_user %>
+                <% position = row.position_in_table(competition_user) %>
                 <div
                   class="
                     text-purple-900 dark:text-purple-0 font-medium text-[13px]
@@ -123,27 +128,50 @@
                 >
                   #<%= number_display(competition_user.rank_in_competition) %>
                 </div>
-                <div class="<%= sub_class %> mt-0.5">
-                  <span class="unit-imperial">
-                    <%= miles_display(competition_user.distance_meters) %> mi
-                  </span>
 
-                  <span class="unit-metric hidden">
-                    <%= number_display(competition_user.distance_meters / 1000.0, round_to: 0) %>
-                    km
-                  </span>
+                <% if position == :first || position == :second %>
+                  <div
+                    class="
+                      text-purple-400 dark:text-purple-300 text-[18px]
+                      leading-none mt-0.5
+                    "
+                    aria-label="See <%= position == :first ? "1st" : "2nd" %> place"
+                  >
+                    ←
+                  </div>
+                <% elsif position == :last %>
+                  <div
+                    class="
+                      text-purple-400 dark:text-purple-300 text-[18px]
+                      leading-none mt-0.5 text-right
+                    "
+                    aria-label="See last place"
+                  >
+                    →
+                  </div>
+                <% else %>
+                  <div class="<%= sub_class %> mt-0.5">
+                    <span class="unit-imperial">
+                      <%= miles_display(competition_user.distance_meters) %> mi
+                    </span>
 
-                  <span class="opacity-50 mx-0.5">·</span>
+                    <span class="unit-metric hidden">
+                      <%= number_display(competition_user.distance_meters / 1000.0, round_to: 0) %>
+                      km
+                    </span>
 
-                  <span class="unit-imperial">
-                    <%= thousands_display(meters_to_feet(competition_user.elevation_meters)) %> ft
-                  </span>
+                    <span class="opacity-50 mx-0.5">·</span>
 
-                  <span class="unit-metric hidden">
-                    <%= thousands_display(competition_user.elevation_meters) %>
-                    m
-                  </span>
-                </div>
+                    <span class="unit-imperial">
+                      <%= thousands_display(meters_to_feet(competition_user.elevation_meters)) %> ft
+                    </span>
+
+                    <span class="unit-metric hidden">
+                      <%= thousands_display(competition_user.elevation_meters) %>
+                      m
+                    </span>
+                  </div>
+                <% end %>
               <% else %>
                 <span class="text-purple-300 dark:text-purple-400 opacity-50">
                   —
