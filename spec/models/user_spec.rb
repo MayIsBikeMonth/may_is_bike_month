@@ -99,15 +99,12 @@ RSpec.describe User, type: :model do
   describe "calculated_slug" do
     let!(:original) { FactoryBot.create(:user, display_name: "Alice Rider") }
 
-    it "appends a counter when display_name collides" do
+    it "suffixes collisions with a counter and stays stable across re-saves" do
       expect(original.slug).to eq "alice-rider"
       duplicate = FactoryBot.create(:user, display_name: "Alice Rider")
       third = FactoryBot.create(:user, display_name: "Alice Rider")
       expect(duplicate.slug).to eq "alice-rider-2"
       expect(third.slug).to eq "alice-rider-3"
-    end
-
-    it "keeps its slug stable on update" do
       original.update!(display_name: "Alice Rider")
       expect(original.reload.slug).to eq "alice-rider"
     end
@@ -117,23 +114,16 @@ RSpec.describe User, type: :model do
     let!(:alice) { FactoryBot.create(:user, display_name: "Alice Rider", strava_username: "alice-strava") }
     let!(:bob) { FactoryBot.create(:user, display_name: "Bob Rider", strava_username: "bob-strava") }
 
-    it "returns [] for blank or empty input" do
+    it "matches by slug/display_name/strava_username/id, handles blanks, dedupes, preserves order" do
+      expect(alice.slug).to eq "alice-rider"
       expect(User.find_all_by_slugs(nil)).to eq([])
       expect(User.find_all_by_slugs([])).to eq([])
       expect(User.find_all_by_slugs(["", " "])).to eq([])
-    end
-
-    it "finds by persisted slug, display_name, strava_username, or id" do
-      expect(alice.slug).to eq "alice-rider"
       expect(User.find_all_by_slugs([alice.slug])).to eq([alice])
       expect(User.find_all_by_slugs(["Bob Rider"])).to eq([bob])
       expect(User.find_all_by_slugs(["alice-strava"])).to eq([alice])
       expect(User.find_all_by_slugs([alice.id.to_s])).to eq([alice])
-    end
-
-    it "preserves input order, dedupes, and skips unknowns" do
-      result = User.find_all_by_slugs([bob.slug, alice.slug, "no-such-slug", bob.slug])
-      expect(result).to eq([bob, alice])
+      expect(User.find_all_by_slugs([bob.slug, alice.slug, "no-such-slug", bob.slug])).to eq([bob, alice])
     end
   end
 

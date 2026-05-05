@@ -94,7 +94,7 @@ RSpec.describe "/competitions", type: :request do
     end
 
     context "with selected users via ?users=" do
-      it "renders selected user columns with rank-of-N" do
+      it "renders selected user columns with rank-of-N and ignores unknown slugs" do
         get "/history?users=alice-modern,bob-legacy"
         expect(response.code).to eq "200"
         # Slug-derived column header (display_name)
@@ -102,9 +102,7 @@ RSpec.describe "/competitions", type: :request do
         expect(response.body).to include("Bob Legacy")
         # Rank label appears in selected cell, e.g. "#1"
         expect(response.body).to match(/#<span>1<\/span>/)
-      end
 
-      it "ignores unknown slugs without erroring" do
         get "/history?users=nope-nobody,alice-modern"
         expect(response.code).to eq "200"
       end
