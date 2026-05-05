@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_21_071743) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_05_160857) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -81,6 +81,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_21_071743) do
     t.datetime "remember_created_at"
     t.integer "role", default: 0
     t.integer "sign_in_count", default: 0, null: false
+    t.string "slug"
     t.jsonb "strava_auth"
     t.string "strava_id"
     t.jsonb "strava_info"

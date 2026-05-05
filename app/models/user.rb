@@ -13,6 +13,7 @@
 #  remember_created_at :datetime
 #  role                :integer          default("basic_user")
 #  sign_in_count       :integer          default(0), not null
+#  slug                :string
 #  strava_auth         :jsonb
 #  strava_info         :jsonb
 #  strava_username     :string
@@ -113,6 +114,7 @@ class User < ApplicationRecord
     self.strava_info ||= {}
     self.strava_username = strava_info["username"] if strava_info["username"].present?
     self.display_name ||= calculated_name
+    self.slug = calculated_slug
   end
 
   # Bust cache
@@ -122,10 +124,6 @@ class User < ApplicationRecord
 
   def strava_user_url
     "https://www.strava.com/athletes/#{strava_id}"
-  end
-
-  def slug
-    strava_username.presence || Slugifyer.slugify(display_name).presence || id.to_s
   end
 
   private
@@ -143,5 +141,9 @@ class User < ApplicationRecord
   def calculated_name
     first_last = [strava_info["firstname"], strava_info["lastname"]].reject(&:blank?).join(" ")
     first_last.present? ? first_last : strava_username
+  end
+
+  def calculated_slug
+    Slugifyer.slugify(display_name).presence || id.to_s
   end
 end
