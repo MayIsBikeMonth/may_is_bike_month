@@ -14,65 +14,38 @@ module Leaderboard
 
       def call
         return tag.span if @upcoming
-        return no_ride_cell unless level
 
-        ride_cell
+        render(UI::Tooltip::Component.new(text: tooltip_text, trigger_in_content: true)) do |tooltip|
+          level ? ride_button(tooltip) : no_ride_span(tooltip)
+        end
       end
 
       private
 
-      def ride_cell
-        data = {
-          controller: "ui--tooltip",
-          action: "click->punch#toggle #{tooltip_actions}",
+      def ride_button(tooltip)
+        data = tooltip.trigger_data(extra_action: "click->punch#toggle").merge(
           "punch-target": "punch",
           "punch-id": @punch_id,
-          "ui--tooltip-target": "trigger",
           date: @date_string,
           l: level
-        }
+        )
         data["user-slug"] = @user_slug if @user_slug
         data[:century] = true if century?
         tag.button(
           type: "button",
           class: button_class,
           "aria-pressed": "false",
-          "aria-describedby": tooltip_id,
+          "aria-describedby": tooltip.tooltip_id,
           data:
-        ) { tooltip_span }
+        ) { tooltip.tooltip_span }
       end
 
-      def no_ride_cell
+      def no_ride_span(tooltip)
         tag.span(
           class: "punchcard-cell",
-          "aria-describedby": tooltip_id,
-          data: {
-            controller: "ui--tooltip",
-            "ui--tooltip-target": "trigger",
-            action: tooltip_actions
-          }
-        ) { tooltip_span }
-      end
-
-      def tooltip_actions
-        "mouseenter->ui--tooltip#showOnHover mouseleave->ui--tooltip#hideOnHover " \
-          "focusin->ui--tooltip#showOnFocus focusout->ui--tooltip#hideOnFocusout"
-      end
-
-      def tooltip_span
-        tag.span(
-          tooltip_text,
-          role: "tooltip",
-          id: tooltip_id,
-          data: {"ui--tooltip-target": "tooltip"},
-          class: "hidden pointer-events-none whitespace-nowrap rounded bg-purple-900 px-2 " \
-            "py-1 text-xs text-white border border-purple-400 z-50 " \
-            "dark:border-purple-300 dark:bg-purple-100 dark:text-purple-900"
-        )
-      end
-
-      def tooltip_id
-        @tooltip_id ||= "punch-tooltip-#{SecureRandom.hex(4)}"
+          "aria-describedby": tooltip.tooltip_id,
+          data: tooltip.trigger_data
+        ) { tooltip.tooltip_span }
       end
 
       def button_class

@@ -34,3 +34,7 @@ This project uses the ViewComponent gem to render components.
 - In view components, **prefer instance variables to `attr_accessor`**.
 - In ViewComponent templates, use the `helpers.` prefix for view helpers (e.g. `helpers.time_ago_in_words`).
   - Rule of thumb: try the bare call first. Only add `helpers.` if it fails with `NoMethodError` — route helpers (`new_bike_path`) and ActionView tag/url builders (`tag.span`, `content_tag`, `link_to`) are mixed into `ViewComponent::Base` directly, so they don't need it.
+
+## Manual browser verification
+
+When using Playwright MCP (`mcp__playwright__browser_take_screenshot`) to verify a change visually, always pass an explicit `filename:` under `tmp/` (e.g. `tmp/tooltip-ride-day.png`). The default tool root is the project root, so plain filenames land in the working tree and need to be cleaned up. `tmp/` is gitignored.
