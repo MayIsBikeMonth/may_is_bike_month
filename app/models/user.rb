@@ -23,6 +23,10 @@
 #  updated_at          :datetime         not null
 #  strava_id           :string
 #
+# Indexes
+#
+#  index_users_on_slug  (slug) UNIQUE
+#
 class User < ApplicationRecord
   include FriendlyFindable
 
@@ -141,6 +145,14 @@ class User < ApplicationRecord
   end
 
   def calculated_slug
-    Slugifyer.slugify(display_name).presence || id.to_s
+    base = Slugifyer.slugify(display_name).presence
+    return nil if base.blank?
+    candidate = base
+    counter = 2
+    while self.class.where(slug: candidate).where.not(id:).exists?
+      candidate = "#{base}-#{counter}"
+      counter += 1
+    end
+    candidate
   end
 end

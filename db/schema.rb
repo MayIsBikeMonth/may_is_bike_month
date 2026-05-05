@@ -89,5 +89,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_05_160857) do
     t.integer "theme", default: 0
     t.integer "unit", default: 0, null: false
     t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_users_on_slug", unique: true
   end
 end

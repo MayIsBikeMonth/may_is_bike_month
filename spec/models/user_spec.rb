@@ -96,6 +96,23 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "calculated_slug" do
+    let!(:original) { FactoryBot.create(:user, display_name: "Alice Rider") }
+
+    it "appends a counter when display_name collides" do
+      expect(original.slug).to eq "alice-rider"
+      duplicate = FactoryBot.create(:user, display_name: "Alice Rider")
+      third = FactoryBot.create(:user, display_name: "Alice Rider")
+      expect(duplicate.slug).to eq "alice-rider-2"
+      expect(third.slug).to eq "alice-rider-3"
+    end
+
+    it "keeps its slug stable on update" do
+      original.update!(display_name: "Alice Rider")
+      expect(original.reload.slug).to eq "alice-rider"
+    end
+  end
+
   describe ".find_all_by_slugs" do
     let!(:alice) { FactoryBot.create(:user, display_name: "Alice Rider", strava_username: "alice-strava") }
     let!(:bob) { FactoryBot.create(:user, display_name: "Bob Rider", strava_username: "bob-strava") }
