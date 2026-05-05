@@ -14,28 +14,66 @@ module Leaderboard
 
       def call
         return tag.span if @upcoming
-        return tag.span(class: "punchcard-cell", title:) unless level
+        return no_ride_cell unless level
 
+        ride_cell
+      end
+
+      private
+
+      def ride_cell
         data = {
-          action: "click->punch#toggle",
+          controller: "ui--tooltip",
+          action: "click->punch#toggle #{tooltip_actions}",
           "punch-target": "punch",
           "punch-id": @punch_id,
+          "ui--tooltip-target": "trigger",
           date: @date_string,
           l: level
         }
         data["user-slug"] = @user_slug if @user_slug
         data[:century] = true if century?
         tag.button(
-          "",
           type: "button",
           class: button_class,
-          title:,
           "aria-pressed": "false",
+          "aria-describedby": tooltip_id,
           data:
+        ) { tooltip_span }
+      end
+
+      def no_ride_cell
+        tag.span(
+          class: "punchcard-cell",
+          "aria-describedby": tooltip_id,
+          data: {
+            controller: "ui--tooltip",
+            "ui--tooltip-target": "trigger",
+            action: tooltip_actions
+          }
+        ) { tooltip_span }
+      end
+
+      def tooltip_actions
+        "mouseenter->ui--tooltip#showOnHover mouseleave->ui--tooltip#hideOnHover " \
+          "focusin->ui--tooltip#showOnFocus focusout->ui--tooltip#hideOnFocusout"
+      end
+
+      def tooltip_span
+        tag.span(
+          tooltip_text,
+          role: "tooltip",
+          id: tooltip_id,
+          data: {"ui--tooltip-target": "tooltip"},
+          class: "hidden pointer-events-none whitespace-nowrap rounded bg-purple-900 px-2 " \
+            "py-1 text-xs text-white border border-purple-400 z-50 " \
+            "dark:border-purple-300 dark:bg-purple-100 dark:text-purple-900"
         )
       end
 
-      private
+      def tooltip_id
+        @tooltip_id ||= "punch-tooltip-#{SecureRandom.hex(4)}"
+      end
 
       def button_class
         "punchcard-cell cursor-pointer outline-none transition-shadow " \
@@ -60,7 +98,7 @@ module Leaderboard
         miles >= 100
       end
 
-      def title
+      def tooltip_text
         "#{Date.parse(@date_string).strftime("%b %-d")}: #{level ? "#{miles.round(1)} mi" : "no rides"}"
       end
     end

@@ -64,7 +64,9 @@ RSpec.describe Leaderboard::PunchcardUserRow::Component, type: :component do
   it "omits data-l for days below the daily requirement" do
     cells = rendered.css(".punchcard-cell")
     expect(cells[1].attr("data-l")).to be_nil
-    expect(cells[1].attr("title")).to eq "May 2: no rides"
+    tooltip_id = cells[1].attr("aria-describedby")
+    tooltip = rendered.css("##{tooltip_id}").first
+    expect(tooltip.text).to eq "May 2: no rides"
   end
 
   it "marks the century day" do
