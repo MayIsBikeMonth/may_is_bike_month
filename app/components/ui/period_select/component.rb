@@ -49,7 +49,7 @@ module UI
           size: :sm,
           active: @period == period_key,
           class: "period-select-standard",
-          data: {period: period_key}
+          data: {period: period_key, turbo_action: "advance"}
         )
       end
 
