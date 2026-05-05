@@ -80,15 +80,12 @@ class User < ApplicationRecord
     # Override FriendlyFindable
     def friendly_find_slug(str = nil)
       return nil if str.blank?
-      find_by_display_name(str) || find_by_strava_username(str)
+
+      find_by_slug(str) || find_by_display_name(str) || find_by_strava_username(str)
     end
 
     def find_all_by_slugs(slugs)
-      slugs = Array(slugs).map(&:to_s).map(&:strip).reject(&:blank?).uniq
-      return [] if slugs.empty?
-      candidates = where(strava_username: slugs).or(where(strava_username: nil)).to_a
-      by_slug = candidates.index_by(&:slug)
-      slugs.filter_map { |slug| by_slug[slug] }
+      Array(slugs).filter_map { friendly_find(it) }.uniq
     end
   end
 

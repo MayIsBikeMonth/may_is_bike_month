@@ -46,14 +46,14 @@ RSpec.describe "/competitions", type: :request do
     let(:modern_dates) { Competition.dates_strings(modern_competition.start_date, modern_competition.end_date) }
 
     def create_modern_user(name:, distance:, elevation:, dates:)
-      user = FactoryBot.create(:user, display_name: name, strava_username: nil)
+      user = FactoryBot.create(:user, display_name: name)
       FactoryBot.create(:competition_user, competition: modern_competition, user:,
         score_data: {dates:, distance:, elevation:,
                      periods: modern_competition.periods.map { |p| p.merge(distance: 0, elevation: 0) }})
     end
 
     def create_legacy_user(name:, distance:, elevation:)
-      user = FactoryBot.create(:user, display_name: name, strava_username: nil)
+      user = FactoryBot.create(:user, display_name: name)
       FactoryBot.create(:competition_user, competition: legacy_competition, user:,
         score_data: {dates: [], distance:, elevation:,
                      periods: legacy_competition.periods.map { |p| p.merge(distance: 0, elevation: 0) }})

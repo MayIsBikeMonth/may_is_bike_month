@@ -15,7 +15,7 @@ RSpec.describe "Competition history user picker", :js, type: :system do
   let(:dates) { Competition.dates_strings(competition.start_date, competition.end_date) }
 
   def make_user(name:, distance:, dates_taken:)
-    user = FactoryBot.create(:user, display_name: name, strava_username: nil)
+    user = FactoryBot.create(:user, display_name: name)
     FactoryBot.create(:competition_user, competition:, user:,
       score_data: {dates: dates_taken, distance:, elevation: 1_000,
                    periods: competition.periods.map { |p| p.merge(distance: 0, elevation: 0) }})

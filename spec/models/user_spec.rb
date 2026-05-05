@@ -96,6 +96,30 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe ".find_all_by_slugs" do
+    let!(:alice) { FactoryBot.create(:user, display_name: "Alice Rider", strava_username: "alice-strava") }
+    let!(:bob) { FactoryBot.create(:user, display_name: "Bob Rider", strava_username: "bob-strava") }
+
+    it "returns [] for blank or empty input" do
+      expect(User.find_all_by_slugs(nil)).to eq([])
+      expect(User.find_all_by_slugs([])).to eq([])
+      expect(User.find_all_by_slugs(["", " "])).to eq([])
+    end
+
+    it "finds by persisted slug, display_name, strava_username, or id" do
+      expect(alice.slug).to eq "alice-rider"
+      expect(User.find_all_by_slugs([alice.slug])).to eq([alice])
+      expect(User.find_all_by_slugs(["Bob Rider"])).to eq([bob])
+      expect(User.find_all_by_slugs(["alice-strava"])).to eq([alice])
+      expect(User.find_all_by_slugs([alice.id.to_s])).to eq([alice])
+    end
+
+    it "preserves input order, dedupes, and skips unknowns" do
+      result = User.find_all_by_slugs([bob.slug, alice.slug, "no-such-slug", bob.slug])
+      expect(result).to eq([bob, alice])
+    end
+  end
+
   describe "after_commit" do
     let(:user) { FactoryBot.create(:user) }
     let(:start_date) { Time.current.beginning_of_month }
