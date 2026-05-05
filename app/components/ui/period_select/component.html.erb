@@ -1,7 +1,7 @@
 <div data-controller="ui--period-select collapse">
   <div
     id="timeSelectionBtnGroup"
-    class="flex flex-wrap justify-end gap-2 <%= "custom-period-selected" if @period == "custom" %>"
+    class="flex flex-wrap justify-end gap-1 sm:gap-2 <%= "custom-period-selected" if @period == "custom" %>"
     role="group"
   >
     <% if @prepend_text.present? %>
@@ -26,6 +26,7 @@
       text: "custom",
       size: :sm,
       active: @period == "custom",
+      html_class: "period-select-standard",
       data: {period: "custom", action: "click->collapse#toggle"}
     ) %>
   </div>

@@ -31,7 +31,7 @@ module UI
         classes = [BASE_CLASSES, COLORS[color], html_class]
         unless color == :link
           classes << SIZES[size]
-          classes << "focus:outline-none focus:ring-3 font-medium"
+          classes << "focus:outline-none focus:ring-3 font-medium no-underline"
         end
         classes << ACTIVE_COLORS[color] if active
         classes.compact.join(" ")
