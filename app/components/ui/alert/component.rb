@@ -42,10 +42,6 @@ module UI
         TEXT_CLASSES[@kind]
       end
 
-      def text_color_classes_important
-        text_color_classes.gsub("00", "00!")
-      end
-
       def dismissable_color_classes
         case @kind
         when :notice
