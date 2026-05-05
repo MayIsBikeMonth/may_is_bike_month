@@ -27,6 +27,7 @@ gem "lookbook" # view_component rendering
 gem "pagy" # pagination
 gem "chartkick" # Display charts
 gem "groupdate" # Required for charts
+gem "hotwire_combobox" # Accessible autocomplete + multiselect chip picker
 
 # Users
 gem "devise"

@@ -2,14 +2,17 @@
 
 module CompetitionHistory
   class Component < ApplicationComponent
-    def initialize(competitions:)
+    def initialize(competitions:, selected_users: [])
       @competitions = competitions
+      @selected_users = selected_users
     end
 
     private
 
+    attr_reader :selected_users
+
     def rows
-      @rows ||= @competitions.map { |competition| Row.new(competition:) }
+      @rows ||= @competitions.map { |competition| Row.new(competition:, selected_users:) }
     end
 
     def max_rider_count
@@ -37,15 +40,12 @@ module CompetitionHistory
       number_display(meters_to_miles(meters), round_to: 0)
     end
 
-    def feet_display(meters)
-      number_display(meters_to_feet(meters), round_to: 0)
-    end
-
     class Row
       attr_reader :competition
 
-      def initialize(competition:)
+      def initialize(competition:, selected_users: [])
         @competition = competition
+        @selected_users = selected_users
       end
 
       def year = competition.year
@@ -60,6 +60,21 @@ module CompetitionHistory
       def last_place
         return nil if sorted_users.size < 4
         sorted_users.last
+      end
+
+      def selected_competition_users
+        @selected_users.map { |user| competition_user_for(user) }
+      end
+
+      # :first / :second → cell is to the LEFT, :last → cell is to the RIGHT.
+      # 3rd is special-cased: when any users are selected the 3rd column is
+      # hidden, so a 3rd-place selected user falls through to a normal
+      # rank+stats render.
+      def position_in_table(competition_user)
+        return :first if competition_user == first_place
+        return :second if competition_user == second_place
+        return :last if competition_user == last_place
+        nil
       end
 
       def rider_count = sorted_users.size
@@ -81,6 +96,10 @@ module CompetitionHistory
 
       def sorted_users
         @sorted_users ||= competition.competition_users_included.sort_by(&:score).reverse
+      end
+
+      def competition_user_for(user)
+        sorted_users.find { |competition_user| competition_user.user_id == user.id }
       end
     end
   end

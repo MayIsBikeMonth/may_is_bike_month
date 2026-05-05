@@ -141,6 +141,38 @@
   @apply cursor-pointer;
 }
 
+/* Hotwire Combobox theming — match purple/mono aesthetic */
+:root {
+  --hw-text-color: var(--color-purple-900);
+  --hw-border-color: var(--color-purple-200);
+  --hw-active-bg-color: var(--color-purple-100);
+  --hw-component-bg-color: white;
+  --hw-option-bg-color: white;
+  --hw-group-bg-color: white;
+  --hw-focus-color: var(--color-purple-400);
+  --hw-border-radius: 0.5rem;
+  --hw-font-size: 13px;
+  --hw-combobox-width--multiple: 100%;
+}
+.dark {
+  --hw-text-color: var(--color-purple-0);
+  --hw-border-color: var(--color-purple-600);
+  --hw-active-bg-color: var(--color-purple-800);
+  --hw-component-bg-color: var(--color-purple-900);
+  --hw-option-bg-color: var(--color-purple-900);
+  --hw-group-bg-color: var(--color-purple-900);
+  --hw-focus-color: var(--color-purple-300);
+}
+.hw-combobox__label {
+  @apply text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
+}
+.hw-combobox__chip {
+  @apply font-mono text-purple-900 dark:text-purple-0 bg-purple-100 dark:bg-purple-700;
+}
+.hw-combobox {
+  min-width: 280px;
+}
+
 .btn {
   @apply cursor-pointer text-white bg-purple-500 hover:bg-purple-600 focus:ring-4 focus:ring-purple-200
     font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none;

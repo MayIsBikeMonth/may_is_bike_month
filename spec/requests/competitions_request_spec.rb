@@ -92,5 +92,31 @@ RSpec.describe "/competitions", type: :request do
       # Legacy competitions get em-dash for everyday (no count possible)
       expect(response.body).to include("&mdash;").or include("—")
     end
+
+    context "with selected users via ?users=" do
+      it "renders selected user columns with rank-of-N and ignores unknown slugs" do
+        get "/history?users=alice-modern,bob-legacy"
+        expect(response.code).to eq "200"
+        # Slug-derived column header (display_name)
+        expect(response.body).to include("Alice Modern")
+        expect(response.body).to include("Bob Legacy")
+        # Rank label appears in selected cell, e.g. "#1"
+        expect(response.body).to match(/#<span>1<\/span>/)
+
+        get "/history?users=nope-nobody,alice-modern"
+        expect(response.code).to eq "200"
+      end
+    end
+
+    describe "POST /history/users" do
+      it "returns turbo_stream chips for the requested slugs" do
+        post "/history/users", params: {combobox_values: "alice-modern,bob-legacy"},
+          headers: {"Accept" => "text/vnd.turbo-stream.html"}
+        expect(response.code).to eq "200"
+        expect(response.media_type).to eq "text/vnd.turbo-stream.html"
+        expect(response.body).to include("Alice Modern")
+        expect(response.body).to include("Bob Legacy")
+      end
+    end
   end
 end

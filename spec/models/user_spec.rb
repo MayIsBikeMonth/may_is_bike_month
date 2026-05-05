@@ -96,6 +96,37 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "calculated_slug" do
+    let!(:original) { FactoryBot.create(:user, display_name: "Alice Rider") }
+
+    it "suffixes collisions with a counter and stays stable across re-saves" do
+      expect(original.slug).to eq "alice-rider"
+      duplicate = FactoryBot.create(:user, display_name: "Alice Rider")
+      third = FactoryBot.create(:user, display_name: "Alice Rider")
+      expect(duplicate.slug).to eq "alice-rider-2"
+      expect(third.slug).to eq "alice-rider-3"
+      original.update!(display_name: "Alice Rider")
+      expect(original.reload.slug).to eq "alice-rider"
+    end
+  end
+
+  describe ".find_all_by_slugs" do
+    let!(:alice) { FactoryBot.create(:user, display_name: "Alice Rider", strava_username: "alice-strava") }
+    let!(:bob) { FactoryBot.create(:user, display_name: "Bob Rider", strava_username: "bob-strava") }
+
+    it "matches by slug/display_name/strava_username/id, handles blanks, dedupes, preserves order" do
+      expect(alice.slug).to eq "alice-rider"
+      expect(User.find_all_by_slugs(nil)).to eq([])
+      expect(User.find_all_by_slugs([])).to eq([])
+      expect(User.find_all_by_slugs(["", " "])).to eq([])
+      expect(User.find_all_by_slugs([alice.slug])).to eq([alice])
+      expect(User.find_all_by_slugs(["Bob Rider"])).to eq([bob])
+      expect(User.find_all_by_slugs(["alice-strava"])).to eq([alice])
+      expect(User.find_all_by_slugs([alice.id.to_s])).to eq([alice])
+      expect(User.find_all_by_slugs([bob.slug, alice.slug, "no-such-slug", bob.slug])).to eq([bob, alice])
+    end
+  end
+
   describe "after_commit" do
     let(:user) { FactoryBot.create(:user) }
     let(:start_date) { Time.current.beginning_of_month }

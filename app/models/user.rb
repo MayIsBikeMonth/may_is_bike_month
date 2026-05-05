@@ -13,6 +13,7 @@
 #  remember_created_at :datetime
 #  role                :integer          default("basic_user")
 #  sign_in_count       :integer          default(0), not null
+#  slug                :string
 #  strava_auth         :jsonb
 #  strava_info         :jsonb
 #  strava_username     :string
@@ -21,6 +22,10 @@
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  strava_id           :string
+#
+# Indexes
+#
+#  index_users_on_slug  (slug) UNIQUE
 #
 class User < ApplicationRecord
   include FriendlyFindable
@@ -79,7 +84,12 @@ class User < ApplicationRecord
     # Override FriendlyFindable
     def friendly_find_slug(str = nil)
       return nil if str.blank?
-      find_by_display_name(str) || find_by_strava_username(str)
+
+      find_by_slug(str) || find_by_display_name(str) || find_by_strava_username(str)
+    end
+
+    def find_all_by_slugs(slugs)
+      Array(slugs).filter_map { friendly_find(it) }.uniq
     end
   end
 
@@ -105,6 +115,7 @@ class User < ApplicationRecord
     self.strava_info ||= {}
     self.strava_username = strava_info["username"] if strava_info["username"].present?
     self.display_name ||= calculated_name
+    self.slug = calculated_slug
   end
 
   # Bust cache
@@ -114,10 +125,6 @@ class User < ApplicationRecord
 
   def strava_user_url
     "https://www.strava.com/athletes/#{strava_id}"
-  end
-
-  def slug
-    strava_username.presence || Slugifyer.slugify(display_name).presence || id.to_s
   end
 
   private
@@ -135,5 +142,17 @@ class User < ApplicationRecord
   def calculated_name
     first_last = [strava_info["firstname"], strava_info["lastname"]].reject(&:blank?).join(" ")
     first_last.present? ? first_last : strava_username
+  end
+
+  def calculated_slug
+    base = Slugifyer.slugify(display_name).presence
+    return nil if base.blank?
+    candidate = base
+    counter = 2
+    while self.class.where(slug: candidate).where.not(id:).exists?
+      candidate = "#{base}-#{counter}"
+      counter += 1
+    end
+    candidate
   end
 end

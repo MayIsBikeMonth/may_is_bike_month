@@ -93,11 +93,12 @@
 
       <span class="opacity-40">
         <span class="unit-imperial">
-          <%= "%.1f" % (meters_to_feet(elevation_meters) / 1000.0) %>k ft
+          <%= thousands_display(meters_to_feet(elevation_meters), decimals: 1) %>
+          ft
         </span>
 
         <span class="unit-metric hidden">
-          <%= "%.1f" % (elevation_meters / 1000.0) %>k m
+          <%= thousands_display(elevation_meters, decimals: 1) %> m
         </span>
       </span>
     </div>

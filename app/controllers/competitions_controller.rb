@@ -10,6 +10,14 @@ class CompetitionsController < ApplicationController
   def history
     @competitions = Competition.start_ordered_desc
       .includes(competition_users_included: :user)
+    @selected_users = User.find_all_by_slugs(params[:users].to_s.split(","))
+    @selectable_users = User.joins(:competition_users)
+      .merge(CompetitionUser.included_in_competition).distinct.order(:display_name)
     @page_title = "Competition history"
+  end
+
+  def history_users
+    users = User.find_all_by_slugs(params[:combobox_values].to_s.split(","))
+    render turbo_stream: helpers.combobox_selection_chips_for(users, value: :slug, display: :display_name)
   end
 end
