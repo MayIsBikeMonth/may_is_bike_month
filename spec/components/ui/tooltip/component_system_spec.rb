@@ -15,7 +15,7 @@ RSpec.describe UI::Tooltip::Component, :js, type: :system do
     first_trigger = find("[aria-describedby='#{first_tooltip[:id]}']")
 
     # ----- Initial state ----------------------------------------------
-    expect(first_tooltip.text(:all)).to eq "5–9 mi"
+    expect(first_tooltip.text(:all)).to eq "Daily totals only count rides of 2 miles or more"
     expect(first_tooltip).not_to be_visible
     expect(page).to be_axe_clean.skipping(SKIPPABLE_AXE_RULES)
 

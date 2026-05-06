@@ -36,6 +36,21 @@ RSpec.describe UI::Tooltip::Component, type: :component do
     end
   end
 
+  context "with a tooltip_button slot that sets a custom action" do
+    let(:component) do
+      render_inline(described_class.new(text: "tip")) do |tooltip|
+        tooltip.with_tooltip_button(data: {action: "click->custom#handler"})
+      end
+    end
+
+    it "chains the custom action with the tooltip actions" do
+      action = component.css("button").attr("data-action").value
+      expect(action).to include "click->custom#handler"
+      expect(action).to include "mouseenter->ui--tooltip#showOnHover"
+      expect(action).to include "focusin->ui--tooltip#showOnFocus"
+    end
+  end
+
   context "with multiple instances" do
     let(:components) do
       [
