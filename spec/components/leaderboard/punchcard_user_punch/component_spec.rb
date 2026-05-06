@@ -20,7 +20,7 @@ RSpec.describe Leaderboard::PunchcardUserPunch::Component, type: :component do
       cell = rendered.css(".punchcard-cell").first
       expect(cell.attr("data-l")).to be_nil
       expect(cell.attr("data-century")).to be_nil
-      expect(cell.attr("title")).to eq "no rides"
+      expect(cell.attr("title")).to eq "May 1: no rides"
     end
   end
 
@@ -31,7 +31,7 @@ RSpec.describe Leaderboard::PunchcardUserPunch::Component, type: :component do
       cell = rendered.css(".punchcard-cell").first
       expect(cell.attr("data-l")).to eq "3"
       expect(cell.attr("data-century")).to be_nil
-      expect(cell.attr("title")).to eq "2025-05-01: 20.0 mi"
+      expect(cell.attr("title")).to eq "May 1: 20.0 mi"
     end
   end
 

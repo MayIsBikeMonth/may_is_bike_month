@@ -61,7 +61,7 @@ module Leaderboard
       end
 
       def title
-        level ? "#{@date_string}: #{miles.round(1)} mi" : "no rides"
+        "#{Date.parse(@date_string).strftime("%b %-d")}: #{level ? "#{miles.round(1)} mi" : "no rides"}"
       end
     end
   end
