@@ -1,19 +1,15 @@
-<% if @trigger_in_content %>
-  <%= content %>
+<% if tooltip_button? %>
+  <%= tooltip_button %>
 <% else %>
   <span class="ui-tooltip inline-block" data-controller="ui--tooltip">
-    <span
-      data-ui--tooltip-target="trigger"
-      data-action="<%= UI::Tooltip::Component::TRIGGER_ACTIONS %>"
-      tabindex="0"
-      aria-describedby="<%= tooltip_id %>"
-      class="
-        inline-block rounded focus:outline-none focus-visible:ring-2
-        focus-visible:ring-purple-400
-      "
-    >
-      <%= content %>
-    </span>
+    <%= tag.button(
+      content,
+      type: "button",
+      "aria-label": @text.presence,
+      "aria-describedby": tooltip_id,
+      data: {"ui--tooltip-target": "trigger", action: UI::Tooltip::Component::TRIGGER_ACTIONS},
+      class: "inline-block rounded cursor-help focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+    ) %>
 
     <%= tooltip_span %>
   </span>

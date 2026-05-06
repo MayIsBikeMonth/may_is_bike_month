@@ -18,8 +18,8 @@ RSpec.describe UI::Tooltip::Component, type: :component do
     expect(component.css("[aria-describedby='#{tooltip_id}']")).to be_present
   end
 
-  it "makes the trigger focusable" do
-    expect(component.css("[aria-describedby]").attr("tabindex").value).to eq "0"
+  it "renders the trigger as a button" do
+    expect(component.css("[aria-describedby]").first.name).to eq "button"
   end
 
   context "with a body slot" do

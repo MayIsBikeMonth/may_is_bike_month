@@ -15,14 +15,16 @@ module Leaderboard
       def call
         return tag.span if @upcoming
 
-        render(UI::Tooltip::Component.new(text: tooltip_text, trigger_in_content: true)) do |tooltip|
-          level ? ride_button(tooltip) : no_ride_span(tooltip)
+        render(UI::Tooltip::Component.new(text: tooltip_text)) do |tooltip|
+          tooltip.with_tooltip_button(**button_attrs)
         end
       end
 
       private
 
-      def ride_button(tooltip)
+      def button_attrs
+        return {class: "punchcard-cell"} unless level
+
         data = {
           action: "click->punch#toggle",
           "punch-target": "punch",
@@ -32,16 +34,7 @@ module Leaderboard
         }
         data["user-slug"] = @user_slug if @user_slug
         data[:century] = true if century?
-        tag.button(
-          type: "button",
-          class: button_class,
-          "aria-pressed": "false",
-          **tooltip.trigger_attrs(data:)
-        ) { tooltip.tooltip_span }
-      end
-
-      def no_ride_span(tooltip)
-        tag.span(class: "punchcard-cell", **tooltip.trigger_attrs) { tooltip.tooltip_span }
+        {class: button_class, "aria-pressed": "false", data:}
       end
 
       def button_class
