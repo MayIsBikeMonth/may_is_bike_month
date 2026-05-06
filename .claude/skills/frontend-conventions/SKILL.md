@@ -9,13 +9,12 @@ description: >-
   or any frontend code that touches styling or interactivity. **Also
   trigger before any `mcp__playwright__browser_take_screenshot` call** —
   this skill defines the required `tmp/` filename rule so screenshots
-  don't land in the project root. Stimulus.js is the JavaScript framework;
-  SCSS and CoffeeScript files exist but are deprecated.
+  don't land in the project root. Stimulus.js is the JavaScript framework.
 ---
 
 # Frontend conventions
 
-This project uses **Stimulus.js** for JavaScript interactivity and **Tailwind CSS** for styling. There are SCSS styles and CoffeeScript files, but they are deprecated — don't add to them.
+This project uses **Stimulus.js** for JavaScript interactivity and **Tailwind CSS** for styling.
 
 The `bin/dev` command handles building and updating Tailwind and JS.
 
