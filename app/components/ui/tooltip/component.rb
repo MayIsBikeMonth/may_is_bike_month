@@ -21,6 +21,18 @@ module UI
         @text = text
       end
 
+      def call
+        return tooltip_button if tooltip_button?
+
+        tag.button(
+          type: "button",
+          "aria-label": @text.presence,
+          "aria-describedby": tooltip_id,
+          data: {controller: "ui--tooltip", "ui--tooltip-target": "trigger", action: TRIGGER_ACTIONS},
+          class: "inline-block rounded cursor-help focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+        ) { safe_join([content, tooltip_span]) }
+      end
+
       private
 
       def tooltip_id
