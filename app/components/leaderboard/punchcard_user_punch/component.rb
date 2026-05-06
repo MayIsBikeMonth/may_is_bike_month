@@ -23,29 +23,25 @@ module Leaderboard
       private
 
       def ride_button(tooltip)
-        data = tooltip.trigger_data(extra_action: "click->punch#toggle").merge(
+        data = {
+          action: "click->punch#toggle",
           "punch-target": "punch",
           "punch-id": @punch_id,
           date: @date_string,
           l: level
-        )
+        }
         data["user-slug"] = @user_slug if @user_slug
         data[:century] = true if century?
         tag.button(
           type: "button",
           class: button_class,
           "aria-pressed": "false",
-          "aria-describedby": tooltip.tooltip_id,
-          data:
+          **tooltip.trigger_attrs(data:)
         ) { tooltip.tooltip_span }
       end
 
       def no_ride_span(tooltip)
-        tag.span(
-          class: "punchcard-cell",
-          "aria-describedby": tooltip.tooltip_id,
-          data: tooltip.trigger_data
-        ) { tooltip.tooltip_span }
+        tag.span(class: "punchcard-cell", **tooltip.trigger_attrs) { tooltip.tooltip_span }
       end
 
       def button_class

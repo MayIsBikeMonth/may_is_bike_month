@@ -13,16 +13,12 @@ module UI
         @trigger_in_content = trigger_in_content
       end
 
-      def tooltip_id
-        @tooltip_id ||= "tooltip-#{SecureRandom.hex(4)}"
-      end
-
-      # Data attrs for a consumer-rendered trigger element. In `trigger_in_content`
-      # mode the consumer's element acts as the controller, target, and trigger;
-      # merge `extra_action:` to chain non-tooltip actions like `click->punch#toggle`.
-      def trigger_data(extra_action: nil)
-        action = [extra_action, TRIGGER_ACTIONS].compact.join(" ")
-        {controller: "ui--tooltip", "ui--tooltip-target": "trigger", action:}
+      def trigger_attrs(data: {})
+        action = [data[:action], TRIGGER_ACTIONS].compact.join(" ")
+        {
+          "aria-describedby": tooltip_id,
+          data: {controller: "ui--tooltip", "ui--tooltip-target": "trigger", **data, action:}
+        }
       end
 
       def tooltip_span
@@ -38,6 +34,10 @@ module UI
       end
 
       private
+
+      def tooltip_id
+        @tooltip_id ||= "tooltip-#{SecureRandom.hex(4)}"
+      end
 
       def tooltip_body
         body? ? body : @text
