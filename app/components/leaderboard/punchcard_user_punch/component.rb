@@ -14,39 +14,28 @@ module Leaderboard
 
       def call
         return tag.span if @upcoming
+        return tag.span(class: "punchcard-cell", title:) unless level
 
-        render(UI::Tooltip::Component.new(text: tooltip_text, trigger_in_content: true)) do |tooltip|
-          level ? ride_button(tooltip) : no_ride_span(tooltip)
-        end
-      end
-
-      private
-
-      def ride_button(tooltip)
-        data = tooltip.trigger_data(extra_action: "click->punch#toggle").merge(
+        data = {
+          action: "click->punch#toggle",
           "punch-target": "punch",
           "punch-id": @punch_id,
           date: @date_string,
           l: level
-        )
+        }
         data["user-slug"] = @user_slug if @user_slug
         data[:century] = true if century?
         tag.button(
+          "",
           type: "button",
           class: button_class,
+          title:,
           "aria-pressed": "false",
-          "aria-describedby": tooltip.tooltip_id,
           data:
-        ) { tooltip.tooltip_span }
+        )
       end
 
-      def no_ride_span(tooltip)
-        tag.span(
-          class: "punchcard-cell",
-          "aria-describedby": tooltip.tooltip_id,
-          data: tooltip.trigger_data
-        ) { tooltip.tooltip_span }
-      end
+      private
 
       def button_class
         "punchcard-cell cursor-pointer outline-none transition-shadow " \
@@ -71,7 +60,7 @@ module Leaderboard
         miles >= 100
       end
 
-      def tooltip_text
+      def title
         "#{Date.parse(@date_string).strftime("%b %-d")}: #{level ? "#{miles.round(1)} mi" : "no rides"}"
       end
     end

@@ -16,28 +16,22 @@ RSpec.describe Leaderboard::PunchcardUserPunch::Component, type: :component do
   context "when distance is below the daily requirement" do
     let(:distance_meters) { 1_000 }
 
-    it "renders a cell with no data-l and 'no rides' tooltip" do
+    it "renders a cell with no data-l and 'no rides' title" do
       cell = rendered.css(".punchcard-cell").first
       expect(cell.attr("data-l")).to be_nil
       expect(cell.attr("data-century")).to be_nil
-      expect(cell.attr("title")).to be_nil
-      tooltip = rendered.css('[role="tooltip"]').first
-      expect(tooltip.text).to eq "May 1: no rides"
-      expect(cell.attr("aria-describedby")).to eq tooltip.attr("id")
+      expect(cell.attr("title")).to eq "May 1: no rides"
     end
   end
 
   context "when distance qualifies for a level" do
     let(:distance_meters) { 32_186.88 } # 20 mi => level 3
 
-    it "renders data-l and a tooltip-described cell" do
+    it "renders data-l and a titled cell" do
       cell = rendered.css(".punchcard-cell").first
       expect(cell.attr("data-l")).to eq "3"
       expect(cell.attr("data-century")).to be_nil
-      expect(cell.attr("title")).to be_nil
-      tooltip = rendered.css('[role="tooltip"]').first
-      expect(tooltip.text).to eq "May 1: 20.0 mi"
-      expect(cell.attr("aria-describedby")).to eq tooltip.attr("id")
+      expect(cell.attr("title")).to eq "May 1: 20.0 mi"
     end
   end
 
