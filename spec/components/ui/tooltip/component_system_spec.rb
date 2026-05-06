@@ -15,7 +15,7 @@ RSpec.describe UI::Tooltip::Component, :js, type: :system do
     first_trigger = find("[aria-describedby='#{first_tooltip[:id]}']")
 
     # ----- Initial state ----------------------------------------------
-    expect(first_tooltip.text(:all)).to eq "5–9 mi"
+    expect(first_tooltip.text(:all)).to eq "Daily totals only count rides of 2 miles or more"
     expect(first_tooltip).not_to be_visible
     expect(page).to be_axe_clean.skipping(SKIPPABLE_AXE_RULES)
 
@@ -61,6 +61,13 @@ RSpec.describe UI::Tooltip::Component, :js, type: :system do
 
     find("body").click
     expect(first_tooltip).not_to be_visible
+
+    # ----- Esc closes the tooltip ------------------------------------
+    first_trigger.hover
+    expect(first_tooltip).to be_visible
+    page.send_keys(:escape)
+    expect(first_tooltip).not_to be_visible
+    find("body").hover
 
     # ----- Focus moving to another trigger hides the first ------------
     page.execute_script("arguments[0].focus()", first_trigger)

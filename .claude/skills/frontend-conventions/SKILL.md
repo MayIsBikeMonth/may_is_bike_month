@@ -6,14 +6,15 @@ description: >-
   for time, and ViewComponent rules (keyword arguments, instance variables,
   `helpers.` prefix in templates). Trigger when adding or modifying views
   (`.html.erb`), view components, Stimulus controllers, Tailwind classes,
-  or any frontend code that touches styling or interactivity. Stimulus.js
-  is the JavaScript framework; SCSS and CoffeeScript files exist but are
-  deprecated.
+  or any frontend code that touches styling or interactivity. **Also
+  trigger before any `mcp__playwright__browser_take_screenshot` call** —
+  this skill defines the required `tmp/` filename rule so screenshots
+  don't land in the project root. Stimulus.js is the JavaScript framework.
 ---
 
 # Frontend conventions
 
-This project uses **Stimulus.js** for JavaScript interactivity and **Tailwind CSS** for styling. There are SCSS styles and CoffeeScript files, but they are deprecated — don't add to them.
+This project uses **Stimulus.js** for JavaScript interactivity and **Tailwind CSS** for styling.
 
 The `bin/dev` command handles building and updating Tailwind and JS.
 
@@ -37,4 +38,4 @@ This project uses the ViewComponent gem to render components.
 
 ## Manual browser verification
 
-When using Playwright MCP (`mcp__playwright__browser_take_screenshot`) to verify a change visually, always pass an explicit `filename:` under `tmp/` (e.g. `tmp/tooltip-ride-day.png`). The default tool root is the project root, so plain filenames land in the working tree and need to be cleaned up. `tmp/` is gitignored.
+**Every `mcp__playwright__browser_take_screenshot` call must pass a `filename:` that starts with `tmp/`** (e.g. `tmp/tooltip-ride-day.png`). The MCP tool's default root is the project root — a bare filename like `tooltip.png` lands in the working tree, shows up in `git status`, and has to be cleaned up by hand. `tmp/` is gitignored, so screenshots there stay out of commits and don't pollute the diff. This rule applies to ad-hoc visual verification, not just PR-screenshot capture.
