@@ -22,7 +22,7 @@
     box-sizing: border-box;
   }
   body {
-    @apply bg-purple-0 dark:bg-purple-900 text-purple-900 dark:text-purple-0 font-sans antialiased text-[13px] leading-[1.45];
+    @apply bg-purple-0 dark:bg-purple-900 twtext-color font-sans antialiased text-[13px] leading-[1.45];
   }
   h1 {
     @apply text-2xl;
@@ -46,6 +46,10 @@
 }
 .wrapper-padding-overflow {
   @apply md:px-7 md:-mx-7 px-4 -mx-4;
+}
+
+@utility twtext-color {
+  @apply text-purple-900 dark:text-purple-0;
 }
 
 @layer components {
@@ -167,7 +171,7 @@
   @apply text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
 }
 .hw-combobox__chip {
-  @apply font-mono text-purple-900 dark:text-purple-0 bg-purple-100 dark:bg-purple-700;
+  @apply font-mono twtext-color bg-purple-100 dark:bg-purple-700;
 }
 .hw-combobox {
   min-width: 280px;
