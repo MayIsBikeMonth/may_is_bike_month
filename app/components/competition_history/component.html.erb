@@ -76,12 +76,7 @@
           <% top_placings.each do |competition_user| %>
             <td class="<%= placing_cell_class %>">
               <% if competition_user %>
-                <div
-                  class="
-                    twtext-color font-medium
-                    text-[13px] truncate max-w-36
-                  "
-                >
+                <div class="twtext-color font-medium text-[13px] truncate max-w-36">
                   <%= competition_user.display_name %>
                 </div>
                 <div class="<%= sub_class %> mt-0.5">
@@ -175,12 +170,7 @@
 
           <td class="<%= placing_cell_class %>">
             <% if row.last_place %>
-              <div
-                class="
-                  twtext-color font-medium text-[13px]
-                  truncate max-w-36
-                "
-              >
+              <div class="twtext-color font-medium text-[13px] truncate max-w-36">
                 <%= row.last_place.display_name %>
               </div>
               <div class="<%= sub_class %> mt-0.5">
