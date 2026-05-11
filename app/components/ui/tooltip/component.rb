@@ -10,7 +10,10 @@ module UI
         "focus-visible:ring-purple-400"
 
       renders_one :body
-      renders_one :tooltip_button, ->(**attrs) { tag.button(**trigger_attrs(**attrs)) { tooltip_span } }
+      renders_one :tooltip_button, ->(**attrs, &block) {
+        inner = block ? safe_join([capture(&block), tooltip_span], " ") : tooltip_span
+        tag.button(**trigger_attrs(**attrs)) { inner }
+      }
 
       def initialize(text: nil)
         @text = text
@@ -19,7 +22,7 @@ module UI
       def call
         return tooltip_button if tooltip_button?
 
-        tag.button(**trigger_attrs(class: TRIGGER_CLASS)) { safe_join([content, tooltip_span]) }
+        tag.button(**trigger_attrs(class: TRIGGER_CLASS)) { safe_join([content, tooltip_span], " ") }
       end
 
       private

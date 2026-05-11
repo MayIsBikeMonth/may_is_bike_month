@@ -27,7 +27,7 @@
         <button
           type="button"
           class="
-            text-purple-900 dark:text-purple-0 font-medium text-left truncate
+            twtext-color font-medium text-left truncate
             cursor-pointer outline-none underline decoration-1
             decoration-transparent hover:decoration-current
             aria-pressed:decoration-current aria-pressed:decoration-2
@@ -41,7 +41,7 @@
           <%= @competition_user.display_name %>
         </button>
       <% else %>
-        <span class="text-purple-900 dark:text-purple-0 font-medium truncate">
+        <span class="twtext-color font-medium truncate">
           <%= @competition_user.display_name %>
         </span>
       <% end %>
@@ -84,7 +84,7 @@
         max-lg:col-start-3 max-lg:row-start-1
       "
     >
-      <span class="text-purple-900 dark:text-purple-0 text-[16px] font-medium">
+      <span class="twtext-color text-[16px] font-medium">
         <span class="unit-imperial">
           <%= number_display(meters_to_miles(@competition_user.distance_meters), round_to: 1) %>
           mi

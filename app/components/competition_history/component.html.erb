@@ -1,4 +1,4 @@
-<% num_class = "font-mono text-[13px] font-medium text-purple-900 dark:text-purple-0 tabular-nums" %>
+<% num_class = "font-mono text-[13px] font-medium twtext-color tabular-nums" %>
 <% sub_class = "font-mono text-[11px] text-purple-400 dark:text-purple-300 tabular-nums" %>
 <% head_class = "w-36 min-w-36 text-purple-300 dark:text-purple-400 text-[10px] uppercase tracking-[0.12em] font-medium whitespace-nowrap border-x border-purple-200 dark:border-purple-600" %>
 <% selected_head_class = "#{head_class} bg-purple-200/70 dark:bg-purple-700" %>
@@ -60,12 +60,7 @@
         <tr class="odd:bg-purple-50/60 dark:odd:bg-purple-800/40">
           <td class="<%= cell_class %> whitespace-nowrap">
             <%= link_to competition_path(row.slug), class: "block no-underline" do %>
-              <div
-                class="
-                  font-mono font-medium text-[20px] text-purple-900
-                  dark:text-purple-0 leading-none
-                "
-              >
+              <div class="font-mono font-medium text-[20px] twtext-color leading-none">
                 <%= row.year %>
               </div>
 
@@ -81,12 +76,7 @@
           <% top_placings.each do |competition_user| %>
             <td class="<%= placing_cell_class %>">
               <% if competition_user %>
-                <div
-                  class="
-                    text-purple-900 dark:text-purple-0 font-medium
-                    text-[13px] truncate max-w-36
-                  "
-                >
+                <div class="twtext-color font-medium text-[13px] truncate max-w-36">
                   <%= competition_user.display_name %>
                 </div>
                 <div class="<%= sub_class %> mt-0.5">
@@ -123,7 +113,7 @@
             <td class="<%= selected_cell_class %>">
               <% if competition_user %>
                 <% position = row.position_in_table(competition_user) %>
-                <div class="text-purple-900 dark:text-purple-0 font-medium text-[13px]">
+                <div class="twtext-color font-medium text-[13px]">
                   #<%= number_display(competition_user.rank_in_competition) %>
                 </div>
                 <% if position == :first || position == :second %>
@@ -180,12 +170,7 @@
 
           <td class="<%= placing_cell_class %>">
             <% if row.last_place %>
-              <div
-                class="
-                  text-purple-900 dark:text-purple-0 font-medium text-[13px]
-                  truncate max-w-36
-                "
-              >
+              <div class="twtext-color font-medium text-[13px] truncate max-w-36">
                 <%= row.last_place.display_name %>
               </div>
               <div class="<%= sub_class %> mt-0.5">
