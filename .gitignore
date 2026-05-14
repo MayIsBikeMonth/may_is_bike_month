@@ -44,6 +44,9 @@
 /app/assets/builds/*
 !/app/assets/builds/.keep
 
+# Per-checkout workspace ID (set by bin/workspace_setup)
+.workspace_id
+
 # Ignore local Claude Code settings
 .claude/settings.local.json
 
