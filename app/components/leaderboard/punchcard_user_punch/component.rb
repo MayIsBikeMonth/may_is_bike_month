@@ -69,9 +69,12 @@ module Leaderboard
       end
 
       def tooltip_imperial
-        return "#{date_label}: #{miles.round(1)} mi" if level
-        threshold = meters_to_miles(@competition.daily_distance_requirement).round
-        "#{date_label}: didn't ride #{threshold} miles"
+        @tooltip_imperial ||= if level
+          "#{date_label}: #{miles.round(1)} mi"
+        else
+          threshold = meters_to_miles(@competition.daily_distance_requirement).round
+          "#{date_label}: didn't ride #{threshold} miles"
+        end
       end
 
       def tooltip_metric
