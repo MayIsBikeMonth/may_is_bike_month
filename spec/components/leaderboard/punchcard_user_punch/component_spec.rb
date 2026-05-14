@@ -22,7 +22,8 @@ RSpec.describe Leaderboard::PunchcardUserPunch::Component, type: :component do
       expect(cell.attr("data-century")).to be_nil
       expect(cell.attr("title")).to be_nil
       tooltip = rendered.css('[role="tooltip"]').first
-      expect(tooltip.text).to eq "May 1: didn't ride 2 miles"
+      expect(tooltip.css(".unit-imperial").text).to eq "May 1: didn't ride 2 miles"
+      expect(tooltip.css(".unit-metric").text).to eq "May 1: didn't ride 3 km"
       expect(cell.attr("aria-describedby")).to eq tooltip.attr("id")
     end
   end
@@ -36,7 +37,8 @@ RSpec.describe Leaderboard::PunchcardUserPunch::Component, type: :component do
       expect(cell.attr("data-century")).to be_nil
       expect(cell.attr("title")).to be_nil
       tooltip = rendered.css('[role="tooltip"]').first
-      expect(tooltip.text).to eq "May 1: 20.0 mi"
+      expect(tooltip.css(".unit-imperial").text).to eq "May 1: 20.0 mi"
+      expect(tooltip.css(".unit-metric").text).to eq "May 1: 32.2 km"
       expect(cell.attr("aria-describedby")).to eq tooltip.attr("id")
     end
   end

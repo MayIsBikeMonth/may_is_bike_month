@@ -66,7 +66,8 @@ RSpec.describe Leaderboard::PunchcardUserRow::Component, type: :component do
     expect(cells[1].attr("data-l")).to be_nil
     tooltip_id = cells[1].attr("aria-describedby")
     tooltip = rendered.css("##{tooltip_id}").first
-    expect(tooltip.text).to eq "May 2: didn't ride 2 miles"
+    expect(tooltip.css(".unit-imperial").text).to eq "May 2: didn't ride 2 miles"
+    expect(tooltip.css(".unit-metric").text).to eq "May 2: didn't ride 3 km"
   end
 
   it "marks the century day" do

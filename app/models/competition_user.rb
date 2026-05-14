@@ -108,15 +108,18 @@ class CompetitionUser < ApplicationRecord
   end
 
   def current_date
-    Time.current.in_time_zone(current_timezone).to_date
+    @current_date ||= Time.current.in_time_zone(current_timezone).to_date
+  end
+
+  def current_date_string
+    @current_date_string ||= current_date.to_s
   end
 
   def upcoming?(date_string, distance_meters)
-    current = current_date.to_s
-    return true if date_string > current
+    return true if date_string > current_date_string
     # Today stays "upcoming" until the user clears the daily requirement —
     # otherwise an in-progress day with a short ride would render as an "x".
-    date_string == current && distance_meters < competition.daily_distance_requirement
+    date_string == current_date_string && distance_meters < competition.daily_distance_requirement
   end
 
   def latest_activity
