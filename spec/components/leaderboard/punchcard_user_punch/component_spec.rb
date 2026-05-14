@@ -16,13 +16,13 @@ RSpec.describe Leaderboard::PunchcardUserPunch::Component, type: :component do
   context "when distance is below the daily requirement" do
     let(:distance_meters) { 1_000 }
 
-    it "renders a cell with no data-l and 'no rides' tooltip" do
+    it "renders a cell with no data-l and a 'didn't ride' tooltip" do
       cell = rendered.css(".punchcard-cell").first
       expect(cell.attr("data-l")).to be_nil
       expect(cell.attr("data-century")).to be_nil
       expect(cell.attr("title")).to be_nil
       tooltip = rendered.css('[role="tooltip"]').first
-      expect(tooltip.text).to eq "May 1: no rides"
+      expect(tooltip.text).to eq "May 1: didn't ride 2 miles"
       expect(cell.attr("aria-describedby")).to eq tooltip.attr("id")
     end
   end

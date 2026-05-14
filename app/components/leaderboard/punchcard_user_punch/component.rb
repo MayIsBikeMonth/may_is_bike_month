@@ -61,7 +61,10 @@ module Leaderboard
       end
 
       def tooltip_text
-        "#{Date.parse(@date_string).strftime("%b %-d")}: #{level ? "#{miles.round(1)} mi" : "no rides"}"
+        date_label = Date.parse(@date_string).strftime("%b %-d")
+        return "#{date_label}: #{miles.round(1)} mi" if level
+        threshold_miles = meters_to_miles(@competition.daily_distance_requirement).round
+        "#{date_label}: didn't ride #{threshold_miles} miles"
       end
     end
   end

@@ -8,6 +8,30 @@ RSpec.describe CompetitionUser, type: :model do
     empty_score_hash.except(:ids).merge(periods: periods.map { |prd| prd.merge(empty_score_hash) })
   end
 
+  describe "upcoming?" do
+    let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2026-04-01")) }
+    let(:competition_user) { FactoryBot.create(:competition_user, competition:) }
+    before { allow(competition_user).to receive(:current_date).and_return(Date.parse("2026-04-16")) }
+
+    it "treats future dates as upcoming" do
+      expect(competition_user.upcoming?("2026-04-17", 0)).to be true
+      expect(competition_user.upcoming?("2026-04-17", 100_000)).to be true
+    end
+
+    it "treats past dates as not upcoming" do
+      expect(competition_user.upcoming?("2026-04-15", 0)).to be false
+      expect(competition_user.upcoming?("2026-04-15", 100_000)).to be false
+    end
+
+    it "treats today as upcoming until the daily distance requirement is met" do
+      threshold = competition.daily_distance_requirement
+      expect(competition_user.upcoming?("2026-04-16", 0)).to be true
+      expect(competition_user.upcoming?("2026-04-16", threshold - 1)).to be true
+      expect(competition_user.upcoming?("2026-04-16", threshold)).to be false
+      expect(competition_user.upcoming?("2026-04-16", threshold * 2)).to be false
+    end
+  end
+
   describe "included_activity_types" do
     let(:competition_user) { FactoryBot.create(:competition_user, included_activity_types:) }
     let(:included_activity_types) { nil }

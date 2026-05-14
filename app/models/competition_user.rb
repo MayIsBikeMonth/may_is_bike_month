@@ -111,6 +111,14 @@ class CompetitionUser < ApplicationRecord
     Time.current.in_time_zone(current_timezone).to_date
   end
 
+  def upcoming?(date_string, distance_meters)
+    current = current_date.to_s
+    return true if date_string > current
+    # Today stays "upcoming" until the user clears the daily requirement —
+    # otherwise an in-progress day with a short ride would render as an "x".
+    date_string == current && distance_meters < competition.daily_distance_requirement
+  end
+
   def latest_activity
     if association(:competition_activities_included).loaded?
       competition_activities_included.max_by { |a| a.start_at || Time.at(0) }
