@@ -87,6 +87,12 @@ Take a snapshot and scroll to the bottom to find the comment area. GitHub render
 
 The `<input type="file">` from step 4 is **CSS-hidden** — calling `browser_file_upload` against its ref directly fails with "can only be used when there is related modal state present." First click the visible **"Paste, drop, or click to add files"** button (or "Attach files" toolbar icon) on the comment form to open the native file chooser, then `browser_file_upload` will satisfy that chooser.
 
+**Use a disambiguating selector for the click.** The naive selector `button[data-file-attachment-for="fc-new_comment_field"]` matches **two** elements — the small toolbar icon ("Attach files") AND the larger visible "Add files" button — and Playwright's strict mode will reject it. Likewise `button.Button--invisible.Button--small.Button` matches unrelated buttons on the page (model picker, copilot mentions hint). The reliable selector is the analytics-event attribute on the visible upload button:
+
+```
+button[data-analytics-event*="UPLOAD_BUTTON"]
+```
+
 Upload each image with `browser_file_upload` (takes the element ref and a file paths array). Wait **2–3 seconds between uploads** so GitHub can process each file, then **3–5 seconds after the last upload** before reading URLs in step 6 — GitHub injects the image markup asynchronously after each file finishes processing.
 
 For multiple images, upload them all to the same comment textarea before extracting URLs — this is more efficient than navigating between uploads.
