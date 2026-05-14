@@ -18,11 +18,11 @@ default_local: &default_local
 
 development:
   <<: *default_local
-  database: may_is_bike_month_development<%= ENV["CONDUCTOR_WORKSPACE_NAME"] %>
+  database: may_is_bike_month_development<%= "_#{ENV["WORKSPACE_ID"]}" if ENV["WORKSPACE_ID"] %>
 
 test:
   <<: *default_local
-  database: may_is_bike_month_test<%= ENV["CONDUCTOR_WORKSPACE_NAME"] %><%= ENV["TEST_ENV_NUMBER"] %>
+  database: may_is_bike_month_test<%= "_#{ENV["WORKSPACE_ID"]}" if ENV["WORKSPACE_ID"] %><%= ENV["TEST_ENV_NUMBER"] %>
 
 production:
   <<: *default
