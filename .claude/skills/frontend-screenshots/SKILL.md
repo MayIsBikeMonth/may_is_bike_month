@@ -40,13 +40,22 @@ Most routes don't need sign-in at all — capture anonymous unless the caller sp
 
 If a URL redirects (admin pages redirect to root when the user isn't admin/developer), pause and ask the user to sign in via the Playwright browser window with the appropriate Strava account. Don't capture against a redirected page — the screenshot will show the wrong content.
 
-**Verify identity before capturing.** The dev DB can contain real-looking data. After sign-in, check the navbar dropdown:
+**Verify identity before capturing — but the gate works differently on the application vs. admin layout.**
 
-```js
-document.getElementById('user-menu-button')?.innerText?.trim()
-```
+The dev DB can contain real-looking data. The gates below catch two distinct risks: the wrong-user-signed-in risk (application layout) and the data-on-the-page risk (admin layout).
 
-The text should start with one of the three seeded `display_name` values (`seth herr`, `Old Scott`, `Ali`). If it's set but doesn't match — **stop and ask** (either you're signed in as a non-seed user, PII risk on upload, or the seeds haven't run: `bundle exec rails db:seed`). For anonymous, expect `user-menu-button` to be absent (`null`/`undefined`) and confirm before continuing.
+- **Application layout** (public routes, account, etc.) renders the `UserDropdown::Component`. Check:
+
+  ```js
+  document.getElementById('user-menu-button')?.innerText?.trim()
+  ```
+
+  The text should start with one of the three seeded `display_name` values (`seth herr`, `Old Scott`, `Ali`). If it's set but doesn't match — **stop and ask** (either you're signed in as a non-seed user, PII risk on upload, or the seeds haven't run: `bundle exec rails db:seed`). For anonymous, expect `user-menu-button` to be absent (`null`/`undefined`) and confirm before continuing.
+
+- **Admin layout** (`/admin/...`) does not render the `UserDropdown::Component` — `#user-menu-button` is always absent regardless of who's signed in, so the application-layout selector is not a sign-in check here. Two signals to use instead:
+
+  1. **Access succeeded** — if you're on `/admin/...` (URL didn't redirect to `/`), the controller's role check passed, so you're at least `admin` or `developer`. That's the only identity signal the admin chrome exposes.
+  2. **The PII risk shifts to the data rendered in the page**, not the navbar — admin index pages show full user tables (display name, Strava ID, activities). Before uploading an admin screenshot, **warn the caller that the page contains real user data and ask them to confirm** rather than checking a DOM selector. Don't try to reproduce the application-layout PII gate with a different selector; the gate's job on admin pages is human review.
 
 ## Capture
 
