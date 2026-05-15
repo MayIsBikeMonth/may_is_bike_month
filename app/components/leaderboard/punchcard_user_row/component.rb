@@ -18,15 +18,7 @@ module Leaderboard
       end
 
       def upcoming?(date_string)
-        return true if date_string > current_date_string
-        # Today defaults to "upcoming" (hidden) so we don't show a premature
-        # "no rides" dot on a day that isn't over — but render it as a punch
-        # once the user has activity on it.
-        date_string == current_date_string && distance_meters_on(date_string).zero?
-      end
-
-      def current_date_string
-        @current_date_string ||= @competition_user.current_date.to_s
+        @competition_user.upcoming?(date_string, distance_meters_on(date_string))
       end
 
       def days_count

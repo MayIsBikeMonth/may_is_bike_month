@@ -15,7 +15,8 @@ module Leaderboard
       def call
         return tag.span if @upcoming
 
-        render(UI::Tooltip::Component.new(text: tooltip_text)) do |tooltip|
+        render(UI::Tooltip::Component.new(text: tooltip_imperial)) do |tooltip|
+          tooltip.with_body { tooltip_body }
           tooltip.with_tooltip_button(**button_attrs)
         end
       end
@@ -60,8 +61,30 @@ module Leaderboard
         miles >= 100
       end
 
-      def tooltip_text
-        "#{Date.parse(@date_string).strftime("%b %-d")}: #{level ? "#{miles.round(1)} mi" : "no rides"}"
+      def tooltip_body
+        safe_join([
+          tag.span(tooltip_imperial, class: "unit-imperial"),
+          tag.span(tooltip_metric, class: "unit-metric hidden")
+        ])
+      end
+
+      def tooltip_imperial
+        @tooltip_imperial ||= if level
+          "#{date_label}: #{miles.round(1)} mi"
+        else
+          threshold = meters_to_miles(@competition.daily_distance_requirement).round
+          "#{date_label}: didn't ride #{threshold} miles"
+        end
+      end
+
+      def tooltip_metric
+        return "#{date_label}: #{(@distance_meters / 1000.0).round(1)} km" if level
+        threshold = (@competition.daily_distance_requirement / 1000.0).round
+        "#{date_label}: didn't ride #{threshold} km"
+      end
+
+      def date_label
+        @date_label ||= Date.parse(@date_string).strftime("%b %-d")
       end
     end
   end

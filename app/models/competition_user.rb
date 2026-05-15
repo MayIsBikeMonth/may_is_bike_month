@@ -108,7 +108,12 @@ class CompetitionUser < ApplicationRecord
   end
 
   def current_date
-    Time.current.in_time_zone(current_timezone).to_date
+    @current_date ||= Time.current.in_time_zone(current_timezone).to_date
+  end
+
+  def upcoming?(date_string, distance_meters)
+    return true if date_string > current_date_string
+    date_string == current_date_string && distance_meters < competition.daily_distance_requirement
   end
 
   def latest_activity
@@ -146,6 +151,10 @@ class CompetitionUser < ApplicationRecord
   end
 
   private
+
+  def current_date_string
+    @current_date_string ||= current_date.to_s
+  end
 
   def dates_before_current_date
     return [] unless competition&.start_date

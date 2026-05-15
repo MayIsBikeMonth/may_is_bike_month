@@ -66,7 +66,8 @@ RSpec.describe Leaderboard::PunchcardUserRow::Component, type: :component do
     expect(cells[1].attr("data-l")).to be_nil
     tooltip_id = cells[1].attr("aria-describedby")
     tooltip = rendered.css("##{tooltip_id}").first
-    expect(tooltip.text).to eq "May 2: no rides"
+    expect(tooltip.css(".unit-imperial").text).to eq "May 2: didn't ride 2 miles"
+    expect(tooltip.css(".unit-metric").text).to eq "May 2: didn't ride 3 km"
   end
 
   it "marks the century day" do
@@ -104,6 +105,16 @@ RSpec.describe Leaderboard::PunchcardUserRow::Component, type: :component do
         expect(today_cell.name).to eq "button"
         expect(today_cell["data-date"]).to eq "2026-04-16"
         expect(rendered.css(%([data-punch-activities-for="#{user.slug}-2026-04-16"])).count).to eq 1
+      end
+    end
+
+    context "when today's activity is below the daily distance requirement" do
+      let(:user_daily) { {"2026-04-16" => {distance_meters: 1_000, elevation_meters: 10}} }
+
+      it "keeps today as an upcoming plain span (no x) until the daily requirement is met" do
+        today_cell = rendered.css("div.h-7 > *")[15]
+        expect(today_cell.name).to eq "span"
+        expect(today_cell["class"]).to be_nil
       end
     end
 
