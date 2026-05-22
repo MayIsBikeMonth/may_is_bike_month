@@ -1,0 +1,42 @@
+# Server provisioning
+
+An [Ansible](https://www.ansible.com/) playbook that prepares a fresh Ubuntu server for [Kamal](https://kamal-deploy.org/) deploys. Run this once against a new droplet before `bin/kamal setup`.
+
+Vendored from [guillaumebriday/kamal-ansible-manager](https://github.com/guillaumebriday/kamal-ansible-manager) at commit [`4d4e4bd`](https://github.com/guillaumebriday/kamal-ansible-manager/commit/4d4e4bd5093301ee18e8d7a2e97861d2e4cf03be) (2025-05-18, MIT — see `LICENSE`). The Scaleway provisioning role has been removed — this app deploys to DigitalOcean.
+
+## What it does
+
+Installs and configures, for Ubuntu only:
+
+- [Docker](https://docs.docker.com/engine/install/ubuntu/)
+- [Fail2ban](https://github.com/fail2ban/fail2ban)
+- [UFW](https://wiki.ubuntu.com/UncomplicatedFirewall) (allows SSH, HTTP, HTTPS)
+- [NTP](https://ubuntu.com/server/docs/network-ntp)
+- Swap, via [geerlingguy.swap](https://github.com/geerlingguy/ansible-role-swap)
+
+It also removes [Snap](https://snapcraft.io/) and disables SSH password login.
+
+## Usage
+
+From the `ansible/` directory:
+
+```bash
+ansible-galaxy install -r requirements.yml
+
+ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts.ini playbook.yml
+```
+
+`hosts.ini` is checked in with the production droplet IP — same one in `config/deploy.yml`.
+
+## Configuring vars
+
+Override variables in `playbook.yml`. For example:
+
+```yml
+vars:
+  security_autoupdate_reboot: "true"
+  security_autoupdate_reboot_time: "03:00"
+  swap_file_size_mb: "1024"
+```
+
+See [geerlingguy.swap defaults](https://github.com/geerlingguy/ansible-role-swap/blob/master/defaults/main.yml) for swap options.
