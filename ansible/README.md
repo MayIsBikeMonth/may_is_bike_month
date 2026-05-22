@@ -21,13 +21,12 @@ It also removes [Snap](https://snapcraft.io/) and disables SSH password login.
 From the `ansible/` directory:
 
 ```bash
-cp hosts.ini.example hosts.ini
-# edit hosts.ini, replacing <host1> with your droplet IP
-
 ansible-galaxy install -r requirements.yml
 
 ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts.ini playbook.yml
 ```
+
+`hosts.ini` is checked in with the production droplet IP — same one in `config/deploy.yml`.
 
 ## Configuring vars
 
