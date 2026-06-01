@@ -168,6 +168,10 @@ class CompetitionActivity < ApplicationRecord
     (created_at || Time.current) > competition_end_at_time
   end
 
+  def manual_entry_after_competition_ended?
+    manual_entry? && entered_after_competition_ended?
+  end
+
   def strava_distance_meters
     strava_data&.dig("distance")
   end
@@ -243,7 +247,7 @@ class CompetitionActivity < ApplicationRecord
   end
 
   def included_distance_meters
-    if manual_entry? && entered_after_competition_ended?
+    if manual_entry_after_competition_ended?
       0
     else
       strava_distance_meters

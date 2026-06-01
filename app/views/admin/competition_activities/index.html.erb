@@ -42,8 +42,9 @@
     if ca.distance_meters
       safe_join([
         tag.span(safe_join([number_display(meters_to_miles(ca.distance_meters), round_to: 1), " mi"]), class: "unit-imperial"),
-        tag.span(safe_join([number_display(ca.distance_meters / 1000.0, round_to: 1), " km"]), class: "unit-metric hidden")
-      ])
+        tag.span(safe_join([number_display(ca.distance_meters / 1000.0, round_to: 1), " km"]), class: "unit-metric hidden"),
+        (tag.div("manual entry after competition ended", class: "less-strong") if ca.manual_entry_after_competition_ended?)
+      ].compact)
     end
   end
 
