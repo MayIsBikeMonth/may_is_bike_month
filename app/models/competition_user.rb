@@ -134,6 +134,11 @@ class CompetitionUser < ApplicationRecord
     competition.included_competition_user_ids_score_ordered.size
   end
 
+  def elevation_winner?
+    return false unless included_in_competition
+    id == competition.elevation_victor_id
+  end
+
   def everyday_rider?
     dates_before_current_date.all? { |date| activity_dates.include?(date.to_s) }
   end

@@ -248,6 +248,30 @@ RSpec.describe CompetitionUser, type: :model do
     end
   end
 
+  describe "elevation_winner?" do
+    let(:competition) { FactoryBot.create(:competition, start_date: Date.parse("2024-05-01")) }
+    # competition_user2 is 1st place (more days), competition_user1 is 2nd
+    let!(:competition_user1) { FactoryBot.create(:competition_user, competition:, score_data: {dates: ["2024-05-01"], distance: 10_000, elevation: 500}) }
+    let!(:competition_user2) { FactoryBot.create(:competition_user, competition:, score_data: {dates: ["2024-05-01", "2024-05-02"], distance: 20_000, elevation: 900}) }
+    let!(:competition_user3) { FactoryBot.create(:competition_user, competition:, included_in_competition: false, score_data: {dates: ["2024-05-01"], distance: 50_000, elevation: 9_000}) }
+
+    it "is the highest-elevation included rider who isn't in 1st place" do
+      expect(competition.elevation_victor_id).to eq competition_user1.id
+      expect(competition_user1.elevation_winner?).to be_truthy
+      expect(competition_user2.elevation_winner?).to be_falsey # 1st place is excluded
+      expect(competition_user3.elevation_winner?).to be_falsey # not included, despite most elevation
+    end
+
+    context "when no non-1st rider has elevation" do
+      let!(:competition_user1) { FactoryBot.create(:competition_user, competition:, score_data: {dates: ["2024-05-01"], distance: 10_000, elevation: 0}) }
+
+      it "has no winner" do
+        expect(competition.elevation_victor_id).to be_nil
+        expect(competition_user1.elevation_winner?).to be_falsey
+      end
+    end
+  end
+
   describe "scoring" do
     let(:competition) { FactoryBot.create(:competition, start_date: Time.parse("2024-05-01")) }
     let(:competition_user1) { FactoryBot.create(:competition_user, competition:) }
