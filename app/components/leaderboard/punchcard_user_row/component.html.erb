@@ -48,12 +48,9 @@
         </button>
 
         <% if @competition_user.elevation_winner? %>
-          <span
-            class="text-[13px] leading-none whitespace-nowrap"
-            title="Elevation victory — most elevation, not in 1st place"
-          >
-            ⛰️🍰
-          </span>
+          <%= render(UI::Tooltip::Component.new(text: "Elevation leader (person with the most elevation not in first place)")) do %>
+            <span class="text-[13px] leading-none whitespace-nowrap">⛰️🍰</span>
+          <% end %>
         <% end %>
       </div>
     </div>

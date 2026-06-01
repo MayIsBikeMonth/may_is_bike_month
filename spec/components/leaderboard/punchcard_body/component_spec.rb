@@ -18,7 +18,7 @@ RSpec.describe Leaderboard::PunchcardBody::Component, type: :component do
   let(:third_place) { competition_user_with(display_name: "Third Place", strava_id: "third", score: 2.0, elevation: 500.0) }
   let(:competition_users) { [first_place, second_place, third_place] }
   let(:rendered) { render_inline(described_class.new(competition:, competition_users:)) }
-  let(:badge) { rendered.css('span[title*="Elevation victory"]') }
+  let(:badge) { rendered.css('[aria-label*="Elevation leader"]') }
 
   it "marks the highest-elevation rider who isn't in 1st place" do
     expect(badge.count).to eq 1
