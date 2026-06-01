@@ -29,7 +29,7 @@
         <%= helpers.image_tag("strava_logo.svg", alt: "Strava", class: "w-3.5 h-3.5 block") %>
       </a>
 
-      <div class="flex items-center min-w-0">
+      <div class="flex items-center min-w-0 gap-1.5">
         <button
           type="button"
           class="
@@ -46,6 +46,12 @@
         >
           <%= @competition_user.display_name %>
         </button>
+
+        <% if @competition_user.elevation_winner? %>
+          <%= render(UI::Tooltip::Component.new(text: "Elevation leader (person with the most elevation not in first place)")) do %>
+            <span class="text-[13px] leading-none whitespace-nowrap">⛰️🍰</span>
+          <% end %>
+        <% end %>
       </div>
     </div>
 

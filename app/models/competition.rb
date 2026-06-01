@@ -78,6 +78,15 @@ class Competition < ApplicationRecord
     @included_competition_user_ids_score_ordered ||= competition_users_included.score_ordered.pluck(:id)
   end
 
+  # The rider with the most elevation who isn't in 1st place wins elevation victory
+  def elevation_victor_id
+    return @elevation_victor_id if defined?(@elevation_victor_id)
+
+    @elevation_victor_id = competition_users_included.score_ordered.to_a.drop(1)
+      .select { |competition_user| competition_user.elevation_meters.positive? }
+      .max_by(&:elevation_meters)&.id
+  end
+
   def in_period?(passed_dates_or_times)
     return false if passed_dates_or_times.blank?
     activity_dates = dates_array_from(passed_dates_or_times)
