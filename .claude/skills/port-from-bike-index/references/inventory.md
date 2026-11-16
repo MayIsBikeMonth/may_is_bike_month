@@ -13,7 +13,7 @@ Write each row so the next port can act on it without re-deriving: name what's m
 | `admin-data-api` skill | Talks to bike_index's `AdminData` production API; MIBM has no equivalent. |
 | `honeybadger-debugging` skill | Built on bike_index's `bin/binx_hb` script and Honeybadger projects. |
 | `production-log-inspection` skill | Reads bike_index's production log host. |
-| Upstream-only `UI::` components | Not pulled until something in MIBM renders them — ask the user which to bring over (SKILL.md Step 3). |
+| Blocklisted `UI::` components (SKILL.md Step 3) | Each needs a model MIBM doesn't have. The model is named in the list. |
 | `Atoms::*` components | Out of scope by namespace. |
 
 ## Cautionary ledger

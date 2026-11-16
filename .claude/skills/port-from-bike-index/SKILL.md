@@ -22,7 +22,7 @@ description: >-
 **Default posture: prefer bike_index.** When the two genuinely differ, **adopt bike_index's version** — even if MIBM's looks richer, even if upstream *dropped* a feature, even if the change looks lateral. "MIBM's is ahead" is not a reason to keep it; the goal is to track upstream. The only reasons to deviate are mechanical, and they're about *how you adapt*, never about rejecting:
 
 - **The fork axes** (below) — you still adopt upstream's *change*, spelled in MIBM's dialect.
-- **A missing dependency** (Step 3) — a component needs a model/subsystem MIBM lacks. That's a **user decision**, not a reason to silently keep MIBM's version — stop and ask.
+- **A missing model** (Step 3): the component is blocklisted. Any other missing dependency gets ported with the component, or raised with the user if it's a whole subsystem. Neither is a reason to quietly keep MIBM's version.
 
 If you think there's a third reason, you're probably rationalizing — **ask the user**. (An MIBM-only feature upstream lacks is fine to keep as an *additive extension on top of* upstream's version, never instead of it.)
 
@@ -106,7 +106,18 @@ Grep each upstream-only controller identifier across `app spec`. **Zero hits is 
 
 ## Step 3 — Decide per file: port, adapt, or skip
 
-**Components MIBM already has track upstream fully.** For **upstream-only `UI::` components**, list them for the user and port the ones they pick — don't add unused components on your own, and don't decide a skip on your own either. Several need models MIBM lacks and are expected to come back as skips: `UI::AddressDisplay`, `UI::ShortId`, and `UI::Forms::{AddressGroup, ComboboxManufacturer, ComboboxManufacturerOptions, ComboboxState, LegacyFormWell, TextEditor, Turnstile}`. Record each decision in `references/inventory.md`.
+**Every upstream `UI::` component ports, except one that needs a model MIBM doesn't have.** That includes upstream-only ones nothing here renders yet. Don't pick which to pull; keep the blocklist of model-dependent components instead, each naming the model it needs:
+
+- **`UI::AddressDisplay`**: `AddressRecord`
+- **`UI::ColorSwatch`**: `Color`
+- **`UI::Forms::AddressGroup`**: `Country`
+- **`UI::Forms::ComboboxManufacturer`** and **`ComboboxManufacturerOptions`**: `Manufacturer`, `BParam`
+- **`UI::Forms::ComboboxState`** (and its controller): `State`, `StatesAndCountries`
+- **`UI::Forms::Email`**: `EmailDomain`
+- **`UI::Forms::LegacyFormWell`**: `AddressRecord`, `Country`, `State`, `Bike`
+- **`UI::Forms::Turnstile`** (and its controller): `EmailDomain`, plus the `Integrations::Turnstile` service
+
+Check what a component's `component.rb`/`.html.erb` calls, not its preview. A preview that queries an absent model (`UI::Chart`'s `Bike` preview, for example) gets static data, and the component still ports. Only a model counts. A missing helper, service or gem gets ported along with the component: `GraphingHelper` for `UI::Chart`, and `BlobUrl` for `UI::Forms::Files` with its CarrierWave branch dropped. The exception is a dependency the size of a subsystem, like `UI::Forms::TextEditor`'s Lexxy. Ask about that one. When upstream adds a component that needs an absent model, add it to this list and tell the user.
 
 Per file:
 
