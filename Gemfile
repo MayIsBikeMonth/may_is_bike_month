@@ -28,6 +28,7 @@ gem "pagy" # pagination
 gem "chartkick" # Display charts
 gem "groupdate" # Required for charts
 gem "hotwire_combobox" # Accessible autocomplete + multiselect chip picker
+gem "inline_svg" # render SVGs inline and give them classes
 
 # Users
 gem "devise"

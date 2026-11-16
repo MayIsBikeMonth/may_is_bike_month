@@ -4,36 +4,55 @@ module UI
   module Tooltip
     class Component < ApplicationComponent
       TRIGGER_ACTIONS = "mouseenter->ui--tooltip#showOnHover mouseleave->ui--tooltip#hideOnHover " \
-        "focusin->ui--tooltip#showOnFocus focusout->ui--tooltip#hideOnFocusout"
+        "focusin->ui--tooltip#showPersistent click->ui--tooltip#showPersistent " \
+        "focusout->ui--tooltip#hideOnFocusout"
 
-      TRIGGER_CLASS = "inline-block rounded cursor-help focus:outline-none focus-visible:ring-2 " \
-        "focus-visible:ring-purple-400"
+      TRIGGER_CLASS = "inline-block rounded cursor-help " \
+        "focus:outline-none focus:ring-3 focus:ring-blue-500/40"
+
+      BUTTON_CLASS = "keep-with-previous inline-flex items-center justify-center h-4 w-4 rounded-full " \
+        "bg-gray-200 text-gray-700 hover:bg-gray-300 " \
+        "dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 " \
+        "text-2xs font-bold cursor-help " \
+        "focus:outline-none focus:ring-3 focus:ring-blue-500/40"
+
+      SURFACE_CLASS = "bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
 
       renders_one :body
       renders_one :tooltip_button, ->(**attrs, &block) {
-        inner = block ? safe_join([capture(&block), tooltip_span], " ") : tooltip_span
-        tag.button(**trigger_attrs(**attrs)) { inner }
+        tag.button(**trigger_attrs(class: BUTTON_CLASS, **attrs)) { block ? capture(&block) : "?" }
       }
 
       def initialize(text: nil)
         @text = text
       end
 
+      # The controller and its hover/focus actions live on the wrapping span so
+      # the trigger and the tooltip are siblings — a link in the tooltip body
+      # can't be nested inside the trigger button.
       def call
-        return tooltip_button if tooltip_button?
-
-        tag.button(**trigger_attrs(class: TRIGGER_CLASS)) { safe_join([content, tooltip_span], " ") }
+        tag.span(class: "inline-block", data: {controller: "ui--tooltip", action: TRIGGER_ACTIONS}) do
+          safe_join([trigger, tooltip_span], " ")
+        end
       end
 
       private
 
+      # With no trigger content, fall back to the "?" button — the default way
+      # tooltips are rendered.
+      def trigger
+        return tooltip_button if tooltip_button?
+        return tag.button(**trigger_attrs(class: BUTTON_CLASS)) { "?" } if content.blank?
+
+        tag.button(**trigger_attrs(class: TRIGGER_CLASS)) { content }
+      end
+
       def trigger_attrs(data: {}, **extra_attrs)
-        action = [data[:action], TRIGGER_ACTIONS].compact.join(" ")
         {
           type: "button",
           "aria-label": @text.presence,
           "aria-describedby": tooltip_id,
-          data: {controller: "ui--tooltip", "ui--tooltip-target": "trigger", **data, action:},
+          data: {"ui--tooltip-target": "trigger", **data},
           **extra_attrs
         }
       end
@@ -46,15 +65,24 @@ module UI
         body? ? body : @text
       end
 
+      # The controller drops pointer-events-none once the tooltip is held open
       def tooltip_span
         tag.span(
-          tooltip_body,
+          safe_join([tooltip_body, arrow_span]),
           role: "tooltip",
           id: tooltip_id,
           data: {"ui--tooltip-target": "tooltip"},
-          class: "hidden pointer-events-none whitespace-nowrap rounded bg-purple-900 px-2 " \
-            "py-1 text-xs text-white border border-purple-400 z-50 " \
-            "dark:border-purple-300 dark:bg-purple-100 dark:text-purple-900"
+          class: "twtext-color hidden pointer-events-none whitespace-normal w-max max-w-[min(24rem,90vw)] rounded text-left " \
+            "px-2 py-1 font-sans text-xs font-normal normal-case border shadow-lg #{SURFACE_CLASS}"
+        )
+      end
+
+      # The controller positions it and picks which two borders show
+      def arrow_span
+        tag.span(
+          "aria-hidden": true,
+          data: {"ui--tooltip-target": "arrow"},
+          class: "absolute h-2 w-2 rotate-45 border-solid #{SURFACE_CLASS}"
         )
       end
     end

@@ -8,9 +8,11 @@ module UI
         md: "h-15 w-15"
       }.freeze
 
-      def initialize(text: nil, size: :md)
+      # A nil color_class leaves the svg inheriting currentColor from its surroundings
+      def initialize(text: nil, size: :md, color_class: "text-slate-400 dark:text-blue-800")
         @text = text
         @size = SIZES.key?(size) ? size : :md
+        @color_class = color_class
       end
 
       def call
@@ -30,19 +32,11 @@ module UI
       private
 
       def spinner_svg
-        classes = "animate-spin text-slate-400 dark:text-purple-700 #{SIZES[@size]}"
+        classes = ["animate-spin", @color_class.presence, SIZES[@size]].compact.join(" ")
         classes = "inline #{classes}" if inline?
         classes = "mx-auto mt-4 #{classes}" unless inline?
 
-        content_tag(:svg, class: classes, xmlns: "http://www.w3.org/2000/svg",
-          fill: "none", viewBox: "0 0 24 24") do
-          safe_join([
-            tag.circle(class: "opacity-25", cx: "12", cy: "12", r: "10",
-              stroke: "currentColor", "stroke-width": "4"),
-            tag.path(class: "opacity-75", fill: "currentColor",
-              d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z")
-          ])
-        end
+        helpers.inline_svg_tag("kelsey/illustrations/bike_wheel.svg", class: classes, aria_hidden: true)
       end
     end
   end

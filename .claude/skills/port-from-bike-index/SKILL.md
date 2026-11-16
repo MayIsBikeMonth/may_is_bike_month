@@ -109,15 +109,12 @@ Grep each upstream-only controller identifier across `app spec`. **Zero hits is 
 **Every upstream `UI::` component ports, except one that needs a model MIBM doesn't have.** That includes upstream-only ones nothing here renders yet. Don't pick which to pull; keep the blocklist of model-dependent components instead, each naming the model it needs:
 
 - **`UI::AddressDisplay`**: `AddressRecord`
-- **`UI::ColorSwatch`**: `Color`
 - **`UI::Forms::AddressGroup`**: `Country`
 - **`UI::Forms::ComboboxManufacturer`** and **`ComboboxManufacturerOptions`**: `Manufacturer`, `BParam`
 - **`UI::Forms::ComboboxState`** (and its controller): `State`, `StatesAndCountries`
-- **`UI::Forms::Email`**: `EmailDomain`
 - **`UI::Forms::LegacyFormWell`**: `AddressRecord`, `Country`, `State`, `Bike`
-- **`UI::Forms::Turnstile`** (and its controller): `EmailDomain`, plus the `Integrations::Turnstile` service
 
-Check what a component's `component.rb`/`.html.erb` calls, not its preview. A preview that queries an absent model (`UI::Chart`'s `Bike` preview, for example) gets static data, and the component still ports. Only a model counts. A missing helper, service or gem gets ported along with the component: `GraphingHelper` for `UI::Chart`, and `BlobUrl` for `UI::Forms::Files` with its CarrierWave branch dropped. The exception is a dependency the size of a subsystem, like `UI::Forms::TextEditor`'s Lexxy. Ask about that one. When upstream adds a component that needs an absent model, add it to this list and tell the user.
+Check what a component's `component.rb`/`.html.erb` calls, not its preview. A preview that queries an absent model (`UI::Chart`'s `Bike` preview, for example) gets static data, and the component still ports. Only a model counts, and only when the component needs its records: a constant on an absent model comes over on its own (`UI::Forms::Email` brings `EmailDomain::RESERVED_REGEX`, `UI::ColorSwatch` brings `Color`'s two cover-up constants, each as a plain module). A missing helper, service or gem gets ported along with the component: `GraphingHelper` for `UI::Chart`, and `BlobUrl` for `UI::Forms::Files` with its CarrierWave branch dropped. The exception is a dependency the size of a subsystem, like `UI::Forms::TextEditor`'s Lexxy or `UI::Forms::Turnstile`'s Cloudflare integration. Ask about those. When upstream adds a component that needs an absent model, add it to this list and tell the user.
 
 Per file:
 

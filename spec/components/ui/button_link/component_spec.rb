@@ -3,50 +3,166 @@
 require "rails_helper"
 
 RSpec.describe UI::ButtonLink::Component, type: :component do
-  let(:component) { render_inline(described_class.new(**options)) }
-  let(:options) { {text: "Click me", href: "/test"} }
+  let(:instance) { described_class.new(**options) }
+  let(:component) { render_inline(instance) }
+  let(:options) { {text: "Link", href: "/test"} }
 
-  it "renders a link with secondary style" do
-    expect(component).to have_link("Click me", href: "/test")
+  it "renders a link styled as a button" do
+    expect(component).to have_css("a[href='/test']")
+    expect(component).to have_text("Link")
     html = component.to_html
-    expect(html).to include("bg-gray-50")
-    expect(html).to include("cursor-pointer")
+    expect(html).to include("inline-flex")
+    expect(html).to include("bg-white/80")
   end
 
-  context "primary" do
-    let(:options) { {text: "Go", href: "/test", color: :primary} }
-    it "renders with primary style" do
-      html = component.to_html
-      expect(html).to include("bg-purple-500")
-      expect(html).to include("text-white")
+  context "with primary color" do
+    let(:options) { {text: "Primary", href: "/test", color: :primary} }
+
+    it "renders primary styles" do
+      expect(component.to_html).to include("bg-blue-600")
     end
   end
 
-  context "error" do
-    let(:options) { {text: "Delete", href: "/test", color: :error} }
-    it "renders with error style" do
-      expect(component.to_html).to include("bg-red-600")
+  it "always applies the active classes (inert until data-active/pressed)" do
+    tokens = component.css("a").first["class"].split
+    expect(tokens).to include("is-active:ring-2", "is-active:bg-purple-500")
+    expect(component).to have_no_css("a[data-active]")
+  end
+
+  context "active: true" do
+    let(:options) { {text: "Active", href: "/test", active: true, data: {turbo: false}} }
+
+    it "flags the link data-active, keeping the passed data attributes" do
+      expect(component).to have_css("a[data-active='true'][data-turbo='false']")
     end
   end
 
-  context "active" do
-    let(:options) { {text: "Active", href: "/test", active: true} }
-    it "renders with active ring" do
-      expect(component.to_html).to include("ring-2")
+  context "disabled: true" do
+    let(:options) { {text: "Disabled", href: "/test", disabled: true, aria: {controls: "panel"}} }
+
+    # An <a> takes no disabled attribute, so dropping the href is what makes it
+    # unfollowable — aria-disabled is what says so, and what the styling hangs off
+    it "renders a link that can't be followed, keeping the passed aria" do
+      expect(component).to have_css("a[aria-disabled='true'][role='link'][tabindex='-1']", text: "Disabled")
+      expect(component).to have_no_css("a[href]")
+      expect(component).to have_css("a[aria-controls='panel']")
+      expect(component.css("a").first["class"].split).to include("aria-disabled:opacity-50", "aria-disabled:cursor-not-allowed")
+    end
+
+    it "keeps hover off it" do
+      hovers = component.css("a").first["class"].split.grep(/hover:/)
+      expect(hovers).to be_present
+      expect(hovers.grep_v(/not-aria-disabled:/)).to eq([])
+    end
+
+    context "with method" do
+      let(:options) { {text: "Follow", href: "/follow", method: :post, disabled: true} }
+
+      it "disables the button the form submits with" do
+        expect(component).to have_css("form button[type='submit'][disabled]", text: "Follow")
+      end
     end
   end
 
-  context "with block content" do
-    let(:component) { render_inline(described_class.new(href: "/test", color: :primary)) { "Block content" } }
-    it "uses block as link text" do
-      expect(component).to have_link("Block content", href: "/test")
+  context "with aria-controls" do
+    let(:options) { {text: "Toggle", href: "/test", aria: {controls: "panel"}} }
+
+    it "renders aria-controls" do
+      expect(component.to_html).to include('aria-controls="panel"')
     end
   end
 
   context "with extra html options" do
-    let(:options) { {text: "Link", href: "/test", data: {turbo: false}} }
-    it "passes data attributes" do
-      expect(component).to have_css('a[data-turbo="false"]')
+    let(:options) { {text: "Turbo", href: "/test", data: {turbo: false}} }
+
+    it "passes through html options" do
+      expect(component).to have_css("a[data-turbo='false']")
+    end
+  end
+
+  context "with html_class" do
+    let(:options) { {text: "Wide", href: "/test", html_class: "w-full"} }
+
+    it "builds it into the link's classes" do
+      expect(component.css("a").first["class"].split).to include("w-full", "inline-flex")
+    end
+  end
+
+  context "with class in html_options" do
+    let(:options) { {text: "Wide", href: "/test", class: "w-full"} }
+
+    it "raises, naming html_class" do
+      expect { instance }.to raise_error(ArgumentError, /you must use the keyword arg html_class/)
+    end
+  end
+
+  context "with an unknown color" do
+    let(:options) { {text: "Link", href: "/test", color: :invalid} }
+
+    it "raises, naming the colors it takes" do
+      expect { instance }.to raise_error(ArgumentError, /unknown color :invalid, expected one of: primary, secondary/)
+    end
+  end
+
+  context "with confirm" do
+    let(:options) { {text: "Delete", href: "/thing", confirm: "Are you sure? It can't be undone"} }
+
+    it "guards the link, escaping the message" do
+      expect(component.css("a").first["onclick"]).to eq("return confirm('Are you sure? It can\\'t be undone')")
+    end
+  end
+
+  context "with a size for link color" do
+    let(:options) { {text: "Link", href: "/test", color: :link, size: :lg} }
+
+    it "raises" do
+      expect { instance }.to raise_error(ArgumentError, /size is not supported/)
+    end
+  end
+
+  context "with method" do
+    let(:options) { {text: "Follow", href: "/follow", color: :primary, method: :post} }
+
+    it "renders a button_to form submitting to the href" do
+      expect(component).to have_css("form[action='/follow'][method='post']")
+      expect(component).to have_css("form button[type='submit']", text: "Follow")
+      expect(component.css("button").first["class"]).to include("bg-blue-600")
+    end
+
+    context "with form attributes" do
+      let(:options) { {text: "Follow", href: "/follow", method: :post, form: {class: "inline-block"}} }
+
+      it "puts them on the wrapping form" do
+        expect(component).to have_css("form.inline-block")
+      end
+    end
+
+    context "with a non-post method" do
+      let(:options) { {text: "Delete", href: "/thing", method: :delete} }
+
+      it "adds the _method hidden field" do
+        expect(component).to have_css("input[type='hidden'][name='_method'][value='delete']", visible: :hidden)
+      end
+    end
+
+    context "with confirm" do
+      let(:options) { {text: "Delete", href: "/thing", method: :delete, confirm: "Are you sure? It can't be undone"} }
+
+      it "renders a Turbo link rather than a form, gated by an escaped onclick" do
+        expect(component).to have_no_css("form")
+        link = component.css("a").first
+        expect(link["onclick"]).to eq("return confirm('Are you sure? It can\\'t be undone')")
+        expect(link["data-turbo"]).to eq "true"
+        expect(link["data-turbo-method"]).to eq "delete"
+      end
+    end
+
+    context "with params" do
+      let(:options) { {text: "Assign", href: "/thing", method: :post, params: {membership_id: 42}} }
+
+      it "renders params as hidden fields" do
+        expect(component).to have_css("input[type='hidden'][name='membership_id'][value='42']", visible: :hidden)
+      end
     end
   end
 end

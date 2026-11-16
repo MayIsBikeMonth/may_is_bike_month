@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe UI::TableColumn::Component do
-  let(:no_sort_args) { {render_sortable: false, current_sort: nil, current_direction: "desc", sortable_url: nil} }
+  let(:no_sort_args) { {render_sortable: false, current_sort: nil, current_direction: "desc", sortable_url: nil, sort_icon: nil} }
 
   describe "#th_classes" do
     let(:col) { described_class.new(label: "Name") }
@@ -28,6 +28,18 @@ RSpec.describe UI::TableColumn::Component do
       expect(col.th_classes(bordered: false)).to include("w-32")
       expect(col.td_classes(bordered: false)).not_to include("w-32")
     end
+
+    context "in a table with sortable columns" do
+      it "is normal weight when not sortable" do
+        expect(col.th_classes(bordered: false, sortable_table: true)).to include("font-normal")
+        expect(col.th_classes(bordered: false)).not_to include("font-normal")
+      end
+
+      it "keeps a sortable header's weight" do
+        col = described_class.new(sortable: "name")
+        expect(col.th_classes(bordered: false, sortable_table: true)).not_to include("font-normal")
+      end
+    end
   end
 
   describe "#td_classes" do
@@ -40,7 +52,7 @@ RSpec.describe UI::TableColumn::Component do
     end
 
     it "includes unbordered classes when not bordered" do
-      expect(col.td_classes(bordered: false)).to include("border-b border-purple-100")
+      expect(col.td_classes(bordered: false)).to include("border-b border-gray-100")
     end
   end
 

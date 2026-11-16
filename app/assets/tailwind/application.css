@@ -1,6 +1,31 @@
 @import "tailwindcss";
+@import "./combobox.css";
+@import "./code_json.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* A table's card running to the page's edges: once its .twwiderow has dropped to one column,
+ * the same 672px as .twfullbleed, or its table is wider than the card, which ui--table-overflow flags */
+@custom-variant table-bleed {
+  @container twwiderow (width < 672px) {
+    @slot;
+  }
+
+  &:where([data-table-bleed=true], [data-table-bleed=true] *) {
+    @slot;
+  }
+}
+
+/* The selected/pressed state of a button, link or menu item, however it's flagged —
+ * including a <label> around a checked radio (UI::Forms::RadioButtonGroup).
+ * Keep it the last @custom-variant: tailwind sorts custom variants in declaration
+ * order, and sorting after `dark` is what lets is-active:* beat the resting,
+ * hover and dark colors it overrides without `!important`.
+ *
+ * The :not()s keep a disabled element from looking active, and tie the specificity of
+ * the hovers they beat (guarded not-disabled:not-aria-disabled:) — sorting last only
+ * settles ties, so without them a pressed button renders its hover color. */
+@custom-variant is-active (&:is([data-active="true"], [aria-pressed="true"], [aria-current], :active, :has(> :checked)):not(:disabled):not([aria-disabled="true"]));
 
 @theme {
   --color-purple-0: #f3edf8;
@@ -15,7 +40,13 @@
   --color-purple-900: #1c0f25;
   --font-sans: "IBM Plex Sans", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", monospace;
+
+  /* 11px, below tailwind's own xs; the line box stays xs's 1rem */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: calc(1 / 0.6875);
 }
+
+@import "./bike_index_components.css";
 
 @layer base {
   * {
@@ -53,22 +84,6 @@
 }
 
 @layer components {
-  .twlink {
-    @apply cursor-pointer underline decoration-1 hover:decoration-2 active:decoration-4 active:text-purple-700 dark:active:text-purple-0 text-purple-500 dark:text-purple-200;
-  }
-
-  .twlabel {
-    @apply block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer;
-  }
-
-  .twinput {
-    @apply block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm
-      text-gray-900 placeholder:text-gray-400
-      focus:border-purple-400 focus:ring-2 focus:ring-purple-400/40 focus:outline-none
-      dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500
-      dark:focus:border-purple-300 dark:focus:ring-purple-300/40;
-  }
-
   .dropdown-menu a,
   .dropdown-menu button {
     @apply block px-4 py-2 text-sm text-gray-700 no-underline hover:bg-purple-100 dark:text-gray-100 dark:hover:bg-purple-700 dark:hover:text-white w-full text-left;
@@ -82,36 +97,31 @@
     @apply opacity-60;
   }
 
-  .ui-table tbody tr:nth-child(odd),
-  dl.ui-table > *:nth-child(odd) {
+  /* Style tables with CSS selectors to prevent caching issues */
+  .ui-table tbody tr:nth-child(odd) {
     @apply bg-white dark:bg-purple-900;
   }
-  .ui-table tbody tr:nth-child(even),
-  dl.ui-table > *:nth-child(even) {
+  .ui-table tbody tr:nth-child(even) {
     @apply bg-purple-0 dark:bg-purple-800;
   }
+  /* Default first/last column rounding/borders. ui_table_controller.js
+     reapplies these to the first/last *visible* column when columns are hidden. */
   .ui-table thead tr th:first-child {
     @apply rounded-tl-sm;
   }
   .ui-table thead tr th:last-child {
     @apply rounded-tr-sm;
   }
-  .ui-table tbody tr:last-child td:first-child {
+  .ui-table :is(tbody:last-child, tfoot) tr:last-child :is(td, th):first-child {
     @apply rounded-bl-sm;
   }
-  .ui-table tbody tr:last-child td:last-child {
+  .ui-table :is(tbody:last-child, tfoot) tr:last-child :is(td, th):last-child {
     @apply rounded-br-sm;
   }
-  dl.ui-table > *:first-child {
-    @apply rounded-t-sm;
-  }
-  dl.ui-table > *:last-child {
-    @apply rounded-b-sm;
-  }
-  .ui-table-bordered tbody tr td:first-child {
+  .ui-table-bordered :is(tbody, tfoot) tr :is(td, th):first-child {
     @apply ui-table-bordered-td-first;
   }
-  .ui-table-bordered tbody tr td:last-child {
+  .ui-table-bordered :is(tbody, tfoot) tr :is(td, th):last-child {
     @apply ui-table-bordered-td-last;
   }
   .ui-table-bordered thead tr th:first-child {
@@ -120,8 +130,22 @@
   .ui-table-bordered thead tr th:last-child {
     @apply ui-table-bordered-th-last;
   }
-  dl.ui-table-bordered {
-    @apply border border-purple-200 dark:border-purple-700 rounded-sm overflow-hidden;
+  /* A table with no thead, as UI::Table::List is, draws its top edge on its first row */
+  .ui-table-bordered tbody:first-child tr:first-child :is(td, th) {
+    @apply border-t;
+  }
+  .ui-table tbody:first-child tr:first-child :is(td, th):first-child {
+    @apply rounded-tl-sm;
+  }
+  .ui-table tbody:first-child tr:first-child :is(td, th):last-child {
+    @apply rounded-tr-sm;
+  }
+  /* A 🔎 or tooltip "?" stays on the line of what it follows. Only the whole cell
+     works: Chromium still breaks after a preceding element that wraps. A .keep-together
+     already holds it with its last word, so the rest of the cell can wrap. UI::Table::List
+     has no scroller to spill into, so its cells always wrap */
+  .ui-table:not(.ui-table-list) td:has(.keep-with-previous:not(.keep-together *)) {
+    @apply whitespace-nowrap;
   }
 }
 .twlink.active {
@@ -143,38 +167,6 @@
 
 .form-control-check {
   @apply cursor-pointer;
-}
-
-/* Hotwire Combobox theming — match purple/mono aesthetic */
-:root {
-  --hw-text-color: var(--color-purple-900);
-  --hw-border-color: var(--color-purple-200);
-  --hw-active-bg-color: var(--color-purple-100);
-  --hw-component-bg-color: white;
-  --hw-option-bg-color: white;
-  --hw-group-bg-color: white;
-  --hw-focus-color: var(--color-purple-400);
-  --hw-border-radius: 0.5rem;
-  --hw-font-size: 13px;
-  --hw-combobox-width--multiple: 100%;
-}
-.dark {
-  --hw-text-color: var(--color-purple-0);
-  --hw-border-color: var(--color-purple-600);
-  --hw-active-bg-color: var(--color-purple-800);
-  --hw-component-bg-color: var(--color-purple-900);
-  --hw-option-bg-color: var(--color-purple-900);
-  --hw-group-bg-color: var(--color-purple-900);
-  --hw-focus-color: var(--color-purple-300);
-}
-.hw-combobox__label {
-  @apply text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
-}
-.hw-combobox__chip {
-  @apply font-mono twtext-color bg-purple-100 dark:bg-purple-700;
-}
-.hw-combobox {
-  min-width: 280px;
 }
 
 .btn {
@@ -267,6 +259,21 @@
     .punch-activities-container:not(.hidden\!) {
       opacity: 0;
       transform: translateY(-4px);
+    }
+  }
+}
+
+@layer base {
+  /* Tailwind's shadows take this color over the one they're written with, which is pitched for
+   * a light page and doesn't show on a dark one. It doesn't inherit, so every element sets it.
+   * A shadow that's a chosen color rather than a shadow sets its own: dark:shadow-gray-300 */
+  * {
+    @variant dark {
+      &,
+      &::before,
+      &::after {
+        --tw-shadow-color: rgb(0 0 0 / 0.5);
+      }
     }
   }
 }

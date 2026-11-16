@@ -15,7 +15,7 @@ RSpec.describe "Landing page", :js, type: :system do
     visit root_path
 
     expect(page).to have_css("h1", text: /MIBM/)
-    expect(page).to be_axe_clean.skipping(SKIPPABLE_AXE_RULES)
+    expect_axe_clean
     expect(page).to have_no_css("html.dark")
 
     find("button[data-open-modal='user-settings-modal']").click

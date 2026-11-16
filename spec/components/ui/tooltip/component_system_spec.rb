@@ -5,104 +5,232 @@ require "rails_helper"
 RSpec.describe UI::Tooltip::Component, :js, type: :system do
   let(:preview_url) { "/lookbook/preview/ui/tooltip/variants" }
 
-  it "shows on hover/focus, latches on click, layers in front, and is accessible in light & dark" do
-    visit preview_url
-
-    tooltips = all("[role='tooltip']", visible: :all)
-    expect(tooltips.size).to be >= 2
-
-    first_tooltip = tooltips.first
-    first_trigger = find("[aria-describedby='#{first_tooltip[:id]}']")
-
-    # ----- Initial state ----------------------------------------------
-    expect(first_tooltip.text(:all)).to eq "Daily totals only count rides of 2 miles or more"
-    expect(first_tooltip).not_to be_visible
-    expect(page).to be_axe_clean.skipping(SKIPPABLE_AXE_RULES)
-
-    # ----- Hover reveals; mouseleave hides ----------------------------
-    first_trigger.hover
-    expect(first_tooltip).to be_visible
-    expect(tooltip_position(first_tooltip[:id])).to include("top" => be_present, "left" => be_present)
-
-    find("body").hover
-    expect(first_tooltip).not_to be_visible
-
-    # ----- Hover-only state isn't dismissed by click outside ----------
-    first_trigger.hover
-    page.execute_script("document.body.click()")
-    expect(first_tooltip).to be_visible
-
-    find("body").hover
-    expect(first_tooltip).not_to be_visible
-
-    # ----- Focus reveals; click outside dismisses ---------------------
-    page.execute_script("arguments[0].focus()", first_trigger)
-    expect(first_tooltip).to be_visible
-
-    find("body").click
-    expect(first_tooltip).not_to be_visible
-
-    # ----- Focus + hover stays through mouseleave; blur clears it -----
-    page.execute_script("arguments[0].focus()", first_trigger)
-    first_trigger.hover
-    expect(first_tooltip).to be_visible
-
-    find("body").hover
-    expect(first_tooltip).to be_visible
-
-    page.execute_script("arguments[0].blur()", first_trigger)
-    expect(first_tooltip).not_to be_visible
-
-    # ----- Click latches: stays after mouseleave, dismissed by outside click ----
-    first_trigger.hover
-    first_trigger.click
-    find("body").hover
-    expect(first_tooltip).to be_visible
-
-    find("body").click
-    expect(first_tooltip).not_to be_visible
-
-    # ----- Esc closes the tooltip ------------------------------------
-    first_trigger.hover
-    expect(first_tooltip).to be_visible
-    page.send_keys(:escape)
-    expect(first_tooltip).not_to be_visible
-    find("body").hover
-
-    # ----- Focus moving to another trigger hides the first ------------
-    page.execute_script("arguments[0].focus()", first_trigger)
-    expect(first_tooltip).to be_visible
-
-    page.execute_script("arguments[0].focus()", find("[aria-describedby='#{tooltips.last[:id]}']"))
-    expect(first_tooltip).not_to be_visible
-
-    # ----- Layering: clicking each trigger in order raises z-index ----
-    # The trailing tooltip from the previous phase is closed by the first
-    # iteration's focus shift, then reopens on its own iteration with a
-    # freshly bumped z-index, so we can run the loop directly against the
-    # carried state.
-    tooltips.each { |t| find("[aria-describedby='#{t[:id]}']").click }
-    z_indexes = tooltips.map { |t| tooltip_z_index(t[:id]).to_i }
-    expect(z_indexes).to eq z_indexes.sort
-    expect(z_indexes.last).to be > z_indexes.first
-
-    # ----- Dark mode renders and is accessible ------------------------
-    visit "#{preview_url}?lookbook[display][theme]=dark"
-
-    expect(page).to have_css("[role='tooltip']", visible: :all)
-    expect(page).to be_axe_clean.skipping(SKIPPABLE_AXE_RULES)
-  end
-
   def tooltip_position(id)
     page.evaluate_script(<<~JS)
       (() => {
         const style = document.getElementById(#{id.to_json}).style
-        return { top: style.top, left: style.left }
+        return { top: style.top, left: style.left, zIndex: style.zIndex, position: style.position }
       })()
     JS
   end
 
-  def tooltip_z_index(id)
-    page.evaluate_script("document.getElementById(#{id.to_json}).style.zIndex")
+  def selected_tooltip_id
+    page.evaluate_script(<<~JS)
+      (() => {
+        const node = document.getSelection().anchorNode
+        return node && node.parentElement.closest("[role='tooltip']")?.id
+      })()
+    JS
+  end
+
+  def top_layer?(id)
+    page.evaluate_script("document.getElementById(#{id.to_json}).matches(':popover-open')")
+  end
+
+  # Not a popover's UA overflow, which clips its arrow, nor its centering, which would part it from its trigger
+  def popover_styles(id)
+    page.evaluate_script(<<~JS)
+      (() => {
+        const tooltip = document.getElementById(#{id.to_json})
+        const [box, trigger] = [tooltip, document.querySelector(`[aria-describedby="${tooltip.id}"]`)].map((element) => element.getBoundingClientRect())
+        const gap = Math.round(Math.min(Math.abs(trigger.top - box.bottom), Math.abs(box.top - trigger.bottom)))
+        return { overflow: getComputedStyle(tooltip).overflow, gap }
+      })()
+    JS
+  end
+
+  def scroll_container(delta)
+    page.driver.with_playwright_page { it.mouse.wheel(delta, 0) }
+  end
+
+  # The top layer stacks popovers in the order they were shown
+  def last_shown_tooltip
+    page.evaluate_script("window.shownTooltips.at(-1)")
+  end
+
+  it "renders accessibly and supports the full hover/focus/click state machine" do
+    visit preview_url
+
+    tooltips = all("[role='tooltip']", visible: :all)
+    expect(tooltips.size).to be >= 2
+    # Capture ids up front; re-reading them off the node handles late in this
+    # long test intermittently raises Playwright StaleReferenceError.
+    tooltip_ids = tooltips.map { |t| t[:id] }
+    expect(tooltip_ids.uniq.size).to eq tooltips.size
+    expect_axe_clean
+
+    tooltip = tooltips.first
+    trigger = find("[aria-describedby='#{tooltip_ids.first}']")
+    expect(trigger.tag_name).to eq "button"
+    expect(tooltip.text(:all)).to eq "5–9 mi"
+    expect(tooltip).not_to be_visible
+
+    body_tooltip = find(".tooltip-body-imperial", visible: :all).find(:xpath, "ancestor::*[@role='tooltip']", visible: :all)
+    expect(body_tooltip).to have_css(".tooltip-body-imperial", text: "5 mi", visible: :all)
+
+    # Hover shows, mouseleave hides - in the top layer, which no ancestor's opacity or overflow reaches
+    trigger.hover
+    expect(tooltip).to be_visible
+    expect(top_layer?(tooltip_ids.first)).to be true
+    expect(tooltip_position(tooltip_ids.first)).to include("top" => be_present, "left" => be_present)
+    expect(popover_styles(tooltip_ids.first)).to eq("overflow" => "visible", "gap" => 8)
+    find("body").hover
+    expect(tooltip).not_to be_visible
+    expect(top_layer?(tooltip_ids.first)).to be false
+
+    # Focus shows, body click hides
+    page.execute_script("arguments[0].focus()", trigger)
+    expect(tooltip).to be_visible
+    find("body").click
+    expect(tooltip).not_to be_visible
+
+    # Hover-only is NOT dismissed by a body click, only by mouseleave
+    trigger.hover
+    page.execute_script("document.body.click()")
+    expect(tooltip).to be_visible
+    find("body").hover
+    expect(tooltip).not_to be_visible
+
+    # Esc closes the tooltip
+    trigger.hover
+    expect(tooltip).to be_visible
+    page.send_keys(:escape)
+    expect(tooltip).not_to be_visible
+    find("body").hover
+
+    # Esc leaves focus on the trigger, so clicking it again has to reopen
+    trigger.click
+    page.send_keys(:escape)
+    expect(tooltip).not_to be_visible
+    trigger.click
+    find("body").hover
+    expect(tooltip).to be_visible
+    find("body").click
+    expect(tooltip).not_to be_visible
+
+    # Hover-then-focus stays visible until BOTH clear
+    trigger.hover
+    page.execute_script("arguments[0].focus()", trigger)
+    find("body").hover
+    expect(tooltip).to be_visible
+    find("body").click
+    expect(tooltip).not_to be_visible
+
+    # Focus-then-hover is symmetric: stays through mouseleave until the click outside
+    page.execute_script("arguments[0].focus()", trigger)
+    trigger.hover
+    find("body").hover
+    expect(tooltip).to be_visible
+    find("body").click
+    expect(tooltip).not_to be_visible
+
+    # Focus moving to another trigger hides the first
+    triggers = tooltip_ids.map { |id| find("[aria-describedby='#{id}']") }
+    page.execute_script("arguments[0].focus()", triggers.first)
+    expect(tooltips.first).to be_visible
+    page.execute_script("arguments[0].focus()", triggers.last)
+    expect(tooltips.first).not_to be_visible
+    find("body").click
+
+    # Focus leaving with nowhere else to land - the browser window losing focus to
+    # another program - is not a dismissal
+    page.execute_script("arguments[0].focus()", trigger)
+    find("body").hover
+    expect(tooltip).to be_visible
+    page.execute_script("arguments[0].blur()", trigger)
+    expect(tooltip).to be_visible
+    find("body").click
+    expect(tooltip).not_to be_visible
+
+    # Clicking the trigger persists the tooltip through mouseleave until a body click,
+    # and only a held-open tooltip takes pointer events rather than being click-through
+    trigger.hover
+    expect(tooltip[:class]).to include "pointer-events-none"
+    trigger.click
+    expect(tooltip[:class]).not_to include "pointer-events-none"
+    find("body").hover
+    expect(tooltip).to be_visible
+    find("body").click
+    expect(tooltip).not_to be_visible
+
+    # Clicking the tooltip text leaves it open, so it can be selected
+    trigger.click
+    tooltip.click
+    find("body").hover
+    expect(tooltip).to be_visible
+    tooltip.double_click
+    expect(tooltip).to be_visible
+    expect(selected_tooltip_id).to eq tooltip_ids.first
+    # A selection dragged past the tooltip's edge ends in a click outside it
+    drag_select(tooltip, past: 120)
+    expect(tooltip).to be_visible
+    find("body").click
+    expect(tooltip).not_to be_visible
+
+    # Tabbing from the trigger into a link in the popup keeps the tooltip open
+    commit_tooltip = find("a[href*='commit']", visible: :all).find(:xpath, "ancestor::*[@role='tooltip']", visible: :all)
+    commit_trigger = find("[aria-describedby='#{commit_tooltip[:id]}']")
+    commit_trigger.click
+    expect(commit_tooltip).to be_visible
+    commit_trigger.send_keys(:tab)
+    expect(commit_tooltip).to be_visible
+    expect(page.evaluate_script("document.activeElement.tagName")).to eq "A"
+    # Esc from a link inside the tooltip returns focus to the trigger
+    page.send_keys(:escape)
+    expect(commit_tooltip).not_to be_visible
+    expect(page.evaluate_script("document.activeElement.getAttribute('aria-describedby')")).to eq commit_tooltip[:id]
+    find("body").click
+    expect(commit_tooltip).not_to be_visible
+
+    # One hovered goes above one held open, and one held open goes back above it once hovered again
+    page.execute_script(<<~JS)
+      window.shownTooltips = []
+      document.addEventListener("toggle", (event) => event.newState === "open" && window.shownTooltips.push(event.target.id), true)
+    JS
+    first, second, third = tooltip_ids.first(3)
+    find("[aria-describedby='#{first}']").click
+    find("[aria-describedby='#{second}']").click
+    find("[aria-describedby='#{third}']").hover
+    expect(find_by_id(second)).to be_visible
+    page.document.synchronize { raise Capybara::ExpectationNotMet unless last_shown_tooltip == third }
+    find("[aria-describedby='#{second}']").hover
+    page.document.synchronize { raise Capybara::ExpectationNotMet unless last_shown_tooltip == second }
+
+    # Held open in a scroll container, hidden while its trigger's scrolled out of view
+    scrolled_trigger = find("button", text: "scrolled trigger")
+    scrolled = find_by_id(scrolled_trigger["aria-describedby"], visible: :all)
+    scrolled_trigger.click
+    expect(scrolled).to be_visible
+    scroll_container(400)
+    expect(page).to have_css("##{scrolled[:id]}:popover-open", visible: :hidden)
+    scroll_container(-400)
+    expect(page).to have_css("##{scrolled[:id]}", visible: true)
+  end
+
+  it "raises by z-index in a browser without popovers" do
+    page.driver.with_playwright_page do |playwright_page|
+      playwright_page.add_init_script(script: <<~JS)
+        for (const name of ["popover", "showPopover", "hidePopover", "togglePopover"]) delete HTMLElement.prototype[name]
+      JS
+    end
+    visit preview_url
+
+    first, second = all("[role='tooltip']", visible: :all).first(2).map { it[:id] }
+    find("[aria-describedby='#{first}']").click
+    find("[aria-describedby='#{second}']").hover
+    expect(find_by_id(first)).to be_visible
+    expect(find_by_id(second)).to be_visible
+    first_position, second_position = [first, second].map { tooltip_position(it) }
+    expect(second_position["zIndex"].to_i).to be > first_position["zIndex"].to_i
+    expect(second_position["position"]).to eq "absolute"
+    find("body").click
+    expect(find_by_id(first, visible: :all)).not_to be_visible
+  end
+
+  it "is accessible in dark mode" do
+    visit "#{preview_url}?_display=#{CGI.escape({theme: "dark"}.to_json)}"
+
+    expect(page).to have_css("[role='tooltip']", visible: :all)
+    expect_axe_clean
   end
 end

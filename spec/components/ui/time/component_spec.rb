@@ -5,10 +5,9 @@ require "rails_helper"
 RSpec.describe UI::Time::Component, type: :component do
   let(:instance) { described_class.new(**options) }
   let(:component) { render_inline(instance) }
-  let(:options) { {time:, format:, timezone_if_different:} }
+  let(:options) { {time:, format:} }
   let(:time) { Time.utc(2024, 1, 15, 14, 30, 0) }
   let(:format) { nil }
-  let(:timezone_if_different) { false }
 
   describe "#render?" do
     context "when time is present" do
@@ -44,6 +43,14 @@ RSpec.describe UI::Time::Component, type: :component do
         expect(component).to have_content("2024-01-15T14:30:00+0000")
         expect(component).to have_css("span.localizeTime")
         expect(component).to have_css("span.preciseTime")
+      end
+    end
+
+    context "with preposition" do
+      let(:options) { {time:, format:, preposition: true} }
+
+      it "renders the class the localizer reads" do
+        expect(component).to have_css("span.localizeTime.withPreposition")
       end
     end
 
