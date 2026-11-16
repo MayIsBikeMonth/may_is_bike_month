@@ -42,7 +42,7 @@ From a session with history, hand this skill to one `general-purpose` subagent (
   `bundle exec rails db:migrate`, and read `log/development.log` before blaming the capture.
   A gem the merge bumped does the same: the running server keeps the version it booted with, so a
   method the new one adds is a `NoMethodError` until `bin/rails restart`.
-- If `mcp__playwright__*` tools aren't registered, tell the user to run `claude mcp add playwright -- npx -y @playwright/mcp@latest` and restart.
+- If `mcp__playwright__*` tools aren't registered, drive the `playwright` npm package (a devDependency, which the system specs use) from a node script under `tmp/` instead. Everything below still applies, with one headless browser per loop rather than a shared one to close.
 - **Check the workspace DB has records before planning a real-page capture** — `Competition.count`
   comes back 0 in a workspace whose `db:seed` never ran, so only preview routes render. Seed it
   (`bundle exec rails db:seed` — it's the per-workspace throwaway DB), or capture previews.
