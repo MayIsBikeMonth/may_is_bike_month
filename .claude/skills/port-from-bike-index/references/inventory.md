@@ -15,8 +15,6 @@ Write each row so the next port can act on it without re-deriving: name what's m
 | `production-log-inspection` skill | Reads bike_index's production log host. |
 | Blocklisted `UI::` components (SKILL.md Step 3) | Each needs a model MIBM doesn't have. The model is named in the list. |
 | `Atoms::*` components | Out of scope by namespace. |
-| `UI::Forms::TextEditor`, `UI::Forms::Turnstile` (+ controllers) | Need Lexxy / Action Text and a Cloudflare Turnstile integration respectively. Awaiting the user's call on porting the subsystem. |
-| `UI::Forms::NestedFields` (+ controller) | Only works against an association declared with `accepts_nested_attributes_for`, and no MIBM model has one. Awaiting the user's call. |
 | `UI::Alerts::FlashMessage`'s hash flash (`translation_key:` + `url:`) and its preview | Its only messages are bike_index's password sign-in prompts. MIBM's copy maps Devise's `:alert` to `:error` instead, since upstream's `UI::Alerts::Base` rejects `:alert`. |
 | `UI::Forms::Files::Upload`'s CarrierWave branch, `BlobUrl`, the `with_existing_image` preview and the thumbnail spec | MIBM stores nothing through CarrierWave and has no model with an attachment; the attached URL is `url_for(attachment)`. |
 | `period_select`, `time_range`, `drag_handle`, `alerts/*`, `forms/*`, `table/column_settings`, `definition_list/row` `.en.yml` sidecars | Inlined (fork axis). |
