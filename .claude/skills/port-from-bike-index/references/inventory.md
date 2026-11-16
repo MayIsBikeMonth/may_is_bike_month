@@ -28,4 +28,8 @@ Write each row so the next port can act on it without re-deriving: name what's m
 
 ## Cautionary ledger
 
-Ports that *looked* fine but broke a live page — none yet. Add a row (what, what the port changed, what broke) whenever one bites.
+Ports that *looked* fine but broke a live page. Add a row whenever one bites.
+
+| What | What the port changed | What broke |
+| --- | --- | --- |
+| `combobox.css` | Upstream's file replaced the `.hw-combobox` rules in `application.css`, dropping MIBM's `min-width: 280px` | `/history`'s picker, in a shrinking flex item, collapsed to a truncated placeholder. The width now sits on that form |
