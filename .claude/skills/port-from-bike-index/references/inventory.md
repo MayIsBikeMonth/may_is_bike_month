@@ -4,7 +4,7 @@ Read from `port-from-bike-index` when writing the end-of-port table, or before d
 
 Everything a port leaves behind gets a row: a whole skill not ported, a section dropped from a skill that was, a skipped or reverted component, a preview, a config file. Skill omissions are the easiest to forget because they're prose, not a missing file.
 
-**Fork-axis transforms don't go here.** Stripping `tw:`, inlining `translation()`, `UI::Forms::` → `Form::`, and bike → competition examples are *how* things came over, not things left behind.
+**Fork-axis transforms don't go here.** Stripping `tw:`, inlining `translation()`, and bike → competition examples are *how* things came over, not things left behind.
 
 Write each row so the next port can act on it without re-deriving: name what's missing in MIBM, and what would have to change for the row to go away. Delete a row once it no longer holds.
 

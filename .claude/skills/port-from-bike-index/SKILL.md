@@ -5,8 +5,8 @@ description: >-
   `bikeindex/bike_index` repo into May is Bike Month. The two repos share a
   design-system and agent-skill lineage but have **forked**, so a verbatim copy
   breaks things — this skill covers the fork axes (the `tw:` Tailwind prefix,
-  `translation()`/`.en.yml` i18n, the `UI::Forms::*` → `Form::*` namespace, and
-  domain/infra divergence), how to fetch and diff bike_index's files, and the
+  `translation()`/`.en.yml` i18n, and domain/infra
+  divergence), how to fetch and diff bike_index's files, and the
   per-file decision procedure for what to port, adapt, or skip. **Use this
   whenever the user asks to port / pull / sync / bring over / update anything
   from bike_index** — "pull in updates from bike_index", "sync our components
@@ -36,7 +36,7 @@ A naive `cp` looks like it works — lint passes, the file renders — and then 
 
 2. **i18n.** bike_index localizes components with `translation(".key")` backed by a `component.en.yml` sidecar. MIBM has neither — inline the English string at each call site (read the sidecar's value first) and drop the sidecar.
 
-3. **Namespace.** Upstream's form components are `UI::Forms::*` under `app/components/ui/forms/`; MIBM's are **`Form::*` under `app/components/form/`** (`Form::Group`, `Form::Input`, `Form::RadioButtonGroup`). Upstream's `UI::Alerts::{FlashMessage,ObjectError}` are MIBM's **`Alerts::{FlashMessages,ObjectErrors}`** (`app/components/alerts/`). Diff upstream's `ui/forms/<x>` against MIBM's `form/<x>`, and rename class references, spec paths, and `ui--forms--*` Stimulus identifiers to match. Upstream's `Atoms::` (`app/components/atoms/`) and every other non-`UI` namespace is out of scope — a component moving from `UI::` into `Atoms::` is leaving the tracked surface, not a rename to follow.
+3. **Namespaces are not a fork axis.** Component names and paths match upstream's exactly — `UI::Forms::*`, `UI::Alerts::*`, `UI::Table::*`, `UI::DefinitionList::*`. When upstream moves or renames a `UI::` component, follow it and migrate every MIBM caller. Upstream's `Atoms::` (`app/components/atoms/`) and every other non-`UI` namespace is out of scope — a component moving from `UI::` into `Atoms::` is leaving the tracked surface, not a rename to follow.
 
 4. **Domain & infra.** bike_index is bikes / orgs / marketplace with password sign-in; MIBM is users / competitions / Strava activities with **Strava-OAuth-only** sign-in. Translate:
    - `BikeIndexFormBuilder` → `MayIsBikeMonthFormBuilder`
@@ -100,7 +100,7 @@ comm -23 ...  # MIBM-only: leave alone, never delete
 
 Grep each upstream-only controller identifier across `app spec`. **Zero hits is a finding, not a pass** — the producer is usually a component change in the same upstream commit, so grep *upstream* for what emits it.
 
-**Read which direction a diff goes.** After a sync, most remaining diffs on shared files are MIBM's adapted copies vs upstream's originals — upstream "adding" `tw:`, `translation()`, `UI::Forms::`, or bike examples. Re-porting that regresses MIBM. Upstream adding genuinely new prose or behavior: adopt it.
+**Read which direction a diff goes.** After a sync, most remaining diffs on shared files are MIBM's adapted copies vs upstream's originals — upstream "adding" `tw:`, `translation()`, or bike examples. Re-porting that regresses MIBM. Upstream adding genuinely new prose or behavior: adopt it.
 
 **After the first sync, diff upstream against itself.** Record the upstream SHA you synced to in the commit message; next time, `git -C /tmp/binx_clone diff --stat <last-sha> HEAD -- <trees>` isolates exactly what's new with no fork-axis noise (`git fetch --unshallow --filter=blob:none` if the shallow clone lacks it). With no recorded SHA, pick a candidate by the date of MIBM's last sync and bucket files: MIBM == candidate and candidate != HEAD → port; MIBM != candidate and candidate != HEAD → merge; candidate == HEAD → already decided.
 
