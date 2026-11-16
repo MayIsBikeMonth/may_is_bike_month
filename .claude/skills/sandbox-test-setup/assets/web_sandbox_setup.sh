@@ -110,8 +110,8 @@ setup_system() {
   sudo -u postgres psql -tc "SELECT 1 FROM pg_roles WHERE rolname='rails'" | grep -q 1 ||
     sudo -u postgres psql -c "CREATE USER rails WITH SUPERUSER PASSWORD 'password';"
 
-  # Playwright MCP's `chrome` channel: a wrapper,
-  # since we're root and a plain symlink dies without --no-sandbox
+  # Playwright MCP's `chrome` channel: a wrapper, since we're root and a plain symlink
+  # dies without --no-sandbox
   local chrome_dir
   chrome_dir="$(ls -d /opt/pw-browsers/chromium-*/chrome-linux* 2>/dev/null | sort -V | tail -1)"
   if [ -x "$chrome_dir/chrome" ]; then
