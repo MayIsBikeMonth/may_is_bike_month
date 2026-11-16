@@ -14,7 +14,7 @@ RSpec.describe UI::Forms::Email::Component, type: :component do
     expect(component).to have_css("input.twinput[type='email'][name='user[email]'][data-ui--forms--email-target='input']")
     expect(component).to_not have_css("input[required]")
     expect(component).to have_css("[aria-live='polite'] p[class~='hidden'][data-ui--forms--email-target='warning']",
-      text: "That doesn't look like your real email address. Please enter an email address where you receive email")
+      text: "That doesn't look like your real email address. Please enter an email address where you receive email", normalize_ws: true)
     expect(component).to have_css("[aria-live='polite'] div button[class~='hidden!'][data-ui--forms--email-target='override']",
       text: "Submit form anyway")
   end

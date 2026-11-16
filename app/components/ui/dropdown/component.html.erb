@@ -3,12 +3,7 @@
     <span class="sr-only">Open <%= @name %> menu</span>
     <%= button_content %>
 
-    <span
-      class="
-        twdropdown-chevron inline-block transition-transform
-        duration-200
-      "
-    >
+    <span class="twdropdown-chevron inline-block transition-transform duration-200">
       <%= render UI::IconChevron::Component.new(direction: :down) %>
     </span>
   <% end %>

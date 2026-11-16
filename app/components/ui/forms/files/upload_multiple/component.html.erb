@@ -3,8 +3,8 @@
   data-ui--forms--files--upload-multiple-url-value="<%= @url %>"
   data-ui--forms--files--upload-multiple-params-value="<%= @params.to_json %>"
   data-ui--forms--files--upload-multiple-file-param-value="<%= @file_param %>"
-  data-ui--forms--files--upload-multiple-uploading-value="<%= "uploading" %>"
-  data-ui--forms--files--upload-multiple-failed-value="<%= "upload failed" %>"
+  data-ui--forms--files--upload-multiple-uploading-value="uploading"
+  data-ui--forms--files--upload-multiple-failed-value="upload failed"
   data-action="ui--forms--files--picker:picked->ui--forms--files--upload-multiple#picked"
 >
   <%= render(UI::Forms::Files::Picker::Component.new(html_options: @html_options, accept: @accept)) do |picker| %>

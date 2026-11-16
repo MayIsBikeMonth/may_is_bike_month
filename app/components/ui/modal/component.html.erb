@@ -15,12 +15,7 @@
     and strand the sticky title bar
   %>
 
-  <div
-    class="
-      my-4 w-full overflow-clip rounded-xl bg-white
-      shadow-xl dark:bg-gray-800
-    "
-  >
+  <div class="my-4 w-full overflow-clip rounded-xl bg-white shadow-xl dark:bg-gray-800">
     <% if @title %>
       <div
         class="
@@ -38,10 +33,7 @@
           commandfor="<%= @id %>"
           command="close"
           aria-label="Close"
-          class="
-            p-1 text-gray-400 hover:text-gray-600
-            dark:hover:text-gray-300
-          "
+          class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
         >
           <%= helpers.inline_svg_tag("icons/x.svg", class: "h-3 w-3", aria_hidden: true) %>
         </button>

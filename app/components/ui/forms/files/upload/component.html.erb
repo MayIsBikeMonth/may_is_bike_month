@@ -2,8 +2,8 @@
   data-controller="ui--forms--files--upload"
   <%# Blank unless the caller named an endpoint - the controller only uploads when it has one %>
   data-ui--forms--files--upload-url-value="<%= @direct_upload_url %>"
-  data-ui--forms--files--upload-uploading-value="<%= "uploading" %>"
-  data-ui--forms--files--upload-failed-value="<%= "upload failed" %>"
+  data-ui--forms--files--upload-uploading-value="uploading"
+  data-ui--forms--files--upload-failed-value="upload failed"
   data-action="ui--forms--files--picker:picked->ui--forms--files--upload#picked"
 >
   <%= render(UI::Forms::Files::Picker::Component.new(form_builder: @form_builder, attribute: @attribute,

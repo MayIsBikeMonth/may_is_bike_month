@@ -15,8 +15,10 @@ pin "@floating-ui/dom", to: "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.7.3
 pin "highlight.js/lib/core", to: "highlight.js--core.js", preload: false
 pin "highlight.js/lib/languages/json", to: "highlight.js--json.js", preload: false
 pin "@rails/activestorage", to: "activestorage.esm.js", preload: false
-pin "chartkick", to: "chartkick.js"
-pin "Chart.bundle", to: "Chart.bundle.js"
+# preload: false because they are 180KB gzipped that only a page with a chart on it
+# should pay for -- ui--chart import()s them when one connects.
+pin "chartkick", to: "chartkick.js", preload: false
+pin "Chart.bundle", to: "Chart.bundle.js", preload: false
 
 # Our components
 pin_all_from "app/components", under: "components", to: ""

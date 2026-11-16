@@ -27,7 +27,7 @@ gem "lookbook" # view_component rendering
 gem "pagy" # pagination
 gem "chartkick" # Display charts
 gem "groupdate" # Required for charts
-gem "hotwire_combobox" # Accessible autocomplete + multiselect chip picker
+gem "hotwire_combobox", github: "josefarias/hotwire_combobox", ref: "a7b0c78b39000a3cd07175ad8d40ce8e7b8b4c66" # Accessible autocomplete + multiselect chip picker; utils/hw_combobox_patch.js patches this revision
 gem "inline_svg" # render SVGs inline and give them classes
 
 # Users
@@ -86,8 +86,7 @@ group :test do
   gem "vcr" # Stub external HTTP requests
   gem "webmock" # mocking for VCR
   gem "capybara" # For view components
-  gem "selenium-webdriver" # Browser driver for system specs
+  gem "capybara-playwright-driver" # Drives :js specs through Playwright (the playwright npm package)
   gem "rails-controller-testing" # Assert testing views
   gem "rspec-retry", require: false # Retry flaky test failures on CI
-  gem "axe-core-rspec" # Accessibility testing
 end

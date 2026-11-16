@@ -4,7 +4,7 @@ description: >-
   May is Bike Month conventions for browser specs (`type: :system, :js`)
   — **drive every step through the real UI** (no FactoryBot or
   `execute_script` shortcuts to skip what a user would do), every
-  example pays a Selenium boot cost so bias hard toward fewer, denser
+  example pays a browser boot cost so bias hard toward fewer, denser
   examples that walk through state via clicks, prefer named-element
   matchers over CSS selectors or `execute_script`, and combine
   same-setup work into one `it` even when scenarios feel
@@ -18,7 +18,7 @@ description: >-
 
 # Integration testing in May is Bike Month
 
-Browser specs (`type: :system, :js`) live in two places: feature flows under `spec/integration/` and component-level interaction specs at `spec/components/**/*_system_spec.rb`. Both run full Chrome sessions via Capybara/Selenium and pay a real Selenium boot cost per example, so the same conventions apply to both: optimize for fewer, denser examples and high-level Capybara helpers. Always tag new specs with `:js, type: :system`.
+Browser specs (`type: :system, :js`) live in two places: feature flows under `spec/integration/` and component-level interaction specs at `spec/components/**/*_system_spec.rb`. Both run full Chromium sessions via Capybara and Playwright and pay a real browser boot cost per example, so the same conventions apply to both: optimize for fewer, denser examples and high-level Capybara helpers. Always tag new specs with `:js, type: :system`.
 
 The general `context`/`let` style and "what to test" rules are in the [`rspec-testing`](../rspec-testing/SKILL.md) skill — the rules below extend it for the system-spec case.
 
@@ -40,7 +40,7 @@ Unit specs prefer one assertion per example. **Integration specs prefer the oppo
 
 Use `context` only when the *setup* differs — a different `let!`, a different page, a different feature flag. Don't split a single user flow across sibling `it` blocks just because each step has its own assertion.
 
-**Combine same-setup work, even when scenarios feel independent.** Before writing a new `describe`/`context`/`it`, read the existing file and find an example whose fixtures and initial `visit` match what you need — then append your clicks/assertions to it. It's tempting to leave a separate `it` for things that feel like different concerns ("button-state test", "morph-capture test", "URL persistence test", "footer localization test"). Don't. A long, sectioned-with-comments example pays one Selenium boot; four short examples pay four. Failure attribution is fine — the failed line number tells you exactly which phase broke. Only add a new block when the setup genuinely differs.
+**Combine same-setup work, even when scenarios feel independent.** Before writing a new `describe`/`context`/`it`, read the existing file and find an example whose fixtures and initial `visit` match what you need — then append your clicks/assertions to it. It's tempting to leave a separate `it` for things that feel like different concerns ("button-state test", "morph-capture test", "URL persistence test", "footer localization test"). Don't. A long, sectioned-with-comments example pays one browser boot; four short examples pay four. Failure attribution is fine — the failed line number tells you exactly which phase broke. Only add a new block when the setup genuinely differs.
 
 ### Good
 

@@ -214,6 +214,7 @@ RSpec.describe UI::Tooltip::Component, :js, type: :system do
       JS
     end
     visit preview_url
+    wait_for_stimulus("ui--tooltip")
 
     first, second = all("[role='tooltip']", visible: :all).first(2).map { it[:id] }
     find("[aria-describedby='#{first}']").click

@@ -24,8 +24,7 @@ Write each row so the next port can act on it without re-deriving: name what's m
 | `ComponentStructs::Shapes`' menu shapes (`link`, `group`, `disabled`, `divider`), `IndexState`, the org search structs | Only `tab` and `entry` are read by `UI::` components. |
 | `application.css`: Bike Index's palette, fonts and breakpoints, the `.inverted` dark variant, `search-all-checked`/`imperial`/`similar-open` variants, org-sidebar body rules, select2, `.twbootcontainer`, `legacy`/`bikebook`/`lexxy_overrides`/`legacy_dark` stylesheets | Bike Index's brand and pages. MIBM keeps its purple palette, IBM Plex fonts, and its own `twtext-color`, `.twlink`, `.twinput` colors. |
 | `bike_index_components.css`: `twpagebleed`, `.only-dev-visible`, `.twalert-body`, `.form-well-label`, `.twsearchrow`, `.twhr` | Org sidebar, legacy Bootstrap cascade, legacy form well, admin search row and `<hr>` — no `UI::` component here emits them (`.twalert-body` is emitted but only fought Bootstrap's `.container`). MIBM keeps its own `.only-dev-visible`. |
-| `utils/hw_combobox_patch.js` | Patches the `hotwire_combobox` gem's GitHub `main`; MIBM installs the rubygems release. Port it with a pin to the same revision. |
-| `spec/support`: upstream's Playwright `capybara.rb`, request/registration helpers, most of `integration_spec_helpers.rb` | MIBM runs system specs on Selenium. `expect_axe_clean`, `wait_for`, `wait_for_stimulus` and `dismiss_flash_messages` were ported. |
+| `spec/support`: request/registration helpers, and `integration_spec_helpers.rb`'s bike helpers, `fill_in_verified`, `browser_cookie_value`, `click_combobox_option` and `RequestHold` | No caller here. |
 
 ## Cautionary ledger
 

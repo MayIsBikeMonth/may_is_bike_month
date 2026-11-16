@@ -15,7 +15,7 @@ RSpec.describe UI::Forms::Combobox::Component, :js, type: :system do
     find_field("Cycle type").click
 
     expect(page).to have_css('[aria-expanded="true"]')
-    expect(page).to have_css('[role="option"]', count: CycleType.slugs.count)
+    expect(page).to have_css('[role="option"]', count: ApplicationComponentPreview::CYCLE_TYPES.count)
     expect_axe_clean
 
     # A query matching nothing says so, and Enter keeps it open to edit

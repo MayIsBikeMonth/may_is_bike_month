@@ -41,8 +41,9 @@
               data: {action: "ui--forms--files--picker#takePicture"}
             ) do %>
           <%# hidden from AT: the button's own text already names it %>
+
           <%= helpers.inline_svg_tag("icons/camera.svg", class: "h-4 w-4", aria_hidden: true) %>
-          <%= "Take picture" %>
+          Take picture
         <% end %>
       <% end %>
 

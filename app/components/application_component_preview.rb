@@ -4,11 +4,16 @@ class ApplicationComponentPreview < ViewComponent::Preview
   include ActionView::Context
 
   # Static stand-ins for the lookup tables upstream previews read, which this app doesn't have
-  CYCLE_TYPES = [["Bike", "bike"], ["Tandem", "tandem"], ["Unicycle", "unicycle"], ["Tricycle", "tricycle"],
-    ["Recumbent", "recumbent"], ["Bike Trailer", "trailer"], ["Cargo Bike (front storage)", "cargo"],
-    ["Tall Bike (multiple frames fused together)", "tall-bike"], ["Penny Farthing", "penny-farthing"],
-    ["Cargo Bike Rear (e.g. longtail)", "cargo-rear"], ["Trail behind (half bike)", "trail-behind"],
-    ["Balance Bike", "balance-bike"]].freeze
+  CYCLE_TYPES = [
+    ["Bike", "bike"], ["Tandem", "tandem"], ["Unicycle", "unicycle"],
+    ["Tricycle", "tricycle"], ["Stroller", "stroller"], ["Recumbent", "recumbent"],
+    ["Bike Trailer", "trailer"], ["Wheelchair", "wheelchair"], ["Cargo Bike (front storage)", "cargo"],
+    ["Tall Bike (multiple frames fused together)", "tall-bike"], ["Penny Farthing", "penny-farthing"], ["Cargo Bike Rear (e.g. longtail)", "cargo-rear"],
+    ["Cargo Tricycle (trike with front storage, e.g. Christiania bike)", "cargo-trike"], ["Cargo Tricycle (trike with rear storage)", "cargo-trike-rear"], ["Trail behind (half bike)", "trail-behind"],
+    ["Pedi Cab (rickshaw)", "pedi-cab"], ["e-Scooter", "e-scooter"], ["e-Personal Mobility Device (EPAMD, e-Skateboard, Segway, e-Unicycle, etc)", "personal-mobility"],
+    ["Scooter (not electric)", "non-e-scooter"], ["Skateboard (not electric)", "non-e-skateboard"], ["e-Motorcycle (e-Dirt bike, e-bike with no pedals)", "e-motorcycle"],
+    ["Elliptical bike", "elliptical"], ["Balance Bike", "balance-bike"]
+  ].freeze
   PRIMARY_ACTIVITIES = [["Commuting", 1], ["Cyclocross", 2], ["Gravel", 3], ["Mountain", 4], ["Road", 5],
     ["Touring", 6]].freeze
   WHEEL_SIZES = [["700c / 29\"", 1], ["650b / 27.5\"", 2], ["26\"", 3], ["24\"", 4], ["20\"", 5], ["16\"", 6]].freeze

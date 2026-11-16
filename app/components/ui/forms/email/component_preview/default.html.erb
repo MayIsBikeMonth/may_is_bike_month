@@ -1,4 +1,4 @@
-<%= form_with(url: "#", builder: MayIsBikeMonthFormBuilder) do |f| %>
+<%= form_with(url: "#", builder: MayIsBikeMonthFormBuilder, data: {turbo: false}) do |f| %>
   <%= render(UI::Forms::Group::Component.new(form_builder: f, attribute: :email, required: true)) do %>
     <%= render(UI::Forms::Email::Component.new(form_builder: f, required: true)) %>
   <% end %>

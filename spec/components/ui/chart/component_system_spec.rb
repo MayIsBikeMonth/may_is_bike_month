@@ -3,12 +3,12 @@
 require "rails_helper"
 
 RSpec.describe UI::Chart::Component, :js, type: :system do
-  # the preview charts real registrations, and chartkick renders "No data" rather than a
+  # the preview charts real activities, and chartkick renders "No data" rather than a
   # canvas for an empty series
-  let!(:bike) { FactoryBot.create(:bike, created_at: Time.current - 1.day) }
+  let!(:competition_activity) { FactoryBot.create(:competition_activity, created_at: Time.current - 1.day) }
 
   it "renders a chart" do
-    visit("/rails/view_components/ui/chart/component/bikes_by_status")
+    visit("/rails/view_components/ui/chart/component/activities")
 
     # the canvas, rather than the placeholder div: chartkick and Chart.js load on
     # demand from ui--chart, so this is what proves they arrived

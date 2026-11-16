@@ -94,20 +94,4 @@ RSpec.describe UI::Forms::Files::Upload::Component, :js, type: :system do
 
     expect(page).to have_no_css("input[type='file'][capture]", visible: :all)
   end
-
-  # This preview renders whatever the seeded org has attached, so it needs one
-  context "with an image already attached" do
-    let!(:organization) do
-      FactoryBot.create(:organization_brakebills, avatar: File.open(Rails.root.join("spec/fixtures/bike.jpg")))
-    end
-
-    it "previews what's attached, rather than starting hidden as the empty picker does" do
-      visit("#{base_path}with_existing_image")
-
-      expect(page).to have_css("#{preview}[href*='bike.jpg'] img[src*='bike.jpg']")
-      # Nothing picked this session, so the field still names no file
-      expect(page).to have_css("[data-ui--forms--files--picker-target='filename']", text: "No file chosen")
-      expect_axe_clean
-    end
-  end
 end

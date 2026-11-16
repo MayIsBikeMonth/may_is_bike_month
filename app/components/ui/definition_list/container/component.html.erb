@@ -1,12 +1,7 @@
 <% if @term == :left_align %>
   <% if @multi_columns %>
     <div class="@container w-full">
-      <dl
-        class="
-          @container gap-x-4 break-words @md:grid
-          @md:grid-cols-2
-        "
-      >
+      <dl class="@container gap-x-4 break-words @md:grid @md:grid-cols-2">
         <%= content %>
       </dl>
     </div>

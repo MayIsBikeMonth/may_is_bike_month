@@ -1,7 +1,6 @@
 import '@hotwired/turbo-rails'
 import 'controllers'
-import 'chartkick'
-import 'Chart.bundle'
+import 'utils/hw_combobox_patch'
 import TimeLocalizer from '@bikeindex/time-localizer'
 
 // Load honeybadger dynamically so ad blockers don't break the entire app

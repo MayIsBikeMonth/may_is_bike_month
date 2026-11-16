@@ -6,6 +6,7 @@ RSpec.describe UI::Dropdown::Component, :js, type: :system do
   context "when interacting with the default dropdown" do
     it "opens and closes" do
       visit "/rails/view_components/ui/dropdown/component/default"
+      wait_for_stimulus("ui--dropdown")
 
       expect(page).to have_css('[aria-expanded="false"]')
       expect_axe_clean
@@ -36,6 +37,7 @@ RSpec.describe UI::Dropdown::Component, :js, type: :system do
   context "when interacting with the custom_button dropdown" do
     it "opens with header and items" do
       visit "/rails/view_components/ui/dropdown/component/custom_button"
+      wait_for_stimulus("ui--dropdown")
 
       expect(page).to have_css('[aria-expanded="false"]')
       expect_axe_clean
@@ -63,6 +65,7 @@ RSpec.describe UI::Dropdown::Component, :js, type: :system do
   context "with two dropdowns" do
     it "closes the open one when the other opens" do
       visit "/rails/view_components/ui/dropdown/component/two_dropdowns"
+      wait_for_stimulus("ui--dropdown")
 
       click_button("First")
       expect(page).to have_css('button[aria-expanded="true"]', text: "First")
@@ -77,6 +80,7 @@ RSpec.describe UI::Dropdown::Component, :js, type: :system do
   context "when the widest entry is wider than the button" do
     it "widens the menu to fit it on one line, without exceeding the viewport" do
       visit "/rails/view_components/ui/dropdown/component/long_entry"
+      wait_for_stimulus("ui--dropdown")
       click_button("Mail")
 
       expect(page).to have_css('[aria-expanded="true"]')

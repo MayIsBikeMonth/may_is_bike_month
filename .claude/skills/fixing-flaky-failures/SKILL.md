@@ -80,10 +80,13 @@ for i in 1 2 3; do bundle exec rspec <the spec file> 2>&1 | grep -E "examples, "
 
 Green locally doesn't mean "add a retry". It narrows the cause to something CI has and you don't: **contention** (browser, Rails and Postgres sharing one runner) or **ordering** (a different seed, or state left by another example).
 
-For contention, slow the browser alone rather than the machine — Selenium's Chrome driver exposes CDP:
+For contention, slow the browser alone rather than the machine, through a CDP session:
 
 ```ruby
-page.driver.browser.execute_cdp("Emulation.setCPUThrottlingRate", rate: 6)
+page.driver.with_playwright_page do |playwright_page|
+  session = playwright_page.context.new_cdp_session(playwright_page)
+  session.send_message("Emulation.setCPUThrottlingRate", params: {rate: 6})
+end
 ```
 
 A rate that leaves the spec green over ~20 runs is evidence, not proof.

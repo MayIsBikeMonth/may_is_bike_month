@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe UI::Forms::RadioButtonGroup::Component, :js, type: :system do
   let(:base_path) { "/rails/view_components/ui/forms/radio_button_group/component/" }
   # match_style retries, so it waits out the color transition
-  let(:purple) { {"background-color" => "rgb(113, 94, 178)"} }
+  let(:purple) { {"background-color" => "rgb(138, 76, 184)"} }
   let(:white) { {"background-color" => "rgb(255, 255, 255)"} }
   # secondary's resting bg-white/80
   let(:translucent_white) { {"background-color" => "oklab(0.999994 0.0000455677 0.0000200868 / 0.8)"} }

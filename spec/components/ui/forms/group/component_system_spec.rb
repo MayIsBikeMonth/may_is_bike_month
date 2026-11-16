@@ -18,16 +18,12 @@ RSpec.describe UI::Forms::Group::Component, :js, type: :system do
   end
 
   context "content_block" do
-    it "focuses the paired Lexxy editor when the label is clicked" do
+    it "focuses the field rendered in the block when the label is clicked" do
       visit("#{base_path}content_block")
 
-      # Lexxy upgrades the <lexxy-editor> asynchronously -- wait for the toolbar before interacting.
-      expect(page).to have_css("lexxy-editor lexxy-toolbar", wait: 10)
+      find("label", text: "Email").click
 
-      find("label", text: "Description").click
-
-      # the label click moves the caret into Lexxy's contenteditable box
-      expect(page).to have_css("#organization_feature_description-content:focus")
+      expect(page).to have_css("#user_email:focus")
     end
   end
 end

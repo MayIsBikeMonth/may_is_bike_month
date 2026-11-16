@@ -6,11 +6,7 @@ RSpec.describe "Landing page", :js, type: :system do
   it "renders the heading, is accessible, and lets the user toggle dark mode" do
     # Pin the OS-level preference to light before visiting so the dark-mode
     # toggle assertions don't depend on the developer's machine.
-    visit "about:blank"
-    page.driver.browser.execute_cdp(
-      "Emulation.setEmulatedMedia",
-      features: [{name: "prefers-color-scheme", value: "light"}]
-    )
+    page.driver.with_playwright_page { it.emulate_media(colorScheme: "light") }
 
     visit root_path
 
@@ -18,8 +14,7 @@ RSpec.describe "Landing page", :js, type: :system do
     expect_axe_clean
     expect(page).to have_no_css("html.dark")
 
-    find("button[data-open-modal='user-settings-modal']").click
-    expect(page).to have_css("dialog[open]")
+    open_modal("button[commandfor='user-settings-modal']")
 
     find("button[data-theme='theme_dark']").click
     expect(page).to have_css("html.dark")

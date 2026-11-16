@@ -279,7 +279,6 @@ RSpec.describe UI::Table::Base::Component, type: :component do
       expect(fragments_written { render_table(cache_records:) }.count).to eq 2
     end
 
-
     context "without a cache_key" do
       it "renders every row uncached" do
         result = nil

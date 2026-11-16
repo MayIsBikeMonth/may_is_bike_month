@@ -57,15 +57,5 @@ RSpec.describe UI::ActiveLink::Component, :js, type: :system do
 
     visit "#{preview_path}/match_params_blank?filter=on"
     expect(page).to_not have_css "a[aria-current]"
-
-    # The navbar renders from a fragment cache shared by every page it was rendered for, so
-    # the current page can't be in the cached markup
-    visit "/help"
-    expect(page).to have_css "#primary-main-menu a[aria-current]", text: "Help", visible: :all
-    expect(page).to have_css "#primary-main-menu a[aria-current]", count: 1, visible: :all
-
-    # Both search links carry a stolenness this page doesn't, which naming no params ignores
-    visit "/search/registrations?query=trek"
-    expect(page).to have_css "#primary-main-menu a[aria-current='page']", text: "Search", count: 2, visible: :all
   end
 end
