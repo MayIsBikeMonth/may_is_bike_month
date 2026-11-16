@@ -20,6 +20,8 @@ allowed-tools: Bash, Read, Edit, Write, Glob, Grep
 
 **Re-read `git branch --show-current` rather than trusting the branch from earlier in the session.** Conductor runs sessions concurrently, so another one can check this worktree out onto a different branch while your conversation is open.
 
+**A Conductor `<name>-v1` local tracking `origin/<name>` gets moved onto `<name>`, without asking** — `bin/conductor_branch` does it at workspace setup and session start. If `git branch --show-current` still ends in `-v1`, run it, and follow what it prints when it can't.
+
 "Update from base", "sync with main", "this branch is behind" all need a base branch to merge *from*. **Don't default to `main`.** A branch is often stacked on another feature branch, and merging `main` instead silently pulls the wrong history. Resolve the base in this order:
 
 1. **A branch the user names** — "update from X" / "base is X" wins outright.

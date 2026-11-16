@@ -55,11 +55,11 @@ back to `DEV_PORT=3010`: the main checkout's port, database and Redis — and a
 
 ## Build the CSS (every environment)
 
-`bin/setup` doesn't build Tailwind. In a checkout where `bin/dev` hasn't run,
-`app/assets/builds/` is empty, and since the layout's `stylesheet_link_tag :app` just
-globs what's there, nothing errors — pages render unstyled, `hidden` doesn't hide, and
-`:js` specs fail visibility assertions in ways that read as flakes. It isn't
-pre-existing; build it:
+`bin/setup` builds Tailwind, but `bin/dev`'s watcher is what keeps it current. In a
+checkout where neither has run, `app/assets/builds/` is empty, and since the layout's
+`stylesheet_link_tag :app` just globs what's there, nothing errors — pages render
+unstyled, `hidden` doesn't hide, and `:js` specs fail visibility assertions in ways that
+read as flakes. Build it:
 
 ```bash
 bundle exec rails tailwindcss:build
