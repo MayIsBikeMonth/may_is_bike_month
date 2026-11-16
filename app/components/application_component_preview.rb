@@ -32,22 +32,7 @@ class ApplicationComponentPreview < ViewComponent::Preview
     CompetitionUser.find(ENV.fetch("LOOKBOOK_COMPETITION_USER_ID", 1))
   end
 
-  # Falls back so a fresh database renders, not raises
-  def lookbook_user
-    @lookbook_user ||= User.find_by(id: ENV.fetch("LOOKBOOK_USER_ID", 1)) || User.first
-  end
-
   private
-
-  def production_notice(rendered)
-    render(UI::Alerts::Base::Component.new(kind: :error,
-      text: "This preview renders a real #{rendered}, so it's disabled in production."))
-  end
-
-  def missing_notice(needed)
-    render(UI::Alerts::Base::Component.new(kind: :warning,
-      text: "Nothing to preview — this environment doesn't have #{needed}."))
-  end
 
   def template
     ActionView::Base.new(

@@ -150,9 +150,9 @@ say "bin/workspace_setup --without_seeds"
 bin/workspace_setup --without_seeds || exit 1
 
 # The pin can want a newer build than /opt/pw-browsers ships; the :js specs launch this one
-say "installing the pinned Playwright Chromium -> /tmp/playwright_install.log"
-npx --no-install playwright install chromium-headless-shell >/tmp/playwright_install.log 2>&1 ||
-  say "playwright install failed - :js specs will not run"
+say "installing the pinned Playwright Chromium in the background -> /tmp/playwright_install.log"
+npx --no-install playwright install chromium-headless-shell >/tmp/playwright_install.log 2>&1 &
+PW_PID=$!
 
 # After workspace_setup: .workspace_id gives BASE_URL its port
 eval "$(ruby bin/env --export)"
@@ -198,6 +198,8 @@ if [ -n "${CLAUDE_ENV_FILE:-}" ] && ! grep -qF "$RUBY_PREFIX/bin" "$CLAUDE_ENV_F
   printf '%s\n' "$ENV_EXPORTS" >> "$CLAUDE_ENV_FILE"
   say "wrote the toolchain env to \$CLAUDE_ENV_FILE"
 fi
+
+wait "$PW_PID" || say "playwright install failed - :js specs will not run, see /tmp/playwright_install.log"
 
 say "done. Shell env for later commands:"
 printf '%s\n' "$ENV_EXPORTS" 'eval "$(ruby bin/env --export)"' | sed 's/^/  /'
