@@ -1,0 +1,112 @@
+# Screenshot phase
+
+This is SKILL.md's **Screenshots** section — read it once the PR exists and **Publish** classified the diff as frontend. It needs the base branch from **Orient** and the PR number from **Publish**; substitute both as literals, since shell state doesn't carry between commands. The numbered steps below are this file's own.
+
+The flow: decide what to capture → capture the branch → capture the same URLs on the base branch → post one `## Screenshots` PR comment, which uploads the images. Screenshots go in a **comment**, never the PR body, so the human-written summary stays first and recaptures don't churn the description.
+
+## Preflight: no `gh`, no screenshots
+
+**This phase needs `gh`. Without it, skip the whole thing** — don't capture, don't upload, don't post anything in its place. Say in your summary that screenshots need `gh`, and hand back the PR URL. Run `github-pr-images`' preflight here, before step 1 — it upgrades a `gh` too old to `--attach`.
+
+**The web sandbox is the exception to that skip.** `gh` doesn't work there, but it hosts in the PR branch's own history instead — capture and post normally, following `github-pr-images`' [references/web-sandbox.md](../../github-pr-images/references/web-sandbox.md) for the hosting. Those URLs last only as long as the branch's objects, so say in your summary that a merged PR's screenshots aren't archival.
+
+**Run that file's probe before anything else in this phase** — before the dev server, the captures and the hosting commits. Some sessions' comment tools rewrite every image URL into inert text, which only shows after the capture round, and the probe finds out for two calls. When it fails, the phase ends there: its one-line update to the `## Screenshots` comment is the only thing posted — the exception to the next paragraph — and your summary gives the user the reason.
+
+**Skipping means posting nothing at all**, not posting something else. Substitute evidence — a rendered-HTML diff, a note about what couldn't be captured — leaves a comment the next run can't find or replace, because it isn't the `## Screenshots` comment. If it's worth having, put it in your summary and let the user decide where it goes.
+
+## Preflight: a CSS diff needs a fresh tailwind build
+
+When the diff touches `app/assets/tailwind/**`, check that `app/assets/builds/tailwind.css` contains the branch's new rules before capturing — another checkout's watcher can leave it stale for hours, and the capture then documents the bug the PR fixes. `bin/rails tailwindcss:build` is the fix — the same command step 3 runs on each checkout.
+
+**Count occurrences, not lines.** The built file is minified onto very few lines, so `grep -c '<selector>'` reports `0` or `1` for a selector that's present many times, and a fresh build reads as a missing one. Use `grep -o '<selector>' app/assets/builds/tailwind.css | wc -l`, and compare the file's mtime against the source's before concluding anything.
+
+## 1. Decide whether screenshots are needed and which URLs to capture
+
+You're only here because the diff is frontend (SKILL.md's classifier gates on that). Whether a `## Screenshots` comment exists decides the scope. Reading it is `github-pr-images`'s job, since it owns it — ask it for the current body first. This costs no browser: it's a `gh api` read.
+
+- New PR, or an existing one with no `## Screenshots` comment → capture every page the whole branch diff affects, not just the commits since the last run.
+- Existing PR with a screenshots comment → continue only if its captures are stale: a commit since the last capture touched a page already screenshotted, or a new affected page now appears in the diff. Limit the capture to those pages. If nothing has moved, return the PR URL.
+
+**A page the diff no longer touches loses its block rather than gaining a recapture.** When its work lands on the base separately, `git diff origin/main -- <path>` comes back empty and the before/after documents a change this PR doesn't make. Drop the `### <url-path>` block; don't recapture it to show two identical images.
+
+From the changed files, infer the affected routes. Heuristics:
+- A view at `app/views/competitions/show.html.erb` → `/competitions/:id` (pick a representative id from the dev db, e.g. `Competition.last.id`)
+- A component touched by a specific page → screenshot that page
+- A shared component (user dropdown, leaderboard, `UI::Badge`, etc.) → screenshot 1–2 representative pages that exercise it
+- A component with a ViewComponent/Lookbook preview → its preview URL (`frontend-screenshots` covers the path format) — a real responsive page, captured like any other URL
+- Admin views → `/admin/...`
+- If unclear, ask the user which URLs to capture before proceeding. Do not guess blindly — 1–3 well-chosen URLs beats 10 random ones.
+
+**Confirm the page renders what changed, before capturing it.** A page that looks like the obvious home for a component often isn't, and a shot that turns out not to contain the change wastes a whole capture round, base branch included. One `browser_evaluate` counting the component's own marker class settles it — filter on `offsetParent !== null`, or a hidden copy counts as on-screen. A component with a preview is the reliable fallback.
+
+## Steps 2–4 run in one subagent
+
+**A subagent sent here skips this section.** Capturing, recapturing on the base and posting take dozens of turns, and each would re-read this session's whole conversation. Once step 1 has picked the URLs, hand steps 2–4 to one `general-purpose` subagent — `model: "sonnet"` (it works out how to drive each page; the pages are chosen) — and wait for it, staying out of the checkout meanwhile. Its prompt says to follow `.claude/skills/pr/references/screenshots.md` from step 1's **Confirm the page renders what changed**, and gives it the `(url-path, page-slug)` pairs with any interaction steps and sign-in, which pages are new on this branch, `<base>`, `<number>`, the base label, and — when updating — which `### <url-path>` blocks to replace or drop. A page that doesn't render the change comes back unconfirmed rather than replaced: picking another is step 1's judgment, so choose one here (or ask the user) and continue the same agent with `SendMessage`. It replies with the comment URL, or the pages it couldn't capture and why. It closes the shared browser, so finish with any page this session still needs first.
+
+## 2. Capture branch screenshots
+
+Invoke the `frontend-screenshots` skill with the `(url-path, page-slug)` pairs from step 1. It handles dev-server check, sign-in, the seeded-user identity gate, viewport sizing, and per-PNG sanity checks, and returns the local PNG paths.
+
+If it returns failures it couldn't diagnose, report them and leave the PR without screenshots — don't post partial results. Abandoning the phase after a capture is the one path where nothing else closes the browser, so close it yourself.
+
+Collect the PNG paths, keyed by `(page-slug, viewport)`. Nothing is uploaded until step 4 posts — `--attach` uploads as part of the post.
+
+## 3. Capture the same URLs on the base branch
+
+Capture the **base-branch** version (the base from SKILL.md's **Orient**) of every screenshot from step 2 so the section becomes a before/after comparison instead of "here's how it looks now." This is the default for every screenshot captured.
+
+Skip per-page only when the URL didn't exist on the base (a brand-new route or page added in this PR) — there's nothing to compare to.
+
+Re-invoke `frontend-screenshots` with the same `(url-path, page-slug)` pairs, passing the base as its `BASE_REF` (`origin/main` unless **Orient** chose otherwise) — its "Cross-branch comparison" section does the rest, whether or not the base is `main`.
+
+**`bin/rails tailwindcss:build` after each checkout when the diff deletes or rewrites a template, as well as when it touches `app/assets/tailwind/**`.** Tailwind builds from a scan of the templates, so a branch that deletes one drops that template's classes from the build, leaving the base's own markup to render unstyled in a shot the PR then gets blamed for. The watcher doesn't rebuild on a checkout, so the base capture otherwise renders the branch's CSS — a before/after that silently shows the same styling twice. Build again on the way back.
+
+## 4. Compose the Screenshots comment and hand it back
+
+`browser_close` first — the captures are done and posting doesn't use the browser. Then write the body to a temp file and invoke `github-pr-images` with it. That skill owns the comment — finding the existing one, creating or editing it, verifying it rendered — and it posts what you hand it verbatim. Everything below is what goes *in* the body.
+
+Each `src` is the PNG's repo-relative path (`tmp/pr_screenshots/…png`); `github-pr-images` uploads each one and swaps the path for its asset URL. **In the sandbox**, host both sets in one `commit_images.sh` call first and use the URLs it prints instead.
+
+Its first line is always `## Screenshots`, because that heading is the handle it's found by next time.
+
+The base-branch shots and branch shots stack as rows in one table, with a small indicator row between them when both are present. The indicator labels the base by its PR when it has one — `#123 👆` for a stacked base, plain `main 👆` otherwise:
+
+```bash
+gh pr list --head <base-branch> --state all --json number --jq '.[0].number // empty'
+```
+
+`// empty` is load-bearing — without it a base with no PR yields the literal `#null`.
+
+```markdown
+## Screenshots
+
+### <url-path>
+
+| Desktop | Mobile |
+| --- | --- |
+| <img src="<base-desktop-path>" width="500"> | <img src="<base-mobile-path>" width="250"> |
+| <base-label> 👆 | this branch 👇 |
+| <img src="<branch-desktop-path>" width="500"> | <img src="<branch-mobile-path>" width="250"> |
+```
+
+Brand-new page (URL didn't exist on the base — see step 3), no comparison row:
+
+```markdown
+### <url-path>
+
+| Desktop | Mobile |
+| --- | --- |
+| <img src="<branch-desktop-path>" width="500"> | <img src="<branch-mobile-path>" width="250"> |
+```
+
+Rules:
+- Each page gets a `### <url-path>` subheading (the literal path, e.g. `/`, `/competitions/2025`, `/admin/competition_users`) followed by its own table.
+- **Every** entry uses this table, with **no exceptions** — including component previews, which are responsive pages with real URLs. A width-invariant component just yields matching desktop and mobile shots; keep both columns, never collapse to one image.
+- **Headers are always `| Desktop | Mobile |`** — never `| main | this branch |` or any per-PR variation. Reviewers should see the same column meaning across every PR.
+- Use `<img src=... width=...>` rather than `![]()` so the widths render predictably in GitHub's table cells. ~500 for desktop, ~250 for mobile fits a side-by-side cell layout cleanly.
+
+When updating an existing screenshots comment, ask `github-pr-images` for its current body first, replace the `### <url-path>` block for any page you recaptured, and leave every other page's block alone, URLs and all — you're handing back a whole body, so anything you drop is dropped.
+
+**A recapture replaces, never appends.** The comment shows the branch as it is now, not a history: no dated or "After merging main" section, no superseded shots kept beside their replacements, and the base half of a block is recaptured along with the branch half. A newly captured state of an existing page — an open modal, a filled form — is its own `### <url-path> — <state>` block in the same table shape. Explanatory prose goes in your summary, not the comment.
+
+Return the PR URL.
