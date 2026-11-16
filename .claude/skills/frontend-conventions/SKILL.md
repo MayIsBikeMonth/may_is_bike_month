@@ -5,7 +5,7 @@ description: >-
   classes, dark mode, the `number_display` helper for numbers (not years),
   `UI::Time::Component` for time, the UI component library rule (every new
   button is `UI::Button`/`UI::ButtonLink`, every form field goes through
-  `Form::Group`, every chart is `UI::Chart`, existing components before new
+  `UI::Forms::Group`, every chart is `UI::Chart`, existing components before new
   ones, never a new `UI::*` argument without the user's permission), that
   **helpers are deprecated — render a view component taking full keyword
   arguments instead**, the collapse helpers for show/hide, and ViewComponent
@@ -37,7 +37,7 @@ This project uses **Stimulus.js** for JavaScript interactivity and **Tailwind CS
   - **Not a year.** `number_display` is `number_with_delimiter`, so it renders 2025 as "2,025". Emit a year bare, the way `Leaderboard::OtherCompetitionLinks` and `CompetitionHistory` do. The same applies to any identifier that only looks numeric.
 - **Every date/time** renders through `UI::Time::Component` — `render(UI::Time::Component.new(time: some_time))`. It emits the client-localized `localizeTime` span the frontend JS converts to the viewer's timezone. Never `l(time, ...)`, `strftime`, `time_ago_in_words`, or a hand-written `localizeTime` span. Pass `format: :localize_time_precise` for seconds precision. It self-hides when `time` is nil, so no surrounding `if` guard is needed.
 
-**Building markup to pass into a component argument uses `capture`** — a component keyword like `UI::Alert`'s `header:` or `UI::Header`'s `text:` takes a string, so a heading that wraps a link or an `<em>` has to be captured first.
+**Building markup to pass into a component argument uses `capture`** — a component keyword like `UI::Alerts::Base`'s `header:` or `UI::Header`'s `text:` takes a string, so a heading that wraps a link or an `<em>` has to be captured first.
 
 ## Tailwind v4 traps
 
@@ -52,9 +52,9 @@ This project uses **Stimulus.js** for JavaScript interactivity and **Tailwind CS
 - Plain button or form submit — **a form submits with `color: :primary`**: `render UI::Button::Component.new(text: "Save", color: :primary, kind: :submit)`. Pass a class as `html_class:`.
 - A link styled as a button: `UI::ButtonLink::Component.new(href:, text:, color:, size:)` — same palette, renders an `<a>`.
 
-The same instinct applies beyond buttons: **check `app/components/ui/` and `app/components/form/` before hand-rolling any UI primitive** (dropdowns → `UI::Dropdown`, tooltips → `UI::Tooltip`, modals → `UI::Modal`, label-beside-value lists → `UI::DefinitionList`, badges, alerts, cards, pagination, tables…). If a component exists for the pattern, use it. **Never add an argument to a `UI::*` component without the user's explicit permission** — its arguments are the design system's surface, and one added for a single caller stays for every caller. If it almost fits, ask, and don't fork its markup inline meanwhile.
+The same instinct applies beyond buttons: **check `app/components/ui/` before hand-rolling any UI primitive** (dropdowns → `UI::Dropdown`, tooltips → `UI::Tooltip`, modals → `UI::Modal`, label-beside-value lists → `UI::DefinitionList`, badges, alerts, cards, pagination, tables…). If a component exists for the pattern, use it. **Never add an argument to a `UI::*` component without the user's explicit permission** — its arguments are the design system's surface, and one added for a single caller stays for every caller. If it almost fits, ask, and don't fork its markup inline meanwhile.
 
-- **A form field gets its label from `Form::Group::Component`** — pass `form_builder:` and `attribute:`; never a bare `<label>` beside a hand-styled input.
+- **A form field gets its label from `UI::Forms::Group::Component`** — pass `form_builder:` and `attribute:`; never a bare `<label>` beside a hand-styled input.
 - **Every chart goes through `UI::Chart::Component`** — not a bare chartkick helper.
 
 ## Showing and hiding elements: always use the collapse helpers
@@ -102,7 +102,7 @@ This project uses the ViewComponent gem to render components, with Lookbook at `
   - Rule of thumb: try the bare call first. Only add `helpers.` if it fails with `NoMethodError` — route helpers (`competition_path`) and ActionView tag/url builders (`tag.span`, `content_tag`, `link_to`) are mixed into `ViewComponent::Base` directly, so they don't need it.
 - **Never nest a component inside a folder that already holds a `component.rb`.** Each component lives in `app/components/<path>/component.rb` (and `spec/components/<path>/component_spec.rb`); siblings go in sibling folders, not subfolders — `leaderboard/punchcard_user_row/`, not `leaderboard/punchcard/user_row/`.
 - **Change a component's signature, then open its `component_preview.rb`** — nothing renders every preview in the suite, so a stale one raises `ArgumentError: unknown keyword` on its Lookbook page with the whole suite green. `curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/rails/view_components/<path>/component/<scenario>"` is the check.
-- **Cache rows, never cells.** Pass `cache_key:` to `UI::Table::Component`, which caches each row on `[cache_key, record]`, rather than putting a `cache(...)` inside a column block.
+- **Cache rows, never cells.** Pass `cache_key:` to `UI::Table::Base::Component`, which caches each row on `[cache_key, record]`, rather than putting a `cache(...)` inside a column block.
 - **Moving a view into a component turns its locals into methods.** A `<% x = … %>` computed once per template becomes a method run once per *call site* — which is how a single pluck becomes one per table row. Memoize anything that queries as you move it.
 - **Converting a partial to a component is a faithful move, not a cleanup.** Carry the markup over verbatim, including comments and commented-out code: those are often a deliberate stash. The only changes a conversion introduces are the ones the move requires — adding `helpers.` where a helper now needs it. Dead code worth removing goes in its own commit.
 

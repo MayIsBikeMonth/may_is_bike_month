@@ -15,6 +15,19 @@ Write each row so the next port can act on it without re-deriving: name what's m
 | `production-log-inspection` skill | Reads bike_index's production log host. |
 | Blocklisted `UI::` components (SKILL.md Step 3) | Each needs a model MIBM doesn't have. The model is named in the list. |
 | `Atoms::*` components | Out of scope by namespace. |
+| `UI::Forms::TextEditor`, `UI::Forms::Turnstile` (+ controllers) | Need Lexxy / Action Text and a Cloudflare Turnstile integration respectively. Awaiting the user's call on porting the subsystem. |
+| `UI::Forms::NestedFields` (+ controller) | Only works against an association declared with `accepts_nested_attributes_for`, and no MIBM model has one. Awaiting the user's call. |
+| `UI::Alerts::FlashMessage`'s hash flash (`translation_key:` + `url:`) and its preview | Its only messages are bike_index's password sign-in prompts. MIBM's copy maps Devise's `:alert` to `:error` instead, since upstream's `UI::Alerts::Base` rejects `:alert`. |
+| `UI::Forms::Files::Upload`'s CarrierWave branch, `BlobUrl`, the `with_existing_image` preview and the thumbnail spec | MIBM stores nothing through CarrierWave and has no model with an attachment; the attached URL is `url_for(attachment)`. |
+| `period_select`, `time_range`, `drag_handle`, `alerts/*`, `forms/*`, `table/column_settings`, `definition_list/row` `.en.yml` sidecars | Inlined (fork axis). |
+| `table/base` spec's `:nl` locale example | MIBM only loads `:en`; the `locale/en` assertion still covers the key. |
+| `ApplicationComponent#translation` and its scope helpers | No i18n sidecars here. |
+| `GraphingHelper#time_range_amounts`, `#period_in_words`, `#organization_dashboard_bikes_graph_data` | No caller here. |
+| `ComponentStructs::Shapes`' menu shapes (`link`, `group`, `disabled`, `divider`), `IndexState`, the org search structs | Only `tab` and `entry` are read by `UI::` components. |
+| `application.css`: Bike Index's palette, fonts and breakpoints, the `.inverted` dark variant, `search-all-checked`/`imperial`/`similar-open` variants, org-sidebar body rules, select2, `.twbootcontainer`, `legacy`/`bikebook`/`lexxy_overrides`/`legacy_dark` stylesheets | Bike Index's brand and pages. MIBM keeps its purple palette, IBM Plex fonts, and its own `twtext-color`, `.twlink`, `.twinput` colors. |
+| `bike_index_components.css`: `twpagebleed`, `.only-dev-visible`, `.twalert-body`, `.form-well-label`, `.twsearchrow`, `.twhr` | Org sidebar, legacy Bootstrap cascade, legacy form well, admin search row and `<hr>` — no `UI::` component here emits them (`.twalert-body` is emitted but only fought Bootstrap's `.container`). MIBM keeps its own `.only-dev-visible`. |
+| `utils/hw_combobox_patch.js` | Patches the `hotwire_combobox` gem's GitHub `main`; MIBM installs the rubygems release. Port it with a pin to the same revision. |
+| `spec/support`: upstream's Playwright `capybara.rb`, request/registration helpers, most of `integration_spec_helpers.rb` | MIBM runs system specs on Selenium. `expect_axe_clean`, `wait_for`, `wait_for_stimulus` and `dismiss_flash_messages` were ported. |
 
 ## Cautionary ledger
 

@@ -123,7 +123,7 @@ Some components only render in a context you can't reproduce on a normal dev pag
 $BASE_URL/rails/view_components/<preview_path>/<scenario>
 ```
 
-`<preview_path>` is the preview class underscored with the `Preview` suffix dropped, and `<scenario>` is the preview method. `Form::Group::ComponentPreview#text_field` → `/rails/view_components/form/group/component/text_field`. If a scenario doesn't exist yet, add a method to the component's `component_preview.rb` first — a preview that renders the exact state (pass the args that trigger it) is often the fastest path to a clean shot.
+`<preview_path>` is the preview class underscored with the `Preview` suffix dropped, and `<scenario>` is the preview method. `UI::Forms::Group::ComponentPreview#text_field` → `/rails/view_components/ui/forms/group/component/text_field`. If a scenario doesn't exist yet, add a method to the component's `component_preview.rb` first — a preview that renders the exact state (pass the args that trigger it) is often the fastest path to a clean shot.
 
 Use this bare route, not Lookbook's `/lookbook/inspect/...`, which wraps the component in its own browser chrome. `/lookbook/preview/...` is the one route that puts a whole `@!group` on a single page — `/lookbook/preview/form/group/kinds` for `Form::Group::ComponentPreview`'s `# @!group Kinds`. Reach for it when the shot needs several scenarios side by side. **It takes a group, not a scenario, and drops the trailing `component`** — `/lookbook/preview/form/group/component/kinds` and `/lookbook/preview/form/group/<scenario>` both 404, which reads as an unregistered group rather than a wrong path. On a dev server that's been up a while, the group page can stop picking up newly added scenarios — `bin/rails restart` clears it.
 

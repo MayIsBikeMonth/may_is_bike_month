@@ -231,6 +231,9 @@
   @media (max-width: 1023px) {
     .punchcard-week > * {
       aspect-ratio: 1;
+    }
+    .punchcard-week > *,
+    .punchcard-week .punchcard-cell {
       border-radius: 3px;
     }
     .punchcard-week > :first-child {
