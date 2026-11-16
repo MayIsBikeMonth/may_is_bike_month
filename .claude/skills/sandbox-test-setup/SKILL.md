@@ -3,12 +3,12 @@ name: sandbox-test-setup
 description: >-
   May is Bike Month Ruby + RSpec environment setup. Two environments:
   **(A) local macOS Conductor workspace** (`/Users/…/conductor/workspaces/…`) —
-  Ruby 4.0.2 is installed via mise but Claude Code's shell sometimes
+  Ruby 4.0.9 is installed via mise but Claude Code's shell sometimes
   spawns subprocesses without the mise shim, so bare `ruby`/`bundle`
   falls back to system 2.6 and fails with `Could not find 'bundler'
   (4.0.9)`. Fix is a PATH prefix, not a reinstall.
   **(B) Claude Code's Linux web sandbox** (`/home/user/may_is_bike_month`) —
-  Ruby 4.0.2 must be built from source (~8–10 min, `cache.ruby-lang.org`
+  Ruby 4.0.9 must be built from source (~8–10 min, `cache.ruby-lang.org`
   firewalled); also postgres/redis, tailwind build, Chrome-matching
   ChromeDriver, and a local jsdelivr proxy for `:js, type: :system`
   specs. Trigger whenever a session runs RSpec/bundle/`bin/lint`, or
@@ -26,21 +26,21 @@ under `/home/user/may_is_bike_month` use **Claude Code web sandbox**.
 
 ## Local macOS (Conductor workspace)
 
-Ruby 4.0.2 is installed via [mise](https://mise.jdx.dev/), but Claude
+Ruby 4.0.9 is installed via [mise](https://mise.jdx.dev/), but Claude
 Code's shell sometimes spawns subprocesses without the mise shim on
 PATH — bare `ruby` then resolves to `/usr/bin/ruby` (2.6) and `bundle`
 fails with `Could not find 'bundler' (4.0.9)`. **The Ruby is
 installed; the PATH just isn't right** — don't reinstall, don't edit
 the Gemfile.
 
-Check first; only prefix PATH if `ruby -v` doesn't already print 4.0.2
+Check first; only prefix PATH if `ruby -v` doesn't already print 4.0.9
 (`mise exec -- ruby`/`bundle` are unreliable in this harness — they
 can still resolve to system 2.6, so use the direct prefix):
 
 ```bash
 ruby -v
-# If it's not 4.0.2:
-export PATH="/Users/seth/.local/share/mise/installs/ruby/4.0.2/bin:$PATH"
+# If it's not 4.0.9:
+export PATH="/Users/seth/.local/share/mise/installs/ruby/4.0.9/bin:$PATH"
 ```
 
 Then run specs the normal way:
@@ -63,18 +63,18 @@ run.
 
 ## Claude Code web sandbox
 
-The Gemfile pins `ruby "4.0.2"` and `Gemfile.lock` pins
-`BUNDLED WITH 4.0.9`. No prebuilt 4.0.2 binary is reachable
+The Gemfile pins `ruby "4.0.9"` and `Gemfile.lock` pins
+`BUNDLED WITH 4.0.9`. No prebuilt 4.0.9 binary is reachable
 (`cache.ruby-lang.org` is 403'd, `ruby/ruby-builder`'s toolcache tops
 out at `3.5.0-preview1`), so build from the GitHub source tag — about
 8–10 min on a 4-core sandbox. Don't fall back to 3.x and patch the
 Gemfile; Bundler 4.x's resolver behaves differently and you'll waste
-time chasing fake regressions. Once `/opt/ruby-4.0.2/x64/` exists,
+time chasing fake regressions. Once `/opt/ruby-4.0.9/x64/` exists,
 `bundle install` works as-is.
 
-## One-shot Ruby 4.0.2 build
+## One-shot Ruby 4.0.9 build
 
-Skip if `/opt/ruby-4.0.2/x64/bin/ruby --version` already prints 4.0.2.
+Skip if `/opt/ruby-4.0.9/x64/bin/ruby --version` already prints 4.0.9.
 Two quirks the bash block handles: (1) GitHub source tarballs lack a
 pre-generated `configure`, so `autogen.sh` runs first; (2) `make install`
 fetches ~30 bundled gems via `BASERUBY`, whose hardcoded CA bundle
@@ -85,9 +85,9 @@ bundled gem with `curl` (which honours
 ```bash
 # 1. Source — GitHub tag tarball (cache.ruby-lang.org is blocked)
 mkdir -p /tmp/ruby-build-src && cd /tmp/ruby-build-src
-curl -sfL "https://github.com/ruby/ruby/archive/refs/tags/v4.0.2.tar.gz" \
+curl -sfL "https://github.com/ruby/ruby/archive/refs/tags/v4.0.9.tar.gz" \
   | tar -xz
-cd ruby-4.0.2
+cd ruby-4.0.9
 
 # 2. Generate ./configure (GitHub source tarballs don't ship it)
 ./autogen.sh
@@ -102,8 +102,8 @@ done < gems/bundled_gems
 
 # 4. Configure + build + install (BASERUBY = preinstalled /opt/ruby-3.3.6)
 mkdir -p /tmp/ruby-build-src/build && cd /tmp/ruby-build-src/build
-/tmp/ruby-build-src/ruby-4.0.2/configure \
-  --prefix=/opt/ruby-4.0.2/x64 \
+/tmp/ruby-build-src/ruby-4.0.9/configure \
+  --prefix=/opt/ruby-4.0.9/x64 \
   --enable-shared \
   --disable-install-doc \
   --with-openssl-dir=/usr
@@ -111,12 +111,12 @@ make -j"$(nproc)"
 SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt make install
 
 # 5. Match the GitHub-Actions hostedtoolcache layout some shebangs assume
-mkdir -p /opt/hostedtoolcache/Ruby/4.0.2
-[ -e /opt/hostedtoolcache/Ruby/4.0.2/x64 ] || \
-  ln -s /opt/ruby-4.0.2/x64 /opt/hostedtoolcache/Ruby/4.0.2/x64
+mkdir -p /opt/hostedtoolcache/Ruby/4.0.9
+[ -e /opt/hostedtoolcache/Ruby/4.0.9/x64 ] || \
+  ln -s /opt/ruby-4.0.9/x64 /opt/hostedtoolcache/Ruby/4.0.9/x64
 
 cd /home/user/may_is_bike_month
-/opt/ruby-4.0.2/x64/bin/ruby --version   # => ruby 4.0.2 ... [x86_64-linux]
+/opt/ruby-4.0.9/x64/bin/ruby --version   # => ruby 4.0.9 ... [x86_64-linux]
 ```
 
 ## Toolchain on PATH
@@ -127,8 +127,8 @@ lives only on `/usr/sbin`.
 
 ```bash
 CHROME_DIR=$(ls -d /opt/pw-browsers/chromium-*/chrome-linux | sort -V | tail -1)
-export PATH="/opt/ruby-4.0.2/x64/bin:$CHROME_DIR:/usr/local/bin:/usr/bin:/bin:/usr/sbin"
-export LD_LIBRARY_PATH="/opt/ruby-4.0.2/x64/lib:$LD_LIBRARY_PATH"
+export PATH="/opt/ruby-4.0.9/x64/bin:$CHROME_DIR:/usr/local/bin:/usr/bin:/bin:/usr/sbin"
+export LD_LIBRARY_PATH="/opt/ruby-4.0.9/x64/lib:$LD_LIBRARY_PATH"
 bundle install
 ```
 
@@ -253,12 +253,12 @@ routes `cdn.jsdelivr.net` → this local server, and
 
 ## End-to-end recap
 
-Assumes Ruby 4.0.2 is already built. Combines the steps above:
+Assumes Ruby 4.0.9 is already built. Combines the steps above:
 
 ```bash
 CHROME_DIR=$(ls -d /opt/pw-browsers/chromium-*/chrome-linux | sort -V | tail -1)
-export PATH="/opt/ruby-4.0.2/x64/bin:$CHROME_DIR:/usr/local/bin:/usr/bin:/bin:/usr/sbin"
-export LD_LIBRARY_PATH="/opt/ruby-4.0.2/x64/lib:$LD_LIBRARY_PATH"
+export PATH="/opt/ruby-4.0.9/x64/bin:$CHROME_DIR:/usr/local/bin:/usr/bin:/bin:/usr/sbin"
+export LD_LIBRARY_PATH="/opt/ruby-4.0.9/x64/lib:$LD_LIBRARY_PATH"
 service postgresql start && service redis-server start
 cd /home/user/may_is_bike_month
 bundle install
