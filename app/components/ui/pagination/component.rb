@@ -39,15 +39,19 @@ module UI
         Pagy::I18n.translate(key, **opts)
       end
 
+      # Multiline classes strings here were confusing tailwind somehow :(
+      # relative, so the z-10s below lift an item's border above the neighbors
+      # -space-x-px overlaps it with
       def disabled_classes
-        "disabled:cursor-default px-3 py-1 leading-tight border border-purple-200 dark:border-purple-700 bg-white dark:bg-purple-800 text-gray-500 dark:text-gray-300 "
+        "disabled:cursor-default relative px-3 py-1 leading-tight border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 no-underline "
       end
 
-      def active_classes(current = false)
-        disabled_classes + "dark:hover:bg-purple-700 hover:bg-purple-100 hover:text-gray-700 dark:hover:text-white "
+      def active_classes
+        disabled_classes + "hover:z-10 hover:border-purple-500 hover:bg-purple-50 hover:text-gray-800 dark:hover:border-purple-500 dark:hover:bg-purple-950 dark:hover:text-white "
       end
 
       def current_link_class
+        # Round the outer edge, if there isn't a prev/next
         extra_classes = if !show_previous
           "rounded-s-md "
         elsif !show_next
@@ -55,8 +59,9 @@ module UI
         else
           ""
         end
+        # The current page fills like an active UI::Button secondary
         extra_classes +
-          "disabled:cursor-default px-3 py-1 leading-tight border border-purple-200 dark:border-purple-700 bg-purple-200 dark:bg-purple-600 text-gray-800 dark:text-gray-100 "
+          "disabled:cursor-default relative z-10 px-3 py-1 leading-tight border border-purple-500 bg-purple-500 text-white "
       end
 
       def pagy_series

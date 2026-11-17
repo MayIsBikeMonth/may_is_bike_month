@@ -1,17 +1,23 @@
 // collapse-utils.js
 // Utility class for handling element collapse animations
 
+// show/hide build `duration-${duration}` at runtime, which tailwind's scanner can't see -
+// the build only carries 200/300/500, from ERB that writes them literally. Change this to
+// anything else and the transition silently stops applying while the timers still wait.
+export const COLLAPSE_DURATION_MS = 200
+
 /**
  * CollapseUtils class providing element collapse/expand functionality
  */
 export class CollapseUtils {
   /**
    * Handle collapsing or showing elements with animation
-   * @param {string} action - 'show' or 'hide'
+   * @param {string} action - 'show', 'hide', or 'toggle'
    * @param {HTMLElement|HTMLElement[]} element - The element(s) to manipulate
    * @param {number} duration - Animation duration in milliseconds
+   * @param {string} direction - 'vertical' (height) or 'horizontal' (width)
    */
-  static collapse (action, element, duration) {
+  static collapse (action, element, duration, direction = 'vertical') {
     if (!element) {
       console.warn('Cannot collapse undefined or null element')
       return
@@ -19,60 +25,116 @@ export class CollapseUtils {
 
     // Handle arrays of elements
     if (Array.isArray(element)) {
-      element.forEach(el => this.collapse(action, el, duration))
+      element.forEach(el => this.collapse(action, el, duration, direction))
       return
     }
 
     if (action === 'show') {
-      this.show(element, duration)
+      this.show(element, duration, direction)
     } else if (action === 'hide') {
-      this.hide(element, duration)
+      this.hide(element, duration, direction)
     } else if (action === 'toggle') {
-      this.toggle(element, duration)
+      this.toggle(element, duration, direction)
     } else {
       console.warn(`Invalid CollapseUtils action: ${action}. must be one of: 'show', 'hide', 'toggle'`)
     }
+  }
+
+  // The measured dimension, the styles to animate, and the collapse scale class
+  // for the axis. Horizontal drives flex-basis too, since a flex-row item is
+  // sized by its basis rather than its width. The edges - padding, border and
+  // margin - go to 0 with it, or they'd stay until display:none and jump.
+  static axis (direction) {
+    const horizontal = direction === 'horizontal'
+    const [start, end] = horizontal ? ['Left', 'Right'] : ['Top', 'Bottom']
+    const edges = [`padding${start}`, `padding${end}`, `border${start}Width`, `border${end}Width`, `margin${start}`, `margin${end}`]
+    return horizontal
+      ? { dimension: 'width', styles: ['width', 'flexBasis'], edges, scale: 'scale-x-0' }
+      : { dimension: 'height', styles: ['height'], edges, scale: 'scale-y-0' }
+  }
+
+  // The element's natural rendered size along the axis (flex-aware, unlike
+  // scrollWidth/scrollHeight, so a shrunk flex item animates to its real size).
+  static naturalSize (element, dimension) {
+    return element.getBoundingClientRect()[dimension]
+  }
+
+  static setSize (element, styles, value) {
+    styles.forEach((style) => { element.style[style] = value })
+  }
+
+  // Reading a layout property forces a synchronous reflow, committing pending
+  // style changes so the following change animates from them.
+  static reflow (element) {
+    return element.offsetWidth
   }
 
   /**
    * Toggle element visibility
    * @param {HTMLElement} element - The element to toggle
    * @param {number} duration - Animation duration in milliseconds
+   * @param {string} direction - 'vertical' (height) or 'horizontal' (width)
    */
-  static toggle (element, duration) {
+  static toggle (element, duration, direction = 'vertical') {
     if (!element) return
 
     const isHidden = element.classList.contains('hidden!') || element.classList.contains('hidden')
-    this.collapse(isHidden ? 'show' : 'hide', element, duration)
+    this.collapse(isHidden ? 'show' : 'hide', element, duration, direction)
   }
 
   /**
    * Show/uncollapse an element with animation
    * @param {HTMLElement} element - The element to uncollapse
    * @param {number} duration - Animation duration in milliseconds
+   * @param {string} direction - 'vertical' (height) or 'horizontal' (width)
    */
-  static show (element, duration) {
-    // Return early if already visible
-    if (this.isVisible(element)) return
+  static show (element, duration, direction = 'vertical') {
+    const { dimension, styles, edges, scale } = this.axis(direction)
+    // Bail if already fully shown — but isVisible alone isn't enough: a hide()
+    // mid-transition still has display:block/visibility:visible until its finalizer
+    // adds hidden!, yet the scale class means the element is collapsed to 0.
+    if (this.isVisible(element) && !element.classList.contains(scale)) return
+    // Cancel any in-flight hide() finalizer so it doesn't stamp hidden! on us. Below the
+    // bail: a second show() mid-animation takes that branch, and cancelling first orphans
+    // the pinned size and the clip with nothing left to clear them.
+    this._cancelFinalizer(element)
     // Remove the hidden
     element.classList.remove('hidden!', 'hidden')
+    // An animated hide leaves the size/scale/clip pinned, so reset before the
+    // duration-0 return too - display alone doesn't uncollapse it
+    element.classList.remove(scale, 'overflow-clip')
+    this.setSize(element, [...styles, ...edges], '')
 
     // Skip animation if duration is 0
     if (!duration) return
 
-    // First, ensure the hidden attributes are set
-    element.classList.add('scale-y-0')
-    element.style.height = 0
+    // Measure the natural size while visible, before collapsing to 0.
+    const target = this.naturalSize(element, dimension)
+    // Collapse to 0 as the transition's starting point - committed with transitions off, as a
+    // hide() leaves them on, or the edges would start animating down from the size just measured
+    element.style.transition = 'none'
+    this.setSize(element, [...styles, ...edges], 0)
+    this.reflow(element)
+    element.style.transition = ''
+    element.classList.add(scale)
     // Always add transition classes (moving toward a more generalizable collapse method)
-    element.classList.add('transition-all', `duration-${duration}`)
+    // Clipped for the duration: content is laid out from the element's leading edge, so the
+    // pinned size doesn't move it - unclipped it covers whatever is sliding past beneath,
+    // and takes the clicks aimed there. clip rather than hidden: no scroll container.
+    element.classList.add('transition-all', 'overflow-clip', `duration-${duration}`)
     // Remove things that transition to hide the element
-    element.classList.remove('scale-y-0')
-    // Set the element's height to its natural height to expand it
-    element.style.height = `${element.scrollHeight}px`
+    element.classList.remove(scale)
+    // Force a reflow so the browser commits the 0 size before transitioning.
+    this.reflow(element)
+    // Set the element's size to its natural size to expand it, its edges back to the stylesheet's
+    this.setSize(element, styles, `${target}px`)
+    this.setSize(element, edges, '')
 
-    // After transition is complete, remove explicit height (clean up afterward)
-    setTimeout(() => {
-      element.style.height = ''
+    // After transition is complete, remove explicit size (clean up afterward)
+    element._collapseFinalizer = setTimeout(() => {
+      this.setSize(element, styles, '')
+      element.classList.remove('overflow-clip')
+      element._collapseFinalizer = null
     }, duration)
   }
 
@@ -80,8 +142,10 @@ export class CollapseUtils {
    * Hide/collapse an element with animation
    * @param {HTMLElement} element - The element to collapse
    * @param {number} duration - Animation duration in milliseconds
+   * @param {string} direction - 'vertical' (height) or 'horizontal' (width)
    */
-  static hide (element, duration) {
+  static hide (element, duration, direction = 'vertical') {
+    this._cancelFinalizer(element)
     // Return early if already hidden
     if (!this.isVisible(element)) return
 
@@ -91,19 +155,34 @@ export class CollapseUtils {
       return
     }
 
+    const { dimension, styles, edges, scale } = this.axis(direction)
+    // Pin the current natural size so the transition has a starting point.
+    this.setSize(element, styles, this.naturalSize(element, dimension) + 'px')
     // Always add transition classes (moving toward a more generalizable collapse method)
-    element.classList.add('transition-all', `duration-${duration}`)
+    // Clipped like show(): the scale below shrinks the content about its centre, so its
+    // far edge escapes the shrinking box. The next show() strips it on the way back in.
+    element.classList.add('transition-all', 'overflow-clip', `duration-${duration}`)
     // Add the tailwind class to shrink
-    element.classList.add('scale-y-0')
-    // Set an explicit height to enable the transition
-    element.style.height = element.scrollHeight + 'px'
-    // Transition to height 0
-    element.style.height = '0px'
+    element.classList.add(scale)
+    // Force a reflow so the browser commits the natural size before transitioning.
+    this.reflow(element)
+    // Transition to size 0
+    this.setSize(element, [...styles, ...edges], '0px')
 
-    // After transition completes, add display: none to remove element from the flow
-    setTimeout(() => {
+    // After transition completes, add display: none to remove element from the flow. The edges go
+    // back to the stylesheet's, out of the flow, for show() to measure
+    element._collapseFinalizer = setTimeout(() => {
       element.classList.add('hidden!')
+      this.setSize(element, edges, '')
+      element._collapseFinalizer = null
     }, duration)
+  }
+
+  static _cancelFinalizer (element) {
+    if (element._collapseFinalizer) {
+      clearTimeout(element._collapseFinalizer)
+      element._collapseFinalizer = null
+    }
   }
 
   /**
@@ -126,7 +205,22 @@ export class CollapseUtils {
  * @param {string} action - 'show', 'hide', or 'toggle'
  * @param {HTMLElement} element - The element to manipulate
  * @param {number} duration - Animation duration in milliseconds
+ * @param {string} direction - 'vertical' (height) or 'horizontal' (width)
  */
-export function collapse (action, element, duration = 200) {
-  return CollapseUtils.collapse(action, element, duration)
+export function collapse (action, element, duration = COLLAPSE_DURATION_MS, direction = 'vertical') {
+  return CollapseUtils.collapse(action, element, duration, direction)
+}
+
+/**
+ * Collapse a form field, disabling what it holds. Collapsing only hides, so a field the
+ * form no longer asks for would still post its values - and a required one it can't
+ * reach would block the submission outright.
+ * @param {HTMLElement} field - The wrapper to collapse
+ * @param {boolean} shown - Whether the form is asking for it
+ * @param {number} duration - Animation duration in milliseconds
+ * @param {string} direction - 'vertical' (height) or 'horizontal' (width)
+ */
+export function collapseField (field, shown, duration, direction) {
+  collapse(shown ? 'show' : 'hide', field, duration, direction)
+  field.querySelectorAll('input, select, textarea').forEach((el) => { el.disabled = !shown })
 }

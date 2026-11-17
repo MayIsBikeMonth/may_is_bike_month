@@ -90,11 +90,13 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 20
-          # cache: yarn
+          node-version-file: .tool-versions
+          cache: npm
       - name: Install packages
-        run: |
-          yarn install --pure-lockfile
+        run: npm ci
+      # :js system specs drive the `playwright` npm package's own Chromium
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
       - name: Test bin/setup
         run: bin/setup
       - name: Reset database after bin/setup seed

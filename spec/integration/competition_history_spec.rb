@@ -38,7 +38,7 @@ RSpec.describe "Competition history user picker", :js, type: :system do
     find("[aria-label='Remove #{display}']").click
   end
 
-  # The selected-user th uses CSS `uppercase`; Selenium's #text returns the
+  # The selected-user th uses CSS `uppercase`; the driver's #text returns the
   # rendered (uppercased) form, so match case-insensitively.
   def selected_column_header(text)
     find("th", text: /#{Regexp.escape(text)}/i)

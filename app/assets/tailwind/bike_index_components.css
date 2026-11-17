@@ -1,0 +1,178 @@
+/* The tw* classes shared with Bike Index's UI components. Rules that style one component's
+ * markup, like .ui-table, stay in application.css, as do this app's palette and brand */
+
+/* A plain custom property rather than @theme, which drops a variable no generated
+ * utility references */
+:root {
+  --gutter: calc(var(--spacing) * 4);
+}
+
+@utility tweyebrow {
+  @apply text-xs font-bold tracking-wider text-purple-500 uppercase dark:text-purple-300;
+}
+
+/* A card that meets the page's own gutter rather than sitting inset inside it twice over,
+ * once the .twwiderow holding it has dropped to one column. Keyed to the row rather than the
+ * viewport so it can't disagree with the column count - 672px is where .twwiderow's second
+ * 320px column stops fitting, and a container query can't read that from a var(). */
+@utility twfullbleed {
+  @container twwiderow (width < 672px) {
+    /* All forced. Tailwind sorts a custom utility by the properties it sets, so each one added
+     * here moves the whole rule and can drop it behind a card class it used to outrank */
+    @apply border-x-0! border-t-0! px-0! rounded-none!;
+  }
+}
+
+@layer components {
+  .twlink {
+    @apply cursor-pointer underline decoration-1 text-purple-500 dark:text-purple-200 transition-colors;
+
+    /* Outranks the hover below on specificity, so a selected link doesn't take the
+     * hover color when the pointer is over it */
+    @variant is-active {
+      @apply text-purple-700 font-bold dark:text-purple-0;
+    }
+  }
+
+  /* Guarded so a disabled UI::Button/UI::ButtonLink in link color holds its color.
+   * Every other color guards its hover in the utilities; link color's lives here. */
+  .twlink:not(:disabled, [aria-disabled="true"]):hover {
+    @apply decoration-2 text-purple-700 dark:text-purple-100;
+  }
+
+  /* For links that should inherit the color of the text they sit in */
+  .twlink-underlined {
+    @apply text-inherit underline transition-colors;
+
+    /* Substituted into `color` rather than resolved here: currentColor in a `color`
+     * declaration is the inherited color, so hover and is-active below shift whatever the
+     * link sits in — lightening in dark mode, where deepening would sink it into the
+     * background. Clamped, so text already at the floor lifts rather than shifting to
+     * itself; a browser too old for relative color syntax still gets the thicker underline */
+    --twlink-underlined-shifted: oklch(from currentColor max(calc(l - 0.12), 0.2) c h);
+
+    @variant dark {
+      --twlink-underlined-shifted: oklch(from currentColor min(calc(l + 0.12), 0.8) c h);
+    }
+
+    @variant is-active {
+      @apply decoration-2 font-bold;
+
+      color: var(--twlink-underlined-shifted);
+    }
+  }
+
+  .twlink-underlined:not(:disabled, [aria-disabled="true"]):hover {
+    @apply decoration-2;
+
+    color: var(--twlink-underlined-shifted);
+  }
+
+  .less-strong {
+    @apply opacity-65 decoration-gray-900/65 dark:decoration-gray-400/65;
+  }
+
+  .twinput {
+    @apply block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm
+      text-gray-900 placeholder:text-gray-400
+      focus:border-purple-400 focus:ring-2 focus:ring-purple-400/40 focus:outline-none
+      dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500
+      dark:focus:border-purple-300 dark:focus:ring-purple-300/40;
+  }
+
+  /* block + the gap to its field, so a label spaces the same whatever renders below it.
+   * Utilities still win, so `twlabel m-0` and the checkbox's `flex` override as before. */
+  .twlabel {
+    @apply block mb-1 text-sm font-medium text-gray-800 dark:text-gray-300 cursor-pointer;
+  }
+
+  /* Fields that read as one control -- a city and its state, a name and its phone. The
+   * gutter is tighter than a page-level grid's, and auto-fit means the break to full width
+   * comes from the row running out of room rather than from a viewport breakpoint, so a row
+   * inside a narrow card breaks at the same width it would anywhere else. */
+  .twfieldrow {
+    @apply grid gap-x-2 grid-cols-[repeat(auto-fit,minmax(140px,1fr))];
+  }
+
+  /* Two columns of cards or sections (three with .twwiderow-3), breaking on the row's own
+   * width like .twfieldrow rather than at a viewport breakpoint. The max() caps the column
+   * count, which repeat() alone would not do - a wide row fits four 320px tracks. auto-fill
+   * rather than auto-fit so a column whose only child is hidden holds its place instead of
+   * handing the whole row to its neighbour. The min(100%) is what keeps that 320px floor
+   * from overflowing a row nested in something narrower than it.
+   * Both counts share the 320px floor, so both are single-column below the 672px that
+   * .twfullbleed and the /twwiderow container queries read. Three columns go 3, 2+1, 1 */
+  .twwiderow {
+    @apply grid gap-x-8;
+    --twwiderow-columns: 2;
+    container: twwiderow / inline-size;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, max(320px, calc(100% / var(--twwiderow-columns) - var(--spacing) * 8))), 1fr));
+  }
+
+  .twwiderow-3 {
+    --twwiderow-columns: 3;
+  }
+
+  [aria-expanded="true"] .twdropdown-chevron {
+    @apply rotate-180;
+  }
+
+  .twdropdown {
+    @apply flex-col list-none py-0 mb-0;
+  }
+
+  /* An entry is a link, or -- for what's already being viewed, which is nowhere to go -- a
+   * label. The rules below that lay entries out take both; only the colors tell them apart */
+  .twdropdown li[role="menuitem"]:first-child > :is(a, span[data-active="true"]) {
+    @apply pt-2 rounded-t-lg;
+  }
+
+  .twdropdown li[role="menuitem"]:last-child > :is(a, span[data-active="true"]) {
+    @apply pb-2 rounded-b-lg;
+  }
+
+  .twdropdown li[role="menuitem"] > :is(a, span[data-active="true"]) {
+    @apply block px-4 py-1 text-left text-base text-gray-700
+      dark:text-gray-200;
+  }
+
+  .twdropdown li[role="menuitem"] > a {
+    @apply no-underline hover:bg-gray-100 hover:text-gray-900
+      dark:hover:bg-gray-700 dark:hover:text-gray-100;
+
+    /* ui--active-link marks the link itself, so the entry reads its own state rather than
+     * the li's. The fill is UI::Button's secondary active, minus the border and ring a
+     * menu item has no room for */
+    @variant is-active {
+      @apply bg-purple-500 text-white;
+    }
+  }
+
+  /* Where-you-are, without the pull of somewhere to go -- under the fill hovering an entry
+   * takes, so the row a pointer is on still reads as the live one */
+  .twdropdown li[role="menuitem"] > span[data-active="true"] {
+    @apply italic bg-gray-50 dark:bg-gray-700/50;
+  }
+
+  .twdropdown li[role="menuitem"]:has(+ li[role="separator"]) > :is(a, span[data-active="true"]) {
+    @apply pb-2;
+  }
+
+  .twdropdown li[role="separator"] + li[role="menuitem"] > :is(a, span[data-active="true"]) {
+    @apply pt-2;
+  }
+
+  .twdropdown li[role="separator"] {
+    @apply border-t border-gray-200 dark:border-gray-700;
+  }
+
+  .twgutter {
+    padding-inline: var(--gutter);
+  }
+
+  /* Edge to edge, then the gutter back inside it - what a wide table scrolls in */
+  .twgutter-bleed {
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+  }
+}

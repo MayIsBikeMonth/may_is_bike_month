@@ -24,7 +24,7 @@ module Leaderboard
       private
 
       def button_attrs
-        return {class: "punchcard-cell"} unless level
+        return {class: "punchcard-cell block size-full"} unless level
 
         data = {
           action: "click->punch#toggle",
@@ -39,7 +39,7 @@ module Leaderboard
       end
 
       def button_class
-        "punchcard-cell cursor-pointer outline-none transition-shadow " \
+        "punchcard-cell block size-full cursor-pointer outline-none transition-shadow " \
           "hover:ring-1 hover:ring-purple-300 dark:hover:ring-purple-600 " \
           "focus-visible:ring-[2px] focus-visible:ring-purple-400 dark:focus-visible:ring-purple-500 " \
           "aria-pressed:shadow-[0_3px_0_0_var(--color-purple-900)] " \

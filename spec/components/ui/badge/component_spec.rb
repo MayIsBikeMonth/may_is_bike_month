@@ -16,7 +16,7 @@ RSpec.describe UI::Badge::Component, type: :component do
     expect(component).not_to have_css("[role='tooltip']")
 
     html = component.to_html
-    expect(html).to include("bg-gray-300")
+    expect(html).to include("bg-[#f0f0f2]")
     expect(html).to include("inline-flex")
     expect(html).to include("rounded-full")
     expect(html).to include("cursor-default")
@@ -41,15 +41,16 @@ RSpec.describe UI::Badge::Component, type: :component do
 
   describe "colors" do
     {
-      success: "bg-emerald-500",
-      notice: "bg-purple-200",
-      purple: "bg-purple-300",
-      warning: "bg-amber-300",
-      cyan: "bg-cyan-400",
-      error: "bg-red-300",
-      gray: "bg-gray-300",
-      rose: "bg-rose-400",
-      orange: "bg-orange-400"
+      success: "bg-green-50",
+      notice: "bg-blue-50",
+      purple: "bg-purple-50",
+      warning: "bg-yellow-50",
+      cyan: "bg-cyan-50",
+      error: "bg-red-50",
+      gray: "bg-[#f0f0f2]",
+      rose: "bg-rose-50",
+      orange: "bg-orange-50",
+      empty: "bg-white"
     }.each do |color_name, css_class|
       context "with #{color_name}" do
         let(:color) { color_name }
@@ -63,7 +64,50 @@ RSpec.describe UI::Badge::Component, type: :component do
   context "with invalid color" do
     let(:color) { :invalid_color }
     it "falls back to gray" do
-      expect(component.to_html).to include("bg-gray-300")
+      expect(component.to_html).to include("bg-[#f0f0f2]")
+    end
+  end
+
+  context "with empty color" do
+    let(:color) { :empty }
+    it "renders with gray border" do
+      html = component.to_html
+      expect(html).to include("bg-white")
+      expect(html).to include("border-gray-300")
+    end
+  end
+
+  describe "decorative leading elements" do
+    context "with an icon" do
+      let(:options) { {text:, icon: "icons/check"} }
+
+      it "hides the icon from screen readers" do
+        expect(component.css("svg[aria-hidden='true']")).to be_present
+        expect(component).to have_text("Test Badge")
+      end
+    end
+
+    context "with an indicator" do
+      let(:options) { {text:, indicator: true} }
+
+      it "hides the dot from screen readers" do
+        expect(component.css("span[aria-hidden='true']")).to be_present
+      end
+    end
+  end
+
+  context "with content block" do
+    let(:component) { render_inline(described_class.new(text: "Fallback")) { "Block content" } }
+
+    it "renders block content instead of text" do
+      expect(component).to have_text("Block content")
+      expect(component).not_to have_text("Fallback")
+    end
+  end
+
+  context "without content block" do
+    it "renders text" do
+      expect(component).to have_text("Test Badge")
     end
   end
 end

@@ -14,7 +14,19 @@ end
 
 ENV["DEV_PORT"] ||= "3010"
 ENV["BASE_URL"] ||= "http://localhost:#{ENV["DEV_PORT"]}"
-ENV["REDIS_URL"] ||= "redis://localhost:6379/#{(ENV["DEV_PORT"].to_i - 1) % 16}"
+
+# Redis has 16 databases. Dev takes 0-7 - database 0 belongs to the main checkout
+# (no WORKSPACE_ID) so workspaces can't clobber it, workspaces share 1-7. Test takes
+# 8-15: specs enqueue into real Sidekiq queues, which a dev server on the same
+# database would run and consume.
+unless ENV["REDIS_URL"]
+  redis_database = if ENV["RAILS_ENV"] == "test"
+    8 + (ENV["WORKSPACE_ID"].to_i + ENV["TEST_ENV_NUMBER"].to_i) % 8
+  else
+    ENV["WORKSPACE_ID"] ? ENV["WORKSPACE_ID"].to_i % 7 + 1 : 0
+  end
+  ENV["REDIS_URL"] = "redis://localhost:6379/#{redis_database}"
+end
 
 # When called with --export, print shell export statements for bash scripts
 if ARGV.include?("--export")

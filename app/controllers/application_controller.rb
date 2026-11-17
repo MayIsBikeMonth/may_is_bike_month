@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  helper_method :display_dev_info?, :user_root_url
+  helper_method :display_dev_info?, :user_root_url, :sort_state
 
   def append_info_to_payload(payload)
     super
@@ -37,6 +37,12 @@ class ApplicationController < ActionController::Base
     # Tie display_dev_info to the rack mini profiler display
     @display_dev_info = !Rails.env.test? && current_user&.developer? &&
       Rack::MiniProfiler.current.present?
+  end
+
+  # Only for a controller that includes Binxtils::SortableTable
+  def sort_state
+    @sort_state ||= ComponentStructs::SortState.new(search_params: helpers.sortable_search_params,
+      sort: helpers.sort_column, direction: helpers.sort_direction)
   end
 
   def user_root_url

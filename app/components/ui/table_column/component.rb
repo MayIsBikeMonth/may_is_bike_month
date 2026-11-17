@@ -3,13 +3,18 @@
 module UI
   module TableColumn
     class Component < ApplicationComponent
-      ARROW_UP = "\u2191"
-      ARROW_DOWN = "\u2193"
       NBSP = "\u00A0"
+      TD_CLASSES = "px-1 py-1 border-b border-gray-100 dark:border-gray-800"
+      # The last row's line is the table's bottom edge, so it stays with the sides
+      BORDERED_TD_CLASSES = "px-1 py-1 border-b border-l border-gray-200 dark:border-gray-700 " \
+        "dark:[tr:not(:last-child)>&]:border-b-gray-800"
 
-      attr_reader :sortable, :cell_block
+      attr_reader :sortable, :cell_block, :footer, :header_tooltip, :row_header
 
-      def initialize(label: nil, sortable: nil, sort_indicator: nil, classes: nil, header_classes: nil, lower_right: nil, &block)
+      # row_header: each cell is a <th scope="row"> naming its row, as a transposed table's labels are
+      def initialize(label: nil, sortable: nil, sort_indicator: nil, classes: nil, header_classes: nil, header_tooltip: nil, lower_right: nil, footer: nil, row_header: false, &block)
+        @header_tooltip = header_tooltip
+        @row_header = row_header
         @label = label
         @sortable = sortable
         @sort_indicator = sort_indicator
@@ -17,6 +22,7 @@ module UI
         @header_classes = header_classes
         @lower_right = lower_right
         @cell_block = block
+        @footer = footer
       end
 
       # Renders cell content for a record. The block should yield the captured
@@ -35,68 +41,60 @@ module UI
         end
       end
 
-      def render_header(render_sortable:, current_sort:, current_direction:, sortable_url:)
+      def render_header(render_sortable:, current_sort:, current_direction:, sortable_url:, sort_icon:)
         if sortable.present? && render_sortable
-          render_sort_link(current_sort:, current_direction:, sortable_url:)
+          render_sort_link(current_sort:, current_direction:, sortable_url:, sort_icon:)
         elsif @sort_indicator.present? && @sort_indicator == current_sort
-          safe_join([header_label, NBSP, arrow_for(current_direction)])
+          safe_join([header_label, NBSP, sort_icon.call(current_direction)])
         else
           header_label
         end
       end
 
-      def th_classes(bordered:)
+      # A plain header beside sortable ones is normal weight, so the sort links stand out
+      def th_classes(bordered:, sortable_table: false)
         classes = ["px-1 py-2"]
         if bordered
-          classes << "border-b border-l border-t border-purple-200 dark:border-purple-700"
+          classes << "border-b border-l border-t border-gray-200 dark:border-gray-600"
         end
+        classes << "font-normal" if sortable_table && sortable.blank?
         classes << @classes if @classes
         classes << @header_classes if @header_classes
         classes.join(" ")
       end
 
-      def td_classes(bordered:)
-        classes = ["px-1 py-1"]
-        classes << if bordered
-          "border-b border-l border-purple-200 dark:border-purple-700"
-        else
-          "border-b border-purple-100 dark:border-purple-800"
-        end
-        classes << @classes if @classes
-        classes.join(" ")
-      end
-
-      private
+      def hideable? = @classes.to_s.split.include?("hideableColumn")
 
       def header_label
         return @label unless @label.nil?
         @sortable&.gsub(/_(id|at)\z/, "")&.titleize
       end
 
-      def render_sort_link(current_sort:, current_direction:, sortable_url:)
-        title = header_label
-        direction = (@sortable == current_sort && current_direction == "desc") ? "asc" : "desc"
-        css = "twlink"
+      def td_classes(bordered:) = [bordered ? BORDERED_TD_CLASSES : TD_CLASSES, @classes].compact.join(" ")
 
-        if @sortable == current_sort
-          css += " active"
-          arrow_spans = [
-            content_tag(:span, arrow_for(current_direction), class: "group-hover:hidden"),
-            content_tag(:span, arrow_for(direction), class: "hidden group-hover:inline opacity-50")
-          ]
-        else
-          arrow_spans = [
-            content_tag(:span, arrow_for(direction), class: "opacity-0 group-hover:opacity-50 transition-opacity")
-          ]
-        end
-
-        link_to(sortable_url.call(@sortable, direction), class: "#{css} group") do
-          safe_join([title, NBSP, *arrow_spans])
-        end
+      def tfoot_classes(bordered:)
+        [td_classes(bordered:), "border-t-2 border-t-gray-200 font-bold dark:border-t-gray-600"].join(" ")
       end
 
-      def arrow_for(direction)
-        (direction == "desc") ? ARROW_DOWN : ARROW_UP
+      private
+
+      def render_sort_link(current_sort:, current_direction:, sortable_url:, sort_icon:)
+        title = header_label
+        sorted_by_this = @sortable == current_sort
+        direction = (sorted_by_this && current_direction == "desc") ? "asc" : "desc"
+
+        arrow_spans = if sorted_by_this
+          [content_tag(:span, sort_icon.call(current_direction), class: "group-hover:hidden"),
+            content_tag(:span, sort_icon.call(direction), class: "hidden group-hover:inline opacity-50")]
+        else
+          [content_tag(:span, sort_icon.call(direction), class: "opacity-0 group-hover:opacity-50 transition-opacity")]
+        end
+
+        # data-active rather than an `active` class: that's what the is-active variant matches
+        link_to(sortable_url.call(@sortable, direction), class: "twlink group",
+          data: {active: sorted_by_this || nil}) do
+          safe_join([title, NBSP, *arrow_spans])
+        end
       end
     end
   end

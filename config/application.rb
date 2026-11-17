@@ -35,7 +35,7 @@ module MayIsBikeMonth
 
     # Enable instrumentation for ViewComponents (used by rack-mini-profiler)
     config.view_component.instrumentation_enabled = true
-    config.view_component.default_preview_layout = "component_preview"
+    config.view_component.previews.default_layout = "component_preview"
 
     # Add app/components to view paths for component preview templates
     initializer "append_component_views", after: :set_autoload_paths do

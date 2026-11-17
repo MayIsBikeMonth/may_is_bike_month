@@ -1,7 +1,10 @@
 import { Controller } from '@hotwired/stimulus'
 
-/* global CSS, getComputedStyle, requestAnimationFrame */
+/* global CSS, getComputedStyle, requestAnimationFrame, cancelAnimationFrame */
 
+// Connects to data-controller='ui--table'
+// Applies first/last visible column styles (rounding, borders) that CSS
+// :first-child/:last-child can't handle when columns are hidden.
 export default class extends Controller {
   static values = {
     sticky: { type: Boolean, default: false }
@@ -10,12 +13,12 @@ export default class extends Controller {
   connect () {
     this.applyEdgeStyles()
     this.boundRefresh = () => this.applyEdgeStyles()
+    this.boundResize = () => this.onResize()
     window.addEventListener('ui-table:refresh', this.boundRefresh)
+    window.addEventListener('resize', this.boundResize)
 
     if (this.stickyValue) {
-      this.boundResize = () => this.setupSticky()
       this.boundScroll = () => this.onScroll()
-      window.addEventListener('resize', this.boundResize)
       this.setupSticky()
     }
   }
@@ -30,6 +33,16 @@ export default class extends Controller {
     if (this.boundScroll) {
       window.removeEventListener('scroll', this.boundScroll)
     }
+    if (this.resizeFrame) cancelAnimationFrame(this.resizeFrame)
+  }
+
+  onResize () {
+    if (this.resizeFrame) return
+    this.resizeFrame = requestAnimationFrame(() => {
+      this.resizeFrame = null
+      this.applyEdgeStyles()
+      if (this.stickyValue) this.setupSticky()
+    })
   }
 
   refresh () {
@@ -114,10 +127,12 @@ export default class extends Controller {
     const tdLast = bordered ? 'ui-table-bordered-td-last' : 'rounded-br-sm'
     const allClasses = [thFirst, thLast, tdFirst, tdLast]
 
+    // Clear previous edge styles
     allClasses.forEach(cls => {
       table.querySelectorAll(`.${CSS.escape(cls)}`).forEach(el => el.classList.remove(cls))
     })
 
+    // Header row
     const headerRow = table.querySelector('thead tr')
     if (headerRow) {
       const ths = this.visibleCells(headerRow, 'th')
@@ -127,10 +142,11 @@ export default class extends Controller {
       }
     }
 
-    const bodyRows = table.querySelectorAll('tbody tr')
+    // Body and footer rows, whose row headers are th
+    const bodyRows = table.querySelectorAll('tbody tr, tfoot tr')
     if (bordered) {
       bodyRows.forEach(row => {
-        const tds = this.visibleCells(row, 'td')
+        const tds = this.visibleCells(row, 'td, th')
         if (tds.length) {
           tds[0].classList.add(tdFirst)
           tds[tds.length - 1].classList.add(tdLast)
@@ -138,7 +154,7 @@ export default class extends Controller {
       })
     } else if (bodyRows.length > 0) {
       const lastRow = bodyRows[bodyRows.length - 1]
-      const tds = this.visibleCells(lastRow, 'td')
+      const tds = this.visibleCells(lastRow, 'td, th')
       if (tds.length) {
         tds[0].classList.add(tdFirst)
         tds[tds.length - 1].classList.add(tdLast)

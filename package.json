@@ -3,6 +3,8 @@
   "devDependencies": {
     "@herb-tools/formatter": "*",
     "@herb-tools/linter": "*",
+    "axe-core": "4.12.1",
+    "playwright": "1.63.0",
     "standard": "*"
   },
   "scripts": {

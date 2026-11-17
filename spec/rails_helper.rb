@@ -8,9 +8,6 @@ Sidekiq.testing!(:fake)
 require "vcr"
 require "view_component/test_helpers"
 require "capybara/rspec"
-require "axe-rspec"
-
-SKIPPABLE_AXE_RULES = %w[color-contrast empty-table-header heading-order html-has-lang landmark-one-main page-has-heading-one region]
 
 VCR.configure do |config|
   config.cassette_library_dir = "spec/vcr_cassettes"
@@ -47,8 +44,10 @@ RSpec.configure do |config|
   config.include ViewComponent::TestHelpers, type: :component
   config.include Capybara::RSpecMatchers, type: :component
 
-  # Use headless Chrome for system specs
-  config.before(:each, type: :system) { driven_by :selenium, using: :headless_chrome }
+  # Capybara.current_driver is the default from spec/support/capybara.rb, or whatever `driver:`
+  # metadata an example overrides it with. Without this, untagged `type: :system`
+  # specs would boot Selenium.
+  config.before(:each, type: :system) { driven_by(Capybara.current_driver) }
 
   config.use_transactional_fixtures = true
   config.render_views = true

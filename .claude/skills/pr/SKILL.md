@@ -3,152 +3,191 @@ name: pr
 description: >-
   Create or update a pull request for the current branch. Trigger when the user
   asks to create/open/make a PR, or to edit/update/rewrite/fix the PR
-  description, body, or summary — for both new PRs (`gh pr create`) and
-  existing ones (`gh pr edit --body-file`). For frontend diffs, delegates to
-  the `frontend-screenshots` skill to capture desktop+mobile screenshots and
-  embeds them under a `## Screenshots` section. Use for any verb that lands on
-  a PR's text content: "open a PR", "make a PR", "update the PR description",
-  "rewrite the PR body", "fix the description".
-allowed-tools: Bash, Read, Glob, Grep
+  description, body, summary, or title — including bare phrasings like "update
+  pr" or "update the PR" with no other object — for both new PRs and existing
+  ones. Also trigger when the ask is to re-host, recreate, or duplicate an
+  existing PR under this repo (e.g. "close this PR and open a new one of the
+  same changes, not a fork") — that's still creating a PR even with no new diff
+  to write. Note this runs `/simplify`, `bin/lint`, a CLAUDE.md conformance pass and
+  a merge from the base before writing the body — skipped when the ask is only to
+  reword the description — and pushes the result. For
+  frontend diffs, delegates the screenshot phase to `references/screenshots.md`,
+  which captures desktop+mobile shots and posts them as a `## Screenshots` PR
+  comment.
 ---
 
 # Pull request workflow
 
-Create or update a pull request for the current branch. If the diff contains frontend changes, delegate screenshot capture to the `frontend-screenshots` skill and embed the results in the PR body under a `## Screenshots` section.
+Five sections, run in this order:
 
-The workflow is ordered so the always-runs phase (steps 1–3) happens first, then the screenshot phase (steps 4–7) runs only when needed. Each step ends with the conditions under which you stop and return.
+1. **Orient** — commit the current work, then the base branch
+2. **Prepare the branch** — merge, cleanup, migrations. Skipped for a description-only ask
+3. **Publish** — read the final diff, write the body, push, create or update
+4. **Screenshots** — frontend diffs only
+5. **What this run taught you** — always last, whatever else ran
 
-## Workflow
+**Shell state does not persist between commands.** Each command below runs in its own shell, so a `BASE=main` in one is gone by the next. Substitute the real values into every command — write `origin/main`, not `origin/$BASE` — and carry the base branch and PR number in your head, not in the environment. Every `origin/main` below means "the base branch from **Orient**".
 
-### 1. Gather branch state
+Run the `gh` commands as written. The appendix at the bottom covers the one environment where `gh` doesn't work.
 
-Run `eval "$(ruby bin/env --export)"` once so `$WORKSPACE_ID`, `$DEV_PORT`, `$BASE_URL`, and `$REDIS_URL` are set from `.workspace_id` (when present). Then run in parallel:
-- `git status` (no `-uall`)
-- `git diff main...HEAD --stat`
-- `git diff main...HEAD --name-only`
-- `git log main..HEAD --oneline`
-- `EXISTING_PR=$(gh pr view --json number,url,title 2>/dev/null)` — capture for step 3.
+## Orient
 
-If the branch has no commits ahead of `main`, stop and tell the user.
+### Check the working tree
 
-### 2. Classify the diff
+**Commit the current work before anything else runs.** Everything below diffs `origin/main...HEAD`, which only sees committed work, and the merge in **Prepare the branch** needs a clean tree. Uncommitted work is silently skipped by the cleanup, the audits, the classifier and the body, so the PR describes the wrong diff.
 
-A change is "frontend" if any changed path matches:
+`git status` (no `-uall`):
+
+- Uncommitted changes from this session's work: commit them now, before the merge, `/simplify` or any audit.
+- Uncommitted changes you didn't make: stop and ask. Don't sweep someone else's work into a commit.
+
+**Handing this skill to a subagent? Commit first.** To a subagent, every uncommitted change looks like someone else's work, so it stops and asks. Commit the session's changes before spawning it, and say in the brief that the tree is clean.
+
+Then: **A Conductor `<name>-v1` local tracking `origin/<name>` gets moved onto `<name>`, without asking** — `bin/conductor_branch` does it at workspace setup and session start. If `git branch --show-current` still ends in `-v1`, run it, and follow what it prints when it can't.
+
+### Determine the base branch
+
+The base is the branch the PR goes off of — `main` by default. The head is always the current branch (`HEAD`), so the branch that sets the base is a *different* one the user points at: "a PR off of `release-2`", "base this on `release-2`", "onto/target `release-2`", "stacked on `<branch>`", or a `--base <branch>` argument. Naming the branch you're already on only identifies the head — the base stays `main`. If it's genuinely unclear whether a named branch is meant as the base, ask rather than guess. Never silently retarget an explicitly-named base to `main`.
+
+When updating an **existing** PR, leave its base untouched — run `gh pr edit` without `--base`. Only retarget when the user explicitly asks.
+
+## Prepare the branch
+
+**Skipped in full when the ask is only to reword an existing PR's description** — fixing the wording shouldn't rewrite code. Everything else (creating a PR, "get this ready", an update after new commits) runs it.
+
+### Update from the base
+
+Bring the branch up to date so the PR reflects the current base and merges without surprises. Follow the `merge-conflicts` skill: `git fetch origin` then `git merge --no-edit origin/main`, merge (never rebase), keep the merge commit to just the merge, and resolve conflicts per that skill.
+
+This has to happen before the cleanup below, which diffs against `origin/main`.
+
+### Simplify, lint, and conform to CLAUDE.md
+
+`references/pre-push-cleanup.md` has this in full: `/simplify`, `bin/lint` scoped to the branch's files, branch-scoped specs, a pass over the changed files against `CLAUDE.md`, and its audits — spec, documentation, churn, comment, backfill and, when the branch adds them, asset, controller, component and markup (the `use-existing-markup` skill). The audits are required every run, not just when the diff looks messy. Commit everything it produces before re-dating migrations.
+
+### Freshen stale migration timestamps
+
+Migrations this branch adds have to be dated within the past 2 days, or the rollback/rename/re-migrate order in `references/pre-push-cleanup.md` re-dates them. Skip when the branch adds no migrations.
+
+## Publish
+
+### Gather branch state
+
+Run in parallel:
+
+- `git diff origin/main...HEAD --stat`
+- `git diff origin/main...HEAD --name-only`
+- `git log origin/main..HEAD --oneline`
+- `gh pr view --json number,url,title,state`
+
+Diff against `origin/main`, not the local base branch — in a Conductor worktree the local base often lags the remote, which would inflate or stale the diff. If you skipped **Prepare the branch**, `git fetch origin` first. If the branch has no commits ahead of `origin/main`, stop and tell the user.
+
+**`rtk proxy` the `git log`** — rtk's hook strips merge commits from `git log --oneline`, so the merge **Prepare the branch** just made is absent and the branch reads as though it never merged.
+
+`gh pr view` exits non-zero with "no pull requests found" when the branch has none — that's the answer to the create-or-update question below, not a broken command, and it's the normal case on a first run.
+
+`gh pr view` returns MERGED and CLOSED PRs too. **Only a PR whose `state` is `OPEN` counts as existing** — for a merged or closed one, create a new PR rather than editing it. Note the number; the push and **Screenshots** both need it.
+
+No `bin/env` eval is needed here — it's only relevant to the screenshot phase, and `frontend-screenshots` runs its own in preflight. Backend-only PRs never touch it.
+
+### Classify the diff
+
+The diff is frontend if a changed path matches one of these **and** renders a page a reviewer could look at:
+
 - `app/views/**` (`.erb`, `.html.erb`)
 - `app/components/**` (ViewComponent templates or Ruby)
 - `app/javascript/**`
 - `app/assets/**`
 - `config/tailwind*`, `tailwind.config.*`, `postcss.config.*`
-- `*.scss`, `*.css`, `*.coffee`, `*.js`, `*.ts`
+- `*.css`, `*.js`, `*.ts`
 
-Record this as `FRONTEND=true|false` for the screenshot decision in step 4.
+Excluded despite matching: mailer views and JSON views (`*.json*`, `*.jbuilder`). A diff that only changes comments or non-rendering config isn't frontend either.
 
-### 3. Build the summary body and create/update the PR
+Markup a reviewer can't see is also excluded — a `hidden` field, a `data-` attribute, an `aria-` or `meta` change. It renders, so the paths above match it, but before and after are the same image, and the `## Screenshots` comment it produces is two identical captures. Ask what the shot would *show*, not whether a template changed.
 
-Write a summary of the change (2–5 bullets based on the diff and recent commits) to a temp file. Follow the repo's existing PR body style — look at the last few merged PRs (`gh pr list --state merged --limit 5 --json body,title`) to match tone and length. Keep the title under ~70 chars.
+Record this as frontend true/false — it's what **Screenshots** gates on.
 
-**Bias toward brevity.** Reviewers skim. A bullet that fits on one line beats one that wraps three times — push detail down to the diff or commit log, not the body. If a per-file bullet starts feeling like an essay, compress to a single sentence naming the *kind* of change (e.g., "tightened description, trimmed unused allowed-tools, consolidated duplicated snippets") rather than enumerating each edit. Aim for under ~6 bullets total across the whole body, including any nested ones; if you're past that, regroup by category until you fit.
+### Write the summary body
 
-**Describe the end state, not the journey.** Reviewers want to know what the PR does *now* — the diff that will land — not the order in which it was built. Avoid framings like "first pass" / "second pass", commit-hash references for stages of work that all merge into the same shipped diff, "originally we tried X then switched to Y", or play-by-play of how the conversation evolved. The git log preserves that. If a discarded approach is genuinely load-bearing context for the reviewer (e.g., explains why the chosen approach is structured oddly), one line is enough; otherwise omit. The same applies when *updating* an existing PR body: rewrite to describe the current diff, don't append a changelog of edits made since the last revision.
-
-**No "Test plan" section unless the user asks.** Don't list things CI already covers — `bundle exec rspec ...`, `bin/lint`, `bin/dev` boots cleanly, etc. Those belong to CI, not the PR body. Only add a Test plan when there's reviewer-facing manual verification a human needs to do (e.g. "click X, confirm Y appears"), and only when the user requests it.
-
-**No Claude Code attribution footer.** Don't append the "🤖 Generated with [Claude Code](https://claude.com/claude-code)" line (or any variant of it) to the body. The PR body should read like the human author wrote it.
-
-Push the branch: `git push -u origin HEAD`.
-
-- If `$EXISTING_PR` from step 1 was non-empty: `gh pr edit <num> --body-file <tmp-body-file>` (don't overwrite the title unless the user asks).
-- Otherwise: `gh pr create --base main --title "..." --body-file <tmp-body-file>`. Capture the PR number from the output.
-
-Always pass the body via `--body-file` (not inline `--body`) to preserve formatting.
-
-**Stop here and return the PR URL** unless step 4's gate says screenshots are needed.
-
-### 4. Decide whether screenshots are needed and which URLs to capture
-
-Only continue past this step when there's a real reason to capture. Otherwise return the PR URL.
-
-- New PR + `FRONTEND=false` → done.
-- New PR + `FRONTEND=true` → continue; capture every affected page.
-- Existing PR + `FRONTEND=false` → done.
-- Existing PR + `FRONTEND=true` → continue only if the captures in the existing screenshots comment are stale: a commit since the last capture touched a page already screenshotted, or a new affected page now appears in the diff. Limit step 5 to those pages. If nothing has moved, done.
-
-From the changed files, infer the affected routes. Heuristics:
-- A view at `app/views/competitions/show.html.erb` → `/competitions/:id` (pick a representative id from the dev db, e.g. `Competition.last.id`)
-- A component touched by a specific page → screenshot that page
-- A shared component (header, footer, leaderboard punchcard, etc.) → screenshot 1–2 representative pages that exercise it
-- Admin views → `/admin/...`
-- If unclear, ask the user which URLs to capture before proceeding. Do not guess blindly — 1–3 well-chosen URLs beats 10 random ones.
-
-### 5. Capture branch screenshots
-
-Invoke the `frontend-screenshots` skill with the `(url-path, page-slug)` pairs from step 4. It handles dev-server check, sign-in, viewport sizing, and per-PNG sanity checks. It returns local paths under `tmp/pr_screenshots/<branch>-<page>-<timestamp>-{desktop,mobile}.png`.
-
-If `frontend-screenshots` returns failures it couldn't diagnose, surface them and stop — don't post partial screenshots.
-
-### 6. Upload branch screenshots and get inline URLs
-
-Invoke the `github-upload-image-to-pr` skill to upload each PNG from step 5 to the PR's comment textarea — GitHub mints persistent `user-attachments/assets/` URLs that render inline in the browser (release assets would force a download on click). The skill clears the textarea without submitting the comment.
-
-Collect the returned URLs, keyed by `(page-slug, viewport)`.
-
-### 6.5 Capture and upload the same URLs on `main`
-
-Capture the **base-branch** version of every screenshot from step 5 so the section becomes a before/after comparison instead of "here's how it looks now." This is the default for every screenshot captured — if you reached step 5 at all, the diff is frontend, and the comparison is informative (a same-screenshot pair documents visual parity for a refactor; a different pair documents the actual visual change).
-
-Skip per-page only when the URL didn't exist on `main` (a brand-new route or page added in this PR) — there's nothing to compare to.
-
-Re-invoke `frontend-screenshots` with the same `(url-path, page-slug)` pairs and tell it to capture against `main` (its cross-branch step — git checkout dance, captures into `...-main-...` filenames, returns to the original branch). Then re-invoke `github-upload-image-to-pr` for those PNGs.
-
-### 7. Post the Screenshots section as the first PR comment
-
-Post the screenshots as a **PR comment**, not in the PR body. This keeps the description tight and skimmable — reviewers see the human-written summary first, with screenshots one scroll down. It also avoids re-editing the body (and its notification noise) every time screenshots are recaptured.
-
-On a fresh PR, this comment is naturally the first one. On an update, find the existing screenshots comment (the one authored by you whose body starts with `## Screenshots`) and edit it in place rather than posting a new one:
-
-```bash
-SCREENSHOT_COMMENT_ID=$(gh api repos/{owner}/{repo}/issues/{PR_NUMBER}/comments \
-  --jq '.[] | select(.body | startswith("## Screenshots")) | .id' | head -1)
-```
-
-- If `$SCREENSHOT_COMMENT_ID` is empty: `gh pr comment <num> --body-file <tmp-comment-file>`.
-- Otherwise: `gh api -X PATCH repos/{owner}/{repo}/issues/comments/$SCREENSHOT_COMMENT_ID -f body=@<tmp-comment-file>`.
-
-**Headers are always `| Desktop | Mobile |`** — that stays the same regardless of whether there's a main comparison. The main shots and branch shots stack as additional rows, with a small indicator row between them when both are present.
-
-Default (with main comparison):
-
-```markdown
-## Screenshots
-
-### <url-path>
-
-| Desktop | Mobile |
-| --- | --- |
-| <img src="<main-desktop-url>" width="500"> | <img src="<main-mobile-url>" width="250"> |
-| main 👆 | this branch 👇 |
-| <img src="<branch-desktop-url>" width="500"> | <img src="<branch-mobile-url>" width="250"> |
-```
-
-Brand-new page (URL didn't exist on `main` — see step 6.5), no comparison row:
-
-```markdown
-### <url-path>
-
-| Desktop | Mobile |
-| --- | --- |
-| <img src="<branch-desktop-url>" width="500"> | <img src="<branch-mobile-url>" width="250"> |
-```
+Write the body to a file under the repo's own `tmp/`; a `PreToolUse` hook refuses writes outside the checkout. Read the last few merged PRs first — `gh pr list --state merged --limit 5 --json title,body` — they're the tone to match. The house shape is a short intro paragraph saying what was broken or what this is, then 2–4 bullets each opening with a bolded clause. Title under ~70 chars.
 
 Rules:
-- Each page gets a `### <url-path>` subheading (the literal path, e.g. `/`, `/competitions/2025`, `/admin/competition_users`) followed by its own table.
-- **Headers are always `| Desktop | Mobile |`** — never `| main | this branch |` or any per-PR variation. Reviewers should see the same column meaning across every PR.
-- Use `<img src=... width=...>` rather than `![]()` so the widths render predictably in GitHub's table cells. ~500 for desktop, ~250 for mobile fits a side-by-side cell layout cleanly.
 
-When updating an existing screenshots comment, replace the existing `### <url-path>` block for any page you recaptured; leave other pages' blocks alone.
+- **Bias hard toward brevity.** Default to a one-line intro plus 2–3 bullets, not the maximum. A bullet that fits on one line beats one that wraps three times.
+- **Cut anything visible in the diff.** Which HTTP client, file-mode flags, helper names, column renames, the exact files removed — that's the diff's job. Keep only what it doesn't make obvious: what the PR adds, the entry point a reviewer would use, and any non-obvious decision they'd otherwise reverse-engineer.
+- **Describe the end state, not the journey.** No "first pass" / "second pass", no commit hashes for stages that all land in the same diff, no "originally we tried X then switched to Y". When updating an existing body, rewrite it to describe the current diff — don't append a changelog of edits since the last revision.
+- **Reference branches by PR number.** A stacked base or a branch this builds on is `#123`, not a branch name: `gh pr list --head <branch> --state all --json number --jq '.[0].number'`. Name the branch only when it has no PR.
+- **No "Test plan" section unless the user asks.** Never list what CI already covers. Only reviewer-facing manual verification ("click X, confirm Y appears") qualifies, and only on request.
+- **No generic "covered by tests" bullet.** That a change is tested is assumed, and naming test mechanics (a fixture, a cassette) goes stale. Mention tests only when *what* is verified is the reviewer-facing point ("adds a regression test for the UTF-8 download crash").
+- **No Claude Code attribution footer**, here or in any comment this workflow posts. It should read like the human author wrote it. **Leaving it out isn't enough where `gh` is missing**: `create_pull_request` and `add_issue_comment` append one server-side (the tell is the session id in its link), while the `update_*` calls don't — so read back what you posted and strip it with an update.
+- **A backfill leads the body.** When the branch adds a `Backfills::` job, the intro says existing rows need one, and the first bullet names the job with the command that runs it once after deploy — `Backfills::…Job.perform_async`.
+- **Link the issue when there is one.** If the branch name, a commit message, or the user's request names an issue, close it from the body — `Closes #123` on its own line. Don't invent a number.
 
-Return the PR URL.
+If a bullet is turning into an essay, compress it to one sentence naming the *kind* of change.
 
-## Notes
+### Push and create or update the PR
 
-- If `frontend-screenshots` or `github-upload-image-to-pr` fails, report the failure clearly and leave the PR without screenshots — don't block PR creation on screenshot tooling.
+```bash
+git push -u origin HEAD
+```
+
+Don't report the local branch name differing from the name in the invocation — pushing `HEAD` creates a matching remote, so it's benign. **Still on a `-v1` that tracks `origin/<name>`** is the exception: push `git push origin HEAD:<name>`, since `-u origin HEAD` creates a second remote branch and leaves the PR behind on the first. If the push is rejected as non-fast-forward, go back to **Prepare the branch**.
+
+- **Open PR found above**: `gh pr edit <number> --title "..." --body-file <tmp-body-file>`. Refresh the title to match the current diff (that's what "update pr" expects) unless the user gave it a deliberate custom title — if unsure, keep the title and update only the body.
+
+  **Read the current body before you replace it.** A human may have edited it since your last run — added a caveat, a reviewer note, a deploy instruction. Anything you can't account for as your own writing gets carried into the new body, or asked about. Don't overwrite it silently.
+- **Otherwise**: `gh pr create --draft --base main --title "..." --body-file <tmp-body-file>`. Draft by default; only skip `--draft` if the user asks for ready-for-review. Note the new number for **Screenshots**.
+
+Always pass the body via `--body-file`, not inline `--body`, to preserve formatting.
+
+### What goes in a comment
+
+This workflow posts **one kind of comment — the `## Screenshots` one — and at most one per PR**, edited in place on later runs. Everything else you have to say goes in the body when a reviewer needs it, and in your reply to the user otherwise. Findings, caveats, evidence you gathered, what you decided not to fix: none of those earn a comment of their own, however well they'd read as one. Don't invent a comment type because you have something to say.
+
+The one that talks itself into existence is the "still accurate" update — a later push makes you wonder whether an earlier comment went stale, so you post that it hasn't. Re-run whatever produced it and edit that comment, or say nothing. Never reason your way to "it still holds" in place of re-running; whether a claim is still true is something to tell the user in chat.
+
+## Screenshots
+
+Two gates, either of which skips the section outright:
+
+- **Not a frontend diff** — per the classifier above. **Unless a `## Screenshots` comment already exists**: the user asked for those captures, so a commit since the last one that changes what they show stales them even here. Recapture only those pages.
+- **No `gh`**, with `$CLAUDE_CODE_REMOTE` unset. Then there is nowhere to host or post the images, so don't capture them and don't post anything in their place. Say so in your summary. **The web sandbox is not this case**, though `gh` doesn't work there: `$CLAUDE_CODE_REMOTE` is `true` there, and the section runs, because `github-pr-images` hosts through the PR branch's history — see the appendix.
+
+**A dev server you believe is down is not a gate.** Run `curl -fs "$BASE_URL/"` now, whatever an earlier check in the session said — the user starts `bin/dev` whenever. Only a failing curl *this* run is a reason to stop and ask.
+
+Otherwise read `references/screenshots.md` and follow it to capture before/after screenshots and post them as a PR comment. Screenshot tooling never blocks the PR — if it fails, report the failure and carry on to **What this run taught you**.
+
+## What this run taught you
+
+Last, before reporting the PR URL. Look back over the whole run and ask whether the repo's own instructions should change:
+
+- **Did any skill mislead you?** A command that failed, a path or version that had moved, a step that didn't match what the repo does now — fix it in that skill. This skill included.
+- **Did you work around something undocumented?** If the next run would hit the same wall, the fix belongs in the skill, not in your memory.
+- **Did the branch establish a convention?** A new pattern, a rule you had to infer from existing code, or a guideline you found yourself explaining — that's `CLAUDE.md`.
+- **Did `/simplify` or the CLAUDE.md pass flag the same thing more than once?** A repeated correction is a missing written rule.
+
+Most runs turn up nothing — say so and stop.
+
+Two bars before you edit a skill, because a wrong edit here is permanent and costs every future run:
+
+- **Did the skill already say it?** Diff the steps you ran against the steps as written. Out of order or skipped is your deviation, so don't stack a new rule on the one you didn't follow. Revise the existing rule instead — reword it, or move it to where it gets read — since a rule you missed is a rule that was missable.
+- **Does it pay for itself?** Weigh how often the guidance fires against what it saves when it does, and state both. Guidance that runs every time to catch something rare is negative, however cheap each run looks.
+
+Then make the edit — commit it onto the branch, push, and update the body if it's worth a bullet. Prefer editing to reporting: a change you only describe is one the next run rediscovers.
+
+Then return the PR URL.
+
+## Appendix: the sandbox where `gh` doesn't work
+
+Only the Claude Code web sandbox (`/home/user/may_is_bike_month`, where `$CLAUDE_CODE_REMOTE` is `true`) lacks the GitHub CLI; everywhere else the sections above run as written, and you shouldn't check. If a `gh` command comes back "command not found" — or, since a `gh` binary can be present there, `HTTP 403: GitHub GraphQL is not available from Claude Code sessions` — swap in the GitHub MCP equivalents — the rest of the workflow is unchanged, including `git push`.
+
+| Where | `gh` | MCP |
+| --- | --- | --- |
+| Publish | `gh pr view --json …,state` | `list_pull_requests`, `state: "open"`, `head: "MayIsBikeMonth:<branch>"` |
+| Publish | `gh pr list --state merged` | `list_pull_requests`, `state: "closed"` |
+| Publish | `gh pr create --draft` | `create_pull_request`, `draft: true`, `head: "<branch>"` |
+| Publish | `gh pr edit <n> --body-file` | `update_pull_request` |
+
+Three traps in that column: `head` takes `owner:branch` when listing but a bare branch name when creating; the body is a string parameter, so `--body-file` has no equivalent; and `list_pull_requests` reports `merged: false` even for merged PRs — which is why the branch-state query asks for open PRs rather than filtering `all` on that field.
+
+**Screenshots do run here**, though `gh` doesn't: `github-pr-images`' `references/web-sandbox.md` commits the images to the PR's branch, deletes them in a second commit, and posts sha-pinned `raw.githubusercontent.com` URLs through the MCP tools. Follow that reference from its probe — a session whose comment tools rewrite image URLs ends the phase before any capture — then capture as normal and follow it for the hosting and posting steps. Those URLs live as long as the branch's objects do, so say in your summary that a merged PR's screenshots aren't archival.

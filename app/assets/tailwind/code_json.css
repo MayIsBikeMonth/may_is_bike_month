@@ -1,0 +1,48 @@
+/* UI::Code::Json. The token colors are classes rather than the inline styles a
+ * server-side highlighter bakes in, which is what lets them take dark variants. */
+
+@layer components {
+  .highlightjs-json pre {
+    @apply m-0 overflow-auto rounded-sm border border-gray-300 bg-gray-50 p-1 dark:border-gray-700 dark:bg-gray-900;
+  }
+
+  /* Only the json grammar is registered, so these six scopes are the whole theme */
+  .highlightjs-json .hljs-attr {
+    @apply text-purple-800 dark:text-purple-300;
+  }
+
+  .highlightjs-json .hljs-string {
+    @apply text-red-700 dark:text-red-300;
+  }
+
+  .highlightjs-json .hljs-number {
+    @apply text-blue-700 dark:text-blue-300;
+  }
+
+  .highlightjs-json .hljs-literal {
+    @apply text-teal-700 dark:text-teal-300;
+  }
+
+  .highlightjs-json .hljs-punctuation {
+    @apply text-gray-500 dark:text-gray-400;
+  }
+
+  .highlightjs-json .hljs-comment {
+    @apply text-gray-400 italic dark:text-gray-500;
+  }
+
+  /* The row's own borders draw the box; w-px shrinks the column to the capped box,
+   * which a table with slack would otherwise overshoot, leaving a gap on the right */
+  .ui-table td:has(.highlightjs-json-cell) {
+    @apply w-px p-0!;
+  }
+
+  /* Scoped, because a legacy table has no row borders to redraw the box this strips */
+  .ui-table .highlightjs-json-cell {
+    @apply w-full;
+  }
+
+  .ui-table .highlightjs-json-cell pre {
+    @apply rounded-none border-0;
+  }
+}
