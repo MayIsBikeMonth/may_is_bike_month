@@ -101,7 +101,7 @@ RSpec.describe Leaderboard::PunchcardUserRow::Component, type: :component do
       end
 
       it "renders today as a clickable punch button and includes its activity in the punch-activities-container" do
-        today_cell = rendered.css("div.h-7 > *")[15]
+        today_cell = rendered.css("div.h-7 > *")[15].at_css("button")
         expect(today_cell.name).to eq "button"
         expect(today_cell["data-date"]).to eq "2026-04-16"
         expect(rendered.css(%([data-punch-activities-for="#{user.slug}-2026-04-16"])).count).to eq 1
@@ -154,7 +154,7 @@ RSpec.describe Leaderboard::PunchcardUserRow::Component, type: :component do
         past = date_string < competition_user.current_date.to_s
         if past
           # past days with no activity render the "x" cell
-          expect(el["class"]).to include("punchcard-cell"),
+          expect(el.at_css(".punchcard-cell")).to be_present,
             "expected #{date_string} to be a past 'x' cell"
         else
           # today (4/17 here) and beyond stay hidden — no x yet

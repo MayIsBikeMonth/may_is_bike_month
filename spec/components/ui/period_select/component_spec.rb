@@ -3,100 +3,98 @@
 require "rails_helper"
 
 RSpec.describe UI::PeriodSelect::Component, type: :component do
-  let(:start_time) { Time.zone.local(2024, 5, 1, 12, 0) }
-  let(:end_time) { Time.zone.local(2024, 5, 8, 12, 0) }
-  let(:period) { "all" }
-  let(:include_future) { false }
-  let(:prepend_text) { nil }
-  let(:instance) do
-    described_class.new(period:, start_time:, end_time:, include_future:, prepend_text:)
-  end
-  let(:component) do
-    with_request_url("/admin/users") { render_inline(instance) }
-  end
-
-  it "renders the default past-period buttons and a custom toggle" do
-    expect(component).to have_css('[role="group"]')
-    expect(component).to have_link("hour")
-    expect(component).to have_link("day")
-    expect(component).to have_link(text: /7 days/)
-    expect(component).to have_link(text: /30 days/)
-    expect(component).to have_link("year")
-    expect(component).to have_link("All")
-    expect(component).to have_button(text: /custom/)
-  end
-
-  it "hides next_week and next_month by default" do
-    expect(component).to have_css('a[data-period="hour"]')
-    expect(component).not_to have_css('a[data-period="next_week"]')
-    expect(component).not_to have_css('a[data-period="next_month"]')
-  end
-
-  it "marks the active period with ring styling" do
-    instance = described_class.new(period: "week", start_time:, end_time:)
-    result = with_request_url("/admin/users") { render_inline(instance) }
-    week_link = result.css('a[data-period="week"]').first
-    day_link = result.css('a[data-period="day"]').first
-    expect(week_link["class"]).to include("ring-2")
-    expect(day_link["class"]).not_to include("ring-2")
-  end
-
-  it "links each period button to a URL with the period param" do
-    expect(component).to have_css('a[data-period="hour"][href*="period=hour"]')
-    expect(component).to have_css('a[data-period="all"][href*="period=all"]')
-  end
-
-  context "when include_future" do
-    let(:include_future) { true }
-
-    it "renders next_week and next_month buttons" do
-      expect(component).to have_css('a[data-period="next_week"]')
-      expect(component).to have_css('a[data-period="next_month"]')
+  describe ".column_label" do
+    it "reads the column as prose" do
+      expect(described_class.column_label("created_at")).to eq "created"
+      expect(described_class.column_label("last_updated_activities_at")).to eq "last updated activities"
+      expect(described_class.column_label("start_at")).to eq "starts"
+      expect(described_class.column_label("subscription_end_at")).to eq "subscription ends"
+      expect(described_class.column_label("request_at")).to eq "requested"
+      # Not a duplicate of request_at - the \z anchor is what keeps this one "requested"
+      expect(described_class.column_label("requested_at")).to eq "requested"
     end
   end
 
-  context "when prepend_text given" do
-    let(:prepend_text) { "Created during:" }
-
-    it "renders the leading label" do
-      expect(component).to have_text("Created during:")
+  describe ".period_label" do
+    it "reads what the period's button does" do
+      expect(described_class.period_label("month")).to eq "past 30 days"
+      expect(described_class.period_label(:next_week)).to eq "next 7 days"
+      expect(described_class.period_label("all")).to eq "All"
+      # Not a PERIODS key, so it falls back rather than raising
+      expect(described_class.period_label("custom")).to eq "custom"
     end
   end
 
-  describe "custom form visibility" do
-    context "when period is not custom" do
-      let(:period) { "week" }
+  describe "rendering" do
+    let(:component) do
+      with_request_url("/admin/competition_activities") do
+        render_inline(described_class.new(period:, start_time: Time.current - 1.week,
+          end_time: Time.current, **options))
+      end
+    end
+    let(:period) { "week" }
+    let(:options) { {} }
+    let(:small) { UI::Button::Component::SIZES[:sm] }
 
-      it "renders the custom form with hidden class" do
-        form = component.css("form[data-collapse-target='content']").first
-        expect(form).to be_present
-        expect(form["class"]).to include("hidden")
+    it "navigates, each period its own link, sized small" do
+      expect(component).to have_css("a[data-period='week'][data-active='true']", class: small.split)
+      expect(component).to have_button("custom", class: small.split)
+      expect(component).not_to have_css("input[type=radio]", visible: :all)
+    end
+
+    context "with size: :md" do
+      let(:options) { {size: :md} }
+      let(:medium) { UI::Button::Component::SIZES[:md] }
+
+      it "sizes the links and the custom button medium instead" do
+        expect(component).to have_css("a[data-period='week']", class: medium.split)
+        expect(component).to have_button("custom", class: medium.split)
       end
     end
 
-    context "when period is custom" do
-      let(:period) { "custom" }
+    context "with a size it doesn't have" do
+      let(:options) { {size: :xl} }
 
-      it "renders the custom form without hidden class" do
-        form = component.css("form[data-collapse-target='content']").first
-        expect(form).to be_present
-        expect(form["class"]).not_to include("hidden")
-      end
-
-      it "prefills datetime inputs with start_time and end_time" do
-        expect(component).to have_css('input[name="start_time_selector"][value="2024-05-01T12:00"]')
-        expect(component).to have_css('input[name="end_time_selector"][value="2024-05-08T12:00"]')
+      it "raises" do
+        expect { component }.to raise_error(ArgumentError, /size/)
       end
     end
-  end
 
-  describe "stimulus wiring" do
-    it "binds the custom button to the collapse toggle action" do
-      expect(component).to have_css('button[data-action*="click->collapse#toggle"]')
-    end
+    context "with a form" do
+      let(:options) { {form: "search_form"} }
 
-    it "binds the custom form submit to the period-select submit action" do
-      expect(component).to have_css('form[data-action*="submit->ui--period-select#submit"]')
+      it "submits that form instead, the checked radio carrying the period" do
+        expect(component).to have_css("input[type=radio][name='period'][value='week'][form='search_form']", visible: :all, count: 1)
+        expect(component).to have_css("input[type=radio][value='week'][checked]", visible: :all)
+        expect(component).not_to have_css("a[data-period]")
+        expect(component).to have_css("label", class: small.split, visible: :all)
+        # Picking one closes the custom panel it replaces, and submits the search
+        expect(component).to have_css(
+          "input[type=radio][value='week'][data-action='change->ui--collapse#hide change->ui--period-select#rangePicked']",
+          visible: :all
+        )
+        # No chip stands for a custom range, so there's nothing to outrank the one picked
+        expect(component).not_to have_css("input[type=hidden][name='period']", visible: :all)
+      end
+
+      it "carries each period's range, for the custom panel to open on" do
+        year = 1.year.ago.beginning_of_day.strftime(described_class::INPUT_TIME_FORMAT)
+        expect(component).to have_css("input[value='year'][data-start-time='#{year}']", visible: :all)
+        # `all` starts at the controller's own earliest_period_date, which the chip can't know
+        expect(component).to have_css("input[value='all']:not([data-start-time])", visible: :all)
+      end
+
+      context "over a custom range" do
+        let(:period) { "custom" }
+
+        it "carries the custom period in a hidden field, and marks what a pick unpicks" do
+          expect(component).to have_css(
+            "input[type=hidden][name='period'][value='custom'][form='search_form'][data-ui--period-select-target='customPeriod']",
+            visible: :all
+          )
+          expect(component).to have_css("button[data-active='true'][data-ui--period-select-target='customButton']")
+        end
+      end
     end
   end
 end

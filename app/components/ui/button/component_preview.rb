@@ -3,44 +3,112 @@
 module UI
   module Button
     class ComponentPreview < ApplicationComponentPreview
+      # @!group In form
+      # Submit reveals the spinner and disables the button -- but only once native
+      # validation has passed, so an empty email leaves the button alone
+      def in_form
+        {template: "ui/button/component_preview/in_form"}
+      end
+
+      # The same state without the submit
+      def submitting
+        render(UI::Button::Component.new(text: "Next", color: :primary, type: "submit",
+          spinner: true, disabled: true, html_class: "[&_span]:inline-flex!"))
+      end
+      # @!endgroup
+
       # @!group Colors
       def primary
         render(UI::Button::Component.new(text: "Primary", color: :primary))
       end
 
-      def secondary
-        render(UI::Button::Component.new(text: "Secondary", color: :secondary))
-      end
-
-      def error
-        render(UI::Button::Component.new(text: "Delete", color: :error))
-      end
-
-      def link
-        render(UI::Button::Component.new(text: "Link style", color: :link))
-      end
-
-      def secondary_with_data
-        render(UI::Button::Component.new(text: "Secondary with data", color: :secondary, data: {action: "click->ui--modal#open"}))
-      end
-      # @!endgroup
-
-      # @!group Active
       def primary_active
         render(UI::Button::Component.new(text: "Primary Active", color: :primary, active: true))
       end
 
+      def primary_disabled
+        render(UI::Button::Component.new(text: "Primary Disabled", color: :primary, disabled: true))
+      end
+
+      # White button with a purple outline (fills purple when active)
+      # @label secondary (with data)
+      def secondary
+        render(UI::Button::Component.new(text: "Secondary", color: :secondary, data: {action: "click->ui--modal#open"}))
+      end
+
+      # @label secondary active (with data)
       def secondary_active
-        render(UI::Button::Component.new(text: "Secondary Active", color: :secondary, active: true))
+        render(UI::Button::Component.new(text: "Secondary Active", color: :secondary, active: true, data: {action: "click->ui--modal#open"}))
+      end
+
+      def secondary_disabled
+        render(UI::Button::Component.new(text: "Secondary Disabled", color: :secondary, disabled: true))
+      end
+
+      # White button with a soft danger outline
+      def error
+        render(UI::Button::Component.new(text: "Delete", color: :error))
       end
 
       def error_active
         render(UI::Button::Component.new(text: "Error Active", color: :error, active: true))
       end
 
+      def error_disabled
+        render(UI::Button::Component.new(text: "Error Disabled", color: :error, disabled: true))
+      end
+
+      def link
+        render(UI::Button::Component.new(text: "Link style", color: :link))
+      end
+
       def link_active
         render(UI::Button::Component.new(text: "Link Active", color: :link, active: true))
       end
+
+      def link_disabled
+        render(UI::Button::Component.new(text: "Link Disabled", color: :link, disabled: true))
+      end
+
+      # The lesser way out, beside a primary action
+      def link_gray
+        render(UI::Button::Component.new(text: "Link gray", color: :link_gray))
+      end
+
+      def link_gray_active
+        render(UI::Button::Component.new(text: "Link Gray Active", color: :link_gray, active: true))
+      end
+
+      def link_gray_disabled
+        render(UI::Button::Component.new(text: "Link Gray Disabled", color: :link_gray, disabled: true))
+      end
+
+      # Filled purple primary
+      def purple
+        render(UI::Button::Component.new(text: "Purple", color: :purple))
+      end
+
+      def purple_active
+        render(UI::Button::Component.new(text: "Purple Active", color: :purple, active: true))
+      end
+
+      def purple_disabled
+        render(UI::Button::Component.new(text: "Purple Disabled", color: :purple, disabled: true))
+      end
+
+      # Blue on the brand yellow, the landing pages' call to action
+      def yellow
+        render(UI::Button::Component.new(text: "Yellow", color: :yellow))
+      end
+
+      def yellow_active
+        render(UI::Button::Component.new(text: "Yellow Active", color: :yellow, active: true))
+      end
+
+      def yellow_disabled
+        render(UI::Button::Component.new(text: "Yellow Disabled", color: :yellow, disabled: true))
+      end
+
       # @!endgroup
 
       # @!group Sizes
@@ -54,6 +122,11 @@ module UI
 
       def large
         render(UI::Button::Component.new(text: "Large", size: :lg))
+      end
+
+      # The pill for a page's main call to action
+      def callout
+        render(UI::Button::Component.new(text: "Callout", color: :yellow, size: :callout))
       end
 
       def large_with_icon

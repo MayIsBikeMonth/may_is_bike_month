@@ -1,9 +1,9 @@
 # Claude Code web sandbox
 
 **The `SessionStart` hook (`.claude/hooks/session-start.sh`) has already set this up**:
-Ruby, gems, `node_modules`, postgres, redis, the Tailwind build, a Chrome-matching
-chromedriver, the local jsdelivr stand-in, and `$PATH`/`PG*`/`LOCAL_CHROME_OVERRIDE`
-exported into your shells. Check with `ruby -v` and `pg_isready` before setting anything
+Ruby, gems, `node_modules`, postgres, redis, the Tailwind build, the pinned Playwright
+Chromium, the local jsdelivr stand-in, and `$PATH`/`PG*`/`PLAYWRIGHT_BROWSERS_PATH`/
+`LOCAL_CHROME_OVERRIDE` exported into your shells. Check with `ruby -v` and `pg_isready` before setting anything
 up.
 
 The hook runs `assets/web_sandbox_setup.sh`. Re-run it when the hook didn't finish or an
@@ -82,19 +82,15 @@ immediately, and `sleep 300` has come back in well under 300s here.
 
 ## `:js, type: :system` specs
 
-They run through Selenium and headless Chrome. Three things the script handles, and what
-to check when one of them breaks:
+They run through capybara-playwright-driver, which launches the `playwright` npm package's
+own Chromium. Two things the script handles, and what to check when one of them breaks:
 
-- **Chrome** is the Playwright-bundled Chromium under `/opt/pw-browsers/chromium-*/` —
-  its build number changes between images, so the script globs it. It writes
-  `/opt/google/chrome/chrome` (Selenium's default path, and Playwright MCP's `chrome`
-  channel) as a **wrapper script** adding `--no-sandbox`, because we're root. A plain
-  symlink dies with `Running as root without --no-sandbox is not supported`, which reads
-  like a missing browser.
-- **chromedriver** has to match that Chromium, not current stable, so the script pulls
-  it from the Chrome for Testing bucket (`storage.googleapis.com`) into
-  `/usr/local/bin/chromedriver`. A `session not created: This version of ChromeDriver
-  only supports Chrome version N` means that step failed — see `/tmp/system_setup.log`.
+- **Chromium** has to be the build the `playwright` pin in `package.json` wants, which can
+  be newer than the one under `/opt/pw-browsers`, so the script runs
+  `npx playwright install chromium-headless-shell` into `$PLAYWRIGHT_BROWSERS_PATH`.
+  `Executable doesn't exist at /opt/pw-browsers/...` means that step failed — see
+  `/tmp/playwright_install.log`. `spec/support/local_chrome.rb` adds `--no-sandbox`, because
+  we're root.
 - **jsdelivr**: `config/importmap.rb` pins luxon, `@bikeindex/time-localizer`,
   `@floating-ui/dom` and `@honeybadger-io/js` from `cdn.jsdelivr.net`, and Chrome rejects
   the egress proxy's CA. With `LOCAL_CHROME_OVERRIDE=1`, `spec/support/local_chrome.rb`
@@ -107,7 +103,9 @@ to check when one of them breaks:
 
 ## Playwright MCP
 
-Same Chromium, through the wrapper above. `/root/.cache/ms-playwright/mcp-auth.json` has
+The `/opt/pw-browsers` Chromium, through `/opt/google/chrome/chrome` — a **wrapper
+script** adding `--no-sandbox`, since a plain symlink dies with `Running as root without
+--no-sandbox is not supported`, which reads like a missing browser. `/root/.cache/ms-playwright/mcp-auth.json` has
 to exist (`{"cookies":[],"origins":[]}`); the script writes it. It has no
 host-resolver mapping, so it **can't load the jsdelivr pins** — `@bikeindex/time-localizer`
 is imported at the top of `application.js`, so no Stimulus controller connects in it.

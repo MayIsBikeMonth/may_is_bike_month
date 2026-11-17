@@ -59,7 +59,10 @@ Skip per-page only when the URL didn't exist on the base (a brand-new route or p
 
 Re-invoke `frontend-screenshots` with the same `(url-path, page-slug)` pairs, passing the base as its `BASE_REF` (`origin/main` unless **Orient** chose otherwise) — its "Cross-branch comparison" section does the rest, whether or not the base is `main`.
 
-**`bin/rails tailwindcss:build` after each checkout when the diff deletes or rewrites a template, as well as when it touches `app/assets/tailwind/**`.** Tailwind builds from a scan of the templates, so a branch that deletes one drops that template's classes from the build, leaving the base's own markup to render unstyled in a shot the PR then gets blamed for. The watcher doesn't rebuild on a checkout, so the base capture otherwise renders the branch's CSS — a before/after that silently shows the same styling twice. Build again on the way back.
+Two things the checkout itself does, either side of it:
+
+- **`bin/rails tailwindcss:build` after each checkout when the diff deletes or rewrites a template, as well as when it touches `app/assets/tailwind/**`.** Tailwind builds from a scan of the templates, so a branch that deletes one drops that template's classes from the build, leaving the base's own markup to render unstyled in a shot the PR then gets blamed for. The watcher doesn't rebuild on a checkout, so the base capture otherwise renders the branch's CSS — a before/after that silently shows the same styling twice. Verify by grepping `app/assets/builds/tailwind.css` for a class the branch adds or removes; build again on the way back.
+- **The dev server can be mid-restart after a checkout** — `frontend-screenshots`' `bin/rails restart` on a `Gemfile.lock` move is one — **so the first navigate can hit `ERR_CONNECTION_REFUSED` or `ERR_ABORTED`.** Poll `curl -fs "$BASE_URL/"` until it answers rather than treating it as a failed capture.
 
 ## 4. Compose the Screenshots comment and hand it back
 

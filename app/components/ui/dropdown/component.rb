@@ -3,35 +3,38 @@
 module UI
   module Dropdown
     class Component < ApplicationComponent
+      # Template Dependency: UI::Button::Component
       renders_one :button
+      # Which entry is current is UI::ActiveLink's, on the entry's own link -- .twdropdown
+      # styles whichever one it marks
       renders_many :entries, types: {
         item: lambda { |&block|
-          content_tag(:li, nil, role: "menuitem", &block)
+          content_tag(:li, capture(&block), role: "menuitem")
         },
         divider: lambda {
           content_tag(:li, "", role: "separator")
         }
       }
 
-      PLACEMENTS = {
-        bottom_end: "bottom-end",
-        bottom_start: "bottom-start",
-        top_end: "top-end",
-        top_start: "top-start",
-        right: "right",
-        left: "left"
-      }.freeze
-
-      def initialize(name:, drop_direction: :bottom_end, button_class: nil, button_color: :secondary, button_size: :md, active: false)
+      def initialize(name:, button_class: nil, button_color: :secondary, button_size: :md, active: false)
         @name = name
         @button_class = button_class
         @button_color = button_color
         @button_size = button_size
         @active = active
-        @placement = PLACEMENTS.fetch(drop_direction, PLACEMENTS[:bottom_end])
       end
 
       private
+
+      def button_attributes
+        {
+          type: "button",
+          class: button_classes,
+          id: button_id,
+          aria: {expanded: false},
+          data: {action: "click->ui--dropdown#toggle", "ui--dropdown-target": "button", active: @active || nil}
+        }
+      end
 
       def button_content
         raw = button? ? button : @name
@@ -41,19 +44,18 @@ module UI
       def button_classes
         return @button_class if @button_class
 
-        classes = UI::Button::Component.new(color: @button_color, size: @button_size, active: @active).button_classes
-        if @button_color == :link
-          classes = classes.gsub("underline", "").squeeze(" ").strip + " px-1"
-        end
-        classes
+        classes = UI::Button::Component.new(color: @button_color, size: @button_size).button_classes
+        return classes unless @button_color == :link
+
+        # button_content underlines the label span, so the trigger itself never does — the
+        # chevron would be underlined with it. .twlink underlines on both hover and active
+        # from the components layer, which is why it takes a utility to hold it off.
+        # UI::Button gives every other color this same no-underline.
+        "#{classes} no-underline px-1"
       end
 
       def button_id
         @button_id ||= @name.parameterize(separator: "-")
-      end
-
-      def floating_ui_placement
-        @placement
       end
     end
   end

@@ -63,7 +63,7 @@ This has to happen before the cleanup below, which diffs against `origin/main`.
 
 ### Simplify, lint, and conform to CLAUDE.md
 
-`references/pre-push-cleanup.md` has this in full: `/simplify`, `bin/lint` scoped to the branch's files, branch-scoped specs, a pass over the changed files against `CLAUDE.md`, and its audits — spec, documentation, churn, comment and, when the branch adds them, asset, controller, component and markup (the `use-existing-markup` skill). The audits are required every run, not just when the diff looks messy. Commit everything it produces before re-dating migrations.
+`references/pre-push-cleanup.md` has this in full: `/simplify`, `bin/lint` scoped to the branch's files, branch-scoped specs, a pass over the changed files against `CLAUDE.md`, and its audits — spec, documentation, churn, comment, backfill and, when the branch adds them, asset, controller, component and markup (the `use-existing-markup` skill). The audits are required every run, not just when the diff looks messy. Commit everything it produces before re-dating migrations.
 
 ### Freshen stale migration timestamps
 
@@ -109,7 +109,7 @@ Record this as frontend true/false — it's what **Screenshots** gates on.
 
 ### Write the summary body
 
-Write the body to a file under the repo's own `tmp/`. Read the last few merged PRs first — `gh pr list --state merged --limit 5 --json title,body` — they're the tone to match. The house shape is a short intro paragraph saying what was broken or what this is, then 2–4 bullets each opening with a bolded clause. Title under ~70 chars.
+Write the body to a file under the repo's own `tmp/`; a `PreToolUse` hook refuses writes outside the checkout. Read the last few merged PRs first — `gh pr list --state merged --limit 5 --json title,body` — they're the tone to match. The house shape is a short intro paragraph saying what was broken or what this is, then 2–4 bullets each opening with a bolded clause. Title under ~70 chars.
 
 Rules:
 
@@ -120,6 +120,7 @@ Rules:
 - **No "Test plan" section unless the user asks.** Never list what CI already covers. Only reviewer-facing manual verification ("click X, confirm Y appears") qualifies, and only on request.
 - **No generic "covered by tests" bullet.** That a change is tested is assumed, and naming test mechanics (a fixture, a cassette) goes stale. Mention tests only when *what* is verified is the reviewer-facing point ("adds a regression test for the UTF-8 download crash").
 - **No Claude Code attribution footer**, here or in any comment this workflow posts. It should read like the human author wrote it. **Leaving it out isn't enough where `gh` is missing**: `create_pull_request` and `add_issue_comment` append one server-side (the tell is the session id in its link), while the `update_*` calls don't — so read back what you posted and strip it with an update.
+- **A backfill leads the body.** When the branch adds a `Backfills::` job, the intro says existing rows need one, and the first bullet names the job with the command that runs it once after deploy — `Backfills::…Job.perform_async`.
 - **Link the issue when there is one.** If the branch name, a commit message, or the user's request names an issue, close it from the body — `Closes #123` on its own line. Don't invent a number.
 
 If a bullet is turning into an essay, compress it to one sentence naming the *kind* of change.

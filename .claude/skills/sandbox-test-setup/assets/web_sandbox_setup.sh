@@ -3,12 +3,12 @@
 #
 #   bash .claude/skills/sandbox-test-setup/assets/web_sandbox_setup.sh [--dev-server]
 #
-# Ruby (built from source on a cold container), postgres, redis, a Chrome-matching
-# chromedriver, the local jsdelivr stand-in, then `bin/workspace_setup --without_seeds`,
+# Ruby (built from source on a cold container), postgres, redis, the local jsdelivr
+# stand-in, then `bin/workspace_setup --without_seeds`, the pinned Playwright Chromium,
 # the Tailwind build and a background seed of an empty development database
 # (/tmp/seed.status). Idempotent; --dev-server also boots bin/dev.
 #
-# Logs: /tmp/ruby_build.log, /tmp/system_setup.log, /tmp/cdn_server.log,
+# Logs: /tmp/ruby_build.log, /tmp/system_setup.log, /tmp/cdn_server.log, /tmp/playwright_install.log,
 #       /tmp/seed.log (+ /tmp/seed.status), /tmp/dev_server.log
 set -uo pipefail
 
@@ -20,6 +20,7 @@ RUBY_PREFIX="/opt/ruby-${RUBYVER}/x64"
 # adds the root-in-a-container flags and routes jsdelivr to the stand-in below.
 ENV_EXPORTS="export PATH=\"$RUBY_PREFIX/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin\"
 export LD_LIBRARY_PATH=\"$RUBY_PREFIX/lib:\${LD_LIBRARY_PATH:-}\"
+export PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
 export PGHOST=127.0.0.1 PGUSER=rails PGPASSWORD=password
 export LOCAL_CHROME_OVERRIDE=1
 export LANG=C.UTF-8 LC_ALL=C.UTF-8"
@@ -109,9 +110,9 @@ setup_system() {
   sudo -u postgres psql -tc "SELECT 1 FROM pg_roles WHERE rolname='rails'" | grep -q 1 ||
     sudo -u postgres psql -c "CREATE USER rails WITH SUPERUSER PASSWORD 'password';"
 
-  # Selenium's default Chrome path, and Playwright MCP's `chrome` channel: a wrapper,
-  # since we're root and a plain symlink dies without --no-sandbox
-  local chrome_dir chrome_version
+  # Playwright MCP's `chrome` channel: a wrapper, since we're root and a plain symlink
+  # dies without --no-sandbox
+  local chrome_dir
   chrome_dir="$(ls -d /opt/pw-browsers/chromium-*/chrome-linux* 2>/dev/null | sort -V | tail -1)"
   if [ -x "$chrome_dir/chrome" ]; then
     mkdir -p /opt/google/chrome /root/.cache/ms-playwright
@@ -120,18 +121,8 @@ setup_system() {
     chmod +x /opt/google/chrome/chrome
     [ -s /root/.cache/ms-playwright/mcp-auth.json ] ||
       printf '{"cookies":[],"origins":[]}' > /root/.cache/ms-playwright/mcp-auth.json
-
-    # The image's chromedriver tracks current stable, not the bundled Chromium
-    chrome_version=$("$chrome_dir/chrome" --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
-    if ! /usr/local/bin/chromedriver --version 2>/dev/null | grep -qF "$chrome_version"; then
-      curl -sfL --max-time 120 -o /tmp/chromedriver.zip \
-        "https://storage.googleapis.com/chrome-for-testing-public/${chrome_version}/linux64/chromedriver-linux64.zip" &&
-        unzip -o -q /tmp/chromedriver.zip -d /tmp &&
-        cp /tmp/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver ||
-        echo "couldn't fetch chromedriver ${chrome_version} - :js specs will not run"
-    fi
   else
-    echo "no chromium under /opt/pw-browsers - :js specs and MCP screenshots will not work"
+    echo "no chromium under /opt/pw-browsers - MCP screenshots will not work"
   fi
 
   setup_cdn
@@ -157,6 +148,11 @@ cd "$REPO"
 
 say "bin/workspace_setup --without_seeds"
 bin/workspace_setup --without_seeds || exit 1
+
+# The pin can want a newer build than /opt/pw-browsers ships; the :js specs launch this one
+say "installing the pinned Playwright Chromium in the background -> /tmp/playwright_install.log"
+npx --no-install playwright install chromium-headless-shell >/tmp/playwright_install.log 2>&1 &
+PW_PID=$!
 
 # After workspace_setup: .workspace_id gives BASE_URL its port
 eval "$(ruby bin/env --export)"
@@ -202,6 +198,8 @@ if [ -n "${CLAUDE_ENV_FILE:-}" ] && ! grep -qF "$RUBY_PREFIX/bin" "$CLAUDE_ENV_F
   printf '%s\n' "$ENV_EXPORTS" >> "$CLAUDE_ENV_FILE"
   say "wrote the toolchain env to \$CLAUDE_ENV_FILE"
 fi
+
+wait "$PW_PID" || say "playwright install failed - :js specs will not run, see /tmp/playwright_install.log"
 
 say "done. Shell env for later commands:"
 printf '%s\n' "$ENV_EXPORTS" 'eval "$(ruby bin/env --export)"' | sed 's/^/  /'

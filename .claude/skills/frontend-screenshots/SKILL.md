@@ -8,8 +8,9 @@ description: >-
   branches, design review, demos — including mid-interaction states like an
   open dropdown, a modal showing, a form mid-fill, or a hover. Use it even when
   the user just says "grab a screenshot" or "show me what this looks like"
-  without naming Playwright. For a component state that's hard to reach on a
-  real page, screenshot its ViewComponent/Lookbook preview URL instead.
+  without naming Playwright. For a component that only renders under a feature
+  flag, a hard-to-reach state or data the dev DB lacks, screenshot its
+  ViewComponent/Lookbook preview URL instead of a full page.
   **Also read the filename rule here before any
   `mcp__playwright__browser_take_screenshot` call**, including a one-off
   capture of some other site — it's what keeps PNGs out of the working tree.
@@ -35,17 +36,19 @@ From a session with history, hand this skill to one `general-purpose` subagent (
 ## Preflight
 
 - `eval "$(ruby bin/env --export)"` so `$BASE_URL` is set.
-- `curl -fs "$BASE_URL/" >/dev/null` — run it every time, even if an earlier check in the session failed; the user may have started it since. If it fails now, start `bin/dev` yourself in the background (`run_in_background: true`) from the workspace directory and wait for `$BASE_URL/` to answer. `bin/env` resolves `$DEV_PORT`/`$BASE_URL` from the workspace ID, so the bin/dev you start binds the same port and DB the user expects.
-- **A 200 doesn't prove the server is this checkout's.** Confirm `ruby bin/env --export` names a `WORKSPACE_ID` first — without one the curl reaches the main checkout. See the `sandbox-test-setup` skill.
+- `curl -fs "$BASE_URL/" >/dev/null` — run it every time, even if an earlier check in the session failed; the user may have started it since. If it fails now, **stop and ask the user to start it — unless this is a spawned `.claude/worktrees/…` checkout or the web sandbox, where you start it yourself** (`bin/dev` in the background, `run_in_background: true`, then wait for `$BASE_URL/` to answer). `bin/env` resolves `$DEV_PORT`/`$BASE_URL` from the workspace ID, so whoever starts bin/dev binds the same port and DB this skill expects.
+- **A 200 doesn't prove the server is this checkout's.** Confirm `ruby bin/env --export` names a `WORKSPACE_ID` first — without one the curl reaches the main checkout. See the `sandbox-test-setup` skill. The web sandbox (`/home/user/may_is_bike_month`) gets a `WORKSPACE_ID` like anywhere else — its setup script runs `bin/workspace_setup` — but it's the only checkout in that container, so whatever `$BASE_URL` resolves to is the right one.
 - A 200 there doesn't promise the next page renders. A merge from the base can leave the dev DB
   unmigrated, so a passing curl can be followed by `ActiveRecord::PendingMigrationError` on every page.
   `bundle exec rails db:migrate`, and read `log/development.log` before blaming the capture.
   A gem the merge bumped does the same: the running server keeps the version it booted with, so a
   method the new one adds is a `NoMethodError` until `bin/rails restart`.
-- If `mcp__playwright__*` tools aren't registered, tell the user to run `claude mcp add playwright -- npx -y @playwright/mcp@latest` and restart.
+- If `mcp__playwright__*` tools aren't registered, drive the `playwright` npm package (a devDependency, which the system specs use) from a node script under `tmp/` instead. Everything below still applies, with one headless browser per loop rather than a shared one to close.
 - **Check the workspace DB has records before planning a real-page capture** — `Competition.count`
   comes back 0 in a workspace whose `db:seed` never ran, so only preview routes render. Seed it
-  (`bundle exec rails db:seed` — it's the per-workspace throwaway DB), or capture previews.
+  (`bundle exec rails db:seed` — it's the per-workspace throwaway DB), or capture previews. In the web
+  sandbox the seed is already running in the background — wait on `/tmp/seed.status`
+  (`sandbox-test-setup`) rather than starting a second one, which dies on duplicates.
 
 ## Sign in (with the PII gate)
 
@@ -105,7 +108,9 @@ If the returned content height is **less than the viewport height**, `browser_re
 
 **Mid-interaction states are in scope.** When the caller asks for a dropdown open, a modal showing, a hover state, a partially-filled form, etc., drive Playwright between settle and the screenshot — `browser_click`, `browser_type`, `browser_press_key`, `browser_hover`, then wait for the UI to reach the target state (`browser_wait_for` on a marker element, or check via `browser_evaluate`) before `browser_take_screenshot`. Treat the interaction sequence as part of the page-slug — e.g. capture `settings-modal-open` after clicking, distinct from a static page-load shot. For cross-branch comparisons, run the *same* interaction sequence on each branch so the screenshots actually compare like-for-like.
 
-**A loading state is captured by holding the request open, not by racing it.** In `browser_run_code_unsafe`, `page.route` the URL and delay with `await page.waitForTimeout(90000)` before `route.continue()` — `setTimeout` isn't defined there — then trigger the fetch.
+**A loading state is captured by holding the request open, not by racing it.** In `browser_run_code_unsafe`, `page.route` the URL and delay with `await page.waitForTimeout(90000)` before `route.continue()` — `setTimeout` isn't defined there — then trigger the fetch the way the page does — for a turbo-frame, by re-setting its `src`. Load the results first: a frame that goes busy from an empty page captures its empty state.
+
+**At the mobile width a `UI::Forms::Combobox` opens a dialog and its own input goes inert** — clicking `#<id>` works, but typing into it times out on "element is inert". Type into `#<id>-hw-dialog-combobox` instead.
 
 **`localStorage` survives the base-branch checkout, and a mid-capture interaction writes to it.** The theme toggle persists `theme` and the unit toggle persists `unitPreference`, so a base loop run after a branch loop that toggled either renders differently at the same URL. Clear those keys, or re-apply the interaction, at the start of each loop rather than once per run.
 
@@ -123,9 +128,11 @@ Some components only render in a context you can't reproduce on a normal dev pag
 $BASE_URL/rails/view_components/<preview_path>/<scenario>
 ```
 
-`<preview_path>` is the preview class underscored with the `Preview` suffix dropped, and `<scenario>` is the preview method. `Form::Group::ComponentPreview#text_field` → `/rails/view_components/form/group/component/text_field`. If a scenario doesn't exist yet, add a method to the component's `component_preview.rb` first — a preview that renders the exact state (pass the args that trigger it) is often the fastest path to a clean shot.
+`<preview_path>` is the preview class underscored with the `Preview` suffix dropped, and `<scenario>` is the preview method. `UI::Forms::Group::ComponentPreview#text_field` → `/rails/view_components/ui/forms/group/component/text_field`. If a scenario doesn't exist yet, add a method to the component's `component_preview.rb` first — a preview that renders the exact state (pass the args that trigger it) is often the fastest path to a clean shot.
 
-Use this bare route, not Lookbook's `/lookbook/inspect/...`, which wraps the component in its own browser chrome. `/lookbook/preview/...` is the one route that puts a whole `@!group` on a single page — `/lookbook/preview/form/group/kinds` for `Form::Group::ComponentPreview`'s `# @!group Kinds`. Reach for it when the shot needs several scenarios side by side. **It takes a group, not a scenario, and drops the trailing `component`** — `/lookbook/preview/form/group/component/kinds` and `/lookbook/preview/form/group/<scenario>` both 404, which reads as an unregistered group rather than a wrong path. On a dev server that's been up a while, the group page can stop picking up newly added scenarios — `bin/rails restart` clears it.
+Use this bare route, not Lookbook's `/lookbook/inspect/...`, which wraps the component in its own browser chrome. `/lookbook/preview/...` is the one route that puts a whole `@!group` on a single page — `/lookbook/preview/ui/tooltip/variants` for `UI::Tooltip::ComponentPreview`'s `# @!group Variants`. Reach for it when the shot needs several scenarios side by side; the component's system spec usually already visits it. **It takes a group, not a scenario, and drops the trailing `component`** — `/lookbook/preview/ui/tooltip/component/variants` and `/lookbook/preview/ui/tooltip/<scenario>` both 404, which reads as an unregistered group rather than a wrong path.
+
+**On a dev server that's been up a while, the group page stops picking up newly added scenarios** — it renders every *other* one, and after a merge deletes a scenario's template it 404s the whole group. Either reads as a broken preview rather than a stale registry; `bin/rails restart` clears it.
 
 The preview page renders the component standalone in `layouts/component_preview` (no site chrome), so a preview that fits the viewport captures at `fullPage: false`. **A preview taller than the viewport still captures `fullPage: true`** — cropping out the changed part is the one thing the shot exists to show. Measure before choosing:
 
@@ -139,13 +146,13 @@ Everything else still applies — same PII/seed-data gate, same `(url-path, page
 
 When the caller wants before/after, repeat the capture loop against the base ref. The caller passes the base — `origin/main` by default, or the PR's actual base when it isn't `main` (a stacked PR's base often isn't). Set `BASE_REF` to that remote ref (e.g. `origin/main`, `origin/sethherr/feature-x`) and use it throughout; `git fetch origin` first so it's current.
 
-**Capture the base at what the branch actually merged, not at the ref's tip.** A fetch moves `origin/main` to commits the branch hasn't taken, so a base capture there renders *the base's newer work* and the diff attributes it to this PR. Check `git rev-list --count HEAD..$BASE_REF` before detaching: non-zero means merge first, or detach at `$(git merge-base HEAD $BASE_REF)` instead.
+**Capture the base at what the branch actually merged, not at the ref's tip.** A fetch moves `origin/main` to commits the branch hasn't taken, so a base capture there renders *the base's newer work* and the diff attributes it to this PR. Check `git rev-list --count HEAD..$BASE_REF` before detaching: non-zero means merge first, or detach at `$(git merge-base HEAD $BASE_REF)` instead. On a busy repo the base can move between the branch capture and the base capture of the same run.
 
 **The detached checkout in step 4 is a sanctioned exception to "never change branch" — don't stop and ask for it.** It detaches at a *remote* ref, reads, and returns to the same branch within this section, committing nothing. Nothing here licenses any other checkout, `git checkout -b`, or one that outlives the capture.
 
 1. `git status` — abort if there are uncommitted changes.
 2. Settle what you're detaching at, per the note above — `$BASE_REF`, or `$(git merge-base HEAD $BASE_REF)` when the branch is behind it. Call that `$BASE_AT`.
-3. Diff `db/migrate/` between the branch and **`$BASE_AT`**, not `$BASE_REF`; abort if it changed — a branch-only migration leaves the DB schema ahead of the base's code, so base pages can error. **Don't abort on a migration that only adds a table, or a column with a default** — nothing on the base reads either, so load the target page after detaching and abort only if it errors.
+3. Diff `db/migrate/` between the branch and **`$BASE_AT`**, not `$BASE_REF`; abort if it changed — a branch-only migration leaves the DB schema ahead of the base's code, so base pages can error. A migration that only shows up against the ref's tip belongs to commits the branch never took, and detaching at the merge-base is what resolves it; aborting there abandons a capture that was fine. **So does aborting on a migration that only adds a table, or a column with a default** — nothing on the base reads either, so load the target page after detaching and abort only if it errors.
 4. `BRANCH=$(git rev-parse --abbrev-ref HEAD)`, `git checkout --detach $BASE_AT` (detached — checking out a branch name fails if a sibling worktree holds it; detached HEAD is allowed concurrently and is the same code), navigate the browser to force Rails to reload the changed files — the watcher can lag that first request, so confirm the page shows the base's markup (the changed element gone) and re-navigate if it doesn't — repeat capture into `...-base-...` filenames, then `git checkout $BRANCH`. Run `bin/rails tailwindcss:build` after each checkout — the watcher doesn't rebuild on a checkout, so a capture can render the other side's CSS.
 
 A `Gemfile.lock` diff is **not** a reason to abort — but when it moves a gem the page loads (hotwire_combobox's JS and CSS), run `bundle install` and `bin/rails restart` after each checkout, or the base renders the branch's gem.

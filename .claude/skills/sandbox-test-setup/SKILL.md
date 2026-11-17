@@ -11,8 +11,8 @@ description: >-
   needs a dev server or seeded data, or hits: a missing `.workspace_id`, `Could not find
   'bundler' (4.0.x)`, `Bundler::RubyVersionMismatch`, `command not found: rspec`, a
   syntax error from bare `ruby` on `{x:}` shorthand, unstyled pages or visibility
-  assertions failing in `:js` specs (missing `tailwind.css`), a chromedriver version
-  mismatch, `PG::ConnectionBad`, or `Running as root without --no-sandbox is not
+  assertions failing in `:js` specs (missing `tailwind.css`), a missing Playwright
+  Chromium (`Executable doesn't exist`), `PG::ConnectionBad`, or `Running as root without --no-sandbox is not
   supported`. The fix is almost never a reinstall or a Gemfile edit — it's a PATH, an
   env var, or a service that isn't running.
 ---

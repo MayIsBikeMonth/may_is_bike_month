@@ -4,27 +4,40 @@ module UI
   module Tooltip
     class ComponentPreview < ApplicationComponentPreview
       # @!group Variants
-      def default
-        render(UI::Tooltip::Component.new(text: "Daily totals only count rides of 2 miles or more")) do
-          tag.span(
-            "?",
-            class: "inline-flex w-4 h-4 items-center justify-center rounded-full " \
-              "bg-purple-200 text-purple-900 text-[10px] font-bold " \
-              "dark:bg-purple-700 dark:text-purple-100"
-          )
+      def with_block_content
+        render(UI::Tooltip::Component.new(text: "5–9 mi")) do
+          tag.i(class: "block h-5 w-5 cursor-help rounded bg-purple-400 dark:bg-purple-700")
         end
       end
 
-      def with_text_trigger
-        render(UI::Tooltip::Component.new(text: "More information about this thing")) do
-          "hover or focus me"
+      def with_text_content
+        render(UI::Tooltip::Component.new(text: "More information about this thing")) { "hover or focus me" }
+      end
+
+      def with_body_slot
+        render(UI::Tooltip::Component.new) do |tooltip|
+          tooltip.with_body { '<span class="tooltip-body-imperial">5 mi</span>'.html_safe }
+          "body slot trigger"
         end
       end
 
-      def with_tooltip_button_slot
-        render(UI::Tooltip::Component.new(text: "May 1: 20.0 mi")) do |tooltip|
-          tooltip.with_tooltip_button(class: "punchcard-cell h-7 w-7", data: {l: 3})
+      # No trigger block: renders the default "?" button
+      def default_button
+        render(UI::Tooltip::Component.new(text: "Visible to other riders viewing your bike"))
+      end
+
+      # A link in the popup: click the "?" to keep it open, then click the link
+      def with_interactive_body
+        render(UI::Tooltip::Component.new(text: "current commit: a1b2c3d")) do |tooltip|
+          tooltip.with_body do
+            'current commit: <a href="https://github.com/bikeindex/bike_index/commit/a1b2c3d" class="twlink">a1b2c3d</a>'.html_safe
+          end
         end
+      end
+
+      # Held open, it hides while the container's scrolled its trigger out of view
+      def in_a_scroll_container
+        render_with_template(template: "ui/tooltip/component_preview/in_a_scroll_container")
       end
       # @!endgroup
     end

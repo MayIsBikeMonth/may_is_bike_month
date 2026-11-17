@@ -39,8 +39,8 @@ Read `app/components/ui/` and convert every hand-written piece an existing compo
 - headings → `UI::Header`
 - pills → `UI::Badge`
 - buttons → `UI::Button`; links styled as buttons, or a `link_to … method:` → `UI::ButtonLink`
-- tables → `UI::Table`, definition lists → `UI::DefinitionList`
-- alerts, modals, tooltips, dropdowns, times → `UI::Alert`, `UI::Modal`, `UI::Tooltip`, `UI::Dropdown`, `UI::Time` (`frontend-conventions` covers time)
+- tables → `UI::Table::Base`, definition lists → `UI::DefinitionList::Container` + `Row`
+- alerts, modals, tooltips, dropdowns, times → `UI::Alerts::Base`, `UI::Modal`, `UI::Tooltip`, `UI::Dropdown`, `UI::Time` (`frontend-conventions` covers time)
 
 **Snap to the nearest existing variant rather than overriding one.** A hand-colored button becomes the closest `UI::Button` `color:` and `size:`, with the override classes deleted — don't write `html_class: "bg-[#…]! px-8!"`. A badge gets the nearest `UI::Badge` `color:`. `!` is for layout only (width, padding, grid placement).
 

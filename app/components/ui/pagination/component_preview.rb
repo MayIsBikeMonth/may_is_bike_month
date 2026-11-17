@@ -4,6 +4,7 @@ module UI
   module Pagination
     class ComponentPreview < ApplicationComponentPreview
       # @!group Pagination Variants
+      # @param page "The page of pagination"
       def first_page(page: 1)
         pagy_a = pagy_arg(default_opts.merge(page:))
         render(UI::Pagination::Component.new(pagy: pagy_a, page_params: {}, size: :lg, data: {turbo_action: "advance"}))
