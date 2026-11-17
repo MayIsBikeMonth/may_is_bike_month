@@ -13,6 +13,11 @@ Write each row so the next port can act on it without re-deriving: name what's m
 | `admin-data-api` skill | Talks to bike_index's `AdminData` production API; MIBM has no equivalent. |
 | `honeybadger-debugging` skill | Built on bike_index's `bin/binx_hb` script and Honeybadger projects. |
 | `production-log-inspection` skill | Reads bike_index's production log host. |
+| `frontend-screenshots`: password sign-in, the superadmin button, org slugs, `?view_as=`, the email PII check | MIBM signs in through Strava only and has no orgs, so its own sign-in and seeded-user gate stand. |
+| `frontend-screenshots`: hiding the footer, review-app banner and donation modal; the org sidebar, `/bikebook`, `orgRegistrationColumns`, rack-attack, legacy-stylesheet previews, `dartsass:build` | None of these exist here. MIBM hides only the profiler badge. |
+| `frontend-screenshots`: mailer previews, the `mcp-auth.json` preflight | MIBM has no mailer previews and no `.mcp.json`. |
+| `pr`: the cycle-type translation and product-name checks, the multi-database migration steps, the mailer, API-view and build-config classifier exclusions | MIBM has no i18n sidecars, no Bike Index product name, one database with `schema.rb`, and none of those files. |
+| `frontend-conventions`: Bike Index's palette and dark-mode setup, `twpagebleed`, `Counts`/`amount_display`, legacy-stylesheet and marketing-page rules, `PathSpellingRedirect`, `IndexState`, org caching, the Turbo opt-in rules | Bike Index domain or infra MIBM lacks. MIBM's purple palette, `.dark` on `<html>` and Turbo Drive (on) stand. |
 | Blocklisted `UI::` components (SKILL.md Step 3) | Each needs a model MIBM doesn't have. The model is named in the list. |
 | `Atoms::*` components | Out of scope by namespace. |
 | `UI::Alerts::FlashMessage`'s hash flash (`translation_key:` + `url:`) and its preview | Its only messages are bike_index's password sign-in prompts. MIBM's copy maps Devise's `:alert` to `:error` instead, since upstream's `UI::Alerts::Base` rejects `:alert`. |

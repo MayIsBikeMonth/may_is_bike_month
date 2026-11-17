@@ -99,7 +99,7 @@ ruby .claude/skills/github-pr-images/assets/inline_attachments.rb {owner}/{repo}
 
 **With nothing to upload**, edit in place: `gh api -X PATCH repos/{owner}/{repo}/issues/comments/$SCREENSHOT_COMMENT_ID -F body=@<absolute-path> --jq .html_url`. `-F` reads a file from `@`; `-f` would post the literal `@<file>`. The path is absolute because `gh` resolves `@` against the shell's cwd.
 
-Only edit the PR description when the user explicitly asks: `gh pr edit $PR_NUMBER --body-file <file> --attach …`, referencing images as `![alt](path)` — the script patches comments only — with the existing body plus a `## Screenshots` section — replace that section if it's already there rather than adding a second.
+Only edit the PR description when the user explicitly asks: `gh pr edit $PR_NUMBER --body-file <file> --attach …`, referencing images as `![alt](path)` — the script patches comments only — with the existing body plus a `## Screenshots` section — replace that section if it's already there rather than adding a second. The `pr-guardrails` hook denies `gh pr edit` until the `pr` skill is loaded.
 
 ## Step 4: Verify
 

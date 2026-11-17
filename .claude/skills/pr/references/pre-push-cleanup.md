@@ -16,7 +16,7 @@ Skip it when the diff has no code in it — a docs- or skill-only branch gives i
 
 **The previous run's merge from the base names that commit** — `rtk proxy git log --merges -2 --format=%h origin/main..HEAD | tail -1`. It's the *second* one because **Prepare the branch** merges before it cleans, so this run's own merge is already the most recent by the time you get here, and `-1` scopes the range to that merge alone — an empty diff, which reads as a clean branch rather than a wrong range. A run that had nothing to merge left no commit, so the range can reach back further than the last run; that costs a re-triage, not a wrong scope. A merge made *between* runs — the user asking to merge main — errs the other way: it's newer than the last run, so the range silently drops the commits before it. Read the session for one before trusting the count.
 
-**That range breaks when earlier branch work was split into its own PRs and merged.** Those commits return through a merge from the base, so `<last-simplify-commit>..HEAD` includes all of them plus everything else the base gained. Check `git log --oneline <last-simplify-commit>..HEAD`; if it lists the base's merges, scope to your own commits (`git show` each) instead. `--no-merges` doesn't rescue it — it hides the merge commits, not the commits they brought in.
+**That range breaks when earlier branch work was split into its own PRs and merged.** Those commits return through a merge from the base, so `<last-simplify-commit>..HEAD` includes all of them plus everything else the base gained — hundreds of files, none of it yours. Check `git log --oneline <last-simplify-commit>..HEAD`; if it lists the base's merges, scope to your own commits (`git show` each) instead. `--no-merges` doesn't rescue it — it hides the merge commits, not the commits they brought in.
 
 Then run `bin/lint` to auto-format (it also picks up whatever `/simplify` just changed). Always `bin/lint`, never another formatter or `standardrb` directly. Scope it to the branch's files rather than walking the whole repo:
 
@@ -29,15 +29,15 @@ Then run `bin/lint` to auto-format (it also picks up whatever `/simplify` just c
 
 `xargs` rather than `bin/lint $(…)` — command substitution splits on spaces in filenames. `rtk proxy` for the same reason the greps below need it: the hook rewrites these into a stat whose trailing `Changes:` line then arrives as a filename.
 
-**All three are load-bearing.** `origin/main...HEAD` sees only *committed* work, and `/simplify` just edited the tree — a file it touched that the branch hadn't committed yet is invisible to that range and goes unlinted. `git diff HEAD` in turn sees only *tracked* files, so a file the branch adds is in neither until it's staged: a new component template lints clean by never being linted, and CI is what finds it. `--exclude-standard` keeps the gitignored paths out. Same union applies to the spec scoping and the audits below, which also run before the commit.
+**All three are load-bearing.** `origin/main...HEAD` sees only *committed* work, and `/simplify` just edited the tree — a file it touched that the branch hadn't committed yet is invisible to that range and goes unlinted. `git diff HEAD` in turn sees only *tracked* files, so a file the branch adds is in neither until it's staged: a new component template lints clean by never being linted, and CI's `lint_and_scan` is what finds it. `--exclude-standard` keeps the gitignored paths out. Same union applies to the spec scoping and the audits below, which also run before the commit.
 
-**Check that substitution produced something first.** With no arguments `bin/lint` lints the whole repo, so an empty diff turns the scoped command into exactly the whole-repo run it's avoiding.
+**Check that substitution produced something first.** With no arguments `bin/lint` lints the whole repo (it falls through to a bare `standardrb --fix` and `npm run lint`), so an empty diff turns the scoped command into exactly the whole-repo run it's avoiding.
 
 A clean run over Ruby-only paths prints **nothing at all** — the summary table comes from the ERB formatter, so silence plus exit 0 is the pass. Take that status from `bin/lint` itself — piped to `tail` it's `tail`'s, and the ERB summary prints "All files are clean!" even when standardrb never ran. Paths the branch deleted are skipped silently — "Not found" means a path git has no history for, ie a typo. Files with no linter (`.md`, `.yml`) are skipped. It takes directories too, so `bin/lint app/components/foo` works while you're still iterating.
 
-Scope specs the same way — the ones covering what the branch changed, never a bare `bundle exec rspec` or a whole top-level directory (see the `rspec-testing` skill). CI runs the full suite; a green PR isn't your job to prove locally. Scoping too far down is the live risk: walk the changed `app/` paths to their `spec/` siblings rather than the specs the change *feels* like it's about — a helper edited in passing has its own.
+Scope specs the same way — the ones covering what the branch changed, never a bare `bundle exec rspec` or a whole top-level directory (see the `rspec-testing` skill). CI runs the full suite; a green PR isn't your job to prove locally. Scoping too far down is the live risk: walk the changed `app/` paths to their `spec/` siblings rather than the specs the change *feels* like it's about — a helper edited in passing has its own, and one like `spec/helpers/sortable_helper_spec.rb` asserts its whole params hash with `eq`, so an added key reds it.
 
-**`bin/rails tailwindcss:build` before the `:js` ones, after the last template edit.** Tailwind's content scan reads the templates, so adding or removing a class in an `.erb` changes the built CSS — and a system spec asserting a computed style fails against the stale build until it's rebuilt. A merge that brings in `app/assets/tailwind/**` does it too. The failure names the assertion, not the build, so it reads as a real regression.
+**`bin/rails tailwindcss:build` before the `:js` ones, after the last template edit.** Tailwind's content scan reads the templates, so adding or removing a class in an `.erb` changes the built CSS — and a system spec asserting a computed style (`spec/components/ui/dropdown/component_system_spec.rb` reads `getComputedStyle(...).color`) fails against the stale build until it's rebuilt. A merge that brings in `app/assets/tailwind/**` does it too. The failure names the assertion, not the build, so it reads as a real regression.
 
 Then review the changed files against `CLAUDE.md` and fix what doesn't conform — code style and testing conventions. A frontend diff also reads the `frontend-conventions` skill: `CLAUDE.md` points there rather than stating the frontend rules, so checking it alone misses them. Only touch lines this branch already changed.
 
@@ -59,7 +59,7 @@ The ones to cut:
 - **A class list the template writes literally.** Pinning `class="w-full max-w-3xl"` re-asserts the source. The exception is a class the component *computes* — a conditional `active`, a width chosen from an argument — where the branch is the point.
 - **What a request spec already covers.** A component spec listing the fields a form renders, next to a request spec that asserts the same names, is one of them maintained for nothing. Keep the one closest to the logic.
 
-Keep, without hesitating, the ones tied to a failure mode: a conditional branch, a computed value, an argument guard that would otherwise fail silently, anything asserting what a cache keys on, and any example written *because* something broke — say so in a comment above it, so the next audit doesn't mistake it for a change-detector.
+Keep, without hesitating, the ones tied to a failure mode: a conditional branch, a computed value, an argument guard that would otherwise fail silently, anything asserting what a fragment cache keys on, and any example written *because* something broke — say so in a comment above it, so the next audit doesn't mistake it for a change-detector.
 
 This applies to the branch's specs, not the suite's. Don't delete pre-existing examples you merely moved between files.
 
@@ -77,7 +77,7 @@ rtk proxy git diff origin/main...HEAD --stat
 
 Smallest files first — one at `+1 -1` is either the point of the branch or pure churn, and telling which takes a moment. `git checkout origin/main -- <file>` when the whole file is churn; when it rides along inside a real change, put the surrounding lines back so the diff shows only what moved.
 
-**What `bin/lint` wrote is not churn** and stays, including in files the branch otherwise didn't touch.
+**What `bin/lint` wrote is not churn** and stays, including in files the branch otherwise didn't touch — see **Code style** in `CLAUDE.md`.
 
 Sweeping mechanical edits are where this collects.
 
@@ -92,9 +92,21 @@ rtk proxy git diff origin/main...HEAD -U0 -- '*.rb' '*.erb' '*.js' '*.ts' '*.css
 
 The `+++ b/…` lines keep each hit attached to its file; the code-path filter keeps markdown headings out. It over-matches on `#{}` interpolation and catches trailing comments — the list is candidates to judge, not verdicts.
 
-**An empty result on a non-empty diff means the pathspec missed the branch, not that the branch is clean.** Extensionless `bin/` scripts and `.github/workflows/*.yml` are why `bin/*` and `*.yml` are on the list; add whatever else the branch touches and re-run rather than reading the blank as a verdict.
+**An empty result on a non-empty diff means the pathspec missed the branch, not that the branch is clean** — the same silent-pass the rtk section below describes, from a different cause. Extensionless `bin/` scripts and `.github/workflows/*.yml` are why `bin/*` and `*.yml` are on the list; add whatever else the branch touches and re-run rather than reading the blank as a verdict.
 
 Judge each against the **Comments** section of `CLAUDE.md` and reach a verdict of keep / razor / delete on every line — a comment survives only by carrying a *why* the code can't. Deleting is the common outcome, razoring the next most common; leaving a block untouched should be the exception you can justify. Watch hardest for the ones you wrote to explain your own reasoning as you worked: narration of the change, mechanism the code already shows, and a second sentence justifying the first.
+
+### The backfill audit
+
+**Required.** Ask whether rows already in the database still fit the branch's code. The shapes that leave them behind:
+
+- **A vocabulary stored as data** — an enum value (`Competition#kind`, `User#role`), a jsonb key or list (`CompetitionUser#included_activity_types`).
+- **A new column whose value depends on existing data**, not its default.
+- **A changed calculated attribute** — existing rows keep the old value until something re-saves them. A scoring change leaves `CompetitionUser#score_data` stale wherever `UpdateCompetitionUserJob` doesn't re-run, and it only re-runs the current competition's users.
+
+Find what reads the old form before calling one due. A value nothing reads again doesn't need one, and one recording what happened — a `StravaRequest`'s stored `parameters` — shouldn't be rewritten.
+
+State the verdict in your reply to the user either way, naming the stored values you checked. When one is due, write it without asking — a `Backfills::` Sidekiq job in `app/jobs/backfills/` with its spec — and lead the PR body with it (SKILL.md's **Write the summary body**).
 
 ### The asset audit
 

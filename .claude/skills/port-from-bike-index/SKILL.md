@@ -157,7 +157,19 @@ Handle **paired** components together (`table` ↔ `table_column`; `definition_l
 
 ### Porting skills, hooks, and scripts
 
-Skills are prose: port **app-agnostic improvements**, and confirm MIBM has the infra each piece of guidance names. Rewrite bike-domain examples to MIBM's, and drop guidance about absent infra (SCSS/CoffeeScript, `translation()` sidecars, `.haml`, `MARKUP_DIGEST`, the `tw:` rule). Keep MIBM's richer sections over a thinner upstream rewrite.
+**Every sync pulls the shared skills, not just the one that prompted it** — a component sync included, since upstream's skills describe the components and their specs. The shared set is whatever both repos have:
+
+```bash
+comm -12 <(ls .claude/skills) <(ls /tmp/binx_clone/.claude/skills)
+```
+
+Run `git -C /tmp/binx_clone diff --stat <last-sha> HEAD -- .claude` first. It lists what upstream changed since the last sync, which is the part to port. Then diff each shared skill whole, because an earlier sync may have left something out. When a skill is updated in place, record the upstream SHA in that commit too.
+
+Skills are prose: port **app-agnostic improvements**, and confirm MIBM has the infra each piece of guidance names. Rewrite bike-domain examples to MIBM's, and drop guidance about absent infra (SCSS/CoffeeScript, `translation()` sidecars, `.haml`, `MARKUP_DIGEST`, the `tw:` rule). Keep MIBM's richer sections over a thinner upstream rewrite. Most of a skill diff is these standing swaps:
+
+- `AGENTS.md` → `CLAUDE.md`. MIBM's `agents.md` has no **Who runs this** section, so a skill's own subagent briefing stays written out rather than pointing there.
+- Bike Index's seeded `@bikeindex.org` users and password sign-in → MIBM's seeded display names and Strava-only sign-in.
+- `bikeindex/bike_index` and `bikeindex:` → `MayIsBikeMonth/may_is_bike_month` and `MayIsBikeMonth:`.
 
 - **`sandbox-test-setup`: diff, then cherry-pick.** MIBM's DB names, seeds, and env differ, so don't overwrite — but version numbers, paths, and tool names go stale silently and port cleanly.
 - **Keep upstream's `references/` split.** SKILL.md loads in full every time; a reference loads only when a step sends you there. Adopting the prose but keeping it inline doubles what every invocation pays.
