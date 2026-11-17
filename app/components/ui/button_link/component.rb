@@ -32,8 +32,8 @@ module UI
 
       private
 
-      # onclick, not data-turbo-confirm (Turbo Drive is off unless a call site opts in) or
-      # data-confirm (rails-ujs, which we're retiring); returning false stops Turbo's handler
+      # onclick, not data-turbo-confirm or data-confirm (rails-ujs, which isn't loaded): it prompts
+      # whether or not Turbo handles the link, and returning false stops Turbo's handler
       def confirmable_attributes
         attributes = html_attributes
         return attributes if @confirm.nil?

@@ -16,8 +16,8 @@ module UI
         "is-active:bg-white is-active:font-semibold is-active:text-gray-900 dark:is-active:border-gray-700 " \
         "dark:is-active:border-b-gray-900 dark:is-active:bg-gray-900 dark:is-active:text-gray-100"
 
-      # turbo: Drive is off app-wide and opted into per element; one data-turbo on the nav
-      # covers every tab, since Turbo reads it off the closest ancestor carrying it
+      # turbo: upstream turns Drive off app-wide and opts in per element, with one data-turbo
+      # on the nav covering every tab. Drive is on here, so tabs are Turbo visits either way
       def initialize(tabs:, nav_label:, turbo: false, margin_classes: "mb-3")
         @tabs = tabs
         @nav_label = nav_label

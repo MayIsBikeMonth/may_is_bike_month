@@ -106,7 +106,7 @@ Judge each against the **Comments** section of `CLAUDE.md` and reach a verdict o
 
 Find what reads the old form before calling one due. A value nothing reads again doesn't need one, and one recording what happened — a `StravaRequest`'s stored `parameters` — shouldn't be rewritten.
 
-State the verdict in your reply to the user either way, naming the stored values you checked. When one is due, write it without asking — a `Backfills::` Sidekiq job in `app/jobs/backfills/` with its spec — and lead the PR body with it (SKILL.md's **Write the summary body**).
+State the verdict in your reply to the user either way, naming the stored values you checked. When one is due, write it without asking — a `Backfills::` job in `app/jobs/backfills/` (`< ApplicationJob`, `sidekiq_options queue: "low_priority", retry: false`) with its spec in `spec/jobs/backfills/` — and lead the PR body with it (SKILL.md's **Write the summary body**).
 
 ### The asset audit
 
