@@ -39,7 +39,7 @@ gem "faraday" # Used to make bare requests to strava
 
 # File storage
 gem "image_processing", "~> 2.2" # Use Active Storage variants
-gem "ruby-vips" # image_processing backend (libvips is installed in the Dockerfile)
+gem "ruby-vips", require: false # image_processing backend. Active Storage loads it, tolerating CI's missing libvips; Bundler.require wouldn't
 
 # Functionality extensions
 gem "binxtils" # Shared utilities from Bike Index (InputNormalizer, TimeParser, TimeZoneParser)
