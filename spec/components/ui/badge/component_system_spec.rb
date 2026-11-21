@@ -15,6 +15,8 @@ RSpec.describe UI::Badge::Component, :js, type: :system do
     expect(trigger).to have_text "N"
     expect(trigger.find("span.cursor-help")).to be_present
 
+    # The controller sets popover on connect; a hover that lands before then misses its mouseenter
+    expect(page).to have_css("##{tooltip[:id]}[popover='manual']", visible: :all)
     trigger.hover
 
     expect(tooltip).to be_visible
