@@ -19,7 +19,7 @@ gem "logstash-event" # Use logstash format for logging data
 # Frontend stuff
 gem "propshaft" # The modern asset pipeline for Rails
 gem "importmap-rails" # Use JavaScript with ESM import maps
-gem "turbo-rails" # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
+gem "turbo-rails", "< 2.0.21" # Hotwire's SPA-like page accelerator. Turbo 8.0.21+ runs a full visit for same-page "#" links: hotwired/turbo#1540
 gem "stimulus-rails" # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem "tailwindcss-rails" # Tailwind for css
 gem "view_component" # view components!
@@ -38,7 +38,8 @@ gem "omniauth-rails_csrf_protection"
 gem "faraday" # Used to make bare requests to strava
 
 # File storage
-gem "image_processing", "~> 1.2" # Use Active Storage variants
+gem "image_processing", "~> 2.2" # Use Active Storage variants
+gem "ruby-vips", require: false # image_processing backend. Active Storage loads it, tolerating CI's missing libvips; Bundler.require wouldn't
 
 # Functionality extensions
 gem "binxtils" # Shared utilities from Bike Index (InputNormalizer, TimeParser, TimeZoneParser)

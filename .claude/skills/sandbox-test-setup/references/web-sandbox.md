@@ -51,8 +51,8 @@ Gemfile — Bundler 4's resolver differs and you'll chase fake regressions.
 The script prints its env block at the end; it's also this:
 
 ```bash
-export PATH="/opt/ruby-4.0.9/x64/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin"  # service is in /usr/sbin
-export LD_LIBRARY_PATH="/opt/ruby-4.0.9/x64/lib:$LD_LIBRARY_PATH"
+export PATH="/opt/ruby-4.0.10/x64/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin"  # service is in /usr/sbin
+export LD_LIBRARY_PATH="/opt/ruby-4.0.10/x64/lib:$LD_LIBRARY_PATH"
 export PGHOST=127.0.0.1 PGUSER=rails PGPASSWORD=password  # database.yml reads these outside CI
 export LOCAL_CHROME_OVERRIDE=1
 export LANG=C.UTF-8 LC_ALL=C.UTF-8  # else foreman dies reading .env: invalid byte sequence in US-ASCII
